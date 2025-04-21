@@ -48,7 +48,7 @@ const Footer = () => {
           <div className="md:col-span-1">
             <div className="flex items-center mb-4">
               <img src={logoImg} alt="Logo" className="h-8 w-auto" />
-              <span className="ml-2 text-xl font-bold text-gray-800">飞书物流</span>
+              <span className="ml-2 text-xl font-bold text-gray-800">Wo AI！</span>
             </div>
             <p className="text-gray-600 text-sm mb-4">
               为全球国际物流提供智能化解决方案
@@ -93,7 +93,7 @@ const Footer = () => {
         <div className="pt-8 border-t border-gray-200">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-500 text-sm">
-              © 2025 飞书智能物流. 保留所有权利.
+              © 2025 WallTech. 保留所有权利.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <a href="#" className="text-gray-500 hover:text-primary text-sm">隐私政策</a>

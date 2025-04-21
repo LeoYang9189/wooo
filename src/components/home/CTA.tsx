@@ -25,7 +25,7 @@ const CTA = () => {
                 viewport={{ once: true }}
                 className="text-gray-600"
               >
-                立即开始体验飞书AI智能物流服务，让您的国际物流业务更高效、更准确、更智能。
+                立即开始体验WallTech旗下Wo AI！智能物流服务，让您的国际物流业务更高效、更准确、更智能。
               </motion.p>
             </div>
             
