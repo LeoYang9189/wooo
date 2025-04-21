@@ -68,6 +68,11 @@ const Hero = () => {
   const handleQuestionSelect = (question: string) => {
     setInputValue(question);
   };
+  
+  // 处理计划说明跳转
+  const handlePlanButtonClick = () => {
+    window.open('https://n72qv2rrvp.feishu.cn/docx/IP1idX5L5ohkp8xoQVjcaZCbnid?from=from_copylink', '_blank');
+  };
 
   return (
     <div className="bg-gradient-to-b from-white via-accent to-white wave-bg section-padding min-h-[80vh] flex items-center relative">
@@ -189,6 +194,24 @@ const Hero = () => {
                 loopDelay={3000}
               />
             </h1>
+            
+            {/* 添加计划说明按钮 */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.6 }}
+              className="mt-4"
+            >
+              <button 
+                onClick={handlePlanButtonClick}
+                className="bg-white text-primary border border-primary/30 px-6 py-2 rounded-full shadow-sm hover:shadow-md transition-all duration-300 hover:bg-primary/5 flex items-center mx-auto"
+              >
+                <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                点我查看计划说明
+              </button>
+            </motion.div>
           </motion.div>
           
           {/* AI对话区域 */}
@@ -298,22 +321,126 @@ const Hero = () => {
             className="grid grid-cols-1 md:grid-cols-4 gap-6 w-full max-w-5xl mx-auto transition-all duration-500"
           >
             {[
-              { icon: "👤", title: "专属形象", description: "每个人都能拥有专属形象的智能伙伴。" },
-              { icon: "🧠", title: "有记忆", description: "有记忆的伙伴, 会记住与你重要的信息。" },
-              { icon: "🔍", title: "开放的", description: "开放的伙伴，让飞书更能适应各种工作。" },
-              { icon: "⚡", title: "统一体验", description: "跨各种场景的统一体验的智能伙伴。" }
+              { 
+                icon: <div className="w-16 h-16 flex items-center justify-center mb-2">
+                  <svg viewBox="0 0 128 128" className="w-full h-full">
+                    <linearGradient id="ai-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#6366F1" />
+                      <stop offset="100%" stopColor="#8B5CF6" />
+                    </linearGradient>
+                    <circle cx="64" cy="64" r="60" fill="white" stroke="#E5E7EB" strokeWidth="2" />
+                    <path d="M64 16c-26.5 0-48 21.5-48 48s21.5 48 48 48 48-21.5 48-48-21.5-48-48-48zm-9 14c5.5 0 10 4.5 10 10s-4.5 10-10 10-10-4.5-10-10 4.5-10 10-10zm-15 48c-5.5 0-10-4.5-10-10s4.5-10 10-10 10 4.5 10 10-4.5 10-10 10zm24 18c-5.5 0-10-4.5-10-10s4.5-10 10-10 10 4.5 10 10-4.5 10-10 10zm15-28c0-5.5 4.5-10 10-10s10 4.5 10 10-4.5 10-10 10-10-4.5-10-10z" fill="url(#ai-gradient)" />
+                    <circle cx="55" cy="40" r="6" fill="#3B82F6" />
+                    <circle cx="40" cy="64" r="6" fill="#10B981" />
+                    <circle cx="64" cy="88" r="6" fill="#F59E0B" />
+                    <circle cx="88" cy="64" r="6" fill="#EF4444" />
+                    <circle cx="64" cy="64" r="10" fill="white" stroke="#6366F1" strokeWidth="2" />
+                    <circle cx="64" cy="64" r="3" fill="#6366F1" />
+                  </svg>
+                </div>, 
+                title: "专属AI", 
+                description: "每个人都能拥有专属自己的智能AI伙伴。" 
+              },
+              { 
+                icon: <div className="w-16 h-16 flex items-center justify-center mb-2">
+                  <svg viewBox="0 0 128 128" className="w-full h-full">
+                    <defs>
+                      <linearGradient id="service-gradient-1" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#4ADE80" />
+                        <stop offset="100%" stopColor="#22C55E" />
+                      </linearGradient>
+                      <linearGradient id="service-gradient-2" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#2563EB" />
+                        <stop offset="100%" stopColor="#3B82F6" />
+                      </linearGradient>
+                      <linearGradient id="service-gradient-3" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#EC4899" />
+                        <stop offset="100%" stopColor="#F472B6" />
+                      </linearGradient>
+                      <filter id="service-shadow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#0001" />
+                      </filter>
+                    </defs>
+                    <circle cx="64" cy="64" r="60" fill="white" stroke="#E5E7EB" strokeWidth="2" />
+                    <g filter="url(#service-shadow)">
+                      <path d="M42 38a6 6 0 0 1 6-6h48a6 6 0 0 1 6 6v12a6 6 0 0 1-6 6H48a6 6 0 0 1-6-6V38z" fill="url(#service-gradient-1)" />
+                      <path d="M26 58a6 6 0 0 1 6-6h48a6 6 0 0 1 6 6v12a6 6 0 0 1-6 6H32a6 6 0 0 1-6-6V58z" fill="url(#service-gradient-2)" />
+                      <path d="M42 78a6 6 0 0 1 6-6h48a6 6 0 0 1 6 6v12a6 6 0 0 1-6 12H48a6 6 0 0 1-6-6V78z" fill="url(#service-gradient-3)" />
+                    </g>
+                    <circle cx="79" cy="44" r="3" fill="white" />
+                    <circle cx="63" cy="64" r="3" fill="white" />
+                    <circle cx="79" cy="84" r="3" fill="white" />
+                  </svg>
+                </div>,
+                title: "全面服务", 
+                description: "产品覆盖国际物流环节的每个节点" 
+              },
+              { 
+                icon: <div className="w-16 h-16 flex items-center justify-center mb-2">
+                  <svg viewBox="0 0 128 128" className="w-full h-full">
+                    <defs>
+                      <linearGradient id="operation-gradient-1" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#F59E0B" />
+                        <stop offset="100%" stopColor="#F97316" />
+                      </linearGradient>
+                      <linearGradient id="operation-gradient-2" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#3B82F6" />
+                        <stop offset="100%" stopColor="#60A5FA" />
+                      </linearGradient>
+                      <filter id="operation-shadow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feDropShadow dx="0" dy="2" stdDeviation="2" floodColor="#0001" />
+                      </filter>
+                    </defs>
+                    <circle cx="64" cy="64" r="60" fill="white" stroke="#E5E7EB" strokeWidth="2" />
+                    <g filter="url(#operation-shadow)">
+                      <rect x="34" y="34" width="60" height="60" rx="8" fill="white" stroke="#E5E7EB" strokeWidth="2" />
+                      <rect x="40" y="48" width="48" height="8" rx="4" fill="#EEF2FF" />
+                      <rect x="40" y="62" width="48" height="8" rx="4" fill="#EEF2FF" />
+                      <rect x="40" y="76" width="48" height="8" rx="4" fill="#EEF2FF" />
+                      <circle cx="48" cy="52" r="4" fill="url(#operation-gradient-1)" />
+                      <circle cx="48" cy="66" r="4" fill="url(#operation-gradient-2)" />
+                      <circle cx="48" cy="80" r="4" fill="#A855F7" />
+                      <circle cx="30" cy="40" r="12" fill="url(#operation-gradient-1)" opacity="0.6" />
+                      <circle cx="98" cy="78" r="16" fill="url(#operation-gradient-2)" opacity="0.6" />
+                    </g>
+                  </svg>
+                </div>,
+                title: "便捷操作", 
+                description: "接入并深度融合货代系统，一句话完成所有操作" 
+              },
+              { 
+                icon: <div className="w-16 h-16 flex items-center justify-center mb-2">
+                  <svg viewBox="0 0 128 128" className="w-full h-full">
+                    <defs>
+                      <linearGradient id="stable-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#F43F5E" />
+                        <stop offset="100%" stopColor="#FB7185" />
+                      </linearGradient>
+                      <filter id="stable-shadow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feDropShadow dx="0" dy="2" stdDeviation="2" floodColor="#0001" />
+                      </filter>
+                    </defs>
+                    <circle cx="64" cy="64" r="60" fill="white" stroke="#E5E7EB" strokeWidth="2" />
+                    <g filter="url(#stable-shadow)">
+                      <path d="M64 28L28 76h36l-8 24 36-48H56l8-24z" fill="url(#stable-gradient)" />
+                    </g>
+                  </svg>
+                </div>,
+                title: "专业稳定", 
+                description: "20年行业经验积累提供专业可靠的服务" 
+              }
             ].map((feature, index) => (
               <motion.div 
                 key={index} 
-                className="bg-white/80 backdrop-blur-md rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300"
+                className="bg-white/80 backdrop-blur-md rounded-xl p-8 shadow-md hover:shadow-lg transition-all duration-300 flex flex-col items-center h-72"
                 whileHover={{ 
                   y: -5, 
                   boxShadow: "0 10px 25px -5px rgba(116, 102, 240, 0.2)"
                 }}
               >
-                <div className="text-4xl mb-3">{feature.icon}</div>
-                <h3 className="text-lg font-semibold text-gray-800">{feature.title}</h3>
-                <p className="text-gray-600 mt-2 text-sm">{feature.description}</p>
+                <div className="flex justify-center">{feature.icon}</div>
+                <h3 className="text-xl font-semibold text-gray-800 my-4">{feature.title}</h3>
+                <p className="text-gray-600 text-base mt-2">{feature.description}</p>
               </motion.div>
             ))}
           </motion.div>
