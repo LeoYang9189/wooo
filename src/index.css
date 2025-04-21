@@ -1,0 +1,209 @@
+@import "tailwindcss";
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+@theme {
+  --color-primary: #7466F0;
+  --color-secondary: #A891FF;
+  --color-accent: #F3F0FF;
+  --color-dark: #333333;
+}
+
+/* 自定义组件样式 */
+.container-custom {
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-custom {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-custom {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-radius: 9999px;
+  transition-property: all;
+  transition-duration: 300ms;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-secondary);
+}
+
+.section-padding {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+@media (min-width: 768px) {
+  .section-padding {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+}
+
+/* 美化波浪背景效果 */
+.wave-bg {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(243,240,255,0.7));
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(116, 102, 240, 0.08);
+  transition: all 0.5s ease;
+}
+
+.wave-bg::before {
+  content: '';
+  position: absolute;
+  width: 150%;
+  height: 150%;
+  top: -25%;
+  left: -25%;
+  background-image: url('/src/assets/wave-bg.svg');
+  background-size: cover;
+  opacity: 0.7;
+  z-index: 0;
+  animation: slowFloat 60s linear infinite;
+  pointer-events: none;
+}
+
+.wave-bg::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(168, 145, 255, 0.1) 0%,
+    rgba(243, 240, 255, 0) 50%,
+    rgba(116, 102, 240, 0.05) 100%
+  );
+  z-index: 1;
+  border-radius: 12px;
+}
+
+/* 添加丝绸光幕效果 */
+.silk-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, 
+    rgba(255, 255, 255, 0.03) 25%, 
+    rgba(243, 240, 255, 0.05) 25%, 
+    rgba(243, 240, 255, 0.05) 50%, 
+    rgba(255, 255, 255, 0.03) 50%, 
+    rgba(255, 255, 255, 0.03) 75%, 
+    rgba(243, 240, 255, 0.05) 75%, 
+    rgba(243, 240, 255, 0.05) 100%
+  );
+  background-size: 20px 20px;
+  animation: silkWave 8s linear infinite;
+  opacity: 0.6;
+  z-index: 2;
+  border-radius: 12px;
+  pointer-events: none;
+}
+
+.light-shimmer {
+  position: absolute;
+  top: -100%;
+  left: -100%;
+  width: 300%;
+  height: 300%;
+  background: linear-gradient(45deg, 
+    rgba(255,255,255,0) 30%, 
+    rgba(255,255,255,0.4) 50%, 
+    rgba(255,255,255,0) 70%
+  );
+  animation: shimmer 10s ease-in-out infinite;
+  z-index: 3;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* 金刚区内容样式 */
+.hero-content {
+  position: relative;
+  z-index: 10;
+}
+
+/* 定义动画 */
+@keyframes slowFloat {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(1deg) scale(1.02);
+  }
+  50% {
+    transform: rotate(0deg) scale(1);
+  }
+  75% {
+    transform: rotate(-1deg) scale(0.98);
+  }
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+@keyframes silkWave {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 40px 40px;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  25% {
+    transform: translate(-30%, -30%) rotate(15deg);
+  }
+  50% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  75% {
+    transform: translate(-70%, -70%) rotate(-15deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+}
