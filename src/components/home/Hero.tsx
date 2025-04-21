@@ -1,27 +1,57 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import octopusAvatar from '../../assets/octopus-avatar.svg';
+import ColoredTypedText from '../common/ColoredTypedText';
 
 const Hero = () => {
-  const [inputValue, setInputValue] = useState('什么是运小智？');
+  const [inputValue, setInputValue] = useState('什么是沃宝？');
+  const [displayedInput, setDisplayedInput] = useState('');
   const [isDialogExpanded, setIsDialogExpanded] = useState(false);
+  const [isTyping, setIsTyping] = useState(true);
+  
+  // 打字机效果
+  useEffect(() => {
+    if (!isTyping) return;
+    
+    const text = '什么是沃宝？';
+    let currentIndex = 0;
+    
+    const typingInterval = setInterval(() => {
+      if (currentIndex < text.length) {
+        setDisplayedInput(text.substring(0, currentIndex + 1));
+        currentIndex++;
+      } else {
+        clearInterval(typingInterval);
+        setIsTyping(false);
+        
+        // 重置打字机效果，循环播放
+        setTimeout(() => {
+          setDisplayedInput('');
+          currentIndex = 0;
+          setIsTyping(true);
+        }, 3000);
+      }
+    }, 150);
+    
+    return () => clearInterval(typingInterval);
+  }, [isTyping]);
   
   // 示例对话数据 - 修改为单个气泡
   const chatMessages = [
     {
       sender: 'bot',
-      avatar: '/src/assets/robot-avatar.svg',
-      content: 'Hello, 我叫小智\n\n我是负责运小智产品售前的数字员工，工号0706\n\n壹省供应链大模型CubeAgent创造了我，赋予了我理解大家语言的能力，当然我也在快速训练、学习成长中，请各位多多支持呀~\n\n如果你想了解我们的产品，你可以这样问：',
+      avatar: octopusAvatar,
+      content: 'Hello, 我叫沃宝\n\nWallTech创造了我，赋予了我理解大家语言的能力，当然我也在快速训练、学习成长中，请各位多多支持呀~\n\n如果你想了解我们的产品，你可以这样问：',
       time: '06月13日 13:04'
     }
   ];
   
   // 示例问题建议
   const suggestedQuestions = [
-    '什么是运小智？',
-    '运小智包含哪些产品？或功能模块？',
+    '什么是沃宝？有什么功能？',
+    'Wo AI！包含哪些产品？或功能模块？',
     '物流可视平台的时效性能达到什么程度？数据多长时间更新一次？',
     '能识别哪些类型的单证呢？识别率是多少？',
-    '运小智主要是适用哪些业务场景呢？能给我发一些客户案例参考一下吗？'
   ];
   
   // 处理对话框点击
@@ -40,10 +70,98 @@ const Hero = () => {
   };
 
   return (
-    <div className="bg-gradient-to-b from-white via-accent to-white wave-bg section-padding min-h-[80vh] flex items-center">
-      {/* 丝绸光幕效果 */}
+    <div className="bg-gradient-to-b from-white via-accent to-white wave-bg section-padding min-h-[80vh] flex items-center relative">
+      {/* 背景效果 */}
       <div className="silk-overlay"></div>
       <div className="light-shimmer"></div>
+      
+      {/* 弧形波浪线 */}
+      <div className="absolute top-0 left-0 right-0 bottom-0 overflow-hidden">
+        {/* 顶部左侧弧形 */}
+        <div className="curved-line" style={{
+          top: '-60%',
+          left: '-30%',
+          width: '120%',
+          height: '120%',
+          transform: 'rotate(15deg)'
+        }}></div>
+        
+        {/* 右上角弧形 */}
+        <div className="curved-line" style={{
+          top: '-80%',
+          right: '-50%',
+          width: '140%',
+          height: '140%',
+          transform: 'rotate(-5deg)'
+        }}></div>
+        
+        {/* 左下方弧形 */}
+        <div className="curved-line" style={{
+          bottom: '-70%',
+          left: '-20%',
+          width: '100%',
+          height: '120%',
+          transform: 'rotate(10deg)'
+        }}></div>
+        
+        {/* 底部中央弧形 */}
+        <div className="curved-line" style={{
+          bottom: '-90%',
+          left: '20%',
+          width: '140%',
+          height: '140%',
+          transform: 'rotate(-15deg)'
+        }}></div>
+        
+        {/* 中部弧形 */}
+        <div className="curved-line" style={{
+          top: '10%',
+          right: '-40%',
+          width: '90%',
+          height: '90%',
+          transform: 'rotate(5deg)',
+          opacity: '0.1'
+        }}></div>
+        
+        {/* 中下部弧形 */}
+        <div className="curved-line" style={{
+          bottom: '-30%',
+          left: '5%',
+          width: '80%',
+          height: '80%',
+          transform: 'rotate(-8deg)',
+          opacity: '0.08'
+        }}></div>
+        
+        {/* 小型弧形 */}
+        <div className="curved-line" style={{
+          top: '15%',
+          left: '10%',
+          width: '50%',
+          height: '50%',
+          transform: 'rotate(12deg)',
+          opacity: '0.06',
+          border: '0.5px solid rgba(237, 210, 248, 0.1)'
+        }}></div>
+        
+        {/* 右侧小型弧形 */}
+        <div className="curved-line" style={{
+          top: '40%',
+          right: '15%',
+          width: '40%',
+          height: '40%',
+          transform: 'rotate(-20deg)',
+          opacity: '0.05',
+          border: '0.5px solid rgba(242, 220, 252, 0.08)'
+        }}></div>
+      </div>
+      
+      {/* 柔和的渐变色背景块 */}
+      <div className="absolute top-0 left-0 right-0 bottom-0 overflow-hidden">
+        <div className="aurora-wave aurora-wave-1"></div>
+        <div className="aurora-wave aurora-wave-2"></div>
+        <div className="aurora-wave aurora-wave-3"></div>
+      </div>
       
       <div className="container-custom relative z-10 hero-content">
         <div className="flex flex-col items-center text-center">
@@ -60,7 +178,16 @@ const Hero = () => {
             className={`mb-8 transition-all duration-500 ${isDialogExpanded ? 'mt-0' : 'mt-8'}`}
           >
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-3">
-              每个人的<span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">智能伙伴</span>
+              <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">AI</span>，让
+              <ColoredTypedText
+                textParts={[
+                  { text: '国际物流', className: 'text-gray-900' },
+                  { text: '更简单', className: 'bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent' }
+                ]}
+                typingSpeed={150}
+                loop={true}
+                loopDelay={3000}
+              />
             </h1>
           </motion.div>
           
@@ -77,9 +204,9 @@ const Hero = () => {
                 {/* 对话标题栏 */}
                 <div className="flex items-center justify-center pb-3 border-b border-gray-100 relative">
                   <div className="absolute left-0">
-                    <img src="/src/assets/robot-avatar.svg" alt="AI助手" className="w-8 h-8" />
+                    <img src={octopusAvatar} alt="AI助手" className="w-8 h-8" />
                   </div>
-                  <h3 className="font-medium text-gray-700">运小智售前咨询</h3>
+                  <h3 className="font-medium text-gray-700">沃宝智能助手</h3>
                   <div className="absolute right-0 cursor-pointer" onClick={handleCloseDialog}>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M18 6L6 18M6 6L18 18" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -97,12 +224,7 @@ const Hero = () => {
                   <div className="mb-4">
                     <div className="flex items-start">
                       <div className="mr-3 mt-1">
-                        <img src={chatMessages[0].avatar} alt="AI助手" className="w-10 h-10" 
-                          onError={(e) => {
-                            e.currentTarget.onerror = null;
-                            e.currentTarget.src = 'data:image/svg+xml;charset=UTF-8,%3csvg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="%237466F0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"%3e%3cpath d="M12 2a3 3 0 0 0-3 3v1h6V5a3 3 0 0 0-3-3z"/%3e%3cpath d="M19 5H5a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z"/%3e%3cpath d="M13 11v8a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-8"/%3e%3cpath d="M16 11v8a1 1 0 0 1-1 1h0"/%3e%3c/svg%3e';
-                          }}
-                        />
+                        <img src={chatMessages[0].avatar} alt="AI助手" className="w-10 h-10" />
                       </div>
                       <div className="bg-gray-50 rounded-lg p-3 text-left max-w-[90%]">
                         <p className="text-gray-800 whitespace-pre-line">{chatMessages[0].content}</p>
@@ -144,26 +266,16 @@ const Hero = () => {
             ) : (
               // 折叠的对话条
               <div 
-                className="bg-white rounded-full shadow-lg flex items-center p-2 pl-6 cursor-pointer hover:shadow-xl transition-all duration-300"
+                className="bg-white/90 backdrop-blur-md rounded-full shadow-lg flex items-center p-2 pl-6 cursor-pointer hover:shadow-xl transition-all duration-300"
                 onClick={handleDialogClick}
               >
                 <div className="mr-2">
-                  <img src="/src/assets/robot-avatar.svg" alt="智能机器人" className="w-10 h-10" 
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = 'data:image/svg+xml;charset=UTF-8,%3csvg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="%237466F0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"%3e%3cpath d="M12 2a3 3 0 0 0-3 3v1h6V5a3 3 0 0 0-3-3z"/%3e%3cpath d="M19 5H5a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z"/%3e%3cpath d="M13 11v8a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-8"/%3e%3cpath d="M16 11v8a1 1 0 0 1-1 1h0"/%3e%3c/svg%3e';
-                    }}
-                  />
+                  <img src={octopusAvatar} alt="智能机器人" className="w-10 h-10" />
                 </div>
-                <input 
-                  type="text" 
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  className="flex-1 py-3 px-4 outline-none text-gray-700 cursor-pointer"
-                  placeholder="你好，我能帮你什么？"
-                  readOnly
-                  onClick={handleDialogClick}
-                />
+                <div className="flex-1 py-3 px-4 outline-none text-gray-500 cursor-pointer bg-transparent flex items-center">
+                  <span>{displayedInput}</span>
+                  <span className="inline-block w-[2px] h-[1em] bg-gray-400 ml-1 animate-blink"></span>
+                </div>
                 <button className="bg-primary hover:bg-secondary transition-colors duration-300 p-3 rounded-full ml-2">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M22 2L11 13" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -193,7 +305,7 @@ const Hero = () => {
             ].map((feature, index) => (
               <motion.div 
                 key={index} 
-                className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300"
+                className="bg-white/80 backdrop-blur-md rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300"
                 whileHover={{ 
                   y: -5, 
                   boxShadow: "0 10px 25px -5px rgba(116, 102, 240, 0.2)"
