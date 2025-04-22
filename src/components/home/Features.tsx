@@ -65,14 +65,14 @@ const featuresData = [
 
 const Features = () => {
   const [activeTab, setActiveTab] = useState(featuresData[0].id);
-  
+
   // 获取当前激活的特性数据
   const activeFeature = featuresData.find(feature => feature.id === activeTab) || featuresData[0];
 
   return (
     <section className="section-padding bg-white py-20">
       <div className="container-custom">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -80,17 +80,17 @@ const Features = () => {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            AI <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">创新场</span> 
+            AI <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">创新场</span>
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
             我们为国际物流各个环节打造的AI解决方案，实现业务全面数字化、智能化升级
           </p>
         </motion.div>
-        
+
         {/* 特性展示区域 - 左图右文本带Tab */}
         <div className="flex flex-col lg:flex-row gap-10 items-center">
           {/* 左侧图片区域 */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
@@ -100,28 +100,30 @@ const Features = () => {
             <div className="relative aspect-video overflow-hidden rounded-xl shadow-xl bg-gray-100">
               {/* 渐变背景 */}
               <div className={`absolute inset-0 bg-gradient-to-br ${activeFeature.color} opacity-15`}></div>
-              
-              {/* 特性图片 */}
-              <img 
-                src={activeFeature.imageSrc} 
-                alt={activeFeature.title} 
+
+              {/* 特性图片 - 添加懒加载 */}
+              <img
+                src={activeFeature.imageSrc}
+                alt={activeFeature.title}
                 className="w-full h-full object-cover rounded-xl"
+                loading="lazy"
+                decoding="async"
               />
-              
+
               {/* 浮动元素装饰 */}
               <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg py-2 px-4 shadow-lg">
                 <span className={`bg-gradient-to-r ${activeFeature.color} bg-clip-text text-transparent font-bold text-xl`}>
                   {activeFeature.title}
                 </span>
               </div>
-              
+
               {/* 额外装饰元素 */}
               <div className="absolute -bottom-3 -right-3 w-24 h-24 rounded-full bg-gradient-to-br from-primary to-secondary opacity-70 blur-xl"></div>
             </div>
           </motion.div>
-          
+
           {/* 右侧Tab和内容区域 */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
@@ -132,6 +134,7 @@ const Features = () => {
             <div className="flex flex-wrap mb-8 border-b border-gray-200">
               {featuresData.map((feature) => (
                 <button
+                  type="button"
                   key={feature.id}
                   className={`mr-6 py-3 px-2 text-xl font-bold transition-all duration-200 border-b-3 ${
                     activeTab === feature.id
@@ -144,7 +147,7 @@ const Features = () => {
                 </button>
               ))}
             </div>
-            
+
             {/* Tab内容 */}
             <div className="feature-content">
               <motion.div
@@ -161,35 +164,39 @@ const Features = () => {
                 <p className="text-gray-700 mb-6 text-lg leading-relaxed">
                   {activeFeature.description}
                 </p>
-                
+
                 {/* 特性要点列表 */}
                 <ul className="space-y-3">
                   {activeFeature.bulletPoints.map((point, index) => (
-                    <motion.li 
-                      key={index}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.3, delay: index * 0.1 }}
-                      className="flex items-start"
-                    >
-                      <div className={`flex-shrink-0 w-5 h-5 rounded-full bg-gradient-to-r ${activeFeature.color} flex items-center justify-center mt-1 mr-3`}>
-                        <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                      <span className="text-gray-700">{point}</span>
-                    </motion.li>
+                    <li key={index}>
+                      <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.3, delay: index * 0.1 }}
+                        className="flex items-start"
+                      >
+                        <div className={`flex-shrink-0 w-5 h-5 rounded-full bg-gradient-to-r ${activeFeature.color} flex items-center justify-center mt-1 mr-3`}>
+                          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                        <span className="text-gray-700">{point}</span>
+                      </motion.div>
+                    </li>
                   ))}
                 </ul>
               </motion.div>
-              
+
               {/* 行动按钮 */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
               >
-                <button className={`mt-6 bg-gradient-to-r ${activeFeature.color} text-white py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 font-medium`}>
+                <button
+                  type="button"
+                  className={`mt-6 bg-gradient-to-r ${activeFeature.color} text-white py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 font-medium`}
+                >
                   了解更多
                 </button>
               </motion.div>
@@ -201,4 +208,4 @@ const Features = () => {
   );
 };
 
-export default Features; 
+export default Features;

@@ -6,10 +6,10 @@ const CTA = () => {
       <div className="container-custom relative z-10">
         <div className="bg-white rounded-2xl p-8 md:p-12 shadow-xl relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-full opacity-5 bg-wave-pattern"></div>
-          
+
           <div className="flex flex-col md:flex-row items-center justify-between relative z-10">
             <div className="md:w-2/3 mb-8 md:mb-0">
-              <motion.h2 
+              <motion.h2
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
@@ -18,7 +18,7 @@ const CTA = () => {
               >
                 准备好体验智能物流助手了吗？
               </motion.h2>
-              <motion.p 
+              <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
@@ -28,7 +28,7 @@ const CTA = () => {
                 立即开始体验WallTech旗下Wo AI！智能物流服务，让您的国际物流业务更高效、更准确、更智能。
               </motion.p>
             </div>
-            
+
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -36,10 +36,18 @@ const CTA = () => {
               viewport={{ once: true }}
               className="flex space-x-4"
             >
-              <button className="px-6 py-3 bg-white border border-primary text-primary rounded-full hover:bg-gray-50 transition-all duration-300">
+              <button
+                type="button"
+                className="px-6 py-3 bg-white border border-primary text-primary rounded-full hover:bg-gray-50 transition-all duration-300"
+                aria-label="了解更多信息"
+              >
                 了解更多
               </button>
-              <button className="btn-primary">
+              <button
+                type="button"
+                className="btn-primary"
+                aria-label="免费试用产品"
+              >
                 免费试用
               </button>
             </motion.div>
@@ -50,4 +58,4 @@ const CTA = () => {
   );
 };
 
-export default CTA; 
+export default CTA;

@@ -1,16 +1,17 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { FiMenu, FiX, FiChevronDown } from 'react-icons/fi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faBrain, 
-  faFileAlt, 
-  faCoins, 
-  faChartLine, 
-  faShip, 
-  faTruck, 
+import {
+  faBrain,
+  faFileAlt,
+  faCoins,
+  faChartLine,
+  faShip,
+  faTruck,
   faBoxes,
-  faCode, 
-  faLaptopCode, 
+  faCode,
+  faLaptopCode,
   faTools,
   faUserTie,
   faBuilding,
@@ -41,11 +42,11 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [activeSubMenu, setActiveSubMenu] = useState<number>(0);
-  
+
   const navItems: NavItem[] = [
-    { 
-      label: '产品功能', 
-      href: '#', 
+    {
+      label: '产品功能',
+      href: '#',
       dropdown: true,
       subItems: [
         {
@@ -54,26 +55,26 @@ const Header = () => {
           icon: <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-500 flex items-center justify-center"><FontAwesomeIcon icon={faBrain} size="lg" /></div>,
           description: '人工智能驱动的创新解决方案',
           subItems: [
-            { 
-              label: 'AI沃宝', 
-              href: '#ai-wobo', 
-              icon: <FontAwesomeIcon icon={faBrain} className="mr-2 text-blue-500 w-4 h-4" /> 
+            {
+              label: 'AI沃宝',
+              href: '#ai-wobo',
+              icon: <FontAwesomeIcon icon={faBrain} className="mr-2 text-blue-500 w-4 h-4" />
             },
-            { 
-              label: '文件识别', 
-              href: '#file-recognition', 
-              icon: <FontAwesomeIcon icon={faFileAlt} className="mr-2 text-blue-500 w-4 h-4" /> 
+            {
+              label: '文件识别',
+              href: '#file-recognition',
+              icon: <FontAwesomeIcon icon={faFileAlt} className="mr-2 text-blue-500 w-4 h-4" />
             },
-            { 
-              label: '超级运价', 
-              href: '#super-freight', 
-              icon: <FontAwesomeIcon icon={faCoins} className="mr-2 text-blue-500 w-4 h-4" /> 
+            {
+              label: '超级运价',
+              href: '#super-freight',
+              icon: <FontAwesomeIcon icon={faCoins} className="mr-2 text-blue-500 w-4 h-4" />
             },
-            { 
-              label: '智能BI', 
-              href: '#intelligent-bi', 
-              isNew: true, 
-              icon: <FontAwesomeIcon icon={faChartLine} className="mr-2 text-blue-500 w-4 h-4" /> 
+            {
+              label: '智能BI',
+              href: '#intelligent-bi',
+              isNew: true,
+              icon: <FontAwesomeIcon icon={faChartLine} className="mr-2 text-blue-500 w-4 h-4" />
             },
           ]
         },
@@ -114,9 +115,9 @@ const Header = () => {
         }
       ]
     },
-    { 
-      label: '合作与支持', 
-      href: '#', 
+    {
+      label: '合作与支持',
+      href: '#',
       dropdown: true,
       subItems: [
         {
@@ -125,15 +126,15 @@ const Header = () => {
           icon: <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-500 flex items-center justify-center"><FontAwesomeIcon icon={faLaptopCode} size="lg" /></div>,
           description: '行业定制解决方案',
           subItems: [
-            { 
-              label: '示例菜单', 
-              href: '#sample1', 
-              icon: <FontAwesomeIcon icon={faUserTie} className="mr-2 text-blue-500 w-4 h-4" /> 
+            {
+              label: '示例菜单',
+              href: '#sample1',
+              icon: <FontAwesomeIcon icon={faUserTie} className="mr-2 text-blue-500 w-4 h-4" />
             },
-            { 
-              label: '示例菜单', 
-              href: '#sample2', 
-              icon: <FontAwesomeIcon icon={faBuilding} className="mr-2 text-blue-500 w-4 h-4" /> 
+            {
+              label: '示例菜单',
+              href: '#sample2',
+              icon: <FontAwesomeIcon icon={faBuilding} className="mr-2 text-blue-500 w-4 h-4" />
             },
           ]
         }
@@ -142,7 +143,7 @@ const Header = () => {
     { label: '关于我们', href: '#' },
     { label: 'API接口', href: '#' }
   ];
-  
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -195,18 +196,18 @@ const Header = () => {
         <div className="flex items-center cursor-pointer">
           <span className="text-2xl font-bold" style={logoStyle}>Wo AI ！</span>
         </div>
-        
+
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
           {navItems.map((item, index) => (
-            <div 
-              key={index} 
+            <div
+              key={index}
               className="relative"
               onMouseEnter={item.dropdown ? () => handleMouseEnter(item.label) : undefined}
               onMouseLeave={handleMouseLeave}
             >
-              <a 
-                href={item.href} 
+              <a
+                href={item.href}
                 className="text-gray-700 hover:text-primary flex items-center py-2"
               >
                 {item.label}
@@ -221,8 +222,8 @@ const Header = () => {
                   {/* 左侧一级菜单列表 */}
                   <div className="w-1/4 border-r border-gray-100 bg-gray-50">
                     {item.subItems.map((subItem, subIndex) => (
-                      <div 
-                        key={subIndex} 
+                      <div
+                        key={subIndex}
                         className={`p-6 cursor-pointer transition-colors flex items-center ${activeSubMenu === subIndex ? 'bg-white' : 'hover:bg-white'}`}
                         onMouseEnter={() => handleSubMenuHover(subIndex)}
                       >
@@ -231,14 +232,14 @@ const Header = () => {
                       </div>
                     ))}
                   </div>
-                  
+
                   {/* 右侧二级菜单内容 */}
                   <div className="w-3/4 p-10">
                     {item.subItems[activeSubMenu] && (
                       <>
                         <h3 className="text-xl font-medium text-gray-800 mb-4">{item.subItems[activeSubMenu].label}</h3>
                         <p className="text-sm text-gray-500 mb-8">{item.subItems[activeSubMenu].description}</p>
-                        
+
                         {/* 特殊处理海关专区菜单，添加分类标签 */}
                         {item.subItems[activeSubMenu].label === '海关专区' ? (
                           <div className="space-y-6">
@@ -270,7 +271,7 @@ const Header = () => {
                                 </a>
                               </div>
                             </div>
-                            
+
                             {/* 欧盟业务分类 */}
                             <div>
                               <div className="mb-4">
@@ -283,7 +284,7 @@ const Header = () => {
                                 </a>
                               </div>
                             </div>
-                            
+
                             {/* 中国业务分类 */}
                             <div>
                               <div className="mb-4">
@@ -312,7 +313,7 @@ const Header = () => {
                                 </a>
                               </div>
                             </div>
-                            
+
                             {/* 其他分类 */}
                             <div>
                               <div className="mb-4">
@@ -352,7 +353,7 @@ const Header = () => {
                                 </a>
                               </div>
                             </div>
-                            
+
                             {/* 协作云平台分类 */}
                             <div>
                               <div className="mb-4">
@@ -400,7 +401,7 @@ const Header = () => {
                                 </a>
                               </div>
                             </div>
-                            
+
                             {/* 欧盟业务分类 */}
                             <div>
                               <div className="mb-4">
@@ -417,7 +418,7 @@ const Header = () => {
                                 </a>
                               </div>
                             </div>
-                            
+
                             {/* 中国业务分类 */}
                             <div>
                               <div className="mb-4">
@@ -442,7 +443,7 @@ const Header = () => {
                                 </a>
                               </div>
                             </div>
-                            
+
                             {/* 其他分类 */}
                             <div>
                               <div className="mb-4">
@@ -474,7 +475,7 @@ const Header = () => {
                                 </a>
                               </div>
                             </div>
-                            
+
                             {/* 代理分类 */}
                             <div>
                               <div className="mb-4">
@@ -514,7 +515,7 @@ const Header = () => {
                                 </a>
                               </div>
                             </div>
-                            
+
                             {/* 实用助手分类 */}
                             <div>
                               <div className="mb-4">
@@ -539,8 +540,8 @@ const Header = () => {
                         ) : (
                           <div className="grid grid-cols-3 gap-6">
                             {item.subItems[activeSubMenu].subItems?.map((nestedItem, nestedIndex) => (
-                              <a 
-                                key={nestedIndex} 
+                              <a
+                                key={nestedIndex}
                                 href={nestedItem.href}
                                 className="flex items-center py-3 text-sm text-gray-600 hover:text-primary"
                               >
@@ -561,27 +562,27 @@ const Header = () => {
             </div>
           ))}
         </nav>
-        
+
         {/* Contact & Auth */}
         <div className="hidden md:flex items-center space-x-4">
           <span className="text-gray-700">400-0682-666</span>
-          <button className="btn-primary">注册/登录</button>
+          <Link to="/auth" className="btn-primary">注册/登录</Link>
         </div>
-        
+
         {/* Mobile Menu Button */}
         <button className="md:hidden" onClick={toggleMenu}>
           {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
         </button>
       </div>
-      
+
       {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="md:hidden bg-white">
           <div className="container-custom py-4 space-y-4">
             {navItems.map((item, index) => (
               <div key={index}>
-                <a 
-                  href={item.href} 
+                <a
+                  href={item.href}
                   className="block py-2 text-gray-700 hover:text-primary flex items-center justify-between"
                   onClick={item.dropdown ? (e) => handleMobileDropdownToggle(e, item.label) : undefined}
                 >
@@ -590,25 +591,25 @@ const Header = () => {
                     <FiChevronDown className="ml-1 h-4 w-4" />
                   )}
                 </a>
-                
+
                 {/* 移动端下拉菜单 */}
                 {item.dropdown && item.subItems && activeDropdown === item.label && (
                   <div className="pl-4 mt-2 space-y-2 border-l-2 border-gray-100">
                     {item.subItems.map((subItem, subIndex) => (
                       <div key={subIndex} className="py-2">
-                        <div 
+                        <div
                           className="flex items-center space-x-2 cursor-pointer"
                           onClick={() => handleSubMenuHover(subIndex)}
                         >
                           {subItem.icon}
                           <span className="font-medium text-gray-700">{subItem.label}</span>
                         </div>
-                        
+
                         {activeSubMenu === subIndex && (
                           <div className="pl-10 mt-2 space-y-1">
                             {subItem.subItems?.map((nestedItem, nestedIndex) => (
-                              <a 
-                                key={nestedIndex} 
+                              <a
+                                key={nestedIndex}
                                 href={nestedItem.href}
                                 className="flex items-center py-1 text-sm text-gray-600 hover:text-primary"
                               >
@@ -632,7 +633,7 @@ const Header = () => {
                 <span className="text-gray-700">400-0682-666</span>
               </div>
               <div className="flex">
-                <button className="btn-primary flex-1">注册/登录</button>
+                <Link to="/auth" className="btn-primary flex-1 text-center">注册/登录</Link>
               </div>
             </div>
           </div>
@@ -642,4 +643,4 @@ const Header = () => {
   );
 };
 
-export default Header; 
+export default Header;

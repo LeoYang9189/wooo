@@ -19,14 +19,14 @@ const SolutionCard = ({ title, description, icon, gradient, size, delay, gridAre
     medium: 'p-6',
     large: 'p-7'
   }[size];
-  
+
   // 图标尺寸
   const iconSize = {
     small: 'w-12 h-12',
     medium: 'w-14 h-14',
     large: 'w-16 h-16'
   }[size];
-  
+
   // 标题尺寸
   const titleSize = {
     small: 'text-lg',
@@ -41,8 +41,8 @@ const SolutionCard = ({ title, description, icon, gradient, size, delay, gridAre
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: delay * 0.1 }}
       viewport={{ once: true }}
-      whileHover={{ 
-        y: -5, 
+      whileHover={{
+        y: -5,
         boxShadow: '0 15px 30px -10px rgba(0, 0, 0, 0.1), 0 8px 10px -5px rgba(0, 0, 0, 0.04)',
         transition: { duration: 0.2 }
       }}
@@ -50,19 +50,19 @@ const SolutionCard = ({ title, description, icon, gradient, size, delay, gridAre
     >
       {/* 背景渐变 - 使用更浅的颜色 */}
       <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-20 transition-all duration-300 group-hover:opacity-30`}></div>
-      
+
       {/* 光晕效果 */}
       <div className="absolute -inset-x-1/2 -top-1/2 w-full h-full bg-gradient-to-br from-white/30 to-transparent opacity-10 transform rotate-12 group-hover:opacity-20 transition-opacity duration-500"></div>
-      
+
       {/* 内容容器 */}
       <div className="relative z-10 h-full flex flex-col">
         <div className={`bg-white/10 backdrop-blur-sm ${iconSize} rounded-xl flex items-center justify-center mb-4 shadow-inner transition-all duration-300 group-hover:shadow-md`}>
           {icon}
         </div>
-        
+
         <h3 className={`${titleSize} font-bold text-gray-800 mb-2`}>{title}</h3>
         <p className="text-gray-600 text-sm md:text-base flex-grow">{description}</p>
-        
+
         {/* 交互指示器 */}
         <div className="mt-4">
           <span className="inline-flex items-center text-primary text-sm transition-all duration-300 opacity-80 group-hover:opacity-100 transform group-hover:translate-x-1">
@@ -151,9 +151,9 @@ const Solutions = () => {
         <div className="aurora-wave aurora-wave-1 opacity-10"></div>
         <div className="aurora-wave aurora-wave-2 opacity-5"></div>
       </div>
-      
+
       <div className="container-custom relative z-10">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -167,19 +167,9 @@ const Solutions = () => {
             为您的国际物流业务提供全方位的AI智能解决方案，提升效率，降低成本
           </p>
         </motion.div>
-        
+
         {/* 精确计算的网格布局 形成完美矩形 */}
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-5" 
-             style={{
-               display: 'grid',
-               gridTemplateAreas: `
-                 'area1 area1 area2'
-                 'area3 area3 area3'
-                 'area4 area5 area5'
-               `,
-               gridTemplateRows: 'minmax(180px, auto) minmax(220px, auto) minmax(180px, auto)',
-               gridTemplateColumns: '1fr 1fr 1fr'
-             }}>
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-5 solutions-grid">
           {solutions.map((solution, index) => (
             <SolutionCard
               key={index}
@@ -193,15 +183,19 @@ const Solutions = () => {
             />
           ))}
         </div>
-        
-        <motion.div 
+
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
           viewport={{ once: true }}
           className="mt-12 text-center"
         >
-          <button className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white py-3 px-8 rounded-lg font-medium shadow-md hover:shadow-lg transform transition-all duration-300 hover:-translate-y-1">
+          <button
+            type="button"
+            className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white py-3 px-8 rounded-lg font-medium shadow-md hover:shadow-lg transform transition-all duration-300 hover:-translate-y-1"
+            aria-label="探索全部解决方案"
+          >
             探索全部解决方案
           </button>
         </motion.div>
@@ -210,4 +204,4 @@ const Solutions = () => {
   );
 };
 
-export default Solutions; 
+export default Solutions;
