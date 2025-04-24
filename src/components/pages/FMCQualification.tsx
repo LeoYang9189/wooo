@@ -886,10 +886,13 @@ const FMCQualification = () => {
                   <h2 className="text-2xl font-bold text-secondary mb-6">什么是海关Bond?</h2>
                   <div className="space-y-4">
                     <p className="text-gray-700 leading-relaxed">
-                      美国海关Bond是一种保证金，用于确保进口商遵守美国海关法规并支付所有必要的关税和费用。任何在美国进行商业进口的企业都需要提供海关Bond。
+                      根据美国海关与边境保护局(CBP)的规定，海关Bond是"一种确保履行法律或法规规定义务的合同"。它是一种特定类型的担保保证金，是三方之间的合同，用于保证特定义务的履行。
                     </p>
                     <p className="text-gray-700 leading-relaxed">
-                      海关Bond是美国海关与边境保护局(CBP)要求的一种担保形式，它保证进口商将遵守所有适用的法律法规，并支付所有应缴的关税、税费和罚款。
+                      在海关Bond中，三方分别是：提供Bond财务担保的担保公司、作为Bond主体的进口商，以及作为受益人的美国海关与边境保护局(CBP)。海关Bond的主要目的是确保交易符合所有法律法规，同时保证CBP能够收到所有进口关税和税费。
+                    </p>
+                    <p className="text-gray-700 leading-relaxed">
+                      如果您计划将价值超过2500美元的商业货物进口到美国，则需要海关进口Bond。海关进口Bond有两种类型：单次入境Bond(用于一次性交易)和连续Bond(允许在Bond期限内进行多次入境，通常为一年，除非终止，否则会自动"自我更新")。
                     </p>
                   </div>
                 </div>
@@ -899,28 +902,69 @@ const FMCQualification = () => {
                   <h2 className="text-2xl font-bold text-secondary mb-6">海关Bond的类型</h2>
 
                   <div className="border-l-4 border-secondary pl-4 py-3 bg-gray-50 mb-6">
-                    <h3 className="font-semibold text-gray-800">主要有两种类型的海关Bond：</h3>
+                    <h3 className="font-semibold text-gray-800">主要有两种类型的海关进口Bond：</h3>
                     <ul className="mt-2 space-y-2">
                       <li className="flex items-start">
                         <span className="text-secondary font-bold mr-2">•</span>
                         <div>
                           <span className="font-medium">单次进口Bond (Single Entry Bond)：</span>
-                          <span className="text-gray-700">适用于偶尔进行进口的企业，每次进口都需要单独申请。</span>
+                          <span className="text-gray-700">适用于偶尔进行进口的企业，每次进口都需要单独申请。适合进口频率较低的企业。</span>
                         </div>
                       </li>
                       <li className="flex items-start">
                         <span className="text-secondary font-bold mr-2">•</span>
                         <div>
                           <span className="font-medium">连续Bond (Continuous Bond)：</span>
-                          <span className="text-gray-700">适用于经常进行进口的企业，有效期为一年，可以覆盖多次进口。</span>
+                          <span className="text-gray-700">适用于经常进行进口的企业，有效期为一年，可以覆盖多次进口，除非终止，否则会自动续期。</span>
                         </div>
                       </li>
                     </ul>
                   </div>
 
-                  <p className="text-gray-700 leading-relaxed">
+                  <p className="text-gray-700 leading-relaxed mb-4">
                     大多数进口商选择连续Bond，因为它更加方便，不需要为每次进口单独申请Bond。连续Bond的金额通常基于过去一年支付的关税、税费和费用的10%计算，最低金额为50,000美元。
                   </p>
+
+                  <div className="border-l-4 border-secondary pl-4 py-3 bg-gray-50 mb-6">
+                    <h3 className="font-semibold text-gray-800">除了进口Bond外，还有其他类型的海关Bond：</h3>
+                    <ul className="mt-2 space-y-2">
+                      <li className="flex items-start">
+                        <span className="text-secondary font-bold mr-2">•</span>
+                        <div>
+                          <span className="font-medium">自由贸易区Bond (Foreign Trade Zone Bond)：</span>
+                          <span className="text-gray-700">用于在自由贸易区内经营的企业。</span>
+                        </div>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-secondary font-bold mr-2">•</span>
+                        <div>
+                          <span className="font-medium">退税Bond (Drawback Bond)：</span>
+                          <span className="text-gray-700">用于申请进口关税退税的企业。</span>
+                        </div>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-secondary font-bold mr-2">•</span>
+                        <div>
+                          <span className="font-medium">保税商品保管人Bond (Custodian of Bonded Merchandise)：</span>
+                          <span className="text-gray-700">用于保管保税商品的企业。</span>
+                        </div>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-secondary font-bold mr-2">•</span>
+                        <div>
+                          <span className="font-medium">国际承运人Bond (International Carrier Bond)：</span>
+                          <span className="text-gray-700">用于国际货物运输的承运人。</span>
+                        </div>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-secondary font-bold mr-2">•</span>
+                        <div>
+                          <span className="font-medium">进口商安全申报Bond (Importer Security Filing Bond)：</span>
+                          <span className="text-gray-700">用于确保进口商提交准确的安全申报信息。</span>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
 
                 {/* 为什么需要海关Bond */}
