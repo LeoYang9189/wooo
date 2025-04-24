@@ -24,6 +24,7 @@ import {
 
 const FMCQualification = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [activeTab, setActiveTab] = useState<'fmc' | 'bond'>('fmc');
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -294,65 +295,189 @@ const FMCQualification = () => {
           </div>
         </section>
 
-        {/* 主要内容区域 */}
+        {/* 主要内容区域 - 带Tab切换 */}
         <section className="py-12">
           <div className="container-custom">
             <div className="bg-white rounded-lg shadow-md p-6 md:p-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">FMC资质介绍</h2>
-
-              <div className="space-y-6">
-                <p className="text-gray-700">
-                  FMC（Federal Maritime Commission，联邦海事委员会）是美国政府的一个独立机构，负责监管美国的国际海运业务。任何在美国从事国际海运业务的公司，包括无船承运人(NVOCC)和海运货运代理(Ocean Freight Forwarder)，都需要获得FMC的许可。
-                </p>
-
-                <div className="border-l-4 border-primary pl-4 py-2 bg-gray-50">
-                  <h3 className="font-semibold text-gray-800">FMC资质的重要性</h3>
-                  <p className="text-gray-700 mt-2">
-                    获得FMC资质是在美国合法经营海运业务的必要条件。没有FMC资质，公司将无法在美国提供国际海运服务，可能面临高额罚款和法律风险。
-                  </p>
-                </div>
-
-                {/* 这里将根据您提供的信息添加更多内容 */}
-                <p className="text-gray-700">
-                  我们提供专业的FMC资质申请服务，帮助您快速获得美国联邦海事委员会的认证，合法开展美国海运业务。
-                </p>
-              </div>
-
-              {/* 美国海关Bond部分 */}
-              <div className="mt-12">
-                <h2 className="text-2xl font-bold text-gray-800 mb-6">美国海关Bond</h2>
-
-                <div className="space-y-6">
-                  <p className="text-gray-700">
-                    美国海关Bond是一种保证金，用于确保进口商遵守美国海关法规并支付所有必要的关税和费用。任何在美国进行商业进口的企业都需要提供海关Bond。
-                  </p>
-
-                  <div className="border-l-4 border-secondary pl-4 py-2 bg-gray-50">
-                    <h3 className="font-semibold text-gray-800">海关Bond的类型</h3>
-                    <p className="text-gray-700 mt-2">
-                      主要有单次进口Bond和连续Bond两种类型。连续Bond适用于经常进行进口的企业，有效期为一年，可以覆盖多次进口。
-                    </p>
-                  </div>
-
-                  {/* 这里将根据您提供的信息添加更多内容 */}
-                  <p className="text-gray-700">
-                    我们提供专业的美国海关Bond申请服务，帮助您顺利完成海关清关手续，确保您的货物能够顺利进入美国市场。
-                  </p>
-                </div>
-              </div>
-
-              {/* 联系我们部分 */}
-              <div className="mt-12 bg-gray-50 p-6 rounded-lg border border-gray-200">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">需要帮助？</h2>
-                <p className="text-gray-700 mb-4">
-                  如果您对FMC资质申请或美国海关Bond有任何疑问，或者需要专业的申请服务，请随时联系我们。
-                </p>
+              {/* Tab切换按钮 */}
+              <div className="flex border-b border-gray-200 mb-8">
                 <button
                   type="button"
-                  className="btn-primary"
+                  className={`py-3 px-6 font-medium text-lg border-b-2 transition-colors duration-200 ${
+                    activeTab === 'fmc'
+                      ? 'border-primary text-primary'
+                      : 'border-transparent text-gray-500 hover:text-gray-700'
+                  }`}
+                  onClick={() => setActiveTab('fmc')}
                 >
-                  联系我们
+                  FMC资质介绍
                 </button>
+                <button
+                  type="button"
+                  className={`py-3 px-6 font-medium text-lg border-b-2 transition-colors duration-200 ${
+                    activeTab === 'bond'
+                      ? 'border-primary text-primary'
+                      : 'border-transparent text-gray-500 hover:text-gray-700'
+                  }`}
+                  onClick={() => setActiveTab('bond')}
+                >
+                  海关Bond介绍
+                </button>
+              </div>
+
+              {/* FMC资质介绍内容 */}
+              <div className={`space-y-8 ${activeTab === 'fmc' ? 'block' : 'hidden'}`}>
+                {/* 什么是FMC部分 */}
+                <div>
+                  <h2 className="text-2xl font-bold text-primary mb-6">什么是FMC?</h2>
+                  <div className="space-y-4">
+                    <p className="text-gray-700 leading-relaxed">
+                      FMC是美国联邦海事委员会(Federal Maritime Commission)的简称，总部设在华盛顿，兼具行政立法、准司法和执法三种职能，掌管和监管以美国为起点或的以集装箱海运为主的水上商业活动，海运承运人和经纪人均受其监管。
+                    </p>
+                    <p className="text-gray-700 leading-relaxed">
+                      根据美国联邦海事委员会规定，企业在美国发起单从事进出美国港口的无船承运货运业务，须预先向美国联邦海事委员会申请并取得美国无船承运人资质。
+                    </p>
+                    <p className="text-gray-700 leading-relaxed">
+                      目前JCtrans客户已有多家非美国公司成功申请到该资质，实现与当地船公司签订合约价、自主发送AMS/ISF等申报信息。
+                    </p>
+                  </div>
+                </div>
+
+                {/* 为什么要申请FMC部分 */}
+                <div>
+                  <h2 className="text-2xl font-bold text-primary mb-6">为什么要申请FMC?</h2>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    {/* 优势1 */}
+                    <div className="bg-blue-500 text-white p-6 rounded-lg">
+                      <div className="flex items-center justify-center h-full">
+                        <p className="text-center font-medium">
+                          合法合规地从事美国无船承运人业务，享受担保；
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* 优势2 */}
+                    <div className="bg-blue-400 text-white p-6 rounded-lg">
+                      <div className="flex items-center justify-center h-full">
+                        <p className="text-center font-medium">
+                          可以直接跟船司订舱，能签发拥有自己抬头的提单，不用找一代/上层代理订舱单，可拥有更优惠的合约运价"Contract Rate"；
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <p className="text-gray-700 leading-relaxed">
+                      FMC资质备案有助于提升公司的信誉度和市场竞争力。在航运物流领域，信任是至关重要的。通过完成FMC资质备案，公司可以向潜在客户和合作伙伴展示其合规性和专业性，从而赢得他们的信任和青睐。此外，这也是公司展示自身实力，扩大市场份额、提升品牌形象的重要途径。
+                    </p>
+                    <p className="text-gray-700 leading-relaxed">
+                      另外，FMC资质备案有助于公司与美国本土企业建立更紧密的合作关系。在美国市场，与当地企业建立合作关系是开展业务的关键。而拥有FMC资质备案的公司，更容易获得美国本土企业的认可和信任，从而与其建立长期稳定的合作关系。
+                    </p>
+                  </div>
+                </div>
+
+                {/* 联系我们部分 */}
+                <div className="mt-12 bg-gray-50 p-6 rounded-lg border border-gray-200">
+                  <h2 className="text-xl font-bold text-gray-800 mb-4">需要帮助？</h2>
+                  <p className="text-gray-700 mb-4">
+                    如果您对FMC资质申请有任何疑问，或者需要专业的申请服务，请随时联系我们。
+                  </p>
+                  <button
+                    type="button"
+                    className="btn-primary"
+                  >
+                    联系我们
+                  </button>
+                </div>
+              </div>
+
+              {/* 海关Bond介绍内容 */}
+              <div className={`space-y-8 ${activeTab === 'bond' ? 'block' : 'hidden'}`}>
+                {/* 什么是海关Bond部分 */}
+                <div>
+                  <h2 className="text-2xl font-bold text-secondary mb-6">什么是海关Bond?</h2>
+                  <div className="space-y-4">
+                    <p className="text-gray-700 leading-relaxed">
+                      美国海关Bond是一种保证金，用于确保进口商遵守美国海关法规并支付所有必要的关税和费用。任何在美国进行商业进口的企业都需要提供海关Bond。
+                    </p>
+                    <p className="text-gray-700 leading-relaxed">
+                      海关Bond是美国海关与边境保护局(CBP)要求的一种担保形式，它保证进口商将遵守所有适用的法律法规，并支付所有应缴的关税、税费和罚款。
+                    </p>
+                  </div>
+                </div>
+
+                {/* 海关Bond的类型 */}
+                <div>
+                  <h2 className="text-2xl font-bold text-secondary mb-6">海关Bond的类型</h2>
+
+                  <div className="border-l-4 border-secondary pl-4 py-3 bg-gray-50 mb-6">
+                    <h3 className="font-semibold text-gray-800">主要有两种类型的海关Bond：</h3>
+                    <ul className="mt-2 space-y-2">
+                      <li className="flex items-start">
+                        <span className="text-secondary font-bold mr-2">•</span>
+                        <div>
+                          <span className="font-medium">单次进口Bond (Single Entry Bond)：</span>
+                          <span className="text-gray-700">适用于偶尔进行进口的企业，每次进口都需要单独申请。</span>
+                        </div>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-secondary font-bold mr-2">•</span>
+                        <div>
+                          <span className="font-medium">连续Bond (Continuous Bond)：</span>
+                          <span className="text-gray-700">适用于经常进行进口的企业，有效期为一年，可以覆盖多次进口。</span>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <p className="text-gray-700 leading-relaxed">
+                    大多数进口商选择连续Bond，因为它更加方便，不需要为每次进口单独申请Bond。连续Bond的金额通常基于过去一年支付的关税、税费和费用的10%计算，最低金额为50,000美元。
+                  </p>
+                </div>
+
+                {/* 为什么需要海关Bond */}
+                <div>
+                  <h2 className="text-2xl font-bold text-secondary mb-6">为什么需要海关Bond?</h2>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    {/* 原因1 */}
+                    <div className="bg-teal-500 text-white p-6 rounded-lg">
+                      <div className="flex items-center justify-center h-full">
+                        <p className="text-center font-medium">
+                          美国法律要求：所有商业进口都必须提供海关Bond，这是法律强制要求的。
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* 原因2 */}
+                    <div className="bg-teal-400 text-white p-6 rounded-lg">
+                      <div className="flex items-center justify-center h-full">
+                        <p className="text-center font-medium">
+                          保障进口流程：有了海关Bond，您的货物清关过程将更加顺畅，避免不必要的延误。
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <p className="text-gray-700 leading-relaxed">
+                    海关Bond不仅是法律要求，也是保护您业务的重要工具。它确保您的进口流程符合美国海关的所有要求，避免因违规而导致的罚款和货物扣留。
+                  </p>
+                </div>
+
+                {/* 联系我们部分 */}
+                <div className="mt-12 bg-gray-50 p-6 rounded-lg border border-gray-200">
+                  <h2 className="text-xl font-bold text-gray-800 mb-4">需要帮助？</h2>
+                  <p className="text-gray-700 mb-4">
+                    如果您对美国海关Bond申请有任何疑问，或者需要专业的申请服务，请随时联系我们。
+                  </p>
+                  <button
+                    type="button"
+                    className="btn-primary"
+                  >
+                    联系我们
+                  </button>
+                </div>
               </div>
             </div>
           </div>
