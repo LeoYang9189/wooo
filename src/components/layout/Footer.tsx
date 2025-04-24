@@ -107,7 +107,7 @@ const Footer = () => {
             <div className="flex space-x-6 mt-4 md:mt-0">
               <a href="/privacy" className="text-gray-500 hover:text-primary text-sm">隐私政策</a>
               <a href="/terms" className="text-gray-500 hover:text-primary text-sm">服务条款</a>
-              <a href="#" className="text-gray-500 hover:text-primary text-sm">Cookie 设置</a>
+              <a href="/cookie-settings" className="text-gray-500 hover:text-primary text-sm">Cookie 设置</a>
             </div>
           </div>
         </div>
