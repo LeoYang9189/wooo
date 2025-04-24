@@ -889,11 +889,25 @@ const FMCQualification = () => {
                       根据美国海关与边境保护局(CBP)的规定，海关Bond是"一种确保履行法律或法规规定义务的合同"。它是一种特定类型的担保保证金，是三方之间的合同，用于保证特定义务的履行。
                     </p>
                     <p className="text-gray-700 leading-relaxed">
+                      海关Bond由美国联邦海事委员会(FMC)推行，实际上是一种保险，受益人为美国政府及美国海关。当进口商因故不提领货物且不支付任何费用弃货时，美国海关除了逾期拍卖货物以外，可以向保险公司求偿以支付该货物在美国产生的各项费用（如storage堆存费、duties税金等）。
+                    </p>
+                    <p className="text-gray-700 leading-relaxed">
                       在海关Bond中，三方分别是：提供Bond财务担保的担保公司、作为Bond主体的进口商，以及作为受益人的美国海关与边境保护局(CBP)。海关Bond的主要目的是确保交易符合所有法律法规，同时保证CBP能够收到所有进口关税和税费。
                     </p>
                     <p className="text-gray-700 leading-relaxed">
-                      如果您计划将价值超过2500美元的商业货物进口到美国，则需要海关进口Bond。海关进口Bond有两种类型：单次入境Bond(用于一次性交易)和连续Bond(允许在Bond期限内进行多次入境，通常为一年，除非终止，否则会自动"自我更新")。
+                      如果您计划将价值超过2500美元的商业货物进口到美国，则需要海关进口Bond。没有购买Bond等于在美国海关没有备案，即使有发送ISF(进口安全申报)也是无法在美国清关进口的，这样的货物抵港会被海关拒收甚至罚款。
                     </p>
+                    <div className="bg-blue-50 p-4 rounded-lg mt-4">
+                      <h3 className="font-semibold text-gray-800 mb-2">海关Bond的用途</h3>
+                      <p className="text-gray-700 mb-2">根据美国海关法规，进口Bond是为了确保法律法规所规定的义务的履行。Bond使用者需同意以下条款：</p>
+                      <ul className="list-disc pl-6 space-y-1 text-gray-700">
+                        <li>同意及时支付关税、税款和相关费用</li>
+                        <li>同意提供单据和证明</li>
+                        <li>同意重运输商品</li>
+                        <li>同意纠正任何不符合通关条款规定之处</li>
+                        <li>同意检查商品</li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
 
@@ -992,8 +1006,57 @@ const FMCQualification = () => {
                   </div>
 
                   <p className="text-gray-700 leading-relaxed">
-                    海关Bond不仅是法律要求，也是保护您业务的重要工具。它确保您的进口流程符合美国海关的所有要求，避免因违规而导致的罚款和货物扣留。
+                    海关Bond不仅是法律要求，也是保护您业务的重要工具。它确保您的进口流程符合美国海关的所有要求，避免因违规而导致的罚款和货物扣留。没有购买Bond等于在美国海关没有备案，即使有发送ISF也是无法在美国清关进口的，这样的货物抵港会被海关拒收甚至罚款。
                   </p>
+                </div>
+
+                {/* 海关Bond的申请流程 */}
+                <div>
+                  <h2 className="text-2xl font-bold text-secondary mb-6">海关Bond的申请流程</h2>
+
+                  <div className="bg-white p-6 rounded-lg shadow-sm mb-6">
+                    <h3 className="font-semibold text-gray-800 mb-4">申请所需文件</h3>
+                    <ul className="list-disc pl-6 space-y-2 text-gray-700">
+                      <li><span className="font-medium">CBP Form 301</span> - 海关Bond申请的主要表格</li>
+                      <li><span className="font-medium">Bond Application</span> - Bond申请表</li>
+                      <li><span className="font-medium">CBP Form 5106</span> - 进口商信息表（如适用）</li>
+                      <li><span className="font-medium">其他文件</span> - 如报关委托书(POA/Power Of Attorney)、合伙协议等</li>
+                    </ul>
+                  </div>
+
+                  <div className="bg-white p-6 rounded-lg shadow-sm mb-6">
+                    <h3 className="font-semibold text-gray-800 mb-4">申请提交方式</h3>
+                    <p className="text-gray-700 mb-4">
+                      所有文件需扫描成分辨率不高于300的TIF格式，所有文档合并为一个邮件附件发送至美国海关指定邮箱。
+                    </p>
+                    <p className="text-gray-700">
+                      对于办理流程或特殊申请等常规问题，可以直接联系美国海关相关部门。如果Bond申请被拒绝，可以联系Reject Team提交更正申请文件。
+                    </p>
+                  </div>
+
+                  <div className="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 className="font-semibold text-gray-800 mb-4">清关名义说明</h3>
+                    <p className="text-gray-700 mb-4">
+                      出口到美国的货物既可以用美国收货人(CONSIGNEE)的名义清关，也可以用发货人(SHIPPER)的名义清关。用谁的Bond就以谁的名义清关。
+                    </p>
+                    <div className="space-y-4">
+                      <div>
+                        <h4 className="font-medium text-gray-800">1. 用美国收货人的名义清关</h4>
+                        <ul className="list-disc pl-6 text-gray-700 mt-2">
+                          <li>如果由货代办理清关，美国收货人需提供他们的Bond，并与货代指定的报关行签署POA</li>
+                          <li>如果由美国收货人自己的报关行清关，中国货代需及时提供10+2表格相关信息</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-800">2. 用中国发货人的名义清关</h4>
+                        <ul className="list-disc pl-6 text-gray-700 mt-2">
+                          <li>通常会用美国货代指定的美国报关行办理清关</li>
+                          <li>需要提供POA(报关委托书)、中国营业执照、注册税号等文件</li>
+                          <li>需要申请购买Bond</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 {/* 联系我们部分 */}
