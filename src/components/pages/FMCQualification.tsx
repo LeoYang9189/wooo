@@ -946,19 +946,7 @@ const FMCQualification = () => {
                     </div>
                   </div>
 
-                  <div className="bg-white p-6 rounded-lg shadow-sm mb-8">
-                    <div className="flex items-start">
-                      <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center text-white mr-4 mt-1 flex-shrink-0">
-                        <FontAwesomeIcon icon={faExclamationTriangle} />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-bold text-gray-800 mb-2">重要提示</h3>
-                        <p className="text-gray-700 leading-relaxed">
-                          如果您计划将价值超过2500美元的商业货物进口到美国，则需要海关进口Bond。没有购买Bond等于在美国海关没有备案，即使有发送ISF(进口安全申报)也是无法在美国清关进口的，这样的货物抵港会被海关拒收甚至罚款。
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+
 
                   <div className="bg-teal-50 p-6 rounded-lg border-l-4 border-teal-500">
                     <h3 className="font-bold text-gray-800 mb-4 flex items-center">
