@@ -1,5 +1,4 @@
 import octopusAvatar from '../../assets/octopus-avatar-new.svg';
-import gonganIcon from '../../assets/gongan.png';
 
 const Footer = () => {
   const footerLinks = [
@@ -129,7 +128,7 @@ const Footer = () => {
               className="flex items-center hover:text-primary transition-colors duration-300"
             >
               <img
-                src={gonganIcon}
+                src="/gongan.png"
                 alt="公安备案图标"
                 className="h-4 mr-1"
               />
