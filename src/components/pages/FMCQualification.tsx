@@ -7,17 +7,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faShip,
   faFileAlt,
-  faHandshake,
   faGlobe,
-  faBuilding,
   faClipboardCheck,
-  faFileInvoiceDollar,
   faFileContract,
   faArrowRight,
   faCheck,
-  faLock,
   faFileSignature,
-  faShieldAlt,
   faNetworkWired,
   faMoneyBillWave,
   faEye
@@ -466,41 +461,41 @@ const FMCQualification = () => {
                 </div>
 
                 {/* FMC所含具体项目 */}
-                <div className="relative">
+                <div className="relative bg-gradient-to-r from-blue-50 to-blue-100 p-8 rounded-xl mb-12">
                   <h2 className="text-2xl font-bold text-gray-800 mb-8">FMC 所含具体项目</h2>
 
-                  <div className="mb-8">
+                  <div className="mb-10">
                     <p className="text-gray-700 leading-relaxed mb-4">
                       在包含以下全部项目的基础上，我们为您提供包含以下全部项目的，质优价廉的FMC申请服务
                     </p>
-                    <p className="text-gray-700 leading-relaxed mb-6">
+                    <p className="text-gray-700 leading-relaxed mb-4">
                       费用一次收取，绝无后续隐藏费用
                     </p>
                     <p className="text-gray-700 leading-relaxed mb-8">
                       现在联系我们，为您提供超时优惠价格
                     </p>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
                       <div className="flex items-center">
-                        <div className="w-10 h-10 flex items-center justify-center bg-blue-500 rounded-full text-white mr-3">
+                        <div className="w-12 h-12 flex items-center justify-center bg-blue-500 rounded-full text-white mr-4 shadow-md">
                           <FontAwesomeIcon icon={faFileAlt} />
                         </div>
                         <span className="font-medium text-gray-700">广覆盖</span>
                       </div>
                       <div className="flex items-center">
-                        <div className="w-10 h-10 flex items-center justify-center bg-blue-600 rounded-full text-white mr-3">
+                        <div className="w-12 h-12 flex items-center justify-center bg-blue-600 rounded-full text-white mr-4 shadow-md">
                           <FontAwesomeIcon icon={faCheck} />
                         </div>
                         <span className="font-medium text-gray-700">高质量</span>
                       </div>
                       <div className="flex items-center">
-                        <div className="w-10 h-10 flex items-center justify-center bg-blue-400 rounded-full text-white mr-3">
+                        <div className="w-12 h-12 flex items-center justify-center bg-blue-400 rounded-full text-white mr-4 shadow-md">
                           <FontAwesomeIcon icon={faMoneyBillWave} />
                         </div>
                         <span className="font-medium text-gray-700">低价格</span>
                       </div>
                       <div className="flex items-center">
-                        <div className="w-10 h-10 flex items-center justify-center bg-blue-500 rounded-full text-white mr-3">
+                        <div className="w-12 h-12 flex items-center justify-center bg-blue-500 rounded-full text-white mr-4 shadow-md">
                           <FontAwesomeIcon icon={faEye} />
                         </div>
                         <span className="font-medium text-gray-700">透明费用</span>
@@ -508,75 +503,60 @@ const FMCQualification = () => {
                     </div>
                   </div>
 
-                  {/* 便当盒式布局 */}
-                  <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-                    {/* 左侧卡片 */}
-                    <div className="md:col-span-5 flex flex-col gap-6">
-                      {/* 申请项目卡片 */}
-                      <div className="bg-blue-50 p-6 rounded-lg shadow-sm">
-                        <h3 className="text-lg font-bold text-gray-800 mb-4">申请项目</h3>
-                        <p className="text-primary font-medium">FMC资质（OTI-NVOCC Lisence）</p>
-                      </div>
-
-                      {/* 时间卡片 */}
-                      <div className="bg-white p-6 rounded-lg shadow-sm">
-                        <h3 className="text-lg font-bold text-gray-800 mb-4">时间（参考）</h3>
-                        <p className="text-gray-700 text-lg">15个工作日</p>
-                      </div>
+                  {/* 便当盒式布局 - 重新设计 */}
+                  <div className="grid grid-cols-12 gap-6">
+                    {/* 第一行 */}
+                    <div className="col-span-12 md:col-span-5 bg-white p-6 rounded-lg shadow-md">
+                      <h3 className="text-lg font-bold text-gray-800 mb-4">申请项目</h3>
+                      <p className="text-blue-600 font-medium">FMC资质（OTI-NVOCC Lisence）</p>
                     </div>
 
-                    {/* 右侧卡片 */}
-                    <div className="md:col-span-7 flex flex-col gap-6">
-                      {/* 申请目的卡片 */}
-                      <div className="bg-blue-50 p-6 rounded-lg shadow-sm">
-                        <h3 className="text-lg font-bold text-gray-800 mb-4">申请目的</h3>
-                        <p className="text-gray-700">办理完成后可以在美线业务中签发无船承运人提单</p>
-                      </div>
+                    <div className="col-span-12 md:col-span-7 bg-white p-6 rounded-lg shadow-md">
+                      <h3 className="text-lg font-bold text-gray-800 mb-4">申请目的</h3>
+                      <p className="text-gray-700">办理完成后可以在美线业务中签发无船承运人提单</p>
+                    </div>
 
-                      {/* 具体事项及流程卡片 */}
-                      <div className="bg-blue-50 p-6 rounded-lg shadow-sm">
-                        <h3 className="text-lg font-bold text-gray-800 mb-4">具体事项及流程</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <div className="flex items-start mb-3">
-                              <span className="text-blue-600 font-bold mr-2">01.</span>
-                              <p className="text-gray-700">FMC BOND</p>
-                            </div>
+                    {/* 第二行 */}
+                    <div className="col-span-12 md:col-span-7 bg-white p-6 rounded-lg shadow-md">
+                      <h3 className="text-lg font-bold text-gray-800 mb-4">具体事项及流程</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+                        <div className="flex items-start">
+                          <span className="text-blue-600 font-bold mr-2 w-6 text-right">01.</span>
+                          <p className="text-gray-700">FMC BOND</p>
+                        </div>
 
-                            <div className="flex items-start mb-3">
-                              <span className="text-blue-600 font-bold mr-2">02.</span>
-                              <p className="text-gray-700">FMC登记（FMC-1/FMC-65）</p>
-                            </div>
+                        <div className="flex items-start">
+                          <span className="text-blue-600 font-bold mr-2 w-6 text-right">04.</span>
+                          <p className="text-gray-700">提单审核</p>
+                        </div>
 
-                            <div className="flex items-start mb-3">
-                              <span className="text-blue-600 font-bold mr-2">03.</span>
-                              <p className="text-gray-700">FMC申请授权（LOA）</p>
-                            </div>
-                          </div>
+                        <div className="flex items-start">
+                          <span className="text-blue-600 font-bold mr-2 w-6 text-right">02.</span>
+                          <p className="text-gray-700">FMC登记（FMC-1/FMC-65）</p>
+                        </div>
 
-                          <div>
-                            <div className="flex items-start mb-3">
-                              <span className="text-blue-600 font-bold mr-2">04.</span>
-                              <p className="text-gray-700">提单审核</p>
-                            </div>
+                        <div className="flex items-start">
+                          <span className="text-blue-600 font-bold mr-2 w-6 text-right">05.</span>
+                          <p className="text-gray-700">数据库维护年费</p>
+                        </div>
 
-                            <div className="flex items-start mb-3">
-                              <span className="text-blue-600 font-bold mr-2">05.</span>
-                              <p className="text-gray-700">数据库维护年费</p>
-                            </div>
+                        <div className="flex items-start">
+                          <span className="text-blue-600 font-bold mr-2 w-6 text-right">03.</span>
+                          <p className="text-gray-700">FMC申请授权（LOA）</p>
+                        </div>
 
-                            <div className="flex items-start mb-3">
-                              <span className="text-blue-600 font-bold mr-2">06.</span>
-                              <p className="text-gray-700">开通运价备案系统账户</p>
-                            </div>
-                          </div>
+                        <div className="flex items-start">
+                          <span className="text-blue-600 font-bold mr-2 w-6 text-right">06.</span>
+                          <p className="text-gray-700">开通运价备案系统账户</p>
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* 背景装饰 */}
-                  <div className="absolute top-0 right-0 w-1/2 h-full bg-blue-500 opacity-10 rounded-r-lg -z-10"></div>
+                    <div className="col-span-12 md:col-span-5 bg-white p-6 rounded-lg shadow-md flex flex-col justify-center">
+                      <h3 className="text-lg font-bold text-gray-800 mb-4">时间（参考）</h3>
+                      <p className="text-gray-700 text-xl">15个工作日</p>
+                    </div>
+                  </div>
                 </div>
 
                 {/* 联系我们部分 */}
