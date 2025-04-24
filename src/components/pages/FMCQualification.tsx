@@ -15,7 +15,11 @@ import {
   faFileSignature,
   faNetworkWired,
   faMoneyBillWave,
-  faEye
+  faEye,
+  faEnvelope,
+  faFileInvoiceDollar,
+  faBriefcase,
+  faCreditCard
 } from '@fortawesome/free-solid-svg-icons';
 
 const FMCQualification = () => {
@@ -740,6 +744,122 @@ const FMCQualification = () => {
                           </button>
                         </div>
                       </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 申请流程部分 */}
+                <div className="mb-16">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-12">申请流程</h2>
+
+                  <div className="relative">
+                    {/* 流程图 */}
+                    <div className="flex flex-col md:flex-row justify-between items-center mb-8 relative">
+                      {/* 步骤1 */}
+                      <div className="flex flex-col items-center mb-8 md:mb-0 z-10">
+                        <div className="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center mb-3 relative">
+                          <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                            <FontAwesomeIcon icon={faFileAlt} className="text-2xl" />
+                          </div>
+                          <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-sm">
+                            01
+                          </div>
+                        </div>
+                        <p className="text-blue-600 font-bold">收集办理材料</p>
+                      </div>
+
+                      {/* 箭头1 */}
+                      <div className="hidden md:block w-16 h-4 bg-blue-100 mx-2"></div>
+
+                      {/* 步骤2 */}
+                      <div className="flex flex-col items-center mb-8 md:mb-0 z-10">
+                        <div className="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center mb-3 relative">
+                          <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                            <FontAwesomeIcon icon={faEnvelope} className="text-2xl" />
+                          </div>
+                          <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-sm">
+                            02
+                          </div>
+                        </div>
+                        <p className="text-blue-600 font-bold">发邮件提交</p>
+                      </div>
+
+                      {/* 箭头2 */}
+                      <div className="hidden md:block w-16 h-4 bg-blue-100 mx-2"></div>
+
+                      {/* 步骤3 */}
+                      <div className="flex flex-col items-center mb-8 md:mb-0 z-10">
+                        <div className="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center mb-3 relative">
+                          <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                            <FontAwesomeIcon icon={faFileInvoiceDollar} className="text-2xl" />
+                          </div>
+                          <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-sm">
+                            03
+                          </div>
+                        </div>
+                        <p className="text-blue-600 font-bold">等待报价</p>
+                      </div>
+                    </div>
+
+                    {/* 返回箭头 */}
+                    <div className="hidden md:block absolute right-0 top-10 w-4 h-40 bg-blue-100"></div>
+
+                    {/* 流程图第二行 */}
+                    <div className="flex flex-col md:flex-row-reverse justify-between items-center relative">
+                      {/* 步骤6 */}
+                      <div className="flex flex-col items-center mb-8 md:mb-0 z-10">
+                        <div className="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center mb-3 relative">
+                          <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                            <FontAwesomeIcon icon={faBriefcase} className="text-2xl" />
+                          </div>
+                          <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-sm">
+                            06
+                          </div>
+                        </div>
+                        <p className="text-blue-600 font-bold">办理成功</p>
+                      </div>
+
+                      {/* 箭头5 */}
+                      <div className="hidden md:block w-16 h-4 bg-blue-100 mx-2"></div>
+
+                      {/* 步骤5 */}
+                      <div className="flex flex-col items-center mb-8 md:mb-0 z-10">
+                        <div className="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center mb-3 relative">
+                          <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                            <FontAwesomeIcon icon={faClipboardCheck} className="text-2xl" />
+                          </div>
+                          <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-sm">
+                            05
+                          </div>
+                        </div>
+                        <p className="text-blue-600 font-bold">开始办理</p>
+                      </div>
+
+                      {/* 箭头4 */}
+                      <div className="hidden md:block w-16 h-4 bg-blue-100 mx-2"></div>
+
+                      {/* 步骤4 */}
+                      <div className="flex flex-col items-center mb-8 md:mb-0 z-10">
+                        <div className="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center mb-3 relative">
+                          <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                            <FontAwesomeIcon icon={faCreditCard} className="text-2xl" />
+                          </div>
+                          <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-sm">
+                            04
+                          </div>
+                        </div>
+                        <p className="text-blue-600 font-bold">签约付款</p>
+                      </div>
+                    </div>
+
+                    {/* 连接箭头 */}
+                    <div className="hidden md:block absolute left-0 top-10 w-4 h-40 bg-blue-100"></div>
+
+                    {/* 底部说明 */}
+                    <div className="mt-12 p-6 bg-blue-50 rounded-lg text-center">
+                      <p className="text-gray-700">
+                        <span className="text-blue-600 font-bold">结束：</span> 办理完成全部项目，交付，培训
+                      </p>
                     </div>
                   </div>
                 </div>
