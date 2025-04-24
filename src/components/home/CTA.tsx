@@ -1,17 +1,8 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
-import LeadFormModal from '../common/LeadFormModal';
+import { useModal } from '../../contexts/ModalContext';
 
 const CTA = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
+  const { openLeadForm } = useModal();
 
   return (
     <section className="section-padding bg-gradient-to-r from-primary to-secondary wave-bg">
@@ -46,20 +37,12 @@ const CTA = () => {
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
               viewport={{ once: true }}
-              className="flex space-x-4"
             >
-              <button
-                type="button"
-                className="px-6 py-3 bg-white border border-primary text-primary rounded-full hover:bg-gray-50 transition-all duration-300"
-                aria-label="了解更多信息"
-              >
-                了解更多
-              </button>
               <button
                 type="button"
                 className="btn-primary"
                 aria-label="免费试用产品"
-                onClick={handleOpenModal}
+                onClick={openLeadForm}
               >
                 免费试用
               </button>
@@ -67,9 +50,6 @@ const CTA = () => {
           </div>
         </div>
       </div>
-
-      {/* 留资弹窗 */}
-      <LeadFormModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </section>
   );
 };
