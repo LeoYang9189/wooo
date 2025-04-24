@@ -1,6 +1,18 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
+import LeadFormModal from '../common/LeadFormModal';
 
 const CTA = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <section className="section-padding bg-gradient-to-r from-primary to-secondary wave-bg">
       <div className="container-custom relative z-10">
@@ -47,6 +59,7 @@ const CTA = () => {
                 type="button"
                 className="btn-primary"
                 aria-label="免费试用产品"
+                onClick={handleOpenModal}
               >
                 免费试用
               </button>
@@ -54,6 +67,9 @@ const CTA = () => {
           </div>
         </div>
       </div>
+
+      {/* 留资弹窗 */}
+      <LeadFormModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </section>
   );
 };
