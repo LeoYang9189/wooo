@@ -559,6 +559,86 @@ const FMCQualification = () => {
                   </div>
                 </div>
 
+                {/* AMS资质所含具体项目 */}
+                <div className="relative bg-gradient-to-r from-amber-50 to-amber-100 p-8 rounded-xl mb-12">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-8">AMS资质所含具体项目</h2>
+
+                  <div className="mb-10">
+                    <p className="text-gray-700 leading-relaxed mb-4">
+                      AMS资质是美国海关自动舱单系统的申报资质，拥有此资质可以以自己的名义直接向美国海关发送数据。
+                    </p>
+                    <p className="text-gray-700 leading-relaxed mb-8">
+                      我们提供全套AMS申报资质申请服务，包含以下全部项目。
+                    </p>
+
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-8">
+                      <div className="flex items-center">
+                        <div className="w-12 h-12 flex items-center justify-center bg-amber-500 rounded-full text-white mr-4 shadow-md">
+                          <FontAwesomeIcon icon={faFileContract} />
+                        </div>
+                        <span className="font-medium text-gray-700">C3 Bond</span>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="w-12 h-12 flex items-center justify-center bg-amber-600 rounded-full text-white mr-4 shadow-md">
+                          <FontAwesomeIcon icon={faNetworkWired} />
+                        </div>
+                        <span className="font-medium text-gray-700">CBP Code申请</span>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="w-12 h-12 flex items-center justify-center bg-amber-400 rounded-full text-white mr-4 shadow-md">
+                          <FontAwesomeIcon icon={faFileAlt} />
+                        </div>
+                        <span className="font-medium text-gray-700">SCAC Code申请</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 便当盒式布局 - AMS */}
+                  <div className="grid grid-cols-12 gap-6">
+                    {/* 第一行 */}
+                    <div className="col-span-12 md:col-span-5 bg-white p-6 rounded-lg shadow-md">
+                      <h3 className="text-lg font-bold text-gray-800 mb-4">申请项目</h3>
+                      <p className="text-amber-600 font-medium">全套AMS申报资质</p>
+                    </div>
+
+                    <div className="col-span-12 md:col-span-7 bg-white p-6 rounded-lg shadow-md">
+                      <h3 className="text-lg font-bold text-gray-800 mb-4">申请目的</h3>
+                      <p className="text-gray-700">以自己的资质发送AMS数据</p>
+                    </div>
+
+                    {/* 第二行 */}
+                    <div className="col-span-12 md:col-span-7 bg-white p-6 rounded-lg shadow-md">
+                      <h3 className="text-lg font-bold text-gray-800 mb-4">具体事项及流程</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+                        <div className="flex items-start">
+                          <span className="text-amber-600 font-bold mr-2 w-6 text-right">01.</span>
+                          <p className="text-gray-700">C3 Bond申请</p>
+                        </div>
+
+                        <div className="flex items-start">
+                          <span className="text-amber-600 font-bold mr-2 w-6 text-right">03.</span>
+                          <p className="text-gray-700">SCAC Code申请</p>
+                        </div>
+
+                        <div className="flex items-start">
+                          <span className="text-amber-600 font-bold mr-2 w-6 text-right">02.</span>
+                          <p className="text-gray-700">CBP Code申请</p>
+                        </div>
+
+                        <div className="flex items-start">
+                          <span className="text-amber-600 font-bold mr-2 w-6 text-right">04.</span>
+                          <p className="text-gray-700">AMS系统账户开通</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="col-span-12 md:col-span-5 bg-white p-6 rounded-lg shadow-md flex flex-col justify-center">
+                      <h3 className="text-lg font-bold text-gray-800 mb-4">时间（参考）</h3>
+                      <p className="text-gray-700 text-xl">10个工作日</p>
+                    </div>
+                  </div>
+                </div>
+
                 {/* FMC办理材料 */}
                 <div className="mb-12">
                   <h2 className="text-2xl font-bold text-primary mb-8">FMC 办理材料</h2>
@@ -616,6 +696,49 @@ const FMCQualification = () => {
                       {/* 补充说明2 */}
                       <div className="ml-10 text-gray-700 text-sm">
                         <p>如有为公司投保（涉外物流责任险）或（海运提单责任保险），请提供保单证明。</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* AMS办理材料 */}
+                <div className="mb-12">
+                  <h2 className="text-2xl font-bold text-amber-600 mb-8">AMS 办理材料</h2>
+
+                  <div className="bg-white p-8 rounded-xl shadow-sm">
+                    <h3 className="text-lg font-bold text-amber-600 mb-6">审核报价材料清单</h3>
+
+                    <div className="space-y-4">
+                      {/* 材料1 */}
+                      <div className="flex items-center p-4 bg-amber-50 rounded-lg">
+                        <div className="w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center mr-4">
+                          <FontAwesomeIcon icon={faCheck} className="text-white text-xs" />
+                        </div>
+                        <span className="text-gray-800 font-medium">AMS资质申请表</span>
+                        <div className="ml-auto">
+                          <button
+                            type="button"
+                            className="py-2 px-6 bg-amber-500 text-white font-medium rounded-lg hover:bg-amber-600 transition-colors duration-300"
+                          >
+                            参考样例
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* 材料2 */}
+                      <div className="flex items-center p-4 bg-amber-50 rounded-lg">
+                        <div className="w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center mr-4">
+                          <FontAwesomeIcon icon={faCheck} className="text-white text-xs" />
+                        </div>
+                        <span className="text-gray-800 font-medium">公司营业执照</span>
+                        <div className="ml-auto">
+                          <button
+                            type="button"
+                            className="py-2 px-6 bg-amber-500 text-white font-medium rounded-lg hover:bg-amber-600 transition-colors duration-300"
+                          >
+                            参考样例
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
