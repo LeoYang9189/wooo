@@ -578,7 +578,7 @@ const FMCQualification = () => {
                             type="button"
                             className="py-2 px-6 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 transition-colors duration-300"
                           >
-                            获取
+                            参考样例
                           </button>
                         </div>
                       </div>
@@ -594,7 +594,7 @@ const FMCQualification = () => {
                             type="button"
                             className="py-2 px-6 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 transition-colors duration-300"
                           >
-                            获取
+                            参考样例
                           </button>
                         </div>
                       </div>
