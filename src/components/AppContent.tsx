@@ -1,0 +1,54 @@
+import { Suspense, lazy } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import { useModal } from '../contexts/ModalContext';
+import DraggableOctopus from './common/DraggableOctopus';
+import AIWobaoChatbox from './common/AIWobaoChatbox';
+import LeadFormModal from './common/LeadFormModal';
+import LoadingSpinner from './common/LoadingSpinner';
+import CookieConsent from './common/CookieConsent';
+
+// 使用懒加载优化性能
+const Home = lazy(() => import('./home/Home'));
+const Auth = lazy(() => import('./pages/Auth'));
+const Terms = lazy(() => import('./pages/Terms'));
+const Privacy = lazy(() => import('./pages/Privacy'));
+const CookieSettings = lazy(() => import('./pages/CookieSettings'));
+const NotFound = lazy(() => import('./pages/NotFound'));
+
+interface AppContentProps {
+  isAIWobaoChatboxOpen: boolean;
+  handleOpenChatbox: () => void;
+  handleCloseChatbox: () => void;
+}
+
+const AppContent = ({ isAIWobaoChatboxOpen, handleOpenChatbox, handleCloseChatbox }: AppContentProps) => {
+  const { isLeadFormOpen, closeLeadForm } = useModal();
+
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <LoadingSpinner size="lg" color="primary" />
+      </div>
+    }>
+      <CookieConsent />
+      <LeadFormModal isOpen={isLeadFormOpen} onClose={closeLeadForm} />
+
+      <Routes>
+        <Route path="/" element={
+          <>
+            <Home />
+            <DraggableOctopus onOpen={handleOpenChatbox} />
+            <AIWobaoChatbox isOpen={isAIWobaoChatboxOpen} onClose={handleCloseChatbox} />
+          </>
+        } />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/cookie-settings" element={<CookieSettings />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Suspense>
+  );
+};
+
+export default AppContent;
