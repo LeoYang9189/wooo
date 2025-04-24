@@ -100,7 +100,7 @@ const Footer = () => {
 
         {/* 底部版权信息 */}
         <div className="pt-8 border-t border-gray-200">
-          <div className="flex flex-col md:flex-row justify-between items-center">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-4">
             <p className="text-gray-500 text-sm">
               © 2025 WallTech. 保留所有权利.
             </p>
@@ -109,6 +109,35 @@ const Footer = () => {
               <a href="/terms" className="text-gray-500 hover:text-primary text-sm">服务条款</a>
               <a href="/cookie-settings" className="text-gray-500 hover:text-primary text-sm">Cookie 设置</a>
             </div>
+          </div>
+
+          {/* 备案信息 */}
+          <div className="flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-4 text-xs text-gray-400">
+            <a
+              href="https://beian.miit.gov.cn/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center hover:text-primary transition-colors duration-300"
+            >
+              <span>沪ICP备20230512号-1</span>
+            </a>
+            <a
+              href="http://www.beian.gov.cn/portal/registerSystemInfo"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center hover:text-primary transition-colors duration-300"
+            >
+              <img
+                src="https://cdn.jsdelivr.net/gh/LeoYang9189/wooo@main/public/gongan.png"
+                alt="公安备案图标"
+                className="h-4 mr-1"
+                onError={(e) => {
+                  // 如果图片加载失败，使用文字替代
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+              <span>沪公网安备31010402005432号</span>
+            </a>
           </div>
         </div>
       </div>
