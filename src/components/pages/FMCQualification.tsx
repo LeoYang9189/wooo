@@ -146,12 +146,12 @@ const FMCQualification = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
               >
-                <div className="bg-gradient-to-r from-blue-400/90 to-indigo-500/90 p-4">
-                  <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center mb-3">
-                    <FontAwesomeIcon icon={faFileSignature} className="text-white text-xl" />
+                <div className="bg-gradient-to-r from-blue-300/80 to-indigo-400/80 p-4">
+                  <div className="w-12 h-12 rounded-full bg-white/30 flex items-center justify-center mb-3">
+                    <FontAwesomeIcon icon={faFileSignature} className="text-indigo-700 text-xl" />
                   </div>
-                  <h3 className="text-white text-lg font-bold">申请FMC+AMS资质</h3>
-                  <p className="text-blue-50 text-sm mt-1">一站式服务，同时获取两项资质</p>
+                  <h3 className="text-indigo-800 text-lg font-bold">申请FMC+AMS资质</h3>
+                  <p className="text-indigo-700 text-sm mt-1">一站式服务，同时获取两项资质</p>
                 </div>
                 <div className="p-5">
                   <ul className="space-y-2 mb-4">
@@ -170,7 +170,7 @@ const FMCQualification = () => {
                   </ul>
                   <button
                     type="button"
-                    className="w-full py-2 bg-gradient-to-r from-blue-400 to-indigo-500 text-white rounded-lg flex items-center justify-center hover:opacity-90 transition-all duration-300 hover:shadow-md"
+                    className="w-full py-2 bg-gradient-to-r from-blue-300 to-indigo-400 text-indigo-800 font-medium rounded-lg flex items-center justify-center hover:opacity-90 transition-all duration-300 hover:shadow-md"
                   >
                     立即申请 <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
                   </button>
@@ -184,12 +184,12 @@ const FMCQualification = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
-                <div className="bg-gradient-to-r from-purple-400/90 to-pink-400/90 p-4">
-                  <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center mb-3">
-                    <FontAwesomeIcon icon={faFileContract} className="text-white text-xl" />
+                <div className="bg-gradient-to-r from-purple-300/80 to-pink-300/80 p-4">
+                  <div className="w-12 h-12 rounded-full bg-white/30 flex items-center justify-center mb-3">
+                    <FontAwesomeIcon icon={faFileContract} className="text-purple-700 text-xl" />
                   </div>
-                  <h3 className="text-white text-lg font-bold">申请FMC资质</h3>
-                  <p className="text-purple-50 text-sm mt-1">美国联邦海事委员会认证</p>
+                  <h3 className="text-purple-800 text-lg font-bold">申请FMC资质</h3>
+                  <p className="text-purple-700 text-sm mt-1">美国联邦海事委员会认证</p>
                 </div>
                 <div className="p-5">
                   <ul className="space-y-2 mb-4">
@@ -208,7 +208,7 @@ const FMCQualification = () => {
                   </ul>
                   <button
                     type="button"
-                    className="w-full py-2 bg-gradient-to-r from-purple-400 to-pink-400 text-white rounded-lg flex items-center justify-center hover:opacity-90 transition-all duration-300 hover:shadow-md"
+                    className="w-full py-2 bg-gradient-to-r from-purple-300 to-pink-300 text-purple-800 font-medium rounded-lg flex items-center justify-center hover:opacity-90 transition-all duration-300 hover:shadow-md"
                   >
                     立即申请 <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
                   </button>
@@ -222,12 +222,12 @@ const FMCQualification = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
               >
-                <div className="bg-gradient-to-r from-amber-400/90 to-orange-400/90 p-4">
-                  <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center mb-3">
-                    <FontAwesomeIcon icon={faNetworkWired} className="text-white text-xl" />
+                <div className="bg-gradient-to-r from-amber-300/80 to-orange-300/80 p-4">
+                  <div className="w-12 h-12 rounded-full bg-white/30 flex items-center justify-center mb-3">
+                    <FontAwesomeIcon icon={faNetworkWired} className="text-amber-700 text-xl" />
                   </div>
-                  <h3 className="text-white text-lg font-bold">申请AMS资质</h3>
-                  <p className="text-amber-50 text-sm mt-1">美国海关自动舱单系统</p>
+                  <h3 className="text-amber-800 text-lg font-bold">申请AMS资质</h3>
+                  <p className="text-amber-700 text-sm mt-1">美国海关自动舱单系统</p>
                 </div>
                 <div className="p-5">
                   <ul className="space-y-2 mb-4">
@@ -246,7 +246,7 @@ const FMCQualification = () => {
                   </ul>
                   <button
                     type="button"
-                    className="w-full py-2 bg-gradient-to-r from-amber-400 to-orange-400 text-white rounded-lg flex items-center justify-center hover:opacity-90 transition-all duration-300 hover:shadow-md"
+                    className="w-full py-2 bg-gradient-to-r from-amber-300 to-orange-300 text-amber-800 font-medium rounded-lg flex items-center justify-center hover:opacity-90 transition-all duration-300 hover:shadow-md"
                   >
                     立即申请 <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
                   </button>
@@ -260,12 +260,12 @@ const FMCQualification = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
               >
-                <div className="bg-gradient-to-r from-emerald-400/90 to-teal-400/90 p-4">
-                  <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center mb-3">
-                    <FontAwesomeIcon icon={faMoneyBillWave} className="text-white text-xl" />
+                <div className="bg-gradient-to-r from-emerald-300/80 to-teal-300/80 p-4">
+                  <div className="w-12 h-12 rounded-full bg-white/30 flex items-center justify-center mb-3">
+                    <FontAwesomeIcon icon={faMoneyBillWave} className="text-emerald-700 text-xl" />
                   </div>
-                  <h3 className="text-white text-lg font-bold">申请海关Bond</h3>
-                  <p className="text-emerald-50 text-sm mt-1">美国进口必备保证金</p>
+                  <h3 className="text-emerald-800 text-lg font-bold">申请海关Bond</h3>
+                  <p className="text-emerald-700 text-sm mt-1">美国进口必备保证金</p>
                 </div>
                 <div className="p-5">
                   <ul className="space-y-2 mb-4">
@@ -284,7 +284,7 @@ const FMCQualification = () => {
                   </ul>
                   <button
                     type="button"
-                    className="w-full py-2 bg-gradient-to-r from-emerald-400 to-teal-400 text-white rounded-lg flex items-center justify-center hover:opacity-90 transition-all duration-300 hover:shadow-md"
+                    className="w-full py-2 bg-gradient-to-r from-emerald-300 to-teal-300 text-emerald-800 font-medium rounded-lg flex items-center justify-center hover:opacity-90 transition-all duration-300 hover:shadow-md"
                   >
                     立即申请 <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
                   </button>
