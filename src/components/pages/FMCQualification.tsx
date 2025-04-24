@@ -559,6 +559,68 @@ const FMCQualification = () => {
                   </div>
                 </div>
 
+                {/* FMC办理材料 */}
+                <div className="mb-12">
+                  <h2 className="text-2xl font-bold text-primary mb-8">FMC 办理材料</h2>
+
+                  <div className="bg-white p-8 rounded-xl shadow-sm">
+                    <h3 className="text-lg font-bold text-blue-600 mb-6">审核报价材料清单</h3>
+
+                    <div className="space-y-4">
+                      {/* 材料1 */}
+                      <div className="flex items-center p-4 bg-blue-50 rounded-lg">
+                        <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center mr-4">
+                          <FontAwesomeIcon icon={faCheck} className="text-white text-xs" />
+                        </div>
+                        <span className="text-gray-800 font-medium">FMC申请表（含公司信息及财报）</span>
+                        <div className="ml-auto">
+                          <button
+                            type="button"
+                            className="py-2 px-6 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 transition-colors duration-300"
+                          >
+                            获取
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* 材料2 */}
+                      <div className="flex items-center p-4 bg-blue-50 rounded-lg">
+                        <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center mr-4">
+                          <FontAwesomeIcon icon={faCheck} className="text-white text-xs" />
+                        </div>
+                        <span className="text-gray-800 font-medium">提单（正反面）</span>
+                        <div className="ml-auto">
+                          <button
+                            type="button"
+                            className="py-2 px-6 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 transition-colors duration-300"
+                          >
+                            获取
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* 材料3 */}
+                      <div className="flex items-center p-4 bg-blue-50 rounded-lg">
+                        <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center mr-4">
+                          <FontAwesomeIcon icon={faEye} className="text-white text-xs" />
+                        </div>
+                        <span className="text-gray-800 font-medium">非必要项（若您含有以下证书，将有助于申核、报价）</span>
+                      </div>
+
+                      {/* 补充说明1 */}
+                      <div className="ml-10 text-gray-700 text-sm">
+                        <p className="mb-2">如为FIATA或其他认可国家或国际货代公会会员，请提供证明。</p>
+                        <p className="mb-4">如：国际认可协会会员（IATA / CIFA / JCtrans 等）</p>
+                      </div>
+
+                      {/* 补充说明2 */}
+                      <div className="ml-10 text-gray-700 text-sm">
+                        <p>如有为公司投保（涉外物流责任险）或（海运提单责任保险），请提供保单证明。</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 {/* 联系我们部分 */}
                 <div className="mt-12 bg-gray-50 p-6 rounded-lg border border-gray-200">
                   <h2 className="text-xl font-bold text-gray-800 mb-4">需要帮助？</h2>
