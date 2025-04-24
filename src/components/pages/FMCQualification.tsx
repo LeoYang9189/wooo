@@ -19,7 +19,21 @@ import {
   faEnvelope,
   faFileInvoiceDollar,
   faBriefcase,
-  faCreditCard
+  faCreditCard,
+  faBuilding,
+  faExclamationTriangle,
+  faInfoCircle,
+  faListAlt,
+  faWarehouse,
+  faShieldAlt,
+  faQuestionCircle,
+  faBalanceScale,
+  faHandHoldingUsd,
+  faClipboardList,
+  faPaperPlane,
+  faFileUpload,
+  faPhoneAlt,
+  faExchangeAlt
 } from '@fortawesome/free-solid-svg-icons';
 
 const FMCQualification = () => {
@@ -882,177 +896,459 @@ const FMCQualification = () => {
               {/* 海关Bond介绍内容 */}
               <div className={`space-y-8 ${activeTab === 'bond' ? 'block' : 'hidden'}`}>
                 {/* 什么是海关Bond部分 */}
-                <div>
-                  <h2 className="text-2xl font-bold text-secondary mb-6">什么是海关Bond?</h2>
-                  <div className="space-y-4">
-                    <p className="text-gray-700 leading-relaxed">
-                      根据美国海关与边境保护局(CBP)的规定，海关Bond是"一种确保履行法律或法规规定义务的合同"。它是一种特定类型的担保保证金，是三方之间的合同，用于保证特定义务的履行。
-                    </p>
-                    <p className="text-gray-700 leading-relaxed">
-                      海关Bond由美国联邦海事委员会(FMC)推行，实际上是一种保险，受益人为美国政府及美国海关。当进口商因故不提领货物且不支付任何费用弃货时，美国海关除了逾期拍卖货物以外，可以向保险公司求偿以支付该货物在美国产生的各项费用（如storage堆存费、duties税金等）。
-                    </p>
-                    <p className="text-gray-700 leading-relaxed">
-                      在海关Bond中，三方分别是：提供Bond财务担保的担保公司、作为Bond主体的进口商，以及作为受益人的美国海关与边境保护局(CBP)。海关Bond的主要目的是确保交易符合所有法律法规，同时保证CBP能够收到所有进口关税和税费。
-                    </p>
-                    <p className="text-gray-700 leading-relaxed">
-                      如果您计划将价值超过2500美元的商业货物进口到美国，则需要海关进口Bond。没有购买Bond等于在美国海关没有备案，即使有发送ISF(进口安全申报)也是无法在美国清关进口的，这样的货物抵港会被海关拒收甚至罚款。
-                    </p>
-                    <div className="bg-blue-50 p-4 rounded-lg mt-4">
-                      <h3 className="font-semibold text-gray-800 mb-2">海关Bond的用途</h3>
-                      <p className="text-gray-700 mb-2">根据美国海关法规，进口Bond是为了确保法律法规所规定的义务的履行。Bond使用者需同意以下条款：</p>
-                      <ul className="list-disc pl-6 space-y-1 text-gray-700">
-                        <li>同意及时支付关税、税款和相关费用</li>
-                        <li>同意提供单据和证明</li>
-                        <li>同意重运输商品</li>
-                        <li>同意纠正任何不符合通关条款规定之处</li>
-                        <li>同意检查商品</li>
-                      </ul>
+                <div className="bg-gradient-to-r from-teal-50 to-blue-50 p-8 rounded-xl mb-8">
+                  <h2 className="text-2xl font-bold text-secondary mb-6 flex items-center">
+                    <span className="w-10 h-10 bg-teal-500 rounded-full flex items-center justify-center text-white mr-3">
+                      <FontAwesomeIcon icon={faFileContract} />
+                    </span>
+                    什么是海关Bond?
+                  </h2>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    <div className="bg-white p-6 rounded-lg shadow-sm">
+                      <h3 className="text-lg font-bold text-teal-600 mb-4 border-b border-teal-100 pb-2">定义</h3>
+                      <p className="text-gray-700 leading-relaxed">
+                        根据美国海关与边境保护局(CBP)的规定，海关Bond是"一种确保履行法律或法规规定义务的合同"。它是一种特定类型的担保保证金，是三方之间的合同，用于保证特定义务的履行。
+                      </p>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-lg shadow-sm">
+                      <h3 className="text-lg font-bold text-teal-600 mb-4 border-b border-teal-100 pb-2">本质</h3>
+                      <p className="text-gray-700 leading-relaxed">
+                        海关Bond由美国联邦海事委员会(FMC)推行，实际上是一种保险，受益人为美国政府及美国海关。当进口商因故不提领货物且不支付任何费用弃货时，美国海关可以向保险公司求偿以支付该货物在美国产生的各项费用。
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div className="bg-white p-6 rounded-lg shadow-sm flex flex-col items-center text-center">
+                      <div className="w-16 h-16 bg-teal-500 rounded-full flex items-center justify-center text-white mb-4">
+                        <FontAwesomeIcon icon={faBuilding} className="text-2xl" />
+                      </div>
+                      <h3 className="font-bold text-gray-800 mb-2">担保公司</h3>
+                      <p className="text-gray-700">提供Bond财务担保</p>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-lg shadow-sm flex flex-col items-center text-center">
+                      <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white mb-4">
+                        <FontAwesomeIcon icon={faShip} className="text-2xl" />
+                      </div>
+                      <h3 className="font-bold text-gray-800 mb-2">进口商</h3>
+                      <p className="text-gray-700">作为Bond主体</p>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-lg shadow-sm flex flex-col items-center text-center">
+                      <div className="w-16 h-16 bg-teal-600 rounded-full flex items-center justify-center text-white mb-4">
+                        <FontAwesomeIcon icon={faGlobe} className="text-2xl" />
+                      </div>
+                      <h3 className="font-bold text-gray-800 mb-2">美国海关(CBP)</h3>
+                      <p className="text-gray-700">作为Bond受益人</p>
+                    </div>
+                  </div>
+
+                  <div className="bg-white p-6 rounded-lg shadow-sm mb-8">
+                    <div className="flex items-start">
+                      <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center text-white mr-4 mt-1 flex-shrink-0">
+                        <FontAwesomeIcon icon={faExclamationTriangle} />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-gray-800 mb-2">重要提示</h3>
+                        <p className="text-gray-700 leading-relaxed">
+                          如果您计划将价值超过2500美元的商业货物进口到美国，则需要海关进口Bond。没有购买Bond等于在美国海关没有备案，即使有发送ISF(进口安全申报)也是无法在美国清关进口的，这样的货物抵港会被海关拒收甚至罚款。
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-teal-50 p-6 rounded-lg border-l-4 border-teal-500">
+                    <h3 className="font-bold text-gray-800 mb-4 flex items-center">
+                      <FontAwesomeIcon icon={faClipboardCheck} className="text-teal-500 mr-2" />
+                      海关Bond的用途
+                    </h3>
+                    <p className="text-gray-700 mb-4">根据美国海关法规，进口Bond是为了确保法律法规所规定的义务的履行。Bond使用者需同意以下条款：</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="flex items-start">
+                        <div className="w-6 h-6 rounded-full bg-teal-500 flex items-center justify-center text-white mr-3 mt-0.5 flex-shrink-0">
+                          <span className="text-xs font-bold">1</span>
+                        </div>
+                        <p className="text-gray-700">同意及时支付关税、税款和相关费用</p>
+                      </div>
+                      <div className="flex items-start">
+                        <div className="w-6 h-6 rounded-full bg-teal-500 flex items-center justify-center text-white mr-3 mt-0.5 flex-shrink-0">
+                          <span className="text-xs font-bold">2</span>
+                        </div>
+                        <p className="text-gray-700">同意提供单据和证明</p>
+                      </div>
+                      <div className="flex items-start">
+                        <div className="w-6 h-6 rounded-full bg-teal-500 flex items-center justify-center text-white mr-3 mt-0.5 flex-shrink-0">
+                          <span className="text-xs font-bold">3</span>
+                        </div>
+                        <p className="text-gray-700">同意重运输商品</p>
+                      </div>
+                      <div className="flex items-start">
+                        <div className="w-6 h-6 rounded-full bg-teal-500 flex items-center justify-center text-white mr-3 mt-0.5 flex-shrink-0">
+                          <span className="text-xs font-bold">4</span>
+                        </div>
+                        <p className="text-gray-700">同意纠正任何不符合通关条款规定之处</p>
+                      </div>
+                      <div className="flex items-start">
+                        <div className="w-6 h-6 rounded-full bg-teal-500 flex items-center justify-center text-white mr-3 mt-0.5 flex-shrink-0">
+                          <span className="text-xs font-bold">5</span>
+                        </div>
+                        <p className="text-gray-700">同意检查商品</p>
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 {/* 海关Bond的类型 */}
-                <div>
-                  <h2 className="text-2xl font-bold text-secondary mb-6">海关Bond的类型</h2>
+                <div className="bg-gradient-to-r from-blue-50 to-teal-50 p-8 rounded-xl mb-8">
+                  <h2 className="text-2xl font-bold text-secondary mb-6 flex items-center">
+                    <span className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white mr-3">
+                      <FontAwesomeIcon icon={faFileSignature} />
+                    </span>
+                    海关Bond的类型
+                  </h2>
 
-                  <div className="border-l-4 border-secondary pl-4 py-3 bg-gray-50 mb-6">
-                    <h3 className="font-semibold text-gray-800">主要有两种类型的海关进口Bond：</h3>
-                    <ul className="mt-2 space-y-2">
-                      <li className="flex items-start">
-                        <span className="text-secondary font-bold mr-2">•</span>
-                        <div>
-                          <span className="font-medium">单次进口Bond (Single Entry Bond)：</span>
-                          <span className="text-gray-700">适用于偶尔进行进口的企业，每次进口都需要单独申请。适合进口频率较低的企业。</span>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    {/* 单次进口Bond */}
+                    <div className="bg-white p-6 rounded-lg shadow-sm relative overflow-hidden">
+                      <div className="absolute top-0 right-0 w-20 h-20">
+                        <div className="absolute transform rotate-45 bg-blue-500 text-white font-bold text-xs py-1 right-[-35px] top-[20px] w-[140px] text-center">
+                          单次使用
                         </div>
-                      </li>
-                      <li className="flex items-start">
-                        <span className="text-secondary font-bold mr-2">•</span>
-                        <div>
-                          <span className="font-medium">连续Bond (Continuous Bond)：</span>
-                          <span className="text-gray-700">适用于经常进行进口的企业，有效期为一年，可以覆盖多次进口，除非终止，否则会自动续期。</span>
+                      </div>
+                      <div className="flex items-center mb-4">
+                        <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white mr-4">
+                          <FontAwesomeIcon icon={faFileContract} className="text-xl" />
                         </div>
-                      </li>
-                    </ul>
+                        <h3 className="text-lg font-bold text-gray-800">单次进口Bond</h3>
+                      </div>
+                      <p className="text-gray-700 mb-4">
+                        <span className="text-blue-600 font-medium">Single Entry Bond</span> - 适用于偶尔进行进口的企业，每次进口都需要单独申请。
+                      </p>
+                      <ul className="space-y-2">
+                        <li className="flex items-start">
+                          <FontAwesomeIcon icon={faCheck} className="text-blue-500 mt-1 mr-2" />
+                          <span className="text-gray-700">适合进口频率较低的企业</span>
+                        </li>
+                        <li className="flex items-start">
+                          <FontAwesomeIcon icon={faCheck} className="text-blue-500 mt-1 mr-2" />
+                          <span className="text-gray-700">每笔交易都需要提供一笔一次性担保</span>
+                        </li>
+                        <li className="flex items-start">
+                          <FontAwesomeIcon icon={faCheck} className="text-blue-500 mt-1 mr-2" />
+                          <span className="text-gray-700">保证金额必须等于或超过货物的总价值加上预估的关税和费用</span>
+                        </li>
+                      </ul>
+                    </div>
+
+                    {/* 连续Bond */}
+                    <div className="bg-white p-6 rounded-lg shadow-sm relative overflow-hidden">
+                      <div className="absolute top-0 right-0 w-20 h-20">
+                        <div className="absolute transform rotate-45 bg-teal-500 text-white font-bold text-xs py-1 right-[-35px] top-[20px] w-[140px] text-center">
+                          推荐选择
+                        </div>
+                      </div>
+                      <div className="flex items-center mb-4">
+                        <div className="w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center text-white mr-4">
+                          <FontAwesomeIcon icon={faFileContract} className="text-xl" />
+                        </div>
+                        <h3 className="text-lg font-bold text-gray-800">连续Bond</h3>
+                      </div>
+                      <p className="text-gray-700 mb-4">
+                        <span className="text-teal-600 font-medium">Continuous Bond</span> - 适用于频繁进口至美国的货运商，有效期为一年，可以覆盖多次进口。
+                      </p>
+                      <ul className="space-y-2">
+                        <li className="flex items-start">
+                          <FontAwesomeIcon icon={faCheck} className="text-teal-500 mt-1 mr-2" />
+                          <span className="text-gray-700">一年内多次使用，自动续期</span>
+                        </li>
+                        <li className="flex items-start">
+                          <FontAwesomeIcon icon={faCheck} className="text-teal-500 mt-1 mr-2" />
+                          <span className="text-gray-700">金额基于过去一年支付的关税、税费和费用的10%计算</span>
+                        </li>
+                        <li className="flex items-start">
+                          <FontAwesomeIcon icon={faCheck} className="text-teal-500 mt-1 mr-2" />
+                          <span className="text-gray-700">最低金额为50,000美元</span>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
 
-                  <p className="text-gray-700 leading-relaxed mb-4">
-                    大多数进口商选择连续Bond，因为它更加方便，不需要为每次进口单独申请Bond。连续Bond的金额通常基于过去一年支付的关税、税费和费用的10%计算，最低金额为50,000美元。
-                  </p>
+                  <div className="bg-white p-6 rounded-lg shadow-sm mb-8">
+                    <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                      <FontAwesomeIcon icon={faInfoCircle} className="text-blue-500 mr-3" />
+                      为什么选择连续Bond?
+                    </h3>
+                    <p className="text-gray-700 leading-relaxed">
+                      大多数进口商选择连续Bond，因为它更加方便，不需要为每次进口单独申请Bond。连续Bond可以涵盖一整年保证期内的所有入境和ISF申报，简化了进口程序，并免除了个别保证金等相关的行政负担。
+                    </p>
+                  </div>
 
-                  <div className="border-l-4 border-secondary pl-4 py-3 bg-gray-50 mb-6">
-                    <h3 className="font-semibold text-gray-800">除了进口Bond外，还有其他类型的海关Bond：</h3>
-                    <ul className="mt-2 space-y-2">
-                      <li className="flex items-start">
-                        <span className="text-secondary font-bold mr-2">•</span>
-                        <div>
-                          <span className="font-medium">自由贸易区Bond (Foreign Trade Zone Bond)：</span>
-                          <span className="text-gray-700">用于在自由贸易区内经营的企业。</span>
+                  <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    <FontAwesomeIcon icon={faListAlt} className="text-teal-500 mr-3" />
+                    其他类型的海关Bond
+                  </h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="bg-white p-4 rounded-lg shadow-sm">
+                      <div className="flex items-center mb-3">
+                        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white mr-3">
+                          <FontAwesomeIcon icon={faGlobe} className="text-sm" />
                         </div>
-                      </li>
-                      <li className="flex items-start">
-                        <span className="text-secondary font-bold mr-2">•</span>
-                        <div>
-                          <span className="font-medium">退税Bond (Drawback Bond)：</span>
-                          <span className="text-gray-700">用于申请进口关税退税的企业。</span>
+                        <h4 className="font-bold text-gray-800">自由贸易区Bond</h4>
+                      </div>
+                      <p className="text-gray-700 text-sm">用于在自由贸易区内经营的企业</p>
+                    </div>
+
+                    <div className="bg-white p-4 rounded-lg shadow-sm">
+                      <div className="flex items-center mb-3">
+                        <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white mr-3">
+                          <FontAwesomeIcon icon={faMoneyBillWave} className="text-sm" />
                         </div>
-                      </li>
-                      <li className="flex items-start">
-                        <span className="text-secondary font-bold mr-2">•</span>
-                        <div>
-                          <span className="font-medium">保税商品保管人Bond (Custodian of Bonded Merchandise)：</span>
-                          <span className="text-gray-700">用于保管保税商品的企业。</span>
+                        <h4 className="font-bold text-gray-800">退税Bond</h4>
+                      </div>
+                      <p className="text-gray-700 text-sm">用于申请进口关税退税的企业</p>
+                    </div>
+
+                    <div className="bg-white p-4 rounded-lg shadow-sm">
+                      <div className="flex items-center mb-3">
+                        <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white mr-3">
+                          <FontAwesomeIcon icon={faWarehouse} className="text-sm" />
                         </div>
-                      </li>
-                      <li className="flex items-start">
-                        <span className="text-secondary font-bold mr-2">•</span>
-                        <div>
-                          <span className="font-medium">国际承运人Bond (International Carrier Bond)：</span>
-                          <span className="text-gray-700">用于国际货物运输的承运人。</span>
+                        <h4 className="font-bold text-gray-800">保税商品保管人Bond</h4>
+                      </div>
+                      <p className="text-gray-700 text-sm">用于保管保税商品的企业</p>
+                    </div>
+
+                    <div className="bg-white p-4 rounded-lg shadow-sm">
+                      <div className="flex items-center mb-3">
+                        <div className="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center text-white mr-3">
+                          <FontAwesomeIcon icon={faShip} className="text-sm" />
                         </div>
-                      </li>
-                      <li className="flex items-start">
-                        <span className="text-secondary font-bold mr-2">•</span>
-                        <div>
-                          <span className="font-medium">进口商安全申报Bond (Importer Security Filing Bond)：</span>
-                          <span className="text-gray-700">用于确保进口商提交准确的安全申报信息。</span>
+                        <h4 className="font-bold text-gray-800">国际承运人Bond</h4>
+                      </div>
+                      <p className="text-gray-700 text-sm">用于国际货物运输的承运人</p>
+                    </div>
+
+                    <div className="bg-white p-4 rounded-lg shadow-sm">
+                      <div className="flex items-center mb-3">
+                        <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white mr-3">
+                          <FontAwesomeIcon icon={faShieldAlt} className="text-sm" />
                         </div>
-                      </li>
-                    </ul>
+                        <h4 className="font-bold text-gray-800">进口商安全申报Bond</h4>
+                      </div>
+                      <p className="text-gray-700 text-sm">用于确保进口商提交准确的安全申报信息</p>
+                    </div>
                   </div>
                 </div>
 
                 {/* 为什么需要海关Bond */}
-                <div>
-                  <h2 className="text-2xl font-bold text-secondary mb-6">为什么需要海关Bond?</h2>
+                <div className="bg-gradient-to-r from-teal-50 to-blue-50 p-8 rounded-xl mb-8">
+                  <h2 className="text-2xl font-bold text-secondary mb-6 flex items-center">
+                    <span className="w-10 h-10 bg-teal-500 rounded-full flex items-center justify-center text-white mr-3">
+                      <FontAwesomeIcon icon={faQuestionCircle} />
+                    </span>
+                    为什么需要海关Bond?
+                  </h2>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     {/* 原因1 */}
-                    <div className="bg-teal-500 text-white p-6 rounded-lg">
-                      <div className="flex items-center justify-center h-full">
-                        <p className="text-center font-medium">
-                          美国法律要求：所有商业进口都必须提供海关Bond，这是法律强制要求的。
-                        </p>
+                    <div className="bg-white p-6 rounded-lg shadow-sm transform transition-transform hover:scale-105">
+                      <div className="w-16 h-16 bg-teal-500 rounded-full flex items-center justify-center text-white mx-auto mb-4">
+                        <FontAwesomeIcon icon={faBalanceScale} className="text-2xl" />
                       </div>
+                      <h3 className="text-lg font-bold text-center text-gray-800 mb-3">法律要求</h3>
+                      <p className="text-center text-gray-700">
+                        所有商业进口都必须提供海关Bond，这是美国海关法规的强制要求。
+                      </p>
                     </div>
 
                     {/* 原因2 */}
-                    <div className="bg-teal-400 text-white p-6 rounded-lg">
-                      <div className="flex items-center justify-center h-full">
-                        <p className="text-center font-medium">
-                          保障进口流程：有了海关Bond，您的货物清关过程将更加顺畅，避免不必要的延误。
+                    <div className="bg-white p-6 rounded-lg shadow-sm transform transition-transform hover:scale-105">
+                      <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white mx-auto mb-4">
+                        <FontAwesomeIcon icon={faShieldAlt} className="text-2xl" />
+                      </div>
+                      <h3 className="text-lg font-bold text-center text-gray-800 mb-3">保障业务</h3>
+                      <p className="text-center text-gray-700">
+                        有了海关Bond，您的货物清关过程将更加顺畅，避免不必要的延误和风险。
+                      </p>
+                    </div>
+
+                    {/* 原因3 */}
+                    <div className="bg-white p-6 rounded-lg shadow-sm transform transition-transform hover:scale-105">
+                      <div className="w-16 h-16 bg-teal-600 rounded-full flex items-center justify-center text-white mx-auto mb-4">
+                        <FontAwesomeIcon icon={faHandHoldingUsd} className="text-2xl" />
+                      </div>
+                      <h3 className="text-lg font-bold text-center text-gray-800 mb-3">财务保障</h3>
+                      <p className="text-center text-gray-700">
+                        确保关税和费用的支付，避免因违规而导致的罚款和货物扣留。
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="bg-white p-6 rounded-lg shadow-sm">
+                    <div className="flex items-start">
+                      <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center text-white mr-4 mt-1 flex-shrink-0">
+                        <FontAwesomeIcon icon={faExclamationTriangle} className="text-xl" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-gray-800 mb-3">重要提示</h3>
+                        <p className="text-gray-700 leading-relaxed">
+                          海关Bond不仅是法律要求，也是保护您业务的重要工具。它确保您的进口流程符合美国海关的所有要求，避免因违规而导致的罚款和货物扣留。
+                        </p>
+                        <p className="text-gray-700 leading-relaxed mt-3 font-medium text-red-600">
+                          没有购买Bond等于在美国海关没有备案，即使有发送ISF也是无法在美国清关进口的，这样的货物抵港会被海关拒收甚至罚款。
                         </p>
                       </div>
                     </div>
                   </div>
-
-                  <p className="text-gray-700 leading-relaxed">
-                    海关Bond不仅是法律要求，也是保护您业务的重要工具。它确保您的进口流程符合美国海关的所有要求，避免因违规而导致的罚款和货物扣留。没有购买Bond等于在美国海关没有备案，即使有发送ISF也是无法在美国清关进口的，这样的货物抵港会被海关拒收甚至罚款。
-                  </p>
                 </div>
 
                 {/* 海关Bond的申请流程 */}
-                <div>
-                  <h2 className="text-2xl font-bold text-secondary mb-6">海关Bond的申请流程</h2>
+                <div className="bg-gradient-to-r from-blue-50 to-teal-50 p-8 rounded-xl mb-8">
+                  <h2 className="text-2xl font-bold text-secondary mb-6 flex items-center">
+                    <span className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white mr-3">
+                      <FontAwesomeIcon icon={faClipboardList} />
+                    </span>
+                    海关Bond的申请流程
+                  </h2>
 
-                  <div className="bg-white p-6 rounded-lg shadow-sm mb-6">
-                    <h3 className="font-semibold text-gray-800 mb-4">申请所需文件</h3>
-                    <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                      <li><span className="font-medium">CBP Form 301</span> - 海关Bond申请的主要表格</li>
-                      <li><span className="font-medium">Bond Application</span> - Bond申请表</li>
-                      <li><span className="font-medium">CBP Form 5106</span> - 进口商信息表（如适用）</li>
-                      <li><span className="font-medium">其他文件</span> - 如报关委托书(POA/Power Of Attorney)、合伙协议等</li>
-                    </ul>
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
+                    {/* 申请所需文件 */}
+                    <div className="md:col-span-6 bg-white p-6 rounded-lg shadow-sm">
+                      <div className="flex items-center mb-4">
+                        <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white mr-3">
+                          <FontAwesomeIcon icon={faFileAlt} />
+                        </div>
+                        <h3 className="text-lg font-bold text-gray-800">申请所需文件</h3>
+                      </div>
+                      <ul className="space-y-3">
+                        <li className="flex items-start">
+                          <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 mr-3 mt-0.5 flex-shrink-0">
+                            <span className="text-xs font-bold">1</span>
+                          </div>
+                          <div>
+                            <span className="font-medium text-gray-800">CBP Form 301</span>
+                            <p className="text-gray-600 text-sm">海关Bond申请的主要表格</p>
+                          </div>
+                        </li>
+                        <li className="flex items-start">
+                          <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 mr-3 mt-0.5 flex-shrink-0">
+                            <span className="text-xs font-bold">2</span>
+                          </div>
+                          <div>
+                            <span className="font-medium text-gray-800">Bond Application</span>
+                            <p className="text-gray-600 text-sm">Bond申请表</p>
+                          </div>
+                        </li>
+                        <li className="flex items-start">
+                          <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 mr-3 mt-0.5 flex-shrink-0">
+                            <span className="text-xs font-bold">3</span>
+                          </div>
+                          <div>
+                            <span className="font-medium text-gray-800">CBP Form 5106</span>
+                            <p className="text-gray-600 text-sm">进口商信息表（如适用）</p>
+                          </div>
+                        </li>
+                        <li className="flex items-start">
+                          <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 mr-3 mt-0.5 flex-shrink-0">
+                            <span className="text-xs font-bold">4</span>
+                          </div>
+                          <div>
+                            <span className="font-medium text-gray-800">其他文件</span>
+                            <p className="text-gray-600 text-sm">如报关委托书(POA)、合伙协议等</p>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+
+                    {/* 申请提交方式 */}
+                    <div className="md:col-span-6 bg-white p-6 rounded-lg shadow-sm">
+                      <div className="flex items-center mb-4">
+                        <div className="w-10 h-10 bg-teal-500 rounded-full flex items-center justify-center text-white mr-3">
+                          <FontAwesomeIcon icon={faPaperPlane} />
+                        </div>
+                        <h3 className="text-lg font-bold text-gray-800">申请提交方式</h3>
+                      </div>
+                      <div className="space-y-4">
+                        <div className="flex items-start">
+                          <div className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center text-teal-500 mr-3 mt-0.5 flex-shrink-0">
+                            <FontAwesomeIcon icon={faFileUpload} />
+                          </div>
+                          <div>
+                            <p className="text-gray-700">
+                              所有文件需扫描成分辨率不高于300的TIF格式，所有文档合并为一个邮件附件发送至美国海关指定邮箱。
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-start">
+                          <div className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center text-teal-500 mr-3 mt-0.5 flex-shrink-0">
+                            <FontAwesomeIcon icon={faPhoneAlt} />
+                          </div>
+                          <div>
+                            <p className="text-gray-700">
+                              对于办理流程或特殊申请等常规问题，可以直接联系美国海关相关部门。如果Bond申请被拒绝，可以联系Reject Team提交更正申请文件。
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="bg-white p-6 rounded-lg shadow-sm mb-6">
-                    <h3 className="font-semibold text-gray-800 mb-4">申请提交方式</h3>
-                    <p className="text-gray-700 mb-4">
-                      所有文件需扫描成分辨率不高于300的TIF格式，所有文档合并为一个邮件附件发送至美国海关指定邮箱。
-                    </p>
-                    <p className="text-gray-700">
-                      对于办理流程或特殊申请等常规问题，可以直接联系美国海关相关部门。如果Bond申请被拒绝，可以联系Reject Team提交更正申请文件。
-                    </p>
-                  </div>
-
+                  {/* 清关名义说明 */}
                   <div className="bg-white p-6 rounded-lg shadow-sm">
-                    <h3 className="font-semibold text-gray-800 mb-4">清关名义说明</h3>
-                    <p className="text-gray-700 mb-4">
-                      出口到美国的货物既可以用美国收货人(CONSIGNEE)的名义清关，也可以用发货人(SHIPPER)的名义清关。用谁的Bond就以谁的名义清关。
+                    <div className="flex items-center mb-5">
+                      <div className="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center text-white mr-3">
+                        <FontAwesomeIcon icon={faExchangeAlt} />
+                      </div>
+                      <h3 className="text-lg font-bold text-gray-800">清关名义说明</h3>
+                    </div>
+                    <p className="text-gray-700 mb-6 border-l-4 border-indigo-200 pl-4 py-2 bg-indigo-50">
+                      出口到美国的货物既可以用美国收货人(CONSIGNEE)的名义清关，也可以用发货人(SHIPPER)的名义清关。<span className="font-medium text-indigo-600">用谁的Bond就以谁的名义清关。</span>
                     </p>
-                    <div className="space-y-4">
-                      <div>
-                        <h4 className="font-medium text-gray-800">1. 用美国收货人的名义清关</h4>
-                        <ul className="list-disc pl-6 text-gray-700 mt-2">
-                          <li>如果由货代办理清关，美国收货人需提供他们的Bond，并与货代指定的报关行签署POA</li>
-                          <li>如果由美国收货人自己的报关行清关，中国货代需及时提供10+2表格相关信息</li>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="bg-blue-50 p-5 rounded-lg">
+                        <h4 className="font-bold text-gray-800 mb-3 flex items-center">
+                          <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white mr-3 flex-shrink-0">
+                            <span className="font-bold">1</span>
+                          </div>
+                          用美国收货人的名义清关
+                        </h4>
+                        <ul className="space-y-2 pl-11">
+                          <li className="flex items-start">
+                            <FontAwesomeIcon icon={faCheck} className="text-blue-500 mt-1 mr-2" />
+                            <p className="text-gray-700">如果由货代办理清关，美国收货人需提供他们的Bond，并与货代指定的报关行签署POA</p>
+                          </li>
+                          <li className="flex items-start">
+                            <FontAwesomeIcon icon={faCheck} className="text-blue-500 mt-1 mr-2" />
+                            <p className="text-gray-700">如果由美国收货人自己的报关行清关，中国货代需及时提供10+2表格相关信息</p>
+                          </li>
                         </ul>
                       </div>
-                      <div>
-                        <h4 className="font-medium text-gray-800">2. 用中国发货人的名义清关</h4>
-                        <ul className="list-disc pl-6 text-gray-700 mt-2">
-                          <li>通常会用美国货代指定的美国报关行办理清关</li>
-                          <li>需要提供POA(报关委托书)、中国营业执照、注册税号等文件</li>
-                          <li>需要申请购买Bond</li>
+
+                      <div className="bg-teal-50 p-5 rounded-lg">
+                        <h4 className="font-bold text-gray-800 mb-3 flex items-center">
+                          <div className="w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center text-white mr-3 flex-shrink-0">
+                            <span className="font-bold">2</span>
+                          </div>
+                          用中国发货人的名义清关
+                        </h4>
+                        <ul className="space-y-2 pl-11">
+                          <li className="flex items-start">
+                            <FontAwesomeIcon icon={faCheck} className="text-teal-500 mt-1 mr-2" />
+                            <p className="text-gray-700">通常会用美国货代指定的美国报关行办理清关</p>
+                          </li>
+                          <li className="flex items-start">
+                            <FontAwesomeIcon icon={faCheck} className="text-teal-500 mt-1 mr-2" />
+                            <p className="text-gray-700">需要提供POA(报关委托书)、中国营业执照、注册税号等文件</p>
+                          </li>
+                          <li className="flex items-start">
+                            <FontAwesomeIcon icon={faCheck} className="text-teal-500 mt-1 mr-2" />
+                            <p className="text-gray-700">需要申请购买Bond</p>
+                          </li>
                         </ul>
                       </div>
                     </div>
