@@ -13,6 +13,7 @@ const Auth = lazy(() => import('./pages/Auth'));
 const Terms = lazy(() => import('./pages/Terms'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const CookieSettings = lazy(() => import('./pages/CookieSettings'));
+const FMCQualification = lazy(() => import('./pages/FMCQualification'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 interface AppContentProps {
@@ -45,6 +46,7 @@ const AppContent = ({ isAIWobaoChatboxOpen, handleOpenChatbox, handleCloseChatbo
         <Route path="/terms" element={<Terms />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/cookie-settings" element={<CookieSettings />} />
+        <Route path="/fmc-qualification" element={<FMCQualification />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>

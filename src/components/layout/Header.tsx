@@ -387,14 +387,14 @@ const Header = () => {
                                   <FontAwesomeIcon icon={faFileAlt} className="mr-2 text-blue-500 w-4 h-4" />
                                   <span>美国公司EIN申请</span>
                                 </a>
-                                <a href="#us-customs-bond" className="flex items-center py-2 text-sm text-gray-600 hover:text-primary">
+                                <Link to="/fmc-qualification" className="flex items-center py-2 text-sm text-gray-600 hover:text-primary">
                                   <FontAwesomeIcon icon={faHandshake} className="mr-2 text-yellow-500 w-4 h-4" />
                                   <span>美国海关Bond</span>
-                                </a>
-                                <a href="#us-fmc-apply" className="flex items-center py-2 text-sm text-gray-600 hover:text-primary">
+                                </Link>
+                                <Link to="/fmc-qualification" className="flex items-center py-2 text-sm text-gray-600 hover:text-primary">
                                   <FontAwesomeIcon icon={faFileAlt} className="mr-2 text-yellow-500 w-4 h-4" />
                                   <span>美国FMC申请</span>
-                                </a>
+                                </Link>
                                 <a href="#canada-customs-bond" className="flex items-center py-2 text-sm text-gray-600 hover:text-primary">
                                   <FontAwesomeIcon icon={faHandshake} className="mr-2 text-yellow-500 w-4 h-4" />
                                   <span>加拿大海关Bond</span>
