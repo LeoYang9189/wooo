@@ -377,6 +377,93 @@ const FMCQualification = () => {
                   </div>
                 </div>
 
+                {/* FMC资质及AMS资质的作用 */}
+                <div>
+                  <h2 className="text-2xl font-bold text-primary mb-6">FMC资质（OTI-NVOCC Lisence）及AMS资质的作用（具体业务）</h2>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    {/* 作用1 */}
+                    <div className="bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+                      <div className="flex items-start mb-3">
+                        <span className="text-primary font-bold text-xl mr-3">01.</span>
+                        <p className="text-gray-700">
+                          合法合规地从事美国无船承运人业务，为托运人签发提单，提升企业核心竞争力。
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* 作用2 */}
+                    <div className="bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+                      <div className="flex items-start mb-3">
+                        <span className="text-primary font-bold text-xl mr-3">02.</span>
+                        <p className="text-gray-700">
+                          企业无需通过船代或是一代，可直接与船东以及美国资代开展业务。
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* 作用3 */}
+                    <div className="bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+                      <div className="flex items-start mb-3">
+                        <span className="text-primary font-bold text-xl mr-3">03.</span>
+                        <p className="text-gray-700">
+                          企业通过运价信息，可以直接和船东询价采购到最优价格并再次销售。
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* 作用4 */}
+                    <div className="bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+                      <div className="flex items-start mb-3">
+                        <span className="text-primary font-bold text-xl mr-3">04.</span>
+                        <p className="text-gray-700">
+                          与潜在发货人开发租船业务。
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* 作用5 */}
+                    <div className="bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+                      <div className="flex items-start mb-3">
+                        <span className="text-primary font-bold text-xl mr-3">05.</span>
+                        <p className="text-gray-700">
+                          签发提单或同等文件。
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* 作用6 */}
+                    <div className="bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+                      <div className="flex items-start mb-3">
+                        <span className="text-primary font-bold text-xl mr-3">06.</span>
+                        <p className="text-gray-700">
+                          租赁集装箱。
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* 作用7 */}
+                    <div className="bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+                      <div className="flex items-start mb-3">
+                        <span className="text-primary font-bold text-xl mr-3">07.</span>
+                        <p className="text-gray-700">
+                          拥有24小时申报服务系统提交AMS/ISF等，时间更可控、更灵活。
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* 作用8 */}
+                    <div className="bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+                      <div className="flex items-start mb-3">
+                        <span className="text-primary font-bold text-xl mr-3">08.</span>
+                        <p className="text-gray-700">
+                          随时掌握货物报关、清关状态、货物信息。
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 {/* 联系我们部分 */}
                 <div className="mt-12 bg-gray-50 p-6 rounded-lg border border-gray-200">
                   <h2 className="text-xl font-bold text-gray-800 mb-4">需要帮助？</h2>
