@@ -193,9 +193,9 @@ const Header = () => {
       }} />
       <div className="container-custom py-3 flex items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center cursor-pointer">
+        <Link to="/" className="flex items-center cursor-pointer">
           <span className="text-2xl font-bold" style={logoStyle}>Wo AI ！</span>
-        </div>
+        </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
