@@ -9,7 +9,7 @@ const PortalCTA: React.FC = () => {
   return (
     <section className="py-20 bg-white">
       <div className="container mx-auto px-4">
-        <div className="max-w-5xl mx-auto bg-gradient-to-r from-blue-600 to-blue-400 rounded-3xl p-12 relative overflow-hidden shadow-xl portal-shadow">
+        <div className="max-w-5xl mx-auto bg-gradient-to-r from-blue-600 to-blue-400 rounded-3xl p-12 relative overflow-hidden shadow-xl portal-shadow portal-wave">
           {/* 背景装饰 */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -mr-32 -mt-32"></div>
@@ -27,14 +27,14 @@ const PortalCTA: React.FC = () => {
                 type="primary" 
                 size="large" 
                 icon={<IconRight />}
-                className="h-12 px-8 bg-white text-blue-600 border-0 font-medium text-base hover:bg-blue-50"
+                className="portal-button portal-button-primary h-12 px-8 bg-white text-blue-600 border-0 font-medium text-base hover:bg-blue-50"
                 onClick={() => navigate('/saas-system')}
               >
                 注册/登录
               </Button>
               <Button 
                 size="large" 
-                className="h-12 px-8 border-white text-white hover:bg-blue-700 hover:border-blue-700 text-base"
+                className="portal-button portal-button-outline h-12 px-8 border-white text-white hover:bg-blue-700 hover:border-blue-700 text-base"
               >
                 联系我们
               </Button>

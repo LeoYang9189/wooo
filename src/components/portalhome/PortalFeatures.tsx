@@ -46,7 +46,7 @@ const PortalFeatures: React.FC = () => {
     <section className="py-20 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">系统功能特点</h2>
+          <h2 className="portal-heading portal-heading-lg mb-4">系统功能特点</h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             超级运价系统为您提供全方位的功能，满足企业内部管理需求
           </p>
@@ -56,9 +56,9 @@ const PortalFeatures: React.FC = () => {
           {features.map((feature, index) => (
             <div 
               key={index} 
-              className="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300"
+              className="portal-card p-8 hover:shadow-md transition-shadow duration-300"
             >
-              <div className="mb-5 w-16 h-16 flex items-center justify-center bg-blue-50 rounded-2xl">
+              <div className="portal-feature-icon mb-5">
                 {feature.icon}
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>

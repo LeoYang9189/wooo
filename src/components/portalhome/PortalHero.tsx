@@ -22,13 +22,13 @@ const PortalHero: React.FC = () => {
 
       <div className="container mx-auto px-4 pt-32 pb-24 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div>
+          <div className="portal-animate-fade-in">
             <div className="mb-6">
               <span className="inline-block py-1 px-3 bg-blue-50 text-blue-600 font-medium rounded-full text-sm">企业门户</span>
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
+            <h1 className="portal-heading portal-heading-xl text-gray-900 leading-tight mb-6">
               Your LOGO<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-400">企业物流管理系统</span>
+              <span className="portal-gradient-text">企业物流管理系统</span>
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-lg">
               针对企业内部员工的完整物流管理解决方案，轻松管理运价、询价、合约等业务流程。
@@ -40,7 +40,7 @@ const PortalHero: React.FC = () => {
                 className="h-12 px-8 bg-gradient-to-r from-blue-600 to-blue-400 border-0 text-base"
                 onClick={() => navigate('/saas-system')}
               >
-                注册/登录
+                进入系统
               </Button>
               <Button size="large" className="h-12 px-8 text-base">
                 了解更多
