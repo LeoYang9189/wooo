@@ -67,7 +67,7 @@ const Header = () => {
             },
             {
               label: '超级运价',
-              href: '#super-freight',
+              href: '/super-freight',
               icon: <FontAwesomeIcon icon={faCoins} className="mr-2 text-blue-500 w-4 h-4" />
             },
             {
