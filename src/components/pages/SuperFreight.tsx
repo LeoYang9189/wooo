@@ -1,8 +1,7 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShip, faTruck, faGlobe, faCoins, faSearch, faChartLine, faHandshake, faCheck, faUserTie, faArrowDown, faHistory, faBroadcastTower, faExchangeAlt } from '@fortawesome/free-solid-svg-icons';
-import octopusAvatar from '../../assets/octopus-avatar-new.svg';
+import { faShip, faTruck, faGlobe, faCoins, faSearch, faChartLine, faHandshake, faCheck, faArrowDown, faHistory, faBroadcastTower, faExchangeAlt } from '@fortawesome/free-solid-svg-icons';
 import Header from '../layout/Header';
 import Footer from '../layout/Footer';
 
