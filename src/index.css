@@ -348,3 +348,76 @@ body {
 .animate-blink {
   animation: blink 0.75s infinite;
 }
+
+/* 添加aspect ratio相关样式 */
+.aspect-ratio {
+  position: relative;
+  width: 100%;
+}
+
+.aspect-ratio-16\/9 {
+  padding-bottom: 56.25%;
+}
+
+.aspect-ratio-4\/3 {
+  padding-bottom: 75%;
+}
+
+.aspect-ratio-1\/1 {
+  padding-bottom: 100%;
+}
+
+.aspect-ratio > * {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 添加企业门户页面的自定义样式 */
+.portal-container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.portal-shadow {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.portal-gradient-blue {
+  background: linear-gradient(to right, #3182ce, #63b3ed);
+}
+
+.portal-gradient-text {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(to right, #3182ce, #63b3ed);
+}
+
+/* 确保z-index层级正确 */
+.z-behind {
+  z-index: -1;
+}
+
+.z-front {
+  z-index: 10;
+}
+
+/* 确保网格布局正常 */
+.grid-cols-portal {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .grid-cols-portal {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShip, faTruck, faGlobe, faCoins, faSearch, faChartLine, faHandshake, faCheck, faArrowDown, faHistory, faBroadcastTower, faExchangeAlt } from '@fortawesome/free-solid-svg-icons';
+import { faShip, faGlobe, faCoins, faSearch, faChartLine, faHandshake, faCheck, faArrowDown, faHistory, faBroadcastTower, faExchangeAlt, faPlane } from '@fortawesome/free-solid-svg-icons';
 import Header from '../layout/Header';
 import Footer from '../layout/Footer';
 
@@ -80,7 +80,7 @@ const SuperFreight = () => {
                 className="text-3xl md:text-4xl font-bold mb-6 leading-tight drop-shadow-md"
                 style={{ textShadow: '0 2px 4px rgba(0,0,0,0.2)' }}
               >
-                运价产品管理是国际物流数字化的基础
+                运价管理是国际物流数字化的基础
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
@@ -89,7 +89,9 @@ const SuperFreight = () => {
                 className="text-white text-base md:text-lg leading-relaxed drop-shadow-sm backdrop-blur-sm bg-black/5 p-4 rounded-lg"
                 style={{ textShadow: '0 1px 2px rgba(0,0,0,0.15)' }}
               >
-                覆盖国际物流海运箱运，海运拼箱，特种箱，冷冻箱，散杂货，进口，空运服务，海铁联运，集卡陆运，敏捷等全业务场景的报价系统，数百家中大型的企业的一致选择。
+                覆盖国际物流海运整箱，海运拼箱，特种箱，冷冻箱，散杂货，进口，空运
+服务，海铁联运，集卡陆运，驳船等全业务场景的报价系统，数百家中大型
+的企业的一致选择。
               </motion.p>
               
               <motion.div 
@@ -98,7 +100,7 @@ const SuperFreight = () => {
                 transition={{ duration: 0.6, delay: 0.4 }}
                 className="flex flex-wrap gap-4 mt-6"
               >
-                <Link to="/signup" className="inline-block">
+                <Link to="/saas-system" className="inline-block">
                   <button className="bg-white text-primary hover:bg-opacity-90 font-medium py-3 px-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                     立即使用
                   </button>
@@ -335,40 +337,47 @@ const SuperFreight = () => {
               <div className="lg:w-1/2">
                 <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 p-2">
                   <div className="bg-gray-50 rounded-xl p-4">
+                    <div className="flex flex-wrap mb-3 gap-2">
+                      <div className="bg-gradient-to-r from-primary to-secondary text-white px-4 py-2 rounded-md text-xs font-medium shadow-sm">
+                        导入自定义模板
+                      </div>
+                      <div className="bg-gradient-to-r from-primary to-secondary text-white px-4 py-2 rounded-md text-xs font-medium shadow-sm">
+                        批量加减价
+                      </div>
+                      <div className="bg-gradient-to-r from-primary to-secondary text-white px-4 py-2 rounded-md text-xs font-medium shadow-sm">
+                        批量操作
+                      </div>
+                    </div>
                     <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
                       <div className="bg-white px-5 py-4">
-                        <div className="flex items-center justify-between mb-4">
+                        <div className="grid grid-cols-5 mb-4">
                           <div className="text-lg font-semibold text-gray-800">目的港</div>
-                          <div className="flex space-x-1">
-                            <span className="text-lg font-semibold text-gray-800">20GP</span>
-                            <span className="text-lg font-semibold text-gray-800">40GP</span>
-                            <span className="text-lg font-semibold text-gray-800">40HQ</span>
-                          </div>
+                          <div className="text-lg font-semibold text-gray-800">班期</div>
+                          <div className="text-lg font-semibold text-gray-800">20GP</div>
+                          <div className="text-lg font-semibold text-gray-800">40GP</div>
+                          <div className="text-lg font-semibold text-gray-800">40HQ</div>
                         </div>
                         <div className="space-y-4">
-                          <div className="flex items-center justify-between py-2 border-b border-gray-100">
-                            <div className="text-gray-700">HONG KONG 香港</div>
-                            <div className="flex space-x-8">
-                              <span className="text-gray-700">$68</span>
-                              <span className="text-gray-700">$216</span>
-                              <span className="text-gray-700">$216</span>
-                            </div>
+                          <div className="grid grid-cols-5 py-2 border-b border-gray-100">
+                            <div className="text-gray-700">香港</div>
+                            <div className="text-gray-700">周一</div>
+                            <div className="text-gray-700">$68</div>
+                            <div className="text-gray-700">$216</div>
+                            <div className="text-gray-700">$216</div>
                           </div>
-                          <div className="flex items-center justify-between py-2 border-b border-gray-100">
-                            <div className="text-gray-700">BUSAN 釜山</div>
-                            <div className="flex space-x-8">
-                              <span className="text-gray-700">$68</span>
-                              <span className="text-gray-700">$216</span>
-                              <span className="text-gray-700">$216</span>
-                            </div>
+                          <div className="grid grid-cols-5 py-2 border-b border-gray-100">
+                            <div className="text-gray-700">釜山</div>
+                            <div className="text-gray-700">周一</div>
+                            <div className="text-gray-700">$68</div>
+                            <div className="text-gray-700">$216</div>
+                            <div className="text-gray-700">$216</div>
                           </div>
-                          <div className="flex items-center justify-between py-2">
-                            <div className="text-gray-700">HAMBURG 汉堡</div>
-                            <div className="flex space-x-8">
-                              <span className="text-gray-700">$84</span>
-                              <span className="text-gray-700">$300</span>
-                              <span className="text-gray-700">$300</span>
-                            </div>
+                          <div className="grid grid-cols-5 py-2">
+                            <div className="text-gray-700">汉堡</div>
+                            <div className="text-gray-700">周二</div>
+                            <div className="text-gray-700">$84</div>
+                            <div className="text-gray-700">$300</div>
+                            <div className="text-gray-700">$300</div>
                           </div>
                         </div>
                       </div>
@@ -387,15 +396,41 @@ const SuperFreight = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="flex flex-wrap justify-center mt-4 gap-2">
-                      <div className="bg-white px-3 py-2 rounded-full text-xs text-primary shadow-sm border border-primary/20">
-                        导入自定义模板
-                      </div>
-                      <div className="bg-white px-3 py-2 rounded-full text-xs text-primary shadow-sm border border-primary/20">
-                        批量加减价
-                      </div>
-                      <div className="bg-white px-3 py-2 rounded-full text-xs text-primary shadow-sm border border-primary/20">
-                        批量操作
+                    <div className="mt-4">
+                      <div className="relative overflow-hidden rounded-xl bg-white shadow-lg border border-gray-100">
+                        <div className="absolute -right-4 -top-4 h-16 w-16">
+                          <div className="absolute transform rotate-45 bg-gradient-to-r from-primary to-secondary text-center text-white font-semibold py-1 right-[-35px] top-[32px] w-[170px]">
+                            合约AI解析
+                          </div>
+                        </div>
+                        <div className="p-4">
+                          <div className="grid grid-cols-3 gap-3">
+                            <div className="flex items-center space-x-2">
+                              <div className="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center">
+                                <FontAwesomeIcon icon={faCoins} className="text-gray-600 text-xs" />
+                              </div>
+                              <span className="text-xs text-gray-600">运价项目模板一</span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <div className="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center">
+                                <FontAwesomeIcon icon={faCoins} className="text-gray-600 text-xs" />
+                              </div>
+                              <span className="text-xs text-gray-600">运价项目模板二</span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <div className="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center">
+                                <FontAwesomeIcon icon={faCoins} className="text-gray-600 text-xs" />
+                              </div>
+                              <span className="text-xs text-gray-600">运价项目模板三</span>
+                            </div>
+                          </div>
+                          <div className="mt-3 flex items-center justify-center">
+                            <div className="flex items-center space-x-2 text-primary">
+                              <FontAwesomeIcon icon={faArrowDown} className="text-xs" />
+                              <span className="text-xs">文件导入 0/3</span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -415,15 +450,14 @@ const SuperFreight = () => {
             <div className="flex flex-col lg:flex-row-reverse items-center gap-8">
               {/* 右侧内容区 */}
               <div className="lg:w-1/2 relative">
-                <div className="absolute -right-4 top-0 w-1 h-full bg-gradient-to-b from-secondary to-primary rounded-full"></div>
+                <div className="absolute -right-4 top-0 w-1 h-full bg-gradient-to-b from-teal-500 to-teal-600 rounded-full"></div>
                 <h2 className="text-3xl font-bold text-gray-800 mb-6">海运拼箱</h2>
                 <p className="text-gray-600 mb-4">
                   支持各种体积比设置，支持目的港20多种计算规则，
-                  支持各种自由混装费市场转换，自动累加，自动生
-                  成报价单，支持阶的规则，让拼箱报价So easy!
+                  支持各种自由混装费市场转换，自动累加，自动生成报价单，支持阶梯规则，让拼箱报价So easy!
                 </p>
                 <Link to="#" className="inline-block">
-                  <button className="bg-gradient-to-r from-secondary to-primary text-white font-medium py-2 px-6 rounded-full hover:shadow-lg transition-all duration-300 mt-4">
+                  <button className="bg-gradient-to-r from-teal-500 to-teal-600 text-white font-medium py-2 px-6 rounded-full hover:shadow-lg transition-all duration-300 mt-4">
                     预约演示
                   </button>
                 </Link>
@@ -433,40 +467,49 @@ const SuperFreight = () => {
               <div className="lg:w-1/2">
                 <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 p-2">
                   <div className="bg-gray-50 rounded-xl p-4">
+                    {/* 主要拼箱运价表 */}
                     <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-                      <div className="bg-white px-5 py-4">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="text-lg font-semibold text-gray-800">目的港</div>
-                          <div className="flex space-x-4">
-                            <span className="text-lg font-semibold text-gray-800">CBM</span>
-                            <span className="text-lg font-semibold text-gray-800">TON</span>
-                          </div>
+                      <div className="bg-white">
+                        {/* 表头 */}
+                        <div className="grid grid-cols-6 bg-gray-50 p-3 border-b border-gray-200">
+                          <div className="text-base font-semibold text-gray-700">目的港</div>
+                          <div className="text-base font-semibold text-gray-700">航程</div>
+                          <div className="text-base font-semibold text-gray-700">中转直达</div>
+                          <div className="text-base font-semibold text-gray-700">CBM</div>
+                          <div className="text-base font-semibold text-gray-700">TON</div>
+                          <div className="text-base font-semibold text-gray-700">体积范围</div>
                         </div>
-                        <div className="space-y-4">
-                          <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                        
+                        {/* 表格内容 */}
+                        <div className="divide-y divide-gray-100">
+                          <div className="grid grid-cols-6 p-3 hover:bg-gray-50">
                             <div className="text-gray-700">GENERAL SANTOS</div>
-                            <div className="flex space-x-8">
-                              <span className="text-gray-700">$68</span>
-                              <span className="text-gray-700">$148</span>
-                            </div>
+                            <div className="text-gray-700">32天</div>
+                            <div className="text-gray-700">直达</div>
+                            <div className="text-gray-700">$68</div>
+                            <div className="text-gray-700">$148</div>
+                            <div className="text-gray-700">100-300</div>
                           </div>
-                          <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                          <div className="grid grid-cols-6 p-3 hover:bg-gray-50">
                             <div className="text-gray-700">BUSAN</div>
-                            <div className="flex space-x-8">
-                              <span className="text-gray-700">$102</span>
-                              <span className="text-gray-700">$211</span>
-                            </div>
+                            <div className="text-gray-700">32天</div>
+                            <div className="text-gray-700">直达</div>
+                            <div className="text-gray-700">$102</div>
+                            <div className="text-gray-700">$211</div>
+                            <div className="text-gray-700">50-250</div>
                           </div>
-                          <div className="flex items-center justify-between py-2">
+                          <div className="grid grid-cols-6 p-3 hover:bg-gray-50">
                             <div className="text-gray-700">HAMBURG</div>
-                            <div className="flex space-x-8">
-                              <span className="text-gray-700">$57</span>
-                              <span className="text-gray-700">$300</span>
-                            </div>
+                            <div className="text-gray-700">75天</div>
+                            <div className="text-gray-700">中转</div>
+                            <div className="text-gray-700">$57</div>
+                            <div className="text-gray-700">$300</div>
+                            <div className="text-gray-700">75-180</div>
                           </div>
                         </div>
                       </div>
-                      <div className="bg-secondary/5 p-3 flex justify-between">
+                      
+                      <div className="bg-secondary/5 p-3 flex justify-between items-center">
                         <div className="flex items-center space-x-2">
                           <div className="w-8 h-8 bg-secondary/20 rounded-full flex items-center justify-center">
                             <FontAwesomeIcon icon={faCoins} className="text-secondary text-xs" />
@@ -480,11 +523,144 @@ const SuperFreight = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="flex justify-center mt-4">
-                      <div className="bg-white px-4 py-2 rounded-lg text-xs shadow-sm border border-secondary/20 flex items-center space-x-2">
-                        <span className="font-medium text-gray-700">当前币种</span>
-                        <span className="text-secondary font-bold">USD</span>
-                        <FontAwesomeIcon icon={faCheck} className="text-secondary text-xs" />
+                    
+                    {/* 内容展示区容器 - 调整高度和定位 */}
+                    <div className="mt-8 relative min-h-[400px] mb-12">
+                      {/* 币种转换浮窗 */}
+                      <div className="absolute -top-6 left-0 w-56 rounded-lg border border-teal-200 bg-white shadow-lg z-10 overflow-hidden">
+                        <div className="p-3 bg-teal-50 border-b border-teal-200">
+                          <h4 className="text-sm font-medium text-gray-700">币种转换</h4>
+                        </div>
+                        <div className="p-3">
+                          <div className="flex items-center justify-between mb-3 p-2 bg-teal-50 rounded-md border border-teal-100">
+                            <span className="text-sm text-gray-700">当前币种</span>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-teal-600 font-bold">USD</span>
+                              <div className="bg-teal-500 rounded-full p-1">
+                                <FontAwesomeIcon icon={faCheck} className="text-white text-xs" />
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="grid grid-cols-3 gap-2 mb-3">
+                            <div className="p-1.5 bg-gray-100 rounded text-center text-gray-600 text-xs border border-gray-200">KRW</div>
+                            <div className="p-1.5 bg-gray-100 rounded text-center text-gray-600 text-xs border border-gray-200">EUR</div>
+                            <div className="p-1.5 bg-gray-100 rounded text-center text-gray-600 text-xs border border-gray-200">CNY</div>
+                          </div>
+                          
+                          <div className="mt-2 border-t border-gray-200 pt-2">
+                            <div className="flex items-center justify-between bg-gray-50 rounded-lg p-1.5 border border-gray-200">
+                              <div className="text-gray-700 text-xs">1CBM=</div>
+                              <div className="flex-1 px-1">
+                                <div className="border-b border-gray-300 text-xs text-gray-400 truncate">输入数值</div>
+                              </div>
+                              <div className="text-gray-700 text-xs">KGS</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* 修改拼箱部分的主要表格和底部标题栏样式 */}
+                      <div className="absolute -top-50 right-0 w-72 bg-white rounded-xl overflow-hidden shadow-xl border border-gray-200 z-20">
+                        <div className="bg-gradient-to-r from-teal-500 to-teal-600 py-2.5 px-4 flex justify-between items-center">
+                          <div className="flex items-center text-white">
+                            <FontAwesomeIcon icon={faArrowDown} className="text-white mr-2" />
+                            <span className="font-medium">拼箱详情</span>
+                          </div>
+                          <div className="flex items-center space-x-2 text-white">
+                            <div className="w-5 h-5 flex items-center justify-center">
+                              <span>···</span>
+                            </div>
+                            <div className="w-5 h-5 rounded-full border border-white flex items-center justify-center">
+                              <FontAwesomeIcon icon={faCheck} className="text-xs" />
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="p-4 bg-teal-50/30">
+                          <div className="text-xs text-gray-600 mb-2">船公司 COSCO/ONE/OOCL</div>
+                          <div className="flex justify-between items-center mb-3">
+                            <div className="font-bold text-sm text-gray-800">SHANGHAI <span className="text-xs font-normal text-gray-500">CN</span></div>
+                            <div className="text-xs text-gray-600">上海 中国</div>
+                          </div>
+                          <div className="flex justify-between items-center mb-3">
+                            <div className="font-bold text-sm text-gray-800">ROTTERDAM <span className="text-xs font-normal text-gray-500">NL</span></div>
+                            <div className="text-xs text-gray-600">鹿特丹 荷兰</div>
+                          </div>
+                          
+                          <div className="flex items-center my-3 border-t border-teal-200/30 pt-3">
+                            <div className="text-xs text-gray-700 flex-1">直达 航程28天</div>
+                            <div className="text-xs text-gray-700">有效日期: 2023-08-18 10:30</div>
+                          </div>
+                          
+                          <div className="mt-3 mb-4 text-xs text-gray-600 bg-white p-2 rounded-md border border-gray-100">
+                            装货地点: 上海市浦东新区外高桥保税区华京路228号联检大楼
+                          </div>
+                          
+                          <div className="grid grid-cols-4 gap-3 mt-4 mb-4">
+                            <div className="text-center bg-white p-2 rounded-md shadow-sm">
+                              <div className="text-xs text-gray-600 mb-1">装期</div>
+                              <div className="text-xs font-medium text-gray-700">周三</div>
+                            </div>
+                            <div className="text-center bg-white p-2 rounded-md shadow-sm">
+                              <div className="text-xs text-gray-600 mb-1">截关期</div>
+                              <div className="text-xs font-medium text-gray-700">周四</div>
+                            </div>
+                            <div className="text-center bg-white p-2 rounded-md shadow-sm">
+                              <div className="text-xs text-gray-600 mb-1">截单期</div>
+                              <div className="text-xs font-medium text-gray-700">周二</div>
+                            </div>
+                            <div className="text-center bg-white p-2 rounded-md shadow-sm">
+                              <div className="text-xs text-gray-600 mb-1">开船期</div>
+                              <div className="text-xs font-medium text-gray-700">周日</div>
+                            </div>
+                          </div>
+                          
+                          <div className="grid grid-cols-3 gap-4 my-4">
+                            <div className="text-center bg-white py-3 px-2 rounded-lg shadow-sm border border-teal-200/40">
+                              <div className="text-lg font-bold text-teal-600">5</div>
+                              <div className="text-xs text-gray-600">CTN</div>
+                            </div>
+                            <div className="text-center bg-white py-3 px-2 rounded-lg shadow-sm border border-teal-200/40">
+                              <div className="text-lg font-bold text-teal-600">3511</div>
+                              <div className="text-xs text-gray-600">KGS</div>
+                            </div>
+                            <div className="text-center bg-white py-3 px-2 rounded-lg shadow-sm border border-teal-200/40">
+                              <div className="text-lg font-bold text-teal-600">18</div>
+                              <div className="text-xs text-gray-600">CBM</div>
+                            </div>
+                          </div>
+                          
+                          <div className="mt-3 p-3 bg-teal-50 rounded-lg text-xs">
+                            <div className="font-medium mb-2">📋 备注信息</div>
+                            <div className="text-gray-700">小柜限重20% CNY 4.25 / RT X 380 + CNY 42580m³</div>
+                          </div>
+                        </div>
+                        
+                        <div className="p-4 border-t border-gray-200">
+                          <div className="flex justify-between items-center mb-3">
+                            <div className="text-sm font-medium text-gray-700">拼箱费用 <span className="text-xs text-teal-500">预付</span></div>
+                            <div className="text-xs text-teal-500 flex items-center">
+                              <span>查看更多</span>
+                              <FontAwesomeIcon icon={faArrowDown} className="ml-1 text-xs" />
+                            </div>
+                          </div>
+                          
+                          <div className="grid grid-cols-3 gap-3 text-xs">
+                            <div className="flex justify-between p-2 bg-white rounded-md shadow-sm">
+                              <span>CBM</span>
+                              <span className="font-medium">$750</span>
+                            </div>
+                            <div className="flex justify-between p-2 bg-white rounded-md shadow-sm">
+                              <span>TON</span>
+                              <span className="font-medium">$950</span>
+                            </div>
+                            <div className="flex justify-between p-2 bg-white rounded-md shadow-sm">
+                              <span>BAF</span>
+                              <span className="font-medium">$1200</span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -504,15 +680,15 @@ const SuperFreight = () => {
             <div className="flex flex-col lg:flex-row items-center gap-8">
               {/* 左侧内容区 */}
               <div className="lg:w-1/2 relative">
-                <div className="absolute -left-4 top-0 w-1 h-full bg-gradient-to-b from-primary to-secondary rounded-full"></div>
+                <div className="absolute -left-4 top-0 w-1 h-full bg-gradient-to-b from-blue-500 to-blue-600 rounded-full"></div>
                 <h2 className="text-3xl font-bold text-gray-800 mb-6">空运运价</h2>
                 <p className="text-gray-600 mb-4">
-                  支持空运进出口运价，起运机场收费，目的机场收费
+                  支持空运进出口运价，起运机场费，目的机场费
                   信息管理维护，个性化展示，自定义加价，对标行业
                   主流空运平台。
                 </p>
                 <Link to="#" className="inline-block">
-                  <button className="bg-gradient-to-r from-primary to-secondary text-white font-medium py-2 px-6 rounded-full hover:shadow-lg transition-all duration-300 mt-4">
+                  <button className="bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium py-2 px-6 rounded-full hover:shadow-lg transition-all duration-300 mt-4">
                     预约演示
                   </button>
                 </Link>
@@ -521,97 +697,222 @@ const SuperFreight = () => {
               {/* 右侧图片展示 */}
               <div className="lg:w-1/2">
                 <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 p-2">
-                  <div className="bg-gray-50 rounded-xl p-4">
-                    <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                  <div className="bg-gray-50 rounded-xl p-4 relative overflow-visible" style={{ minHeight: "700px", width: "130%" }}>
+                    
+                    {/* 功能按钮区域 - 移到顶部 */}
+                    <div className="grid grid-cols-5 gap-2 mb-4" style={{ width: "70%" }}>
+                      <div className="bg-white p-3 rounded-lg shadow-sm border border-blue-100 flex flex-col items-center justify-center">
+                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mb-1">
+                          <FontAwesomeIcon icon={faPlane} className="text-blue-500 text-xs" />
+                        </div>
+                        <span className="text-xs text-gray-600 text-center">个性化展示</span>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg shadow-sm border border-blue-100 flex flex-col items-center justify-center">
+                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mb-1">
+                          <FontAwesomeIcon icon={faGlobe} className="text-blue-500 text-xs" />
+                        </div>
+                        <span className="text-xs text-gray-600 text-center">进出口运价</span>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg shadow-sm border border-blue-100 flex flex-col items-center justify-center">
+                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mb-1">
+                          <FontAwesomeIcon icon={faShip} className="text-blue-500 text-xs" />
+                        </div>
+                        <span className="text-xs text-gray-600 text-center">起运机场费</span>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg shadow-sm border border-blue-100 flex flex-col items-center justify-center">
+                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mb-1">
+                          <FontAwesomeIcon icon={faCoins} className="text-blue-500 text-xs" />
+                        </div>
+                        <span className="text-xs text-gray-600 text-center">目的机场费</span>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg shadow-sm border border-blue-100 flex flex-col items-center justify-center">
+                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mb-1">
+                          <FontAwesomeIcon icon={faChartLine} className="text-blue-500 text-xs" />
+                        </div>
+                        <span className="text-xs text-gray-600 text-center">自定义加价</span>
+                      </div>
+                    </div>
+                    
+                    {/* 主表格 */}
+                    <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm" style={{ width: "70%" }}>
                       <div className="bg-white px-5 py-4">
                         <div className="flex items-center justify-between mb-4">
                           <div className="text-lg font-semibold text-gray-800">目的机场</div>
-                          <div className="flex space-x-4">
+                          <div className="flex space-x-6">
                             <span className="text-lg font-semibold text-gray-800">45KG</span>
                             <span className="text-lg font-semibold text-gray-800">100KG</span>
                             <span className="text-lg font-semibold text-gray-800">300KG</span>
+                            <span className="text-lg font-semibold text-gray-800">1000KG</span>
                           </div>
                         </div>
                         <div className="space-y-4">
                           <div className="flex items-center justify-between py-2 border-b border-gray-100">
                             <div className="text-gray-700">PVG 浦东机场</div>
-                            <div className="flex space-x-6">
+                            <div className="flex space-x-10">
+                              <span className="text-gray-700">12</span>
                               <span className="text-gray-700">12</span>
                               <span className="text-gray-700">12</span>
                               <span className="text-gray-700">12</span>
                             </div>
                           </div>
                           <div className="flex items-center justify-between py-2 border-b border-gray-100">
-                            <div className="text-gray-700">HKG 香港</div>
-                            <div className="flex space-x-6">
+                            <div className="text-gray-700">HKG 香港机场</div>
+                            <div className="flex space-x-10">
                               <span className="text-gray-700">16.34</span>
                               <span className="text-gray-700">18.5</span>
+                              <span className="text-gray-700">20.3</span>
                               <span className="text-gray-700">20.3</span>
                             </div>
                           </div>
                           <div className="flex items-center justify-between py-2">
-                            <div className="text-gray-700">DXB 迪拜</div>
-                            <div className="flex space-x-6">
+                            <div className="text-gray-700">DXB 迪拜机场</div>
+                            <div className="flex space-x-10">
                               <span className="text-gray-700">34</span>
+                              <span className="text-gray-700">28</span>
                               <span className="text-gray-700">28</span>
                               <span className="text-gray-700">28</span>
                             </div>
                           </div>
                         </div>
                       </div>
-                      <div className="bg-primary/5 p-3 flex justify-between">
+                      <div className="bg-blue-500/5 p-3 flex justify-between">
                         <div className="flex items-center space-x-2">
-                          <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
-                            <FontAwesomeIcon icon={faTruck} className="text-primary text-xs" />
+                          <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
+                            <FontAwesomeIcon icon={faPlane} className="text-blue-500 text-xs" />
                           </div>
                           <span className="text-sm text-gray-700">空运详情</span>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center">
-                            <FontAwesomeIcon icon={faSearch} className="text-primary text-xs" />
+                          <div className="w-6 h-6 bg-blue-500/10 rounded-full flex items-center justify-center">
+                            <FontAwesomeIcon icon={faSearch} className="text-blue-500 text-xs" />
                           </div>
                         </div>
                       </div>
                     </div>
-                    <div className="grid grid-cols-5 gap-2 mt-4">
-                      <div className="bg-white p-3 rounded-lg shadow-sm border border-primary/10 flex flex-col items-center justify-center">
-                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mb-1">
-                          <FontAwesomeIcon icon={faTruck} className="text-blue-500 text-xs" />
+                    
+                    {/* 空运详情卡片 - 移到可见区域 */}
+                    <div className="absolute left-[230px] bottom-[30px] w-[330px] bg-white rounded-lg shadow-lg border border-blue-100 overflow-hidden z-10">
+                      {/* 右上角旋转标记 */}
+                      <div className="absolute -right-10 -top-10 w-20 h-20 bg-blue-500 rotate-45 opacity-70 z-0"></div>
+                      
+                      {/* 箭头连接线 */}
+                      <svg className="absolute" style={{ left: "-60px", top: "-30px", width: "60px", height: "30px" }}>
+                        <defs>
+                          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6" />
+                          </marker>
+                        </defs>
+                        <path d="M0,0 L50,20" stroke="#3b82f6" strokeWidth="2" markerEnd="url(#arrowhead)" />
+                      </svg>
+
+                      {/* 修改为票务样式 */}
+                      <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-3 flex justify-between items-center">
+                        <div className="flex items-center">
+                          <FontAwesomeIcon icon={faPlane} className="mr-2 text-sm" />
+                          <span className="font-medium">空运详情</span>
                         </div>
-                        <span className="text-xs text-gray-600 text-center">个性化展示</span>
+                        <div className="text-xs py-0.5 px-2 bg-white/20 rounded-full">
+                          <span>CA 东方航空</span>
+                        </div>
                       </div>
-                      <div className="bg-white p-3 rounded-lg shadow-sm border border-primary/10 flex flex-col items-center justify-center">
-                        <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center mb-1">
-                          <FontAwesomeIcon icon={faGlobe} className="text-indigo-500 text-xs" />
+                      
+                      <div className="p-3">
+                        {/* 起飞和降落区域 */}
+                        <div className="flex items-center justify-between mb-4 pt-1">
+                          <div className="text-center w-1/3">
+                            <div className="text-xs text-gray-500 mb-1">出发地</div>
+                            <div className="text-lg font-bold text-gray-800">PVG</div>
+                            <div className="text-xs text-gray-600">上海浦东</div>
+                          </div>
+                          
+                          <div className="flex-1 flex flex-col items-center justify-center px-2">
+                            <div className="w-full h-0.5 bg-gray-200 relative mb-1">
+                            </div>
+                            <div className="text-xs text-gray-500">航程: 32天</div>
+                          </div>
+                          
+                          <div className="text-center w-1/3">
+                            <div className="text-xs text-gray-500 mb-1">目的地</div>
+                            <div className="text-lg font-bold text-gray-800">DXB</div>
+                            <div className="text-xs text-gray-600">迪拜</div>
+                          </div>
                         </div>
-                        <span className="text-xs text-gray-600 text-center">进出口运价</span>
-                      </div>
-                      <div className="bg-white p-3 rounded-lg shadow-sm border border-primary/10 flex flex-col items-center justify-center">
-                        <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mb-1">
-                          <FontAwesomeIcon icon={faShip} className="text-purple-500 text-xs" />
+                        
+                        {/* 分隔条 */}
+                        <div className="w-full h-0.5 bg-gray-100 my-3"></div>
+                        
+                        {/* 重量信息 */}
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="text-sm text-gray-700">重量限制</div>
+                          <div className="text-sm font-medium text-teal-600">500kg-1000kg</div>
                         </div>
-                        <span className="text-xs text-gray-600 text-center">起运机场收费</span>
-                      </div>
-                      <div className="bg-white p-3 rounded-lg shadow-sm border border-primary/10 flex flex-col items-center justify-center">
-                        <div className="w-8 h-8 bg-pink-100 rounded-lg flex items-center justify-center mb-1">
-                          <FontAwesomeIcon icon={faCoins} className="text-pink-500 text-xs" />
+                        
+                        {/* 价格表格 - 更像票务样式 */}
+                        <div className="mb-3 border border-gray-100 rounded-lg overflow-hidden">
+                          <div className="bg-gray-50 px-3 py-2 border-b border-gray-100">
+                            <div className="text-xs font-medium text-gray-700">价格明细 (单位：CNY)</div>
+                          </div>
+                          <div className="grid grid-cols-5 gap-0 text-xs">
+                            <div className="border-r border-gray-100 p-2 flex flex-col items-center justify-center">
+                              <div className="text-gray-500 mb-1">+45</div>
+                              <div className="font-medium text-red-500">¥1000</div>
+                            </div>
+                            <div className="border-r border-gray-100 p-2 flex flex-col items-center justify-center">
+                              <div className="text-gray-500 mb-1">+100</div>
+                              <div className="font-medium text-red-500">¥20.8</div>
+                            </div>
+                            <div className="border-r border-gray-100 p-2 flex flex-col items-center justify-center">
+                              <div className="text-gray-500 mb-1">+300</div>
+                              <div className="font-medium text-red-500">¥40.5</div>
+                            </div>
+                            <div className="border-r border-gray-100 p-2 flex flex-col items-center justify-center">
+                              <div className="text-gray-500 mb-1">+500</div>
+                              <div className="font-medium text-red-500">¥32.5</div>
+                            </div>
+                            <div className="p-2 flex flex-col items-center justify-center">
+                              <div className="text-gray-500 mb-1">+1000</div>
+                              <div className="font-medium text-red-500">¥1000</div>
+                            </div>
+                          </div>
                         </div>
-                        <span className="text-xs text-gray-600 text-center">目的机场收费</span>
-                      </div>
-                      <div className="bg-white p-3 rounded-lg shadow-sm border border-primary/10 flex flex-col items-center justify-center">
-                        <div className="w-8 h-8 bg-teal-100 rounded-lg flex items-center justify-center mb-1">
-                          <FontAwesomeIcon icon={faChartLine} className="text-teal-500 text-xs" />
+                        
+                        {/* 备注卡片 */}
+                        <div className="bg-gray-50 rounded-lg p-3 text-xs">
+                          <div className="flex items-center mb-2">
+                            <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center mr-2">
+                              <FontAwesomeIcon icon={faCheck} className="text-blue-500 text-xs" />
+                            </div>
+                            <div className="font-medium text-gray-700">备注信息</div>
+                          </div>
+                          <div className="space-y-2 pl-7">
+                            <div className="flex justify-between items-center">
+                              <span className="text-gray-600">累计重量限制:</span>
+                              <span className="font-medium">5252 KG</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-gray-600">最低承运重量:</span>
+                              <span className="font-medium">5252 KG</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-gray-600">尺寸上限:</span>
+                              <span className="font-medium">300×500×1000cm</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-gray-600">币种:</span>
+                              <span className="font-medium">CNY</span>
+                            </div>
+                          </div>
                         </div>
-                        <span className="text-xs text-gray-600 text-center">自定义加价</span>
                       </div>
                     </div>
+                    
                   </div>
                 </div>
               </div>
             </div>
           </motion.div>
 
-          {/* 现船管理 */}
+          {/* 现舱管理 */}
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -622,15 +923,15 @@ const SuperFreight = () => {
             <div className="flex flex-col lg:flex-row-reverse items-center gap-8">
               {/* 右侧内容区 */}
               <div className="lg:w-1/2 relative">
-                <div className="absolute -right-4 top-0 w-1 h-full bg-gradient-to-b from-secondary to-primary rounded-full"></div>
-                <h2 className="text-3xl font-bold text-gray-800 mb-6">现船管理</h2>
+                <div className="absolute -right-4 top-0 w-1 h-full bg-gradient-to-b from-amber-500 to-amber-600 rounded-full"></div>
+                <h2 className="text-3xl font-bold text-gray-800 mb-6">现舱管理</h2>
                 <p className="text-gray-600 mb-4">
-                  支持现船管理，现船预定，现船审批，现船预约，
-                  现船申请，现船统计，现船在线支付预定，现船利
+                  支持现舱管理，现舱预定，现舱审批，现舱预约，
+                  现舱申请，现舱统计，现舱在线支付预定，现舱利
                   润统计，让船位管理更轻松。
                 </p>
                 <Link to="#" className="inline-block">
-                  <button className="bg-gradient-to-r from-secondary to-primary text-white font-medium py-2 px-6 rounded-full hover:shadow-lg transition-all duration-300 mt-4">
+                  <button className="bg-gradient-to-r from-amber-500 to-amber-600 text-white font-medium py-2 px-6 rounded-full hover:shadow-lg transition-all duration-300 mt-4">
                     预约演示
                   </button>
                 </Link>
@@ -677,31 +978,31 @@ const SuperFreight = () => {
                           </div>
                         </div>
                       </div>
-                      <div className="bg-secondary/5 p-3 flex justify-between">
+                      <div className="bg-amber-500/5 p-3 flex justify-between">
                         <div className="flex items-center space-x-2">
-                          <div className="w-8 h-8 bg-secondary/20 rounded-full flex items-center justify-center">
-                            <FontAwesomeIcon icon={faShip} className="text-secondary text-xs" />
+                          <div className="w-8 h-8 bg-amber-500/20 rounded-full flex items-center justify-center">
+                            <FontAwesomeIcon icon={faShip} className="text-amber-500 text-xs" />
                           </div>
-                          <span className="text-sm text-gray-700">现船详情</span>
+                          <span className="text-sm text-gray-700">现舱详情</span>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <div className="w-6 h-6 bg-secondary/10 rounded-full flex items-center justify-center">
-                            <FontAwesomeIcon icon={faSearch} className="text-secondary text-xs" />
+                          <div className="w-6 h-6 bg-amber-500/10 rounded-full flex items-center justify-center">
+                            <FontAwesomeIcon icon={faSearch} className="text-amber-500 text-xs" />
                           </div>
                         </div>
                       </div>
                     </div>
-                    <div className="bg-white rounded-lg shadow-sm mt-4 p-3 border border-secondary/20">
+                    <div className="bg-white rounded-lg shadow-sm mt-4 p-3 border border-amber-200/40">
                       <div className="flex flex-col space-y-2">
                         <div className="flex items-center text-sm text-gray-700">
-                          <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center mr-2">
-                            <FontAwesomeIcon icon={faCheck} className="text-blue-500 text-xs" />
+                          <div className="w-5 h-5 bg-amber-100 rounded-full flex items-center justify-center mr-2">
+                            <FontAwesomeIcon icon={faCheck} className="text-amber-500 text-xs" />
                           </div>
                           <span>客户名称"明海网"预定了20GP舱位请及时查看</span>
                         </div>
                         <div className="flex items-center text-sm text-gray-700">
-                          <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center mr-2">
-                            <FontAwesomeIcon icon={faCheck} className="text-blue-500 text-xs" />
+                          <div className="w-5 h-5 bg-amber-100 rounded-full flex items-center justify-center mr-2">
+                            <FontAwesomeIcon icon={faCheck} className="text-amber-500 text-xs" />
                           </div>
                           <span>客户名称"明海网"预定了40GP舱位请及时查看</span>
                         </div>
@@ -771,10 +1072,10 @@ const SuperFreight = () => {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <button className="bg-white text-primary hover:bg-gray-100 font-bold py-3 px-8 rounded-lg shadow-md transition-all duration-300">
-              免费试用
+              立即使用
             </button>
             <button className="bg-transparent hover:bg-white/10 border-2 border-white text-white font-bold py-3 px-8 rounded-lg shadow-md transition-all duration-300">
-              了解更多
+              预约演示
             </button>
           </div>
         </motion.div>
