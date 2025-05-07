@@ -13,12 +13,10 @@ import {
   DatePicker,
   Modal,
   Message,
-  Tag,
   Table,
-  Tooltip,
   Switch
 } from '@arco-design/web-react';
-import { IconSave, IconDelete, IconRobot, IconClose, IconPlus, IconMinus, IconSettings } from '@arco-design/web-react/icon';
+import { IconSave, IconDelete, IconRobot, IconPlus, IconMinus, IconSettings } from '@arco-design/web-react/icon';
 import { useNavigate } from 'react-router-dom';
 import SaasLayout from './SaasLayout';
 import './CreateFclInquiry.css'; // 复用已有的CSS
@@ -293,10 +291,10 @@ const CreatePrecarriageRate: React.FC = () => {
         terminal: '' // 清空码头
       });
     } else {
-      setFormState({
-        ...formState,
-        [key]: value
-      });
+    setFormState({
+      ...formState,
+      [key]: value
+    });
     }
   };
 
@@ -728,14 +726,14 @@ const CreatePrecarriageRate: React.FC = () => {
                     <div className="flex items-center justify-between mb-2">
                       <div className="text-gray-800 font-medium">起运地区域选择</div>
                       <div className="flex items-center gap-2">
-                        <Button 
-                          type="outline" 
-                          icon={<IconRobot />} 
-                          onClick={openAiModal}
+                      <Button 
+                        type="outline" 
+                        icon={<IconRobot />} 
+                        onClick={openAiModal}
                           size="mini"
-                        >
-                          AI识别
-                        </Button>
+                      >
+                        AI识别
+                      </Button>
                         <Button 
                           type="primary" 
                           icon={<IconPlus />} 
@@ -744,7 +742,7 @@ const CreatePrecarriageRate: React.FC = () => {
                         >
                           添加区域
                         </Button>
-                      </div>
+                    </div>
                     </div>
                     <div className="mb-2 text-xs text-gray-500">
                       提示：可添加多个区域，当选择2个及以上街道/村镇时，详细地址将禁用
@@ -845,8 +843,8 @@ const CreatePrecarriageRate: React.FC = () => {
                   </Col>
                 </Row>
               </div>
-            </Col>
-            
+                  </Col>
+                  
             {/* 右侧区域：目的港、码头、供应商 */}
             <Col span={12}>
               <div className="border rounded p-4 mb-4">
@@ -1007,8 +1005,8 @@ const CreatePrecarriageRate: React.FC = () => {
                       dataIndex: '20gp',
                       width: 120,
                       render: (value: string, record: RateItem) => (
-                        <Input
-                          placeholder="请输入运价"
+                      <Input 
+                        placeholder="请输入运价" 
                           value={value}
                           onChange={val => updateRateItem(record.key, '20gp', val)}
                           allowClear
@@ -1020,8 +1018,8 @@ const CreatePrecarriageRate: React.FC = () => {
                       dataIndex: '40gp',
                       width: 120,
                       render: (value: string, record: RateItem) => (
-                        <Input
-                          placeholder="请输入运价"
+                      <Input 
+                        placeholder="请输入运价" 
                           value={value}
                           onChange={val => updateRateItem(record.key, '40gp', val)}
                           allowClear
@@ -1033,8 +1031,8 @@ const CreatePrecarriageRate: React.FC = () => {
                       dataIndex: '40hc',
                       width: 120,
                       render: (value: string, record: RateItem) => (
-                        <Input
-                          placeholder="请输入运价"
+                      <Input 
+                        placeholder="请输入运价" 
                           value={value}
                           onChange={val => updateRateItem(record.key, '40hc', val)}
                           allowClear
@@ -1046,8 +1044,8 @@ const CreatePrecarriageRate: React.FC = () => {
                       dataIndex: '45hc',
                       width: 120,
                       render: (value: string, record: RateItem) => (
-                        <Input
-                          placeholder="请输入运价"
+                      <Input 
+                        placeholder="请输入运价" 
                           value={value}
                           onChange={val => updateRateItem(record.key, '45hc', val)}
                           allowClear
@@ -1059,8 +1057,8 @@ const CreatePrecarriageRate: React.FC = () => {
                       dataIndex: '40nor',
                       width: 120,
                       render: (value: string, record: RateItem) => (
-                        <Input
-                          placeholder="请输入运价"
+                      <Input 
+                        placeholder="请输入运价" 
                           value={value}
                           onChange={val => updateRateItem(record.key, '40nor', val)}
                           allowClear

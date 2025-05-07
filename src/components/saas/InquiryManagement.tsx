@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
-import { Card, Breadcrumb, Typography, Button, Space, Select, DatePicker, Table, Modal, Grid, Switch, Dropdown, Menu, Tooltip } from '@arco-design/web-react';
+import { Card, Breadcrumb, Typography, Button, Space, Select, Table, Modal, Grid, Switch, Dropdown, Menu, Tooltip } from '@arco-design/web-react';
 import { IconSearch, IconRefresh, IconFilter, IconList, IconDragDotVertical, IconEdit, IconDelete, IconDownload, IconEye, IconUndo, IconDown, IconPlus } from '@arco-design/web-react/icon';
 import { useNavigate } from 'react-router-dom';
 import SaasLayout from './SaasLayout';
 import './InquiryManagement.css';
 
 const Title = Typography.Title;
-const Option = Select.Option;
-const RangePicker = DatePicker.RangePicker;
+
+
 const Row = Grid.Row;
 const Col = Grid.Col;
 
 const InquiryManagement: React.FC = () => {
   // 筛选项状态
-  const [filter, setFilter] = useState({});
+  
   const [customTableModalVisible, setCustomTableModalVisible] = useState(false);
-  const [columnVisibility, setColumnVisibility] = useState({});
+  
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
   const onSelectChange = (keys: (string | number)[]) => setSelectedRowKeys(keys);
   const [current, setCurrent] = useState(1);
@@ -431,7 +431,7 @@ const InquiryManagement: React.FC = () => {
       >
         <div className="p-4">
           <Row gutter={[16, 16]}>
-            {fieldList.map((field, idx) => (
+            {fieldList.map((field) => (
               <Col span={8} key={field.key}>
                 <div className="custom-column-item border border-gray-200 rounded p-4 mt-3">
                   <div className="flex items-center justify-between mb-4">

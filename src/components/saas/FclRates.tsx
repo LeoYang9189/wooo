@@ -9,16 +9,16 @@ import {
   Breadcrumb,
   Typography,
   Tag,
-  Layout,
-  Menu,
+
+
   Modal,
   Upload,
   Message,
   Progress,
-  Avatar,
-  Dropdown,
-  Badge,
-  Divider,
+
+
+
+
   Switch,
   Grid,
   Tooltip
@@ -32,34 +32,34 @@ import {
   IconDelete, 
   IconRefresh, 
   IconFilter,
-  IconDashboard,
-  IconFile,
-  IconStorage,
-  IconSettings,
-  IconMenuFold,
-  IconMenuUnfold,
+
+
+
+
+
+
   IconRobot,
-  IconNotification,
-  IconMessage,
-  IconUser,
-  IconDown,
-  IconPoweroff,
-  IconSettings as IconSettingsOutline,
-  IconLanguage,
-  IconQuestionCircle,
+
+
+
+
+
+
+
+
   IconList,
   IconDragDotVertical
 } from '@arco-design/web-react/icon';
 import '@arco-design/web-react/dist/css/arco.css';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import SaasLayout from './SaasLayout';
 import './InquiryManagement.css';
 
 const Title = Typography.Title;
 const Option = Select.Option;
 const RangePicker = DatePicker.RangePicker;
-const MenuItem = Menu.Item;
-const SubMenu = Menu.SubMenu;
+
+
 const Row = Grid.Row;
 const Col = Grid.Col;
 
@@ -111,7 +111,7 @@ const waveAnimation = `
 
 const FclRates: React.FC = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
-  const [collapsed, setCollapsed] = useState(false);
+
   const [aiModalVisible, setAiModalVisible] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [shipPosition, setShipPosition] = useState(0);
@@ -144,19 +144,7 @@ const FclRates: React.FC = () => {
     weight: false,
     bookingDeadline: false
   });
-  const navigate = useNavigate();
 
-  const toggleCollapse = () => {
-    setCollapsed(!collapsed);
-  };
-
-  const handleMenuItemClick = (key: string) => {
-    if (key === '1') {
-      navigate('/saas-system');
-    } else if (key === '3') {
-      navigate('/fcl-rates');
-    }
-  };
 
   // 打开AI识别弹窗
   const openAiModal = () => {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   Card, 
   Breadcrumb, 
-  Typography, 
+  // Typography, 
   Button, 
   Space, 
   Input, 
@@ -20,7 +20,7 @@ import { useNavigate } from 'react-router-dom';
 import SaasLayout from './SaasLayout';
 import './CreateFclInquiry.css';
 
-const { Title } = Typography;
+
 const { Row, Col } = Grid;
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -102,10 +102,12 @@ const CreateFclInquiry: React.FC = () => {
     navigate('/inquiry-management');
   };
 
-  // 添加箱型箱量
+  // 未使用的函数
+  /*
   const handleAddContainer = () => {
-    // 展示添加箱型箱量的逻辑
+    // 实现未使用...
   };
+  */
 
   return (
     <SaasLayout 

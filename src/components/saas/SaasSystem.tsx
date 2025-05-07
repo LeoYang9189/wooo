@@ -1,42 +1,17 @@
-import React, { useState } from 'react';
-import { Layout, Menu, Button, Avatar, Dropdown, Space, Typography, Breadcrumb } from '@arco-design/web-react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Button, Typography, Breadcrumb } from '@arco-design/web-react';
+import {
+  IconFile,
+  IconMessage,
+  IconUser,
+  IconNav
+} from '@arco-design/web-react/icon';
 import '@arco-design/web-react/dist/css/arco.css';
 import SaasLayout from './SaasLayout';
 
-// 导入Arco Design图标
-import {
-  IconDashboard,
-  IconSettings,
-  IconUser,
-  IconMessage,
-  IconNotification,
-  IconDown,
-  IconMenuFold,
-  IconMenuUnfold,
-  IconFile,
-  IconStorage,
-  IconNav
-} from '@arco-design/web-react/icon';
-
-const MenuItem = Menu.Item;
-const SubMenu = Menu.SubMenu;
-const { Text, Title } = Typography;
+const { Title } = Typography;
 
 const SaasSystem: React.FC = () => {
-  const [collapsed, setCollapsed] = useState(false);
-  const navigate = useNavigate();
-
-  const toggleCollapse = () => {
-    setCollapsed(!collapsed);
-  };
-
-  const handleMenuItemClick = (key: string) => {
-    if (key === '3') {
-      navigate('/fcl-rates');
-    }
-  };
-
   return (
     <SaasLayout menuSelectedKey="1" breadcrumb={
       <Breadcrumb>

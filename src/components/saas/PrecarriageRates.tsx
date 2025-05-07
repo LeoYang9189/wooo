@@ -8,7 +8,6 @@ import {
   Card, 
   Breadcrumb,
   Typography,
-  Tag,
   Modal,
   Switch,
   Grid,
@@ -30,7 +29,6 @@ import {
   IconMore,
   IconCopy,
   IconEye,
-  IconCaretDown,
   IconToTop
 } from '@arco-design/web-react/icon';
 import { useNavigate } from 'react-router-dom';
@@ -44,10 +42,19 @@ const Row = Grid.Row;
 const Col = Grid.Col;
 
 // 定义状态类型和对应颜色
-const StatusColors = {
+/* 未使用的常量
+const StatusColors: Record<string, string> = {
   '正常': 'green',
   '过期': 'gray',
   '下架': 'red'
+};
+*/
+
+// 映射状态颜色到CSS类名
+const StatusColorClasses: Record<string, string> = {
+  '正常': 'bg-green-500',
+  '过期': 'bg-gray-500',
+  '下架': 'bg-red-500'
 };
 
 // 定义数据接口
@@ -137,11 +144,8 @@ const PrecarriageRates: React.FC = () => {
 
   // 获取运价状态标签
   const getRateStatusTag = (status: string) => {
-    let colorClass = '';
-    if (status === '正常') colorClass = 'bg-green-500';
-    else if (status === '过期') colorClass = 'bg-gray-500';
-    else if (status === '下架') colorClass = 'bg-red-500';
-    else colorClass = 'bg-blue-500';
+    // 使用 StatusColorClasses 对象来获取颜色类名
+    const colorClass = StatusColorClasses[status] || 'bg-blue-500';
     
     return (
       <div className="flex items-center">
@@ -152,7 +156,7 @@ const PrecarriageRates: React.FC = () => {
   };
 
   // 渲染更多操作下拉菜单
-  const renderMoreActions = (record: DataItem) => {
+  const renderMoreActions = () => {
     return (
       <Menu>
         <Menu.Item key="copy">
@@ -292,7 +296,7 @@ const PrecarriageRates: React.FC = () => {
       dataIndex: 'operation',
       fixed: 'right' as const,
       width: 180,
-      render: (_: any, record: DataItem) => (
+      render: (_: any, _record: DataItem) => (
         <div style={{display:'flex', flexWrap:'wrap', gap:4}}>
           <div style={{display:'flex', gap:4, width:'100%'}}>
             <Button type="text" size="mini" icon={<IconEye />}>查看</Button>
@@ -300,7 +304,7 @@ const PrecarriageRates: React.FC = () => {
           </div>
           <div style={{display:'flex', gap:4, width:'100%'}}>
             <Button type="text" size="mini" icon={<IconToTop />}>上架</Button>
-            <Dropdown droplist={renderMoreActions(record)} position="br">
+            <Dropdown droplist={renderMoreActions()} position="br">
               <Button type="text" size="mini" icon={<IconMore />}>更多</Button>
             </Dropdown>
           </div>
@@ -574,7 +578,7 @@ const PrecarriageRates: React.FC = () => {
       >
         <div className="p-4">
           <Row gutter={[16, 16]}>
-            {columnConfigList.map((column, idx) => (
+            {columnConfigList.map((column) => (
               <Col span={8} key={column.key}>
                 <div className="custom-column-item border border-gray-200 rounded p-4 mt-3">
                   <div className="flex items-center justify-between mb-4">

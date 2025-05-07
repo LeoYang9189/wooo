@@ -1,6 +1,6 @@
 import React, { useState, ReactNode } from 'react';
-import { Layout, Menu, Button, Avatar, Dropdown, Space, Typography, Breadcrumb, Badge, Divider } from '@arco-design/web-react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { Layout, Menu, Button, Avatar, Dropdown, Breadcrumb, Badge, Divider } from '@arco-design/web-react';
+import { useNavigate } from 'react-router-dom';
 import {
   IconDashboard,
   IconSettings,
@@ -21,7 +21,7 @@ import {
 const { Header, Sider, Content } = Layout;
 const MenuItem = Menu.Item;
 const SubMenu = Menu.SubMenu;
-const { Text } = Typography;
+
 
 interface SaasLayoutProps {
   children: ReactNode;
@@ -32,7 +32,7 @@ interface SaasLayoutProps {
 const SaasLayout: React.FC<SaasLayoutProps> = ({ children, breadcrumb, menuSelectedKey }) => {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
+  
 
   const toggleCollapse = () => setCollapsed(!collapsed);
 
