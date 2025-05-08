@@ -41,15 +41,6 @@ const RangePicker = DatePicker.RangePicker;
 const Row = Grid.Row;
 const Col = Grid.Col;
 
-// 定义状态类型和对应颜色
-/* 未使用的常量
-const StatusColors: Record<string, string> = {
-  '正常': 'green',
-  '过期': 'gray',
-  '下架': 'red'
-};
-*/
-
 // 映射状态颜色到CSS类名
 const StatusColorClasses: Record<string, string> = {
   '正常': 'bg-green-500',
@@ -60,50 +51,50 @@ const StatusColorClasses: Record<string, string> = {
 // 定义数据接口
 interface DataItem {
   key: string;
-  code: string; // 港前运价编号
-  rateType: string; // 运价类型
-  sublineType: string | null; // 支线类型
-  origin: string; // 起运地
-  destination: string; // 起运港
-  terminal: string; // 码头
-  vendor: string; // 供应商
-  '20gp': number;
-  '40gp': number;
-  '40hc': number;
-  '40nor': number;
-  '45hc': number;
+  code: string; // 尾程运价编号
+  origin: string; // 目的港
+  addressType: '第三方地址' | '亚马逊仓库' | '易仓'; // 配送地址类型
+  zipCode: string; // 邮编
+  address: string; // 地址
+  warehouseCode: string | null; // 仓库代码
+  agentName: string; // 代理名称
   validDateRange: string; // 有效期区间
-  status: '正常' | '过期' | '下架'; // 状态
   remark: string; // 备注
   creator: string; // 创建人
   createTime: string; // 创建时间
   updater: string; // 更新人
   updateTime: string; // 更新时间
+  status: '正常' | '过期' | '下架'; // 状态
+  '20gp': number; // 20GP价格
+  '40gp': number; // 40GP价格
+  '40hc': number; // 40HC价格
+  '45hc': number; // 45HC价格
+  '40nor': number; // 40NOR价格
 }
 
-const PrecarriageRates: React.FC = () => {
+const LastMileRates: React.FC = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
   const [customTableModalVisible, setCustomTableModalVisible] = useState(false);
   const [columnVisibility, setColumnVisibility] = useState({
     code: true,
-    rateType: true,
-    sublineType: true,
     origin: true,
-    destination: true,
-    terminal: true,
-    vendor: true,
-    '20gp': true,
-    '40gp': true,
-    '40hc': true,
-    '40nor': true,
-    '45hc': true,
+    addressType: true,
+    zipCode: true,
+    address: true,
+    warehouseCode: true,
+    agentName: true,
     validDateRange: true,
-    status: true,
     remark: true,
     creator: true,
     createTime: true,
     updater: true,
-    updateTime: true
+    updateTime: true,
+    status: true,
+    '20gp': true,
+    '40gp': true,
+    '40hc': true,
+    '45hc': true,
+    '40nor': true
   });
   const navigate = useNavigate();
 
@@ -129,24 +120,24 @@ const PrecarriageRates: React.FC = () => {
   const resetColumnVisibility = () => {
     setColumnVisibility({
       code: true,
-      rateType: true,
-      sublineType: true,
       origin: true,
-      destination: true,
-      terminal: true,
-      vendor: true,
-      '20gp': true,
-      '40gp': true,
-      '40hc': true,
-      '40nor': true,
-      '45hc': true,
+      addressType: true,
+      zipCode: true,
+      address: true,
+      warehouseCode: true,
+      agentName: true,
       validDateRange: true,
-      status: true,
       remark: true,
       creator: true,
       createTime: true,
       updater: true,
-      updateTime: true
+      updateTime: true,
+      status: true,
+      '20gp': true,
+      '40gp': true,
+      '40hc': true,
+      '45hc': true,
+      '40nor': true
     });
   };
 
@@ -184,7 +175,7 @@ const PrecarriageRates: React.FC = () => {
   // 生成表格列配置
   const columns = [
     {
-      title: '港前运价编号',
+      title: '尾程运价编号',
       dataIndex: 'code',
       width: 120,
       sorter: true,
@@ -192,48 +183,58 @@ const PrecarriageRates: React.FC = () => {
       render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
     },
     {
-      title: '运价类型',
-      dataIndex: 'rateType',
-      width: 100,
-      sorter: true,
-      resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
-    },
-    {
-      title: '支线类型',
-      dataIndex: 'sublineType',
-      width: 120,
-      sorter: true,
-      resizable: true,
-      render: (value: string | null) => value ? <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip> : '-'
-    },
-    {
-      title: '起运地',
+      title: '目的港',
       dataIndex: 'origin',
-      width: 180,
-      sorter: true,
-      resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
-    },
-    {
-      title: '起运港',
-      dataIndex: 'destination',
       width: 150,
       sorter: true,
       resizable: true,
       render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
     },
     {
-      title: '码头',
-      dataIndex: 'terminal',
+      title: '配送地址类型',
+      dataIndex: 'addressType',
       width: 120,
       sorter: true,
       resizable: true,
       render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
     },
     {
-      title: '供应商',
-      dataIndex: 'vendor',
+      title: '邮编',
+      dataIndex: 'zipCode',
+      width: 100,
+      sorter: true,
+      resizable: true,
+      render: (value: string, record: DataItem) => {
+        if (record.addressType === '亚马逊仓库' || record.addressType === '易仓') {
+          return '-';
+        }
+        return <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>;
+      }
+    },
+    {
+      title: '地址',
+      dataIndex: 'address',
+      width: 180,
+      sorter: true,
+      resizable: true,
+      render: (value: string, record: DataItem) => {
+        if (record.addressType === '亚马逊仓库' || record.addressType === '易仓') {
+          return '-';
+        }
+        return <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>;
+      }
+    },
+    {
+      title: '仓库代码',
+      dataIndex: 'warehouseCode',
+      width: 120,
+      sorter: true,
+      resizable: true,
+      render: (value: string | null) => value ? <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip> : '-'
+    },
+    {
+      title: '代理名称',
+      dataIndex: 'agentName',
       width: 150,
       sorter: true,
       resizable: true,
@@ -288,14 +289,6 @@ const PrecarriageRates: React.FC = () => {
       render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
     },
     {
-      title: '状态',
-      dataIndex: 'status',
-      width: 100,
-      sorter: true,
-      resizable: true,
-      render: (value: string) => <Tooltip content={value} mini>{getRateStatusTag(value)}</Tooltip>
-    },
-    {
       title: '备注',
       dataIndex: 'remark',
       width: 150,
@@ -336,6 +329,14 @@ const PrecarriageRates: React.FC = () => {
       render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
     },
     {
+      title: '状态',
+      dataIndex: 'status',
+      width: 100,
+      sorter: true,
+      resizable: true,
+      render: (value: string) => <Tooltip content={value} mini>{getRateStatusTag(value)}</Tooltip>
+    },
+    {
       title: '操作',
       dataIndex: 'operation',
       fixed: 'right' as const,
@@ -361,163 +362,161 @@ const PrecarriageRates: React.FC = () => {
   const data: DataItem[] = [
     {
       key: '1',
-      code: 'PCR2024050001',
-      rateType: '直拖',
-      sublineType: null,
-      origin: '浙江省杭州市萧山区',
-      destination: 'CNSHA | SHANGHAI',
-      terminal: '洋山',
-      vendor: '安吉物流',
-      '20gp': 800,
-      '40gp': 1200,
-      '40hc': 1300,
-      '40nor': 1250,
-      '45hc': 1500,
+      code: 'LMR2024050001',
+      origin: 'USLAX | LOS ANGELES',
+      addressType: '第三方地址',
+      zipCode: '92101',
+      address: 'San Diego, CA',
+      warehouseCode: null,
+      agentName: 'XPO TRUCK LLC',
       validDateRange: '2024-05-01 至 2024-12-31',
-      status: '正常',
       remark: '',
       creator: '张三',
       createTime: '2024-05-01 10:30:45',
       updater: '张三',
-      updateTime: '2024-05-01 10:30:45'
+      updateTime: '2024-05-01 10:30:45',
+      status: '正常',
+      '20gp': 1200,
+      '40gp': 1800,
+      '40hc': 1900,
+      '45hc': 2200,
+      '40nor': 2000
     },
     {
       key: '2',
-      code: 'PCR2024050002',
-      rateType: '支线',
-      sublineType: '湖州海铁',
-      origin: '浙江省湖州市吴兴区',
-      destination: 'CNNGB | NINGBO',
-      terminal: '北仑',
-      vendor: '中远海运',
-      '20gp': 400,
-      '40gp': 700,
-      '40hc': 750,
-      '40nor': 720,
-      '45hc': 850,
+      code: 'LMR2024050002',
+      origin: 'USNYC | NEW YORK',
+      addressType: '亚马逊仓库',
+      zipCode: '',
+      address: '',
+      warehouseCode: 'ONT8',
+      agentName: 'DRAYEASY INC',
       validDateRange: '2024-05-15 至 2024-11-30',
-      status: '正常',
       remark: '',
       creator: '李四',
       createTime: '2024-05-02 14:20:33',
       updater: '王五',
-      updateTime: '2024-05-03 09:15:10'
+      updateTime: '2024-05-03 09:15:10',
+      status: '正常',
+      '20gp': 980,
+      '40gp': 1650,
+      '40hc': 1750,
+      '45hc': 2050,
+      '40nor': 1800
     },
     {
       key: '3',
-      code: 'PCR2024050003',
-      rateType: '直拖',
-      sublineType: null,
-      origin: '江苏省苏州市工业园区',
-      destination: 'CNSHA | SHANGHAI',
-      terminal: '外高桥',
-      vendor: '德邦物流',
-      '20gp': 850,
-      '40gp': 1250,
-      '40hc': 1350,
-      '40nor': 1300,
-      '45hc': 1550,
+      code: 'LMR2024050003',
+      origin: 'DEHAM | HAMBURG',
+      addressType: '易仓',
+      zipCode: '',
+      address: '',
+      warehouseCode: 'LAX203',
+      agentName: 'AMERICAN FREIGHT SOLUTIONS',
       validDateRange: '2024-04-01 至 2024-12-15',
-      status: '正常',
       remark: '需提前24小时预约',
       creator: '赵六',
       createTime: '2024-04-28 16:45:22',
       updater: '赵六',
-      updateTime: '2024-04-28 16:45:22'
+      updateTime: '2024-04-28 16:45:22',
+      status: '正常',
+      '20gp': 1300,
+      '40gp': 1950,
+      '40hc': 2050,
+      '45hc': 2400,
+      '40nor': 2100
     },
     {
       key: '4',
-      code: 'PCR2024040001',
-      rateType: '直拖',
-      sublineType: null,
-      origin: '上海市嘉定区',
-      destination: 'CNSHA | SHANGHAI',
-      terminal: '洋山',
-      vendor: '顺丰物流',
-      '20gp': 750,
-      '40gp': 1150,
-      '40hc': 1250,
-      '40nor': 1200,
-      '45hc': 1450,
+      code: 'LMR2024040001',
+      origin: 'NLRTM | ROTTERDAM',
+      addressType: '第三方地址',
+      zipCode: '96001',
+      address: 'Redding, CA',
+      warehouseCode: null,
+      agentName: 'WEST COAST CARRIERS LLC',
       validDateRange: '2024-03-01 至 2024-05-31',
-      status: '过期',
       remark: '',
       creator: '孙七',
       createTime: '2024-03-20 11:30:05',
       updater: '李四',
-      updateTime: '2024-04-10 15:22:18'
+      updateTime: '2024-04-10 15:22:18',
+      status: '过期',
+      '20gp': 1100,
+      '40gp': 1700,
+      '40hc': 1800,
+      '45hc': 2150,
+      '40nor': 1950
     },
     {
       key: '5',
-      code: 'PCR2024050004',
-      rateType: '支线',
-      sublineType: '乍浦支线',
-      origin: '浙江省嘉兴市平湖市',
-      destination: 'CNSHA | SHANGHAI',
-      terminal: '洋山',
-      vendor: '海得航运',
-      '20gp': 450,
-      '40gp': 750,
-      '40hc': 800,
-      '40nor': 780,
-      '45hc': 920,
+      code: 'LMR2024050004',
+      origin: 'SGSIN | SINGAPORE',
+      addressType: '亚马逊仓库',
+      zipCode: '',
+      address: '',
+      warehouseCode: 'BFI4',
+      agentName: 'EAGLE EXPRESS LOGISTICS',
       validDateRange: '2024-05-01 至 2024-10-31',
-      status: '正常',
-      remark: '周一、周四发船',
+      remark: '周一、周四发车',
       creator: '王五',
       createTime: '2024-04-29 09:10:56',
       updater: '王五',
-      updateTime: '2024-04-29 09:10:56'
+      updateTime: '2024-04-29 09:10:56',
+      status: '正常',
+      '20gp': 1050,
+      '40gp': 1550,
+      '40hc': 1650,
+      '45hc': 1900,
+      '40nor': 1700
     },
     {
       key: '6',
-      code: 'PCR2024030001',
-      rateType: '支线',
-      sublineType: '海宁支线',
-      origin: '浙江省嘉兴市海宁市',
-      destination: 'CNNGB | NINGBO',
-      terminal: '北仑',
-      vendor: '浙江海洋航运',
-      '20gp': 500,
-      '40gp': 800,
-      '40hc': 850,
-      '40nor': 830,
-      '45hc': 950,
+      code: 'LMR2024030001',
+      origin: 'USLAX | LOS ANGELES',
+      addressType: '易仓',
+      zipCode: '',
+      address: '',
+      warehouseCode: 'ATL205',
+      agentName: 'INTERMODAL TRANSPORT CO',
       validDateRange: '2024-03-15 至 2024-04-30',
-      status: '下架',
       remark: '已停运',
       creator: '张三',
       createTime: '2024-03-10 13:50:42',
       updater: '张三',
-      updateTime: '2024-04-25 10:05:38'
+      updateTime: '2024-04-25 10:05:38',
+      status: '下架',
+      '20gp': 1150,
+      '40gp': 1750,
+      '40hc': 1850,
+      '45hc': 2200,
+      '40nor': 2000
     }
   ];
 
   // 筛选项列表
   const filterItems = [
     { 
-      label: '运价类型', 
-      placeholder: '请选择运价类型', 
-      options: ['直拖', '支线'] 
+      label: '配送地址类型', 
+      placeholder: '请选择配送地址类型', 
+      options: ['第三方地址', '亚马逊仓库', '易仓'] 
     },
     { 
-      label: '支线类型', 
-      placeholder: '请选择支线类型', 
-      options: ['湖州海铁', '海宁支线', '乍浦支线'] 
+      label: '目的港', 
+      placeholder: '请选择目的港',
+      options: ['USLAX | LOS ANGELES', 'USNYC | NEW YORK', 'DEHAM | HAMBURG', 'NLRTM | ROTTERDAM', 'SGSIN | SINGAPORE']
     },
     { 
-      label: '起运地', 
-      placeholder: '请选择起运地' 
+      label: '邮编', 
+      placeholder: '请输入邮编' 
     },
     { 
-      label: '起运港', 
-      placeholder: '请选择起运港',
-      options: ['CNSHA | SHANGHAI', 'CNNGB | NINGBO']
+      label: '地址', 
+      placeholder: '请输入地址' 
     },
     { 
-      label: '码头', 
-      placeholder: '请选择码头',
-      options: ['洋山', '外高桥', '北仑']
+      label: '仓库代码', 
+      placeholder: '请输入仓库代码'
     },
     { 
       label: '有效期', 
@@ -532,39 +531,39 @@ const PrecarriageRates: React.FC = () => {
 
   // 列配置项
   const columnConfigList = [
-    { label: '港前运价编号', key: 'code' },
-    { label: '运价类型', key: 'rateType' },
-    { label: '支线类型', key: 'sublineType' },
-    { label: '起运地', key: 'origin' },
-    { label: '起运港', key: 'destination' },
-    { label: '码头', key: 'terminal' },
-    { label: '供应商', key: 'vendor' },
+    { label: '尾程运价编号', key: 'code' },
+    { label: '目的港', key: 'origin' },
+    { label: '配送地址类型', key: 'addressType' },
+    { label: '邮编', key: 'zipCode' },
+    { label: '地址', key: 'address' },
+    { label: '仓库代码', key: 'warehouseCode' },
+    { label: '代理名称', key: 'agentName' },
     { label: '20GP', key: '20gp' },
     { label: '40GP', key: '40gp' },
     { label: '40HC', key: '40hc' },
     { label: '40NOR', key: '40nor' },
     { label: '45HC', key: '45hc' },
     { label: '有效期', key: 'validDateRange' },
-    { label: '状态', key: 'status' },
     { label: '备注', key: 'remark' },
     { label: '创建人', key: 'creator' },
     { label: '创建时间', key: 'createTime' },
     { label: '更新人', key: 'updater' },
-    { label: '更新时间', key: 'updateTime' }
+    { label: '更新时间', key: 'updateTime' },
+    { label: '状态', key: 'status' }
   ];
 
-  // 新增港前运价
-  const handleCreatePrecarriageRate = () => {
-    navigate('/saas/create-precarriage-rate');
+  // 新增尾程运价
+  const handleCreateLastMileRate = () => {
+    navigate('/saas/create-lastmile-rate');
   };
 
   return (
     <SaasLayout 
-      menuSelectedKey="22" 
+      menuSelectedKey="23" 
       breadcrumb={
         <Breadcrumb>
           <Breadcrumb.Item>门点服务管理</Breadcrumb.Item>
-          <Breadcrumb.Item>港前运价</Breadcrumb.Item>
+          <Breadcrumb.Item>尾程运价</Breadcrumb.Item>
         </Breadcrumb>
       }
     >
@@ -600,7 +599,7 @@ const PrecarriageRates: React.FC = () => {
       <Card>
         <div className="flex justify-between mb-4">
           <Space>
-            <Button type="primary" icon={<IconPlus />} onClick={handleCreatePrecarriageRate}>新增港前运价</Button>
+            <Button type="primary" icon={<IconPlus />} onClick={handleCreateLastMileRate}>新增尾程运价</Button>
             <Button icon={<IconUpload />}>批量导入</Button>
             <Button icon={<IconDownload />}>导出</Button>
           </Space>
@@ -673,4 +672,4 @@ const PrecarriageRates: React.FC = () => {
   );
 };
 
-export default PrecarriageRates; 
+export default LastMileRates; 

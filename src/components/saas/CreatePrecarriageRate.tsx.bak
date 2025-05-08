@@ -13,10 +13,12 @@ import {
   DatePicker,
   Modal,
   Message,
+  Tag,
   Table,
+  Tooltip,
   Switch
 } from '@arco-design/web-react';
-import { IconSave, IconDelete, IconRobot, IconPlus, IconMinus, IconSettings, IconUpload } from '@arco-design/web-react/icon';
+import { IconSave, IconDelete, IconRobot, IconClose, IconPlus, IconMinus, IconSettings } from '@arco-design/web-react/icon';
 import { useNavigate } from 'react-router-dom';
 import SaasLayout from './SaasLayout';
 import './CreateFclInquiry.css'; // 复用已有的CSS
@@ -200,17 +202,6 @@ interface RateItem {
   '40hc': string;
   '45hc': string;
   '40nor': string;
-  specialNote: string; // 添加特殊备注字段
-}
-
-// 非按箱型计费项目接口
-interface NonContainerRateItem {
-  key: number;
-  feeName: string;
-  currency: string;
-  unit: string; // 计费单位
-  price: string; // 单价
-  specialNote: string;
 }
 
 /**
@@ -251,20 +242,7 @@ const CreatePrecarriageRate: React.FC = () => {
       '40gp': '',
       '40hc': '',
       '45hc': '',
-      '40nor': '',
-      specialNote: '' // 添加特殊备注字段
-    }
-  ]);
-  
-  // 非按箱型计费列表状态
-  const [nonContainerRateList, setNonContainerRateList] = useState<NonContainerRateItem[]>([
-    {
-      key: 1,
-      feeName: '报关费',
-      currency: 'CNY',
-      unit: '票',
-      price: '',
-      specialNote: ''
+      '40nor': ''
     }
   ]);
   
@@ -292,7 +270,7 @@ const CreatePrecarriageRate: React.FC = () => {
     remark: ''
   });
 
-  // 起运港对应的码头选项
+  // 目的港对应的码头选项
   const terminalOptions: Record<string, OptionItem[]> = {
     'CNSHA | SHANGHAI': [
       { value: '外高桥', label: '外高桥' },
@@ -308,17 +286,17 @@ const CreatePrecarriageRate: React.FC = () => {
   // 更新保存表单状态
   const handleFormChange = (key: string, value: any) => {
     if (key === 'destination') {
-      // 如果修改了起运港，重置码头选择
+      // 如果修改了目的港，重置码头选择
       setFormState({
         ...formState,
         [key]: value,
         terminal: '' // 清空码头
       });
     } else {
-    setFormState({
-      ...formState,
-      [key]: value
-    });
+      setFormState({
+        ...formState,
+        [key]: value
+      });
     }
   };
 
@@ -581,8 +559,7 @@ const CreatePrecarriageRate: React.FC = () => {
         ...formState,
         ...values,
         areaList,
-        rateList,
-        nonContainerRateList
+        rateList
       };
       
       console.log('表单数据:', formData);
@@ -629,21 +606,7 @@ const CreatePrecarriageRate: React.FC = () => {
       '40gp': '',
       '40hc': '',
       '45hc': '',
-      '40nor': '',
-      specialNote: '' // 添加特殊备注字段
-    }]);
-  };
-  
-  // 添加非按箱型计费项目
-  const addNonContainerRateItem = () => {
-    const newKey = nonContainerRateList.length > 0 ? Math.max(...nonContainerRateList.map(item => item.key)) + 1 : 1;
-    setNonContainerRateList([...nonContainerRateList, {
-      key: newKey,
-      feeName: '压夜费',
-      currency: 'CNY',
-      unit: '票',
-      price: '',
-      specialNote: ''
+      '40nor': ''
     }]);
   };
   
@@ -657,16 +620,6 @@ const CreatePrecarriageRate: React.FC = () => {
     setRateList(newRateList);
   };
   
-  // 删除非按箱型计费项目
-  const removeNonContainerRateItem = (key: number) => {
-    if (nonContainerRateList.length === 1) {
-      Message.warning('至少需要保留一个计费项目');
-      return;
-    }
-    const newRateList = nonContainerRateList.filter(item => item.key !== key);
-    setNonContainerRateList(newRateList);
-  };
-  
   // 更新运价项目字段
   const updateRateItem = (key: number, field: string, value: string) => {
     const newRateList = rateList.map(item => {
@@ -676,17 +629,6 @@ const CreatePrecarriageRate: React.FC = () => {
       return item;
     });
     setRateList(newRateList);
-  };
-  
-  // 更新非按箱型计费项目字段
-  const updateNonContainerRateItem = (key: number, field: string, value: string) => {
-    const newRateList = nonContainerRateList.map(item => {
-      if (item.key === key) {
-        return { ...item, [field]: value };
-      }
-      return item;
-    });
-    setNonContainerRateList(newRateList);
   };
   
   // 打开箱型设置弹窗
@@ -734,8 +676,7 @@ const CreatePrecarriageRate: React.FC = () => {
           <div className="flex justify-between items-center mb-4">
             <Title heading={5}>新增港前运价</Title>
             <Space>
-              <Button type="primary" icon={<IconSave />} onClick={handleSubmit}>保存草稿</Button>
-              <Button type="primary" status="success" icon={<IconUpload />} onClick={handleSubmit}>直接上架</Button>
+              <Button type="primary" icon={<IconSave />} onClick={handleSubmit}>保存</Button>
               <Button icon={<IconDelete />} onClick={handleCancel}>取消</Button>
             </Space>
           </div>
@@ -787,14 +728,14 @@ const CreatePrecarriageRate: React.FC = () => {
                     <div className="flex items-center justify-between mb-2">
                       <div className="text-gray-800 font-medium">起运地区域选择</div>
                       <div className="flex items-center gap-2">
-                      <Button 
-                        type="outline" 
-                        icon={<IconRobot />} 
-                        onClick={openAiModal}
+                        <Button 
+                          type="outline" 
+                          icon={<IconRobot />} 
+                          onClick={openAiModal}
                           size="mini"
-                      >
-                        AI识别
-                      </Button>
+                        >
+                          AI识别
+                        </Button>
                         <Button 
                           type="primary" 
                           icon={<IconPlus />} 
@@ -803,7 +744,7 @@ const CreatePrecarriageRate: React.FC = () => {
                         >
                           添加区域
                         </Button>
-                    </div>
+                      </div>
                     </div>
                     <div className="mb-2 text-xs text-gray-500">
                       提示：可添加多个区域，当选择2个及以上街道/村镇时，详细地址将禁用
@@ -904,18 +845,18 @@ const CreatePrecarriageRate: React.FC = () => {
                   </Col>
                 </Row>
               </div>
-                  </Col>
-                  
-            {/* 右侧区域：起运港、码头、供应商 */}
+            </Col>
+            
+            {/* 右侧区域：目的港、码头、供应商 */}
             <Col span={12}>
               <div className="border rounded p-4 mb-4">
-                <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2 mb-4">起运港信息</div>
+                <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2 mb-4">目的信息</div>
                 
                 <Row gutter={[16, 16]}>
                   <Col span={24}>
-                    <FormItem label="起运港" field="destination" rules={[{ required: true, message: '请选择起运港' }]}>
+                    <FormItem label="目的港" field="destination" rules={[{ required: true, message: '请选择目的港' }]}>
                       <Select 
-                        placeholder="请选择起运港" 
+                        placeholder="请选择目的港" 
                         style={{ width: '100%' }}
                         value={formState.destination}
                         onChange={(value) => handleFormChange('destination', value)}
@@ -988,32 +929,26 @@ const CreatePrecarriageRate: React.FC = () => {
             <Col span={24}>
               <div className="border rounded p-4 mb-4">
                 <div className="flex justify-between items-center mb-4">
-                  <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2">运价信息</div>
+                  <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2">集装箱运价信息</div>
+                  <Space>
+                    <Button 
+                      type="secondary" 
+                      icon={<IconSettings />} 
+                      size="small"
+                      onClick={openBoxTypeModal}
+                    >
+                      设置箱型
+                    </Button>
+                    <Button 
+                      type="primary" 
+                      icon={<IconPlus />} 
+                      size="small"
+                      onClick={addRateItem}
+                    >
+                      增加条目
+                    </Button>
+                  </Space>
                 </div>
-                
-                {/* 按箱型计费条目 */}
-                <div className="mb-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <div className="text-gray-700 font-medium">按箱型计费条目</div>
-                    <Space>
-                      <Button 
-                        type="secondary" 
-                        icon={<IconSettings />} 
-                        size="small"
-                        onClick={openBoxTypeModal}
-                      >
-                        设置箱型
-                      </Button>
-                      <Button 
-                        type="primary" 
-                        icon={<IconPlus />} 
-                        size="small"
-                        onClick={addRateItem}
-                      >
-                        增加条目
-                      </Button>
-                    </Space>
-                  </div>
                 
                 <Table
                   borderCell={true}
@@ -1072,8 +1007,8 @@ const CreatePrecarriageRate: React.FC = () => {
                       dataIndex: '20gp',
                       width: 120,
                       render: (value: string, record: RateItem) => (
-                      <Input 
-                        placeholder="请输入运价" 
+                        <Input
+                          placeholder="请输入运价"
                           value={value}
                           onChange={val => updateRateItem(record.key, '20gp', val)}
                           allowClear
@@ -1085,8 +1020,8 @@ const CreatePrecarriageRate: React.FC = () => {
                       dataIndex: '40gp',
                       width: 120,
                       render: (value: string, record: RateItem) => (
-                      <Input 
-                        placeholder="请输入运价" 
+                        <Input
+                          placeholder="请输入运价"
                           value={value}
                           onChange={val => updateRateItem(record.key, '40gp', val)}
                           allowClear
@@ -1098,8 +1033,8 @@ const CreatePrecarriageRate: React.FC = () => {
                       dataIndex: '40hc',
                       width: 120,
                       render: (value: string, record: RateItem) => (
-                      <Input 
-                        placeholder="请输入运价" 
+                        <Input
+                          placeholder="请输入运价"
                           value={value}
                           onChange={val => updateRateItem(record.key, '40hc', val)}
                           allowClear
@@ -1111,8 +1046,8 @@ const CreatePrecarriageRate: React.FC = () => {
                       dataIndex: '45hc',
                       width: 120,
                       render: (value: string, record: RateItem) => (
-                      <Input 
-                        placeholder="请输入运价" 
+                        <Input
+                          placeholder="请输入运价"
                           value={value}
                           onChange={val => updateRateItem(record.key, '45hc', val)}
                           allowClear
@@ -1124,151 +1059,19 @@ const CreatePrecarriageRate: React.FC = () => {
                       dataIndex: '40nor',
                       width: 120,
                       render: (value: string, record: RateItem) => (
-                      <Input 
-                        placeholder="请输入运价" 
+                        <Input
+                          placeholder="请输入运价"
                           value={value}
                           onChange={val => updateRateItem(record.key, '40nor', val)}
                           allowClear
                         />
                       )
-                    }] : []),
-                    {
-                      title: '特殊备注',
-                      dataIndex: 'specialNote',
-                      width: 180,
-                      render: (value: string, record: RateItem) => (
-                        <Input 
-                          placeholder="请输入特殊备注" 
-                          value={value}
-                          onChange={val => updateRateItem(record.key, 'specialNote', val)}
-                          allowClear
-                        />
-                      )
-                    }
+                    }] : [])
                   ]}
                   data={rateList}
                   pagination={false}
                   rowKey="key"
                 />
-                </div>
-                
-                {/* 非按箱型计费条目 */}
-                <div>
-                  <div className="flex justify-between items-center mb-4">
-                    <div className="text-gray-700 font-medium">非按箱型计费条目</div>
-                    <Button 
-                      type="primary" 
-                      icon={<IconPlus />} 
-                      size="small"
-                      onClick={addNonContainerRateItem}
-                    >
-                      增加条目
-                    </Button>
-                  </div>
-                  
-                  <Table
-                    borderCell={true}
-                    columns={[
-                      {
-                        title: '操作',
-                        width: 80,
-                        render: (_, record: NonContainerRateItem) => (
-                          <Button 
-                            type="text"
-                            icon={<IconMinus />}
-                            onClick={() => removeNonContainerRateItem(record.key)}
-                            size="mini"
-                          />
-                        )
-                      },
-                      {
-                        title: '费用名称',
-                        dataIndex: 'feeName',
-                        width: 180,
-                        render: (value: string, record: NonContainerRateItem) => (
-                          <Select
-                            placeholder="请选择费用名称"
-                            value={value}
-                            onChange={val => updateNonContainerRateItem(record.key, 'feeName', val)}
-                            style={{ width: '100%' }}
-                            allowClear
-                          >
-                            <Select.Option value="报关费">报关费</Select.Option>
-                            <Select.Option value="压夜费">压夜费</Select.Option>
-                            <Select.Option value="落箱费">落箱费</Select.Option>
-                          </Select>
-                        )
-                      },
-                      {
-                        title: '币种',
-                        dataIndex: 'currency',
-                        width: 120,
-                        render: (value: string, record: NonContainerRateItem) => (
-                          <Select
-                            placeholder="请选择币种"
-                            value={value}
-                            onChange={val => updateNonContainerRateItem(record.key, 'currency', val)}
-                            style={{ width: '100%' }}
-                            allowClear
-                          >
-                            <Select.Option value="CNY">CNY</Select.Option>
-                            <Select.Option value="USD">USD</Select.Option>
-                            <Select.Option value="EUR">EUR</Select.Option>
-                          </Select>
-                        )
-                      },
-                      {
-                        title: '计费单位',
-                        dataIndex: 'unit',
-                        width: 120,
-                        render: (value: string, record: NonContainerRateItem) => (
-                          <Select
-                            placeholder="请选择计费单位"
-                            value={value}
-                            onChange={val => updateNonContainerRateItem(record.key, 'unit', val)}
-                            style={{ width: '100%' }}
-                            allowClear
-                          >
-                            <Select.Option value="票">票</Select.Option>
-                            <Select.Option value="单">单</Select.Option>
-                            <Select.Option value="次">次</Select.Option>
-                            <Select.Option value="天">天</Select.Option>
-                            <Select.Option value="小时">小时</Select.Option>
-                          </Select>
-                        )
-                      },
-                      {
-                        title: '单价',
-                        dataIndex: 'price',
-                        width: 120,
-                        render: (value: string, record: NonContainerRateItem) => (
-                          <Input 
-                            placeholder="请输入单价" 
-                            value={value}
-                            onChange={val => updateNonContainerRateItem(record.key, 'price', val)}
-                            allowClear
-                          />
-                        )
-                      },
-                      {
-                        title: '特殊备注',
-                        dataIndex: 'specialNote',
-                        width: 180,
-                        render: (value: string, record: NonContainerRateItem) => (
-                          <Input 
-                            placeholder="请输入特殊备注" 
-                            value={value}
-                            onChange={val => updateNonContainerRateItem(record.key, 'specialNote', val)}
-                            allowClear
-                          />
-                        )
-                      }
-                    ]}
-                    data={nonContainerRateList}
-                    pagination={false}
-                    rowKey="key"
-                  />
-                </div>
               </div>
             </Col>
           </Row>

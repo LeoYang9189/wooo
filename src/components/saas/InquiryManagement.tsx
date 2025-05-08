@@ -171,8 +171,20 @@ const InquiryManagement: React.FC = () => {
     { title: '箱型箱量', dataIndex: 'containerInfo', width: 160, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
     { title: '货好时间', dataIndex: 'cargoReadyTime', sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
     { title: '货盘性质', dataIndex: 'cargoNature', sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
-    { title: '船公司', dataIndex: 'shipCompany', width: 160, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
-    { title: '直达/中转', dataIndex: 'transitType', sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
+    { title: '船公司', dataIndex: 'shipCompany', width: 160, sorter: true, resizable: true, render: (val: string) => {
+        if (val === '不指定') {
+          return <Tooltip content="不指定" mini><span className="arco-ellipsis text-gray-400">不指定</span></Tooltip>;
+        }
+        return <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip>;
+      }
+    },
+    { title: '直达/中转', dataIndex: 'transitType', sorter: true, resizable: true, render: (val: string) => {
+        if (!val) {
+          return <Tooltip content="不限" mini><span className="arco-ellipsis text-gray-400">不限</span></Tooltip>;
+        }
+        return <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip>;
+      } 
+    },
     { title: '起运港', dataIndex: 'departurePort', width: 160, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
     { title: '卸货港', dataIndex: 'dischargePort', width: 160, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
     { title: '备注', dataIndex: 'remark', sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
@@ -209,34 +221,34 @@ const InquiryManagement: React.FC = () => {
   ];
   const data: any[] = [
     {
-      inquiryNo: 'R20240001', source: '内部', inquirer: '张三', inquiryStatus: '草稿', firstQuoteStatus: '待报价', mainQuoteStatus: '待报价', lastQuoteStatus: '待报价', containerInfo: '1*20GP+2*40HC', cargoReadyTime: '1周内', cargoNature: '询价', shipCompany: 'MSC | 地中海', transitType: '直达', departurePort: 'CNSHA | Shanghai', dischargePort: 'USLAX | Los Angeles', remark: '电子产品 优先考虑直达航线', createdAt: '2024-05-10 08:30:15', clientType: '正式客户', clientName: '上海测试',
+      inquiryNo: 'R20240001', source: '内部', inquirer: '张三', inquiryStatus: '草稿', firstQuoteStatus: '待报价', mainQuoteStatus: '待报价', lastQuoteStatus: '待报价', containerInfo: '1*20GP+2*40HC', cargoReadyTime: '1周内', cargoNature: '询价', shipCompany: '不指定', transitType: '直达', departurePort: 'CNSHA | Shanghai', dischargePort: 'USLAX | Los Angeles', remark: '电子产品 优先考虑直达航线', createdAt: '2024-05-10 08:30:15', clientType: '正式客户', clientName: '上海测试',
     },
     {
-      inquiryNo: 'R20240002', source: '内部', inquirer: '李四', inquiryStatus: '已提交', firstQuoteStatus: '已报价', mainQuoteStatus: '已报价', lastQuoteStatus: '待报价', containerInfo: '3*40HC', cargoReadyTime: '2周内', cargoNature: '实单', shipCompany: 'COSCO | 中远海运', transitType: '中转', departurePort: 'CNTAO | Qingdao', dischargePort: 'USNYC | New York', remark: '需要温控设备', createdAt: '2024-05-10 09:45:22', clientType: '正式客户', clientName: '深圳测试',
+      inquiryNo: 'R20240002', source: '内部', inquirer: '李四', inquiryStatus: '已提交', firstQuoteStatus: '已报价', mainQuoteStatus: '已报价', lastQuoteStatus: '待报价', containerInfo: '3*40HC', cargoReadyTime: '2周内', cargoNature: '实单', shipCompany: 'COSCO | 中远海运', transitType: '', departurePort: 'CNTAO | Qingdao', dischargePort: 'USNYC | New York', remark: '需要温控设备', createdAt: '2024-05-10 09:45:22', clientType: '正式客户', clientName: '深圳测试',
     },
     {
-      inquiryNo: 'R20240003', source: '内部', inquirer: '王五', inquiryStatus: '已提交', firstQuoteStatus: '已报价', mainQuoteStatus: '已报价', lastQuoteStatus: '已报价', containerInfo: '2*20GP', cargoReadyTime: '2024-06-15', cargoNature: '询价', shipCompany: 'OOCL | 东方海外', transitType: '直达', departurePort: 'CNNGB | Ningbo', dischargePort: 'DEHAM | Hamburg', remark: '', createdAt: '2024-05-10 10:15:30', clientType: '正式客户', clientName: '青岛测试',
+      inquiryNo: 'R20240003', source: '内部', inquirer: '王五', inquiryStatus: '已提交', firstQuoteStatus: '已报价', mainQuoteStatus: '已报价', lastQuoteStatus: '已报价', containerInfo: '2*20GP', cargoReadyTime: '2024-06-15', cargoNature: '询价', shipCompany: '不指定', transitType: '直达', departurePort: 'CNNGB | Ningbo', dischargePort: 'DEHAM | Hamburg', remark: '', createdAt: '2024-05-10 10:15:30', clientType: '正式客户', clientName: '青岛测试',
     },
     {
-      inquiryNo: 'R20240004', source: '内部', inquirer: '赵六', inquiryStatus: '草稿', firstQuoteStatus: '拒绝报价', mainQuoteStatus: '待报价', lastQuoteStatus: '待报价', containerInfo: '1*40HC+1*40HQ', cargoReadyTime: '1个月内', cargoNature: '实单', shipCompany: 'CMA | 达飞轮船', transitType: '中转', departurePort: 'CNXMN | Xiamen', dischargePort: 'GBFXT | Felixstowe', remark: '客户要求准班期', createdAt: '2024-05-10 10:20:45', clientType: '正式客户', clientName: '宁波测试',
+      inquiryNo: 'R20240004', source: '内部', inquirer: '赵六', inquiryStatus: '草稿', firstQuoteStatus: '拒绝报价', mainQuoteStatus: '待报价', lastQuoteStatus: '待报价', containerInfo: '1*40HC+1*40HQ', cargoReadyTime: '1个月内', cargoNature: '实单', shipCompany: 'CMA | 达飞轮船', transitType: '', departurePort: 'CNXMN | Xiamen', dischargePort: 'GBFXT | Felixstowe', remark: '客户要求准班期', createdAt: '2024-05-10 10:20:45', clientType: '正式客户', clientName: '宁波测试',
     },
     {
-      inquiryNo: 'R20240005', source: '内部', inquirer: '钱七', inquiryStatus: '草稿', firstQuoteStatus: '待报价', mainQuoteStatus: '待报价', lastQuoteStatus: '拒绝报价', containerInfo: '5*40GP', cargoReadyTime: '暂不确定', cargoNature: '询价', shipCompany: 'ONE | 海洋网联', transitType: '直达', departurePort: 'CNDLC | Dalian', dischargePort: 'SGSIN | Singapore', remark: '危险品6.1类', createdAt: '2024-05-10 10:25:10', clientType: '正式客户', clientName: '大连测试',
+      inquiryNo: 'R20240005', source: '内部', inquirer: '钱七', inquiryStatus: '草稿', firstQuoteStatus: '待报价', mainQuoteStatus: '待报价', lastQuoteStatus: '拒绝报价', containerInfo: '5*40GP', cargoReadyTime: '暂不确定', cargoNature: '询价', shipCompany: '不指定', transitType: '', departurePort: 'CNDLC | Dalian', dischargePort: 'SGSIN | Singapore', remark: '危险品6.1类', createdAt: '2024-05-10 10:25:10', clientType: '正式客户', clientName: '大连测试',
     },
     {
-      inquiryNo: 'R20240006', source: '内部', inquirer: '孙八', inquiryStatus: '草稿', firstQuoteStatus: '待报价', mainQuoteStatus: '待报价', lastQuoteStatus: '待报价', containerInfo: '2*20GP+2*40HC', cargoReadyTime: '2024-07-10', cargoNature: '实单', shipCompany: 'HAPAG | 德国赫伯罗特', transitType: '中转', departurePort: 'CNCAN | Guangzhou', dischargePort: 'NLRTM | Rotterdam', remark: '需要提供装箱方案', createdAt: '2024-05-10 10:30:25', clientType: '正式客户', clientName: '广州测试',
+      inquiryNo: 'R20240006', source: '内部', inquirer: '孙八', inquiryStatus: '草稿', firstQuoteStatus: '待报价', mainQuoteStatus: '待报价', lastQuoteStatus: '待报价', containerInfo: '2*20GP+2*40HC', cargoReadyTime: '2024-07-10', cargoNature: '实单', shipCompany: '不指定', transitType: '中转', departurePort: 'CNCAN | Guangzhou', dischargePort: 'NLRTM | Rotterdam', remark: '需要提供装箱方案', createdAt: '2024-05-10 10:30:25', clientType: '正式客户', clientName: '广州测试',
     },
     {
-      inquiryNo: 'R20240007', source: '内部', inquirer: '周九', inquiryStatus: '已提交', firstQuoteStatus: '已报价', mainQuoteStatus: '已报价', lastQuoteStatus: '待报价', containerInfo: '4*40HQ', cargoReadyTime: '2周内', cargoNature: '询价', shipCompany: 'ZIM | 以星航运', transitType: '直达', departurePort: 'CNSZX | Shenzhen', dischargePort: 'AEDXB | Dubai', remark: '', createdAt: '2024-05-10 10:35:10', clientType: '正式客户', clientName: '天津测试',
+      inquiryNo: 'R20240007', source: '内部', inquirer: '周九', inquiryStatus: '已提交', firstQuoteStatus: '已报价', mainQuoteStatus: '已报价', lastQuoteStatus: '待报价', containerInfo: '4*40HQ', cargoReadyTime: '2周内', cargoNature: '询价', shipCompany: 'ZIM | 以星航运', transitType: '', departurePort: 'CNSZX | Shenzhen', dischargePort: 'AEDXB | Dubai', remark: '', createdAt: '2024-05-10 10:35:10', clientType: '正式客户', clientName: '天津测试',
     },
     {
-      inquiryNo: 'R20240008', source: '内部', inquirer: '吴十', inquiryStatus: '草稿', firstQuoteStatus: '待报价', mainQuoteStatus: '待报价', lastQuoteStatus: '待报价', containerInfo: '1*20GP', cargoReadyTime: '1周内', cargoNature: '实单', shipCompany: 'MSC | 地中海', transitType: '中转', departurePort: 'CNQIN | Qinhuangdao', dischargePort: 'JPTYO | Tokyo', remark: '需要冷藏', createdAt: '2024-05-10 16:20:35', clientType: '正式客户', clientName: '厦门测试',
+      inquiryNo: 'R20240008', source: '内部', inquirer: '吴十', inquiryStatus: '草稿', firstQuoteStatus: '待报价', mainQuoteStatus: '待报价', lastQuoteStatus: '待报价', containerInfo: '1*20GP', cargoReadyTime: '1周内', cargoNature: '实单', shipCompany: '不指定', transitType: '中转', departurePort: 'CNQIN | Qinhuangdao', dischargePort: 'JPTYO | Tokyo', remark: '需要冷藏', createdAt: '2024-05-10 16:20:35', clientType: '正式客户', clientName: '厦门测试',
     },
     {
-      inquiryNo: 'R20240009', source: '内部', inquirer: '郑十一', inquiryStatus: '已提交', firstQuoteStatus: '已报价', mainQuoteStatus: '已报价', lastQuoteStatus: '待报价', containerInfo: '3*40GP+2*20GP', cargoReadyTime: '2024-08-01', cargoNature: '询价', shipCompany: 'MAERSK | 马士基', transitType: '直达', departurePort: 'CNTSN | Tianjin', dischargePort: 'KRPUS | Busan', remark: '高价值货物', createdAt: '2024-05-11 09:10:15', clientType: '正式客户', clientName: '中远测试',
+      inquiryNo: 'R20240009', source: '内部', inquirer: '郑十一', inquiryStatus: '已提交', firstQuoteStatus: '已报价', mainQuoteStatus: '已报价', lastQuoteStatus: '待报价', containerInfo: '3*40GP+2*20GP', cargoReadyTime: '2024-08-01', cargoNature: '询价', shipCompany: 'MAERSK | 马士基', transitType: '', departurePort: 'CNTSN | Tianjin', dischargePort: 'KRPUS | Busan', remark: '高价值货物', createdAt: '2024-05-11 09:10:15', clientType: '正式客户', clientName: '中远测试',
     },
     {
-      inquiryNo: 'R20240010', source: '内部', inquirer: '王十二', inquiryStatus: '草稿', firstQuoteStatus: '已报价', mainQuoteStatus: '待报价', lastQuoteStatus: '已报价', containerInfo: '2*40HC', cargoReadyTime: '暂不确定', cargoNature: '实单', shipCompany: 'EVERGREEN | 长荣海运', transitType: '中转', departurePort: 'CNLYG | Lianyungang', dischargePort: 'MYPKG | Port Klang', remark: '需要提供报关资料', createdAt: '2024-05-11 10:25:40', clientType: '正式客户', clientName: '中国测试',
+      inquiryNo: 'R20240010', source: '内部', inquirer: '王十二', inquiryStatus: '草稿', firstQuoteStatus: '已报价', mainQuoteStatus: '待报价', lastQuoteStatus: '已报价', containerInfo: '2*40HC', cargoReadyTime: '暂不确定', cargoNature: '实单', shipCompany: '不指定', transitType: '', departurePort: 'CNLYG | Lianyungang', dischargePort: 'MYPKG | Port Klang', remark: '需要提供报关资料', createdAt: '2024-05-11 10:25:40', clientType: '正式客户', clientName: '中国测试',
     },
   ];
 

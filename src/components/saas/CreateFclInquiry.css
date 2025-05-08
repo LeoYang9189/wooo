@@ -28,6 +28,11 @@
 .match-price-table .arco-table-th {
   background-color: #F7F8FA;
   font-weight: 600;
+  white-space: nowrap !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  padding: 10px 12px;
 }
 
 .match-price-table .arco-table-td {
@@ -35,6 +40,7 @@
   text-overflow: ellipsis;
   overflow: hidden;
   max-width: 200px;
+  padding: 10px 12px;
 }
 
 /* 按钮样式 */
@@ -83,4 +89,25 @@
   border-radius: 4px;
   padding: 16px;
   margin-bottom: 16px;
+}
+
+/* 统一表格样式 */
+.match-price-table {
+  width: 100%;
+}
+
+/* 单元格内容溢出处理 */
+.match-price-table .arco-table-td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 表格内查看按钮样式 */
+.view-link {
+  color: #165DFF;
+  cursor: pointer;
+}
+
+.view-link:hover {
+  text-decoration: underline;
 } 

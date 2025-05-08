@@ -117,7 +117,7 @@ const SaasLayout: React.FC<SaasLayoutProps> = ({ children, breadcrumb, menuSelec
             }
           >
             <MenuItem key="22" onClick={() => navigate('/precarriage-rates')}>港前运价</MenuItem>
-            <MenuItem key="23">尾程运价</MenuItem>
+            <MenuItem key="23" onClick={() => navigate('/lastmile-rates')}>尾程运价</MenuItem>
           </SubMenu>
           <SubMenu
             key="sub2"
@@ -156,7 +156,7 @@ const SaasLayout: React.FC<SaasLayoutProps> = ({ children, breadcrumb, menuSelec
           >
             <MenuItem key="16">船公司管理</MenuItem>
             <MenuItem key="17">港口管理</MenuItem>
-            <MenuItem key="18">航线管理</MenuItem>
+            <MenuItem key="18" onClick={() => navigate('/route-management')}>航线管理</MenuItem>
             <MenuItem key="19">货币管理</MenuItem>
           </SubMenu>
           <MenuItem key="12">

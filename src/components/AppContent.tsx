@@ -23,6 +23,10 @@ const InquiryManagement = lazy(() => import('./saas/InquiryManagement'));
 const CreateFclInquiry = lazy(() => import('./saas/CreateFclInquiry'));
 const PrecarriageRates = lazy(() => import('./saas/PrecarriageRates'));
 const CreatePrecarriageRate = lazy(() => import('./saas/CreatePrecarriageRate'));
+const LastMileRates = lazy(() => import('./saas/LastMileRates'));
+const CreateLastMileRate = lazy(() => import('./saas/CreateLastMileRate'));
+const RouteManagement = lazy(() => import('./saas/RouteManagement'));
+const CreateRoute = lazy(() => import('./saas/CreateRoute'));
 
 interface AppContentProps {
   isAIWobaoChatboxOpen: boolean;
@@ -63,6 +67,10 @@ const AppContent = ({ isAIWobaoChatboxOpen, handleOpenChatbox, handleCloseChatbo
         <Route path="/saas/create-inquiry/fcl" element={<CreateFclInquiry />} />
         <Route path="/precarriage-rates" element={<PrecarriageRates />} />
         <Route path="/saas/create-precarriage-rate" element={<CreatePrecarriageRate />} />
+        <Route path="/lastmile-rates" element={<LastMileRates />} />
+        <Route path="/saas/create-lastmile-rate" element={<CreateLastMileRate />} />
+        <Route path="/route-management" element={<RouteManagement />} />
+        <Route path="/saas/create-route" element={<CreateRoute />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>

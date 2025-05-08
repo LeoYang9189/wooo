@@ -351,7 +351,7 @@ const SuperFreight = () => {
                     <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
                       <div className="bg-white px-5 py-4">
                         <div className="grid grid-cols-5 mb-4">
-                          <div className="text-lg font-semibold text-gray-800">目的港</div>
+                          <div className="text-lg font-semibold text-gray-800">起运港</div>
                           <div className="text-lg font-semibold text-gray-800">班期</div>
                           <div className="text-lg font-semibold text-gray-800">20GP</div>
                           <div className="text-lg font-semibold text-gray-800">40GP</div>
@@ -453,7 +453,7 @@ const SuperFreight = () => {
                 <div className="absolute -right-4 top-0 w-1 h-full bg-gradient-to-b from-teal-500 to-teal-600 rounded-full"></div>
                 <h2 className="text-3xl font-bold text-gray-800 mb-6">海运拼箱</h2>
                 <p className="text-gray-600 mb-4">
-                  支持各种体积比设置，支持目的港20多种计算规则，
+                  支持各种体积比设置，支持起运港20多种计算规则，
                   支持各种自由混装费市场转换，自动累加，自动生成报价单，支持阶梯规则，让拼箱报价So easy!
                 </p>
                 <Link to="#" className="inline-block">
@@ -472,7 +472,7 @@ const SuperFreight = () => {
                       <div className="bg-white">
                         {/* 表头 */}
                         <div className="grid grid-cols-6 bg-gray-50 p-3 border-b border-gray-200">
-                          <div className="text-base font-semibold text-gray-700">目的港</div>
+                          <div className="text-base font-semibold text-gray-700">起运港</div>
                           <div className="text-base font-semibold text-gray-700">航程</div>
                           <div className="text-base font-semibold text-gray-700">中转直达</div>
                           <div className="text-base font-semibold text-gray-700">CBM</div>
