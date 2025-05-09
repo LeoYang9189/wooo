@@ -23,6 +23,8 @@ import {
   IconLocation,
   IconInfoCircle
 } from '@arco-design/web-react/icon';
+import './ContainerSystem.css';
+import ContainerBackground from './ContainerBackground';
 
 const { Header, Sider, Content } = Layout;
 const MenuItem = Menu.Item;
@@ -87,17 +89,19 @@ const ContainerSaasLayout: React.FC<ContainerSaasLayoutProps> = ({ children, bre
           selectedKeys={[menuSelectedKey || '1']}
           defaultOpenKeys={['sub1']}
           style={{ width: '100%' }}
+          className="container-menu"
         >
-          <MenuItem key="1" onClick={() => handleMenuItemClick('1')}>
+          <MenuItem key="1" onClick={() => handleMenuItemClick('1')} className="container-menu-item">
             <IconDashboard />
             <span>控制台</span>
           </MenuItem>
-          <MenuItem key="2">
+          <MenuItem key="2" className="container-menu-item">
             <IconApps />
             <span>数据概览</span>
           </MenuItem>
           <SubMenu
             key="sub1"
+            className="container-menu-item"
             title={
               <span>
                 <IconStorage />
@@ -113,6 +117,7 @@ const ContainerSaasLayout: React.FC<ContainerSaasLayoutProps> = ({ children, bre
           </SubMenu>
           <SubMenu
             key="sub2"
+            className="container-menu-item"
             title={
               <span>
                 <IconCalendar />
@@ -126,6 +131,7 @@ const ContainerSaasLayout: React.FC<ContainerSaasLayoutProps> = ({ children, bre
           </SubMenu>
           <SubMenu
             key="sub3"
+            className="container-menu-item"
             title={
               <span>
                 <IconLocation />
@@ -139,6 +145,7 @@ const ContainerSaasLayout: React.FC<ContainerSaasLayoutProps> = ({ children, bre
           </SubMenu>
           <SubMenu
             key="sub4"
+            className="container-menu-item"
             title={
               <span>
                 <IconFile />
@@ -153,6 +160,7 @@ const ContainerSaasLayout: React.FC<ContainerSaasLayoutProps> = ({ children, bre
           </SubMenu>
           <SubMenu
             key="sub5"
+            className="container-menu-item"
             title={
               <span>
                 <IconSettings />
@@ -165,7 +173,7 @@ const ContainerSaasLayout: React.FC<ContainerSaasLayoutProps> = ({ children, bre
             <MenuItem key="20">场站管理</MenuItem>
             <MenuItem key="21">供应商管理</MenuItem>
           </SubMenu>
-          <MenuItem key="22">
+          <MenuItem key="22" className="container-menu-item">
             <IconInfoCircle />
             <span>公告管理</span>
           </MenuItem>
@@ -232,7 +240,8 @@ const ContainerSaasLayout: React.FC<ContainerSaasLayoutProps> = ({ children, bre
             </Dropdown>
           </div>
         </Header>
-        <Content className="p-6 bg-gray-50 min-h-[calc(100vh-64px)] overflow-auto">
+        <Content className="p-6 bg-gray-50 min-h-[calc(100vh-64px)] overflow-auto relative">
+          <ContainerBackground />
           {children}
         </Content>
       </Layout>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Card, Grid, Typography, Statistic, Space, Button, Table, Badge, Dropdown, Menu, Tag } from '@arco-design/web-react';
 import { IconMoreVertical, IconRefresh, IconCalendar, IconExport, IconUserGroup, IconStorage, IconBulb, IconRobot } from '@arco-design/web-react/icon';
 import ContainerSaasLayout from './ContainerSaasLayout';
+import './ContainerSystem.css';
 
 const { Row, Col } = Grid;
 const { Title, Paragraph, Text } = Typography;
@@ -102,10 +103,10 @@ const ContainerSystem: React.FC = () => {
       </div>
 
       {/* 数据概览卡片 */}
-      <Row gutter={[16, 16]} className="mb-6">
+      <Row gutter={[16, 16]} className="mb-6 container-stats-wrapper">
         {containerStatusData.map((item, index) => (
           <Col span={6} key={index}>
-            <Card bordered={false} className="h-full shadow-sm hover:shadow-md transition-shadow">
+            <Card bordered={false} className="h-full shadow-sm hover:shadow-md transition-shadow status-card container-stats-card">
               <Statistic 
                 title={
                   <div className="text-base font-medium text-gray-600">{item.title}</div>
@@ -149,7 +150,7 @@ const ContainerSystem: React.FC = () => {
               </Dropdown>
             </div>
             
-            <div className="h-64 flex justify-center items-center border border-gray-100 rounded-lg bg-gray-50">
+            <div className="h-64 flex justify-center items-center border border-gray-100 rounded-lg bg-gray-50 chart-placeholder">
               <div className="text-center text-gray-400">
                 <IconStorage style={{ fontSize: 48 }} className="mb-2" />
                 <div>箱型分布图表将在此显示</div>
@@ -174,7 +175,7 @@ const ContainerSystem: React.FC = () => {
               </Dropdown>
             </div>
             
-            <div className="h-64 flex justify-center items-center border border-gray-100 rounded-lg bg-gray-50">
+            <div className="h-64 flex justify-center items-center border border-gray-100 rounded-lg bg-gray-50 chart-placeholder">
               <div className="text-center text-gray-400">
                 <IconRobot style={{ fontSize: 48 }} className="mb-2" />
                 <div>地域分布地图将在此显示</div>
@@ -195,7 +196,7 @@ const ContainerSystem: React.FC = () => {
             </div>
             
             <div className="space-y-3">
-              <div className="p-3 border border-warning-2 bg-warning-1 rounded-lg">
+              <div className="p-3 border border-warning-2 bg-warning-1 rounded-lg alert-card">
                 <div className="flex items-center">
                   <Badge status="warning" />
                   <Text className="ml-2 font-medium">超期滞留预警</Text>
@@ -205,7 +206,7 @@ const ContainerSystem: React.FC = () => {
                 </div>
               </div>
               
-              <div className="p-3 border border-danger-2 bg-danger-1 rounded-lg">
+              <div className="p-3 border border-danger-2 bg-danger-1 rounded-lg alert-card">
                 <div className="flex items-center">
                   <Badge status="error" />
                   <Text className="ml-2 font-medium">箱损严重预警</Text>
@@ -215,7 +216,7 @@ const ContainerSystem: React.FC = () => {
                 </div>
               </div>
               
-              <div className="p-3 border border-info-2 bg-info-1 rounded-lg">
+              <div className="p-3 border border-info-2 bg-info-1 rounded-lg alert-card">
                 <div className="flex items-center">
                   <Badge status="processing" />
                   <Text className="ml-2 font-medium">库存不足预警</Text>
@@ -242,6 +243,7 @@ const ContainerSystem: React.FC = () => {
               pagination={{ pageSize: 5, simple: true }}
               border={false}
               size="small"
+              className="operations-table"
               columns={[
                 {
                   title: '操作类型',
@@ -264,7 +266,7 @@ const ContainerSystem: React.FC = () => {
                   dataIndex: 'status',
                   width: 90,
                   render: (status) => (
-                    <Tag color={statusColorMap[status]}>{status}</Tag>
+                    <Tag color={statusColorMap[status]} className="container-status-tag">{status}</Tag>
                   ),
                 },
                 {
