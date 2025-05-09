@@ -72,7 +72,7 @@ const AppContent = ({ isAIWobaoChatboxOpen, handleOpenChatbox, handleCloseChatbo
         <Route path="/saas/create-lastmile-rate" element={<CreateLastMileRate />} />
         <Route path="/route-management" element={<RouteManagement />} />
         <Route path="/saas/create-route" element={<CreateRoute />} />
-        <Route path="/container-system" element={<ContainerSystem />} />
+        <Route path="/smartainer/*" element={<ContainerSystem />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>

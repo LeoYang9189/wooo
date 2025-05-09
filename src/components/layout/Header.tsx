@@ -78,7 +78,7 @@ const Header = () => {
             },
             {
               label: '智慧集装箱',
-              href: '/container-system',
+              href: '/smartainer',
               isNew: true,
               icon: <FontAwesomeIcon icon={faBoxes} className="mr-2 text-green-500 w-4 h-4" />
             },

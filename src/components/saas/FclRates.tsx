@@ -363,7 +363,7 @@ const FclRates: React.FC = () => {
       width: 100,
       render: (value: string) => (
         <Tooltip content={value} mini>
-          <Tag color={value === '舱位充足' ? 'green' : 'orange'} size="small">
+          <Tag color={value === '舱位充足' ? 'blue' : 'orange'} size="small">
             {value}
           </Tag>
         </Tooltip>
@@ -1098,7 +1098,7 @@ const FclRates: React.FC = () => {
                   {/* 底部信息 */}
                   <div className="mt-10 pt-6 border-t border-gray-100">
                     <div className="flex items-center text-gray-500 text-sm mb-2">
-                      <div className="w-4 h-4 rounded-full bg-green-500 mr-2 flex-shrink-0"></div>
+                      <div className="w-4 h-4 rounded-full bg-blue-500 mr-2 flex-shrink-0"></div>
                       <span>支持格式：PDF、Word、Excel、图片</span>
                     </div>
                     <div className="flex items-center text-gray-500 text-sm">
@@ -1211,16 +1211,16 @@ const FclRates: React.FC = () => {
             <div className="p-10 text-center relative">
               {/* 成功状态背景装饰 */}
               <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-0 right-0 w-60 h-60 bg-green-50 rounded-full opacity-60 -mr-20 -mt-20"></div>
+                <div className="absolute top-0 right-0 w-60 h-60 bg-blue-50 rounded-full opacity-60 -mr-20 -mt-20"></div>
                 <div className="absolute bottom-0 left-0 w-40 h-40 bg-blue-50 rounded-full opacity-40 -ml-10 -mb-10"></div>
               </div>
               
               <div className="relative z-10">
                 <div className="mb-8 flex justify-center">
                   <div className="w-24 h-24 rounded-full flex items-center justify-center relative">
-                    <div className="absolute inset-0 bg-green-500 rounded-full animate-pulse opacity-10"></div>
-                    <div className="absolute inset-0 bg-green-500 rounded-full animate-pulse opacity-20" style={{ animationDelay: '0.2s' }}></div>
-                    <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-green-400 rounded-full flex items-center justify-center text-white shadow-lg">
+                    <div className="absolute inset-0 bg-blue-500 rounded-full animate-pulse opacity-10"></div>
+                    <div className="absolute inset-0 bg-blue-500 rounded-full animate-pulse opacity-20" style={{ animationDelay: '0.2s' }}></div>
+                    <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-blue-400 rounded-full flex items-center justify-center text-white shadow-lg">
                       <div className="text-3xl">✓</div>
                     </div>
                   </div>
@@ -1239,7 +1239,7 @@ const FclRates: React.FC = () => {
                       <div className="text-gray-500 text-sm">提取项目</div>
                     </div>
                     <div className="text-center border-l border-r border-gray-100">
-                      <div className="text-2xl font-bold text-green-500 mb-1">28</div>
+                      <div className="text-2xl font-bold text-blue-500 mb-1">28</div>
                       <div className="text-gray-500 text-sm">运价信息</div>
                     </div>
                     <div className="text-center">
@@ -1252,14 +1252,14 @@ const FclRates: React.FC = () => {
                 <Button 
                   type="primary" 
                   style={{
-                    background: 'linear-gradient(45deg, #52c41a, #13c2c2)',
+                    background: 'linear-gradient(45deg, #1890ff, #4dabf5)',
                     borderRadius: '24px',
                     height: '44px',
                     padding: '0 32px',
                     fontSize: '16px',
                     fontWeight: 500,
                     border: 'none',
-                    boxShadow: '0 6px 16px rgba(82, 196, 26, 0.25)'
+                    boxShadow: '0 6px 16px rgba(24, 144, 255, 0.25)'
                   }}
                   onClick={closeAiModal}
                 >
