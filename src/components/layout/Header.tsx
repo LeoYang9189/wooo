@@ -76,6 +76,12 @@ const Header = () => {
               isNew: true,
               icon: <FontAwesomeIcon icon={faChartLine} className="mr-2 text-blue-500 w-4 h-4" />
             },
+            {
+              label: '智慧集装箱',
+              href: '/container-system',
+              isNew: true,
+              icon: <FontAwesomeIcon icon={faBoxes} className="mr-2 text-green-500 w-4 h-4" />
+            },
           ]
         },
         {

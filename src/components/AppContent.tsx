@@ -27,6 +27,7 @@ const LastMileRates = lazy(() => import('./saas/LastMileRates'));
 const CreateLastMileRate = lazy(() => import('./saas/CreateLastMileRate'));
 const RouteManagement = lazy(() => import('./saas/RouteManagement'));
 const CreateRoute = lazy(() => import('./saas/CreateRoute'));
+const ContainerSystem = lazy(() => import('./containersaas/ContainerSystem'));
 
 interface AppContentProps {
   isAIWobaoChatboxOpen: boolean;
@@ -71,6 +72,7 @@ const AppContent = ({ isAIWobaoChatboxOpen, handleOpenChatbox, handleCloseChatbo
         <Route path="/saas/create-lastmile-rate" element={<CreateLastMileRate />} />
         <Route path="/route-management" element={<RouteManagement />} />
         <Route path="/saas/create-route" element={<CreateRoute />} />
+        <Route path="/container-system" element={<ContainerSystem />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
