@@ -6,9 +6,7 @@ import {
   Select, 
   DatePicker, 
   Card, 
-  Breadcrumb,
   Typography,
-  Input,
   Grid,
   Tooltip
 } from '@arco-design/web-react';
@@ -17,11 +15,8 @@ import {
   IconRefresh, 
   IconFilter,
   IconDownload,
-  IconCalendar
+  IconList
 } from '@arco-design/web-react/icon';
-import '@arco-design/web-react/dist/css/arco.css';
-import SaasLayout from '../saas/SaasLayout';
-
 const Title = Typography.Title;
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
@@ -165,15 +160,7 @@ const FreightRateQuery: React.FC = () => {
   };
 
   return (
-    <SaasLayout menuSelectedKey="freight-rate-query">
-      {/* 面包屑导航 */}
-      <div className="mb-4">
-        <Breadcrumb>
-          <Breadcrumb.Item>运价中心</Breadcrumb.Item>
-          <Breadcrumb.Item>运价查询</Breadcrumb.Item>
-        </Breadcrumb>
-      </div>
-
+    <>
       {/* 搜索条件卡片 */}
       <Card className="mb-4">
         <Title heading={6} className="mb-4">查询条件</Title>
@@ -260,20 +247,19 @@ const FreightRateQuery: React.FC = () => {
 
       {/* 数据表格卡片 */}
       <Card>
-        <div className="flex justify-between mb-4">
+        <div className="flex justify-between items-center mb-4">
           <Space>
+            <Button type="primary" icon={<IconSearch />}>直接询价</Button>
             <Button icon={<IconDownload />}>导出数据</Button>
-            <Button icon={<IconCalendar />}>历史查询</Button>
           </Space>
-          
-          <div className="flex items-center">
-            <span className="text-gray-500 mr-2">快速搜索:</span>
-            <Input.Search
-              allowClear
-              placeholder="请输入关键字"
-              style={{ width: 250 }}
-            />
-          </div>
+          <Button 
+            icon={<IconList />}
+            onClick={() => {
+              // TODO: 实现自定义表格功能
+            }}
+          >
+            自定义表格
+          </Button>
         </div>
         
         <Table
@@ -292,7 +278,7 @@ const FreightRateQuery: React.FC = () => {
         
         <div className="mt-2 text-gray-500 text-sm">共 156 条</div>
       </Card>
-    </SaasLayout>
+    </>
   );
 };
 

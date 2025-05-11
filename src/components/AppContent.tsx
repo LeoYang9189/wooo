@@ -75,7 +75,7 @@ const AppContent = ({ isAIWobaoChatboxOpen, handleOpenChatbox, handleCloseChatbo
         <Route path="/route-management" element={<RouteManagement />} />
         <Route path="/saas/create-route" element={<CreateRoute />} />
         <Route path="/smartainer/*" element={<ContainerSystem />} />
-        <Route path="/controltower" element={<ControlTower />} />
+        <Route path="/controltower/*" element={<ControlTower />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
