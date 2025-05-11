@@ -26,6 +26,7 @@ import {
   IconPlus
 } from '@arco-design/web-react/icon';
 import AIAssistant from '../layout/ai';
+import { useNavigate } from 'react-router-dom';
 
 const { Row, Col } = Grid;
 const { RangePicker } = DatePicker;
@@ -53,6 +54,7 @@ const OrderManagement: React.FC = () => {
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [orderType, setOrderType] = useState<string>('');
   const [aiVisible, setAiVisible] = useState(false);
+  const navigate = useNavigate();
 
   const handleSearch = async () => {
     try {
@@ -159,7 +161,7 @@ const OrderManagement: React.FC = () => {
             size="small" 
             icon={<IconEye />}
             onClick={() => {
-              Message.info(`查看订单：${record.orderNo}`);
+              navigate(`/controltower/order-detail/${record.orderNo}`);
             }}
           >
             查看

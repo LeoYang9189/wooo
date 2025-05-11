@@ -11,6 +11,11 @@ const { Header, Sider, Content } = Layout;
 const MenuItem = Menu.Item;
 const SubMenu = Menu.SubMenu;
 
+interface BreadcrumbItem {
+  title: string;
+  path?: string; // 可选路径，允许为最后一项不设置路径
+}
+
 interface LayoutProps {
   children: React.ReactNode;
 }
@@ -29,14 +34,27 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
   };
 
   // 根据当前路由生成面包屑
-  const getBreadcrumbs = () => {
-    const path = location.pathname.replace('/controltower/', '').replace('/', '');
-    const breadcrumbs = [
+  const getBreadcrumbs = (): BreadcrumbItem[] => {
+    const path = location.pathname.replace('/controltower/', '');
+    const breadcrumbs: BreadcrumbItem[] = [
       { title: '首页', path: '/controltower' },
       { title: '控制塔系统', path: '/controltower' }
     ];
 
-    switch (path) {
+    // 检查是否是订单详情页面（格式：/order-detail/:orderId）
+    if (path.startsWith('order-detail/')) {
+      const orderId = path.split('/')[1]; // 获取订单ID
+      breadcrumbs.push(
+        { title: '订单中心', path: '/controltower/order' },
+        { title: '订单管理', path: '/controltower/order-management' },
+        { title: orderId, path: undefined } // 当前订单，无链接
+      );
+      return breadcrumbs;
+    }
+
+    // 处理其他路径
+    const simplePath = path.replace('/', '');
+    switch (simplePath) {
       case '':
       case 'dashboard':
         breadcrumbs.push({ title: '仪表盘', path: '/controltower/dashboard' });
@@ -242,7 +260,7 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
                 <Breadcrumb.Item
                   key={index}
                   onClick={() => item.path && navigate(item.path)}
-                  className="cursor-pointer hover:text-blue-500"
+                  className={item.path ? "cursor-pointer hover:text-blue-500" : "text-blue-600 font-medium"}
                 >
                   {item.title}
                 </Breadcrumb.Item>

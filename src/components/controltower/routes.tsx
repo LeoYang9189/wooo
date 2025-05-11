@@ -8,6 +8,8 @@ import InvoiceManagement from './pages/InvoiceManagement';
 import UserProfile from './pages/UserProfile';
 import CompanyProfile from './pages/CompanyProfile';
 import OrderManagement from './pages/OrderManagement';
+import OrderDetail from './pages/OrderDetail';
+import BLAddition from './pages/BLAddition';
 
 const ControlTowerRoutes: React.FC = () => {
   return (
@@ -17,6 +19,8 @@ const ControlTowerRoutes: React.FC = () => {
       <Route path="/freight-rate-query" element={<FreightRateQuery />} />
       <Route path="/inquiry-management" element={<InquiryManagement />} />
       <Route path="/order-management" element={<OrderManagement />} />
+      <Route path="/order-detail/:orderId" element={<OrderDetail />} />
+      <Route path="/bl-addition/:orderId" element={<BLAddition />} />
       <Route path="/billing-management" element={<BillingManagement />} />
       <Route path="/invoice-management" element={<InvoiceManagement />} />
       <Route path="/user-profile" element={<UserProfile />} />
