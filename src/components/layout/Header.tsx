@@ -366,7 +366,7 @@ const Header = () => {
                                 <span className="font-bold text-gray-800 text-base pb-1 inline-block border-b-2 border-gradient-to-r from-blue-500 to-purple-500" style={{borderImage: 'linear-gradient(to right, #3b82f6, #8b5cf6) 1'}}>协作云平台</span>
                               </div>
                               <div className="grid grid-cols-3 gap-4 pl-6">
-                                <a href="#control-tower" className="flex items-center py-2 text-sm text-gray-600 hover:text-primary">
+                                <a href="/controltower" className="flex items-center py-2 text-sm text-gray-600 hover:text-primary">
                                   <FontAwesomeIcon icon={faBoxes} className="mr-2 text-purple-500 w-4 h-4" />
                                   <span>控制塔协作系统</span>
                                 </a>

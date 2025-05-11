@@ -90,7 +90,7 @@ const PortalHero: React.FC = () => {
                 type="primary" 
                 size="large" 
                 className="h-14 px-10 bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 border-0 text-base shadow-xl hover:shadow-2xl transition-all hover:scale-105 rounded-full font-medium"
-                onClick={() => navigate('/saas-system')}
+                onClick={() => navigate('/controltower')}
               >
                 进入系统
               </Button>
