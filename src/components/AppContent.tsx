@@ -27,18 +27,19 @@ const LastMileRates = lazy(() => import('./saas/LastMileRates'));
 const CreateLastMileRate = lazy(() => import('./saas/CreateLastMileRate'));
 const RouteManagement = lazy(() => import('./saas/RouteManagement'));
 const CreateRoute = lazy(() => import('./saas/CreateRoute'));
+const RegionManagement = lazy(() => import('./saas/RegionManagement'));
+const CreateRegion = lazy(() => import('./saas/CreateRegion'));
+const ZipcodeManagement = lazy(() => import('./saas/ZipcodeManagement'));
+const FbaWarehouseManagement = lazy(() => import('./saas/FbaWarehouseManagement'));
 const ContainerSystem = lazy(() => import('./containersaas/ContainerSystem'));
 const ControlTower = lazy(() => import('./controltower/ControlTower'));
+const RateQuery = lazy(() => import('./saas/RateQuery'));
+const CombinationRateQuery = lazy(() => import('./saas/CombinationRateQuery'));
 
+interface AppContentProps {}
 
-interface AppContentProps {
-  isAIWobaoChatboxOpen: boolean;
-  handleOpenChatbox: () => void;
-  handleCloseChatbox: () => void;
-}
-
-const AppContent = ({ isAIWobaoChatboxOpen, handleOpenChatbox, handleCloseChatbox }: AppContentProps) => {
-  const { isLeadFormOpen, closeLeadForm } = useModal();
+const AppContent = ({}: AppContentProps) => {
+  const { modalState, openModal, closeModal } = useModal();
 
   return (
     <Suspense fallback={
@@ -47,17 +48,17 @@ const AppContent = ({ isAIWobaoChatboxOpen, handleOpenChatbox, handleCloseChatbo
       </div>
     }>
       <CookieConsent />
-      <LeadFormModal isOpen={isLeadFormOpen} onClose={closeLeadForm} />
+      <LeadFormModal isOpen={modalState.leadForm.isOpen} onClose={() => closeModal('leadForm')} />
 
       <Routes>
         <Route path="/" element={
           <>
             <Home />
-            <DraggableOctopus onOpen={handleOpenChatbox} />
-            <AIWobaoChatbox isOpen={isAIWobaoChatboxOpen} onClose={handleCloseChatbox} />
+            <DraggableOctopus onClick={() => openModal('aiChat')} />
+            <AIWobaoChatbox isOpen={modalState.aiChat.isOpen} onClose={() => closeModal('aiChat')} />
           </>
         } />
-        <Route path="/auth" element={<Auth />} />
+        <Route path="/auth/*" element={<Auth />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/cookie-settings" element={<CookieSettings />} />
@@ -74,8 +75,14 @@ const AppContent = ({ isAIWobaoChatboxOpen, handleOpenChatbox, handleCloseChatbo
         <Route path="/saas/create-lastmile-rate" element={<CreateLastMileRate />} />
         <Route path="/route-management" element={<RouteManagement />} />
         <Route path="/saas/create-route" element={<CreateRoute />} />
+        <Route path="/saas/region-management" element={<RegionManagement />} />
+        <Route path="/saas/create-region" element={<CreateRegion />} />
+        <Route path="/saas/zipcode-management" element={<ZipcodeManagement />} />
+        <Route path="/saas/fba-warehouse" element={<FbaWarehouseManagement />} />
         <Route path="/smartainer/*" element={<ContainerSystem />} />
         <Route path="/controltower/*" element={<ControlTower />} />
+        <Route path="/rate-query" element={<RateQuery />} />
+        <Route path="/combination-rate-query" element={<CombinationRateQuery />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>

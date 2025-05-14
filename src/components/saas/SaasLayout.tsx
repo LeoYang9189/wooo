@@ -106,6 +106,12 @@ const SaasLayout: React.FC<SaasLayoutProps> = ({ children, breadcrumb, menuSelec
             <MenuItem key="6">整箱附加费</MenuItem>
             <MenuItem key="7">拼箱附加费</MenuItem>
             <MenuItem key="8">空运附加费</MenuItem>
+            <MenuItem 
+              key="3" 
+              onClick={() => navigate('/rate-query')}
+            >
+              运价查询
+            </MenuItem>
           </SubMenu>
           <SubMenu
             key="sub5"
@@ -158,6 +164,9 @@ const SaasLayout: React.FC<SaasLayoutProps> = ({ children, breadcrumb, menuSelec
             <MenuItem key="17">港口管理</MenuItem>
             <MenuItem key="18" onClick={() => navigate('/route-management')}>航线管理</MenuItem>
             <MenuItem key="19">货币管理</MenuItem>
+            <MenuItem key="region" onClick={() => navigate('/saas/region-management')}>行政区划</MenuItem>
+            <MenuItem key="zipcode" onClick={() => navigate('/saas/zipcode-management')}>邮编管理</MenuItem>
+            <MenuItem key="fba-warehouse" onClick={() => navigate('/saas/fba-warehouse')}>FBA仓库</MenuItem>
           </SubMenu>
           <MenuItem key="12">
             <IconFile />

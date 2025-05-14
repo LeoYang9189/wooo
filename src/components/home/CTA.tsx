@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { useModal } from '../../contexts/ModalContext';
 
 const CTA = () => {
-  const { openLeadForm } = useModal();
+  const { openModal } = useModal();
 
   return (
     <section className="section-padding bg-gradient-to-r from-primary to-secondary wave-bg">
@@ -42,7 +42,7 @@ const CTA = () => {
                 type="button"
                 className="btn-primary"
                 aria-label="免费试用产品"
-                onClick={openLeadForm}
+                onClick={() => openModal('leadForm')}
               >
                 免费试用
               </button>

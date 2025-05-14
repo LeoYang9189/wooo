@@ -167,6 +167,7 @@ const CreateFclInquiry: React.FC = () => {
     cargoReadyTime: '二周内',   // 货好时间
     cargoReadyDate: '',        // 货好具体日期
     transitType: '不指定',     // 直达/中转，默认不指定
+    route: '跨太平洋东行',      // 航线，默认为跨太平洋东行
     departurePort: 'CNSHA | Shanghai',    // 起运港
     dischargePort: 'USLAX | Los Angeles', // 卸货港
     transitPort: '',           // 中转港
@@ -1535,6 +1536,26 @@ const CreateFclInquiry: React.FC = () => {
                         <Radio value="直达">直达</Radio>
                         <Radio value="中转">中转</Radio>
                       </RadioGroup>
+                    </FormItem>
+                  </Col>
+                  
+                  <Col span={24}>
+                    <FormItem label="航线" field="route">
+                      <Select
+                        placeholder="请选择航线" 
+                        value={formState.route}
+                        onChange={(value) => handleFormChange('route', value)}
+                        style={{ width: '100%' }}
+                        showSearch
+                      >
+                        <Option value="跨太平洋东行">跨太平洋东行</Option>
+                        <Option value="跨太平洋西行">跨太平洋西行</Option>
+                        <Option value="远东西行">远东西行</Option>
+                        <Option value="远东东行">远东东行</Option>
+                        <Option value="欧地线">欧地线</Option>
+                        <Option value="亚洲区域">亚洲区域</Option>
+                        <Option value="中东印巴线">中东印巴线</Option>
+                      </Select>
                     </FormItem>
                   </Col>
                   

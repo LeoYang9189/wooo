@@ -8,10 +8,10 @@ interface Position {
 }
 
 interface Props {
-  onOpen: () => void;
+  onClick: () => void;
 }
 
-const DraggableOctopus: React.FC<Props> = ({ onOpen }) => {
+const DraggableOctopus: React.FC<Props> = ({ onClick }) => {
   const [position, setPosition] = useState<Position>({ x: window.innerWidth - 80, y: window.innerHeight - 120 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState<Position>({ x: 0, y: 0 });
@@ -121,13 +121,13 @@ const DraggableOctopus: React.FC<Props> = ({ onOpen }) => {
       }}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
-      onClick={() => !isDragging && onOpen()}
+      onClick={() => !isDragging && onClick()}
       role="button"
       tabIndex={0}
       aria-label="打开AI沃宝助手"
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
-          onOpen();
+          onClick();
         }
       }}
     >
