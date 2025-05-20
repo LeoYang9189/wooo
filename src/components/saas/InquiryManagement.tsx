@@ -11,6 +11,46 @@ const TabPane = Tabs.TabPane;
 const Row = Grid.Row;
 const Col = Grid.Col;
 
+// 添加类型定义
+
+// 定义询价项接口
+interface InquiryItem {
+  inquiryNo: string;
+  source: string;
+  inquirer: string;
+  inquiryStatus: string;
+  firstQuoteStatus: string;
+  mainQuoteStatus: string;
+  lastQuoteStatus: string;
+  cargoReadyTime: string;
+  cargoNature: string;
+  shipCompany: string;
+  transitType: string;
+  route: string;
+  departurePort: string;
+  dischargePort: string;
+  remark: string;
+  createdAt: string;
+  clientType: string;
+  clientName: string;
+  // FCL特有
+  containerInfo?: string;
+  // LCL/Air特有
+  weight?: string;
+  volume?: string;
+}
+
+// 定义列类型接口
+interface ColumnItem {
+  title: string;
+  dataIndex?: string;
+  width?: number;
+  sorter?: boolean;
+  resizable?: boolean;
+  fixed?: 'left' | 'right';
+  render?: (value: any, record: InquiryItem) => React.ReactNode;
+}
+
 const InquiryManagement: React.FC = () => {
   // 筛选项状态
   
@@ -55,7 +95,7 @@ const InquiryManagement: React.FC = () => {
   // 根据Tab获取当前要显示的列
   const getColumns = () => {
     // 基础列（所有类型共有）
-    const baseColumns = [
+    const baseColumns: ColumnItem[] = [
       { title: '询价编号', dataIndex: 'inquiryNo', sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
       { title: '询价来源', dataIndex: 'source', sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
       { title: '询价人', dataIndex: 'inquirer', sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
@@ -185,7 +225,7 @@ const InquiryManagement: React.FC = () => {
     ];
 
     // 根据Tab添加特定的列
-    let specificColumns: any[] = [];
+    let specificColumns: ColumnItem[] = [];
     if (activeTab === 'fcl') {
       specificColumns = [
         { title: '箱型箱量', dataIndex: 'containerInfo', width: 160, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
@@ -198,7 +238,7 @@ const InquiryManagement: React.FC = () => {
     }
 
     // 公共后续列
-    const commonColumns = [
+    const commonColumns: ColumnItem[] = [
       { title: '货好时间', dataIndex: 'cargoReadyTime', sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
       { title: '货盘性质', dataIndex: 'cargoNature', sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
       { title: '船公司', dataIndex: 'shipCompany', width: 160, sorter: true, resizable: true, render: (val: string) => {
@@ -227,10 +267,17 @@ const InquiryManagement: React.FC = () => {
         dataIndex: 'operations',
         fixed: 'right' as const,
         width: 150,
-        render: () => (
+        render: (_: unknown, record: { inquiryNo: string }) => (
           <div style={{display:'flex',flexWrap:'wrap',gap:4}}>
             <div style={{display:'flex',gap:4,width:'100%'}}>
-              <Button type="text" size="mini" icon={<IconEye />}>查看</Button>
+              <Button 
+                type="text" 
+                size="mini" 
+                icon={<IconEye />} 
+                onClick={() => navigate(`/saas/inquiry-detail/${activeTab}/${record.inquiryNo}`)}
+              >
+                查看
+              </Button>
               <Button type="text" size="mini" icon={<IconEdit />}>编辑</Button>
             </div>
             <div style={{display:'flex',gap:4,width:'100%'}}>
@@ -257,7 +304,7 @@ const InquiryManagement: React.FC = () => {
   const columns = getColumns();
 
   // 整箱数据
-  const fclData: any[] = [
+  const fclData: InquiryItem[] = [
     {
       inquiryNo: 'R20240001', source: '内部', inquirer: '张三', inquiryStatus: '草稿', firstQuoteStatus: '待报价', mainQuoteStatus: '待报价', lastQuoteStatus: '待报价', containerInfo: '1*20GP+2*40HC', cargoReadyTime: '1周内', cargoNature: '询价', shipCompany: '不指定', transitType: '直达', route: '跨太平洋东行', departurePort: 'CNSHA | Shanghai', dischargePort: 'USLAX | Los Angeles', remark: '电子产品 优先考虑直达航线', createdAt: '2024-05-10 08:30:15', clientType: '正式客户', clientName: '上海测试',
     },
@@ -276,7 +323,7 @@ const InquiryManagement: React.FC = () => {
   ];
 
   // 拼箱数据
-  const lclData: any[] = [
+  const lclData: InquiryItem[] = [
     {
       inquiryNo: 'L20240001', source: '内部', inquirer: '张三', inquiryStatus: '草稿', firstQuoteStatus: '待报价', mainQuoteStatus: '待报价', lastQuoteStatus: '待报价', weight: '1200', volume: '3.5', cargoReadyTime: '1周内', cargoNature: '询价', shipCompany: '不指定', transitType: '直达', route: '跨太平洋东行', departurePort: 'CNSHA | Shanghai', dischargePort: 'USLAX | Los Angeles', remark: '服装类产品', createdAt: '2024-05-12 08:30:15', clientType: '正式客户', clientName: '杭州测试',
     },
@@ -289,7 +336,7 @@ const InquiryManagement: React.FC = () => {
   ];
 
   // 空运数据
-  const airData: any[] = [
+  const airData: InquiryItem[] = [
     {
       inquiryNo: 'A20240001', source: '内部', inquirer: '张三', inquiryStatus: '草稿', firstQuoteStatus: '待报价', mainQuoteStatus: '待报价', lastQuoteStatus: '待报价', weight: '350', volume: '1.2', cargoReadyTime: '1周内', cargoNature: '询价', shipCompany: '不指定', transitType: '直达', route: '跨太平洋东行', departurePort: 'CNPVG | Shanghai Pudong', dischargePort: 'USLAX | Los Angeles', remark: '电子产品 紧急发货', createdAt: '2024-05-15 08:30:15', clientType: '正式客户', clientName: '上海电子',
     },
@@ -317,7 +364,7 @@ const InquiryManagement: React.FC = () => {
   // 自定义表格字段
   const getFieldList = () => {
     // 基础字段（所有类型共有）
-    const baseFields = [
+    const baseFields: {label: string, key: string}[] = [
       { label: '询价编号', key: 'inquiryNo' },
       { label: '询价来源', key: 'source' },
       { label: '询价人', key: 'inquirer' },
@@ -328,7 +375,7 @@ const InquiryManagement: React.FC = () => {
     ];
     
     // 特定类型字段
-    let specificFields: any[] = [];
+    let specificFields: {label: string, key: string}[] = [];
     if (activeTab === 'fcl') {
       specificFields = [
         { label: '箱型箱量', key: 'containerInfo' },
@@ -341,7 +388,7 @@ const InquiryManagement: React.FC = () => {
     }
     
     // 公共后续字段
-    const commonFields = [
+    const commonFields: {label: string, key: string}[] = [
       { label: '货好时间', key: 'cargoReadyTime' },
       { label: '货盘性质', key: 'cargoNature' },
       { label: '船公司', key: 'shipCompany' },

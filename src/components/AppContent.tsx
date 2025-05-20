@@ -6,6 +6,8 @@ import AIWobaoChatbox from './common/AIWobaoChatbox';
 import LeadFormModal from './common/LeadFormModal';
 import LoadingSpinner from './common/LoadingSpinner';
 import CookieConsent from './common/CookieConsent';
+import CreateLclInquiry from './saas/CreateLclInquiry';
+import InquiryDetail from './saas/InquiryDetail';
 
 // 使用懒加载优化性能
 const Home = lazy(() => import('./home/Home'));
@@ -23,8 +25,10 @@ const InquiryManagement = lazy(() => import('./saas/InquiryManagement'));
 const CreateFclInquiry = lazy(() => import('./saas/CreateFclInquiry'));
 const PrecarriageRates = lazy(() => import('./saas/PrecarriageRates'));
 const CreatePrecarriageRate = lazy(() => import('./saas/CreatePrecarriageRate'));
+const ViewPrecarriageRate = lazy(() => import('./saas/ViewPrecarriageRate'));
 const LastMileRates = lazy(() => import('./saas/LastMileRates'));
 const CreateLastMileRate = lazy(() => import('./saas/CreateLastMileRate'));
+const ViewLastMileRate = lazy(() => import('./saas/ViewLastMileRate'));
 const RouteManagement = lazy(() => import('./saas/RouteManagement'));
 const CreateRoute = lazy(() => import('./saas/CreateRoute'));
 const RegionManagement = lazy(() => import('./saas/RegionManagement'));
@@ -35,6 +39,7 @@ const ContainerSystem = lazy(() => import('./containersaas/ContainerSystem'));
 const ControlTower = lazy(() => import('./controltower/ControlTower'));
 const RateQuery = lazy(() => import('./saas/RateQuery'));
 const CombinationRateQuery = lazy(() => import('./saas/CombinationRateQuery'));
+const CreateAirInquiry = lazy(() => import('./saas/CreateAirInquiry'));
 
 interface AppContentProps {}
 
@@ -69,10 +74,14 @@ const AppContent = ({}: AppContentProps) => {
         <Route path="/portal" element={<Portal />} />
         <Route path="/inquiry-management" element={<InquiryManagement />} />
         <Route path="/saas/create-inquiry/fcl" element={<CreateFclInquiry />} />
+        <Route path="/saas/create-inquiry/lcl" element={<CreateLclInquiry />} />
+        <Route path="/saas/create-inquiry/air" element={<CreateAirInquiry />} />
         <Route path="/precarriage-rates" element={<PrecarriageRates />} />
         <Route path="/saas/create-precarriage-rate" element={<CreatePrecarriageRate />} />
+        <Route path="/view-precarriage-rate/:id" element={<ViewPrecarriageRate />} />
         <Route path="/lastmile-rates" element={<LastMileRates />} />
         <Route path="/saas/create-lastmile-rate" element={<CreateLastMileRate />} />
+        <Route path="/view-last-mile-rate/:id" element={<ViewLastMileRate />} />
         <Route path="/route-management" element={<RouteManagement />} />
         <Route path="/saas/create-route" element={<CreateRoute />} />
         <Route path="/saas/region-management" element={<RegionManagement />} />
@@ -83,6 +92,7 @@ const AppContent = ({}: AppContentProps) => {
         <Route path="/controltower/*" element={<ControlTower />} />
         <Route path="/rate-query" element={<RateQuery />} />
         <Route path="/combination-rate-query" element={<CombinationRateQuery />} />
+        <Route path="/saas/inquiry-detail/:type/:id" element={<InquiryDetail />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>

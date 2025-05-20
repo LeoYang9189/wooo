@@ -25,7 +25,8 @@ import {
   IconRefresh, 
   IconFilter,
   IconList,
-  IconDragDotVertical
+  IconDragDotVertical,
+  IconEye
 } from '@arco-design/web-react/icon';
 import { useNavigate } from 'react-router-dom';
 import SaasLayout from './SaasLayout';
@@ -535,250 +536,451 @@ const RateQuery: React.FC = () => {
     };
   });
 
-  // 港前运价列定义
+  // 港前运价状态颜色映射
+  const precarriageStatusColorClasses: Record<string, string> = {
+    '正常': 'bg-green-500',
+    '过期': 'bg-gray-500',
+    '下架': 'bg-red-500'
+  };
+
+  // 获取港前运价状态标签
+  const getPrecarriageRateStatusTag = (status: string) => {
+    const colorClass = precarriageStatusColorClasses[status] || 'bg-blue-500';
+    
+    return (
+      <div className="flex items-center">
+        <div className={`w-2 h-2 rounded-full ${colorClass} mr-2`}></div>
+        <span>{status}</span>
+      </div>
+    );
+  };
+
+  // 处理查看港前运价详情
+  const handleViewPrecarriageRate = (id: string) => {
+    navigate(`/view-precarriage-rate/${id}`);
+  };
+
+  // 港前运价列定义 - 复刻自PrecarriageRates.tsx
   const precarriageColumns = [
     {
-      title: '类型',
-      dataIndex: 'type',
-      width: 100,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
+      title: '港前运价编号',
+      dataIndex: 'code',
+      width: 120,
       sorter: true,
       resizable: true,
+      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+    },
+    {
+      title: '运价类型',
+      dataIndex: 'rateType',
+      width: 100,
+      sorter: true,
+      resizable: true,
+      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+    },
+    {
+      title: '支线类型',
+      dataIndex: 'sublineType',
+      width: 120,
+      sorter: true,
+      resizable: true,
+      render: (value: string | null) => value ? <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip> : '-'
     },
     {
       title: '起运地',
       dataIndex: 'origin',
-      width: 150,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
+      width: 180,
       sorter: true,
       resizable: true,
+      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
     },
     {
-      title: '目的地',
+      title: '起运港',
       dataIndex: 'destination',
       width: 150,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
       sorter: true,
       resizable: true,
+      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+    },
+    {
+      title: '码头',
+      dataIndex: 'terminal',
+      width: 120,
+      sorter: true,
+      resizable: true,
+      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
     },
     {
       title: '供应商',
       dataIndex: 'vendor',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
+      width: 150,
       sorter: true,
       resizable: true,
-    },
-    {
-      title: '币种',
-      dataIndex: 'currency',
-      width: 80,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
+      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
     },
     {
       title: '20GP',
       dataIndex: '20gp',
       width: 100,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
       sorter: true,
       resizable: true,
+      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
     },
     {
       title: '40GP',
       dataIndex: '40gp',
       width: 100,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
       sorter: true,
       resizable: true,
+      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
     },
     {
       title: '40HC',
       dataIndex: '40hc',
       width: 100,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
       sorter: true,
       resizable: true,
+      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
     },
     {
-      title: '有效期',
-      dataIndex: 'validDate',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '操作',
-      dataIndex: 'operations',
-      fixed: 'right' as const,
-      width: 150,
-      render: () => (
-        <div style={{display:'flex',flexWrap:'wrap',gap:4}}>
-          <div style={{display:'flex',gap:4,width:'100%'}}>
-            <Button type="text" size="mini" icon={<IconEdit />}>编辑</Button>
-            <Button type="text" size="mini" icon={<IconDownload />}>下载</Button>
-          </div>
-          <div style={{display:'flex',gap:4,width:'100%'}}>
-            <Button type="text" size="mini" icon={<IconDelete />}>复制</Button>
-          </div>
-        </div>
-      ),
-    },
-  ];
-
-  // 港前运价数据
-  const precarriageData = [
-    {
-      key: '1',
-      type: '直达',
-      origin: '苏州工业园区',
-      destination: '洋山港',
-      vendor: '德邦专线',
-      currency: 'CNY',
-      '20gp': '800.00',
-      '40gp': '1200.00',
-      '40hc': '1300.00',
-      validDate: '2024-12-31',
-    },
-    {
-      key: '2',
-      type: '支线',
-      origin: '太仓港',
-      destination: '洋山港',
-      vendor: '速航65号',
-      currency: 'CNY',
-      '20gp': '400.00',
-      '40gp': '700.00',
-      '40hc': '750.00',
-      validDate: '2024-11-30',
-    },
-    {
-      key: '3',
-      type: '直达',
-      origin: '嘉兴',
-      destination: '宁波港',
-      vendor: '安捷快线',
-      currency: 'CNY',
-      '20gp': '600.00',
-      '40gp': '950.00',
-      '40hc': '1000.00',
-      validDate: '2024-10-31',
-    },
-    {
-      key: '4',
-      type: '直达',
-      origin: '上海市奉贤区',
-      destination: '洋山港',
-      vendor: '申通物流',
-      currency: 'CNY',
-      '20gp': '650.00',
-      '40gp': '950.00',
-      '40hc': '1000.00',
-      validDate: '2024-12-15',
-    },
-  ];
-
-  // 尾程运价列定义
-  const oncarriageColumns = [
-    {
-      title: '目的港',
-      dataIndex: 'origin',
-      width: 150,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '配送地址类型',
-      dataIndex: 'addressType',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '邮编',
-      dataIndex: 'zipCode',
+      title: '40NOR',
+      dataIndex: '40nor',
       width: 100,
-      render: (value: string, record: any) => {
-        if (record.addressType === '亚马逊仓库' || record.addressType === '易仓') {
-          return '-';
-        }
-        return <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>;
-      },
       sorter: true,
       resizable: true,
+      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
     },
     {
-      title: '地址',
-      dataIndex: 'address',
-      width: 180,
-      render: (value: string, record: any) => {
-        if (record.addressType === '亚马逊仓库' || record.addressType === '易仓') {
-          return '-';
-        }
-        return <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>;
-      },
+      title: '45HC',
+      dataIndex: '45hc',
+      width: 100,
       sorter: true,
       resizable: true,
-    },
-    {
-      title: '仓库代码',
-      dataIndex: 'warehouseCode',
-      width: 120,
-      render: (value: string | null) => value ? <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip> : '-',
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '代理名称',
-      dataIndex: 'agentName',
-      width: 150,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
+      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
     },
     {
       title: '有效期',
       dataIndex: 'validDateRange',
       width: 180,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
       sorter: true,
       resizable: true,
+      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
+      width: 100,
+      sorter: true,
+      resizable: true,
+      render: (value: string) => <Tooltip content={value} mini>{getPrecarriageRateStatusTag(value)}</Tooltip>
     },
     {
       title: '备注',
       dataIndex: 'remark',
       width: 150,
-      render: (value: string) => <Tooltip content={value || '-'} mini><span className="arco-ellipsis">{value || '-'}</span></Tooltip>,
       sorter: true,
       resizable: true,
+      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
     },
     {
       title: '操作',
       dataIndex: 'operations',
       fixed: 'right' as const,
+      width: 80,
+      render: (_: any, record: PrecarriageDataItem) => (
+        <Button type="text" size="mini" icon={<IconEye />} onClick={() => handleViewPrecarriageRate(record.key)}>查看</Button>
+      ),
+    },
+  ];
+
+  // 港前运价数据接口
+  interface PrecarriageDataItem {
+    key: string;
+    code: string; // 港前运价编号
+    rateType: string; // 运价类型
+    sublineType: string | null; // 支线类型
+    origin: string; // 起运地
+    destination: string; // 起运港
+    terminal: string; // 码头
+    vendor: string; // 供应商
+    '20gp': number;
+    '40gp': number;
+    '40hc': number;
+    '40nor': number;
+    '45hc': number;
+    validDateRange: string; // 有效期区间
+    status: '正常' | '过期' | '下架'; // 状态
+    remark: string; // 备注
+  }
+
+  // 港前运价数据
+  const precarriageData: PrecarriageDataItem[] = [
+    {
+      key: '1',
+      code: 'PCR2024050001',
+      rateType: '直拖',
+      sublineType: null,
+      origin: '浙江省杭州市萧山区',
+      destination: 'CNSHA | SHANGHAI',
+      terminal: '洋山',
+      vendor: '安吉物流',
+      '20gp': 800,
+      '40gp': 1200,
+      '40hc': 1300,
+      '40nor': 1250,
+      '45hc': 1500,
+      validDateRange: '2024-05-01 至 2024-12-31',
+      status: '正常',
+      remark: '',
+    },
+    {
+      key: '2',
+      code: 'PCR2024050002',
+      rateType: '支线',
+      sublineType: '湖州海铁',
+      origin: '浙江省湖州市吴兴区',
+      destination: 'CNNGB | NINGBO',
+      terminal: '北仑',
+      vendor: '中远海运',
+      '20gp': 400,
+      '40gp': 700,
+      '40hc': 750,
+      '40nor': 720,
+      '45hc': 850,
+      validDateRange: '2024-05-15 至 2024-11-30',
+      status: '正常',
+      remark: '',
+    },
+    {
+      key: '3',
+      code: 'PCR2024050003',
+      rateType: '直拖',
+      sublineType: null,
+      origin: '江苏省苏州市工业园区',
+      destination: 'CNSHA | SHANGHAI',
+      terminal: '外高桥',
+      vendor: '德邦物流',
+      '20gp': 850,
+      '40gp': 1250,
+      '40hc': 1350,
+      '40nor': 1300,
+      '45hc': 1550,
+      validDateRange: '2024-04-01 至 2024-12-15',
+      status: '正常',
+      remark: '需提前24小时预约',
+    },
+    {
+      key: '4',
+      code: 'PCR2024040001',
+      rateType: '直拖',
+      sublineType: null,
+      origin: '上海市嘉定区',
+      destination: 'CNSHA | SHANGHAI',
+      terminal: '洋山',
+      vendor: '顺丰物流',
+      '20gp': 750,
+      '40gp': 1150,
+      '40hc': 1250,
+      '40nor': 1200,
+      '45hc': 1450,
+      validDateRange: '2024-03-01 至 2024-05-31',
+      status: '过期',
+      remark: '',
+    },
+  ];
+
+  // 尾程运价状态颜色映射
+  const lastMileStatusColorClasses: Record<string, string> = {
+    '正常': 'bg-green-500',
+    '过期': 'bg-gray-500',
+    '下架': 'bg-red-500'
+  };
+
+  // 获取尾程运价状态标签
+  const getLastMileRateStatusTag = (status: string) => {
+    const colorClass = lastMileStatusColorClasses[status] || 'bg-blue-500';
+    
+    return (
+      <div className="flex items-center">
+        <div className={`w-2 h-2 rounded-full ${colorClass} mr-2`}></div>
+        <span>{status}</span>
+      </div>
+    );
+  };
+
+  // 尾程运价数据接口
+  interface OncarriageDataItem {
+    key: string;
+    code: string; // 尾程运价编号
+    origin: string; // 目的港
+    addressType: '第三方地址' | '亚马逊仓库' | '易仓'; // 配送地址类型
+    zipCode: string; // 邮编
+    address: string; // 地址
+    warehouseCode: string | null; // 仓库代码
+    agentName: string; // 代理名称
+    validDateRange: string; // 有效期区间
+    remark: string; // 备注
+    status: '正常' | '过期' | '下架'; // 状态
+    '20gp': number; // 20GP价格
+    '40gp': number; // 40GP价格
+    '40hc': number; // 40HC价格
+    '45hc': number; // 45HC价格
+    '40nor': number; // 40NOR价格
+  }
+  
+  // 处理查看尾程运价详情
+  const handleViewLastMileRate = (id: string) => {
+    navigate(`/view-last-mile-rate/${id}`);
+  };
+
+  // 尾程运价列定义
+  const oncarriageColumns = [
+    {
+      title: '尾程运价编号',
+      dataIndex: 'code',
+      width: 120,
+      sorter: true,
+      resizable: true,
+      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+    },
+    {
+      title: '目的港',
+      dataIndex: 'origin',
       width: 150,
-      render: () => (
-        <div style={{display:'flex',flexWrap:'wrap',gap:4}}>
-          <div style={{display:'flex',gap:4,width:'100%'}}>
-            <Button type="text" size="mini" icon={<IconEdit />}>编辑</Button>
-            <Button type="text" size="mini" icon={<IconDownload />}>下载</Button>
-          </div>
-          <div style={{display:'flex',gap:4,width:'100%'}}>
-            <Button type="text" size="mini" icon={<IconDelete />}>复制</Button>
-          </div>
-        </div>
+      sorter: true,
+      resizable: true,
+      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+    },
+    {
+      title: '配送地址类型',
+      dataIndex: 'addressType',
+      width: 120,
+      sorter: true,
+      resizable: true,
+      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+    },
+    {
+      title: '邮编',
+      dataIndex: 'zipCode',
+      width: 100,
+      sorter: true,
+      resizable: true,
+      render: (value: string, record: OncarriageDataItem) => {
+        if (record.addressType === '亚马逊仓库' || record.addressType === '易仓') {
+          return '-';
+        }
+        return <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>;
+      }
+    },
+    {
+      title: '地址',
+      dataIndex: 'address',
+      width: 180,
+      sorter: true,
+      resizable: true,
+      render: (value: string, record: OncarriageDataItem) => {
+        if (record.addressType === '亚马逊仓库' || record.addressType === '易仓') {
+          return '-';
+        }
+        return <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>;
+      }
+    },
+    {
+      title: '仓库代码',
+      dataIndex: 'warehouseCode',
+      width: 120,
+      sorter: true,
+      resizable: true,
+      render: (value: string | null) => value ? <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip> : '-'
+    },
+    {
+      title: '代理名称',
+      dataIndex: 'agentName',
+      width: 150,
+      sorter: true,
+      resizable: true,
+      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+    },
+    {
+      title: '20GP',
+      dataIndex: '20gp',
+      width: 100,
+      sorter: true,
+      resizable: true,
+      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+    },
+    {
+      title: '40GP',
+      dataIndex: '40gp',
+      width: 100,
+      sorter: true,
+      resizable: true,
+      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+    },
+    {
+      title: '40HC',
+      dataIndex: '40hc',
+      width: 100,
+      sorter: true,
+      resizable: true,
+      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+    },
+    {
+      title: '40NOR',
+      dataIndex: '40nor',
+      width: 100,
+      sorter: true,
+      resizable: true,
+      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+    },
+    {
+      title: '45HC',
+      dataIndex: '45hc',
+      width: 100,
+      sorter: true,
+      resizable: true,
+      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+    },
+    {
+      title: '有效期',
+      dataIndex: 'validDateRange',
+      width: 180,
+      sorter: true,
+      resizable: true,
+      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
+      width: 100,
+      sorter: true,
+      resizable: true,
+      render: (value: string) => <Tooltip content={value} mini>{getLastMileRateStatusTag(value)}</Tooltip>
+    },
+    {
+      title: '备注',
+      dataIndex: 'remark',
+      width: 150,
+      sorter: true,
+      resizable: true,
+      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value || '-'}</span></Tooltip>
+    },
+    {
+      title: '操作',
+      dataIndex: 'operations',
+      fixed: 'right' as const,
+      width: 80,
+      render: (_: any, record: OncarriageDataItem) => (
+        <Button type="text" size="mini" icon={<IconEye />} onClick={() => handleViewLastMileRate(record.key)}>查看</Button>
       ),
     },
   ];
 
   // 尾程运价数据
-  const oncarriageData = [
+  const oncarriageData: OncarriageDataItem[] = [
     {
       key: '1',
+      code: 'LMR2024050001',
       origin: 'USLAX | LOS ANGELES',
       addressType: '第三方地址',
       zipCode: '92101',
@@ -787,9 +989,16 @@ const RateQuery: React.FC = () => {
       agentName: 'XPO TRUCK LLC',
       validDateRange: '2024-05-01 至 2024-12-31',
       remark: '',
+      status: '正常',
+      '20gp': 1200,
+      '40gp': 1800,
+      '40hc': 1900,
+      '45hc': 2200,
+      '40nor': 2000
     },
     {
       key: '2',
+      code: 'LMR2024050002',
       origin: 'USNYC | NEW YORK',
       addressType: '亚马逊仓库',
       zipCode: '',
@@ -798,9 +1007,16 @@ const RateQuery: React.FC = () => {
       agentName: 'DRAYEASY INC',
       validDateRange: '2024-05-15 至 2024-11-30',
       remark: '',
+      status: '正常',
+      '20gp': 980,
+      '40gp': 1650,
+      '40hc': 1750,
+      '45hc': 2050,
+      '40nor': 1800
     },
     {
       key: '3',
+      code: 'LMR2024050003',
       origin: 'DEHAM | HAMBURG',
       addressType: '易仓',
       zipCode: '',
@@ -809,9 +1025,16 @@ const RateQuery: React.FC = () => {
       agentName: 'AMERICAN FREIGHT SOLUTIONS',
       validDateRange: '2024-04-01 至 2024-12-15',
       remark: '需提前24小时预约',
+      status: '正常',
+      '20gp': 1300,
+      '40gp': 1950,
+      '40hc': 2050,
+      '45hc': 2400,
+      '40nor': 2100
     },
     {
       key: '4',
+      code: 'LMR2024040001',
       origin: 'NLRTM | ROTTERDAM',
       addressType: '第三方地址',
       zipCode: '96001',
@@ -820,42 +1043,50 @@ const RateQuery: React.FC = () => {
       agentName: 'WEST COAST CARRIERS LLC',
       validDateRange: '2024-03-01 至 2024-05-31',
       remark: '',
+      status: '过期',
+      '20gp': 1100,
+      '40gp': 1700,
+      '40hc': 1800,
+      '45hc': 2150,
+      '40nor': 1950
     },
   ];
 
-  // 根据当前tab获取数据和列
-  const getColumnsAndData = () => {
+  // 获取表格数据
+  const getTableData = () => {
     switch (activeTab) {
       case 'lcl':
-        return {
-          columns: lclAirColumns,
-          data: lclData
-        };
+        return lclData;
       case 'air':
-        return {
-          columns: lclAirColumns,
-          data: airData
-        };
+        return airData;
       case 'precarriage':
-        return {
-          columns: precarriageColumns,
-          data: precarriageData
-        };
+        return precarriageData;
       case 'oncarriage':
-        return {
-          columns: oncarriageColumns,
-          data: oncarriageData
-        };
+        return oncarriageData;
       case 'fcl':
       default:
-        return {
-          columns: fclColumns,
-          data: fclData
-        };
+        return fclData;
     }
   };
 
-  const { columns, data } = getColumnsAndData();
+  // 获取表格列
+  const getTableColumns = () => {
+    switch (activeTab) {
+      case 'lcl':
+        return lclAirColumns;
+      case 'air':
+        return lclAirColumns;
+      case 'precarriage':
+        return precarriageColumns;
+      case 'oncarriage':
+        return oncarriageColumns;
+      case 'fcl':
+      default:
+        return fclColumns;
+    }
+  };
+  
+  // 定义类型安全的表格组件渲染
 
   const pagination = {
     showTotal: true,
@@ -1059,14 +1290,16 @@ const RateQuery: React.FC = () => {
         
         <div className="flex justify-between mb-4">
           <Space>
-            {/* 组合方案查询按钮替代新增运价按钮 */}
-            <Button 
-              type="primary" 
-              icon={<IconSearch />}
-              onClick={openCombinationQuery}
-            >
-              组合方案查询
-            </Button>
+            {/* 组合方案查询按钮仅在整箱、拼箱和空运tab下显示 */}
+            {(activeTab === 'fcl' || activeTab === 'lcl' || activeTab === 'air') && (
+              <Button 
+                type="primary" 
+                icon={<IconSearch />}
+                onClick={openCombinationQuery}
+              >
+                组合方案查询
+              </Button>
+            )}
             <Button icon={<IconUpload />}>批量导入</Button>
             <Button icon={<IconDownload />}>导出列表</Button>
           </Space>
@@ -1084,8 +1317,8 @@ const RateQuery: React.FC = () => {
         <Table
           rowKey="key"
           loading={false}
-          columns={columns}
-          data={data}
+          columns={getTableColumns() as any}
+          data={getTableData() as any}
           rowSelection={{
             selectedRowKeys,
             onChange: onSelectChange,
