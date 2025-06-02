@@ -9,34 +9,32 @@ import 'echarts-countries-js/echarts-countries-js/world';
 
 const ControlTowerPanel: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [mapRegistered, setMapRegistered] = useState(false);
   const [realtimeOrders, setRealtimeOrders] = useState<Array<{id: string, source: string, time: string}>>([]);
   const [realtimeTasks, setRealtimeTasks] = useState<Array<{id: string, task: string, time: string}>>([]);
   
-  // 运价指数数据状态
-  const [freightIndices, setFreightIndices] = useState([
+  // 运价指数数据状�?  const [freightIndices, setFreightIndices] = useState([
     { code: 'FBX01', name: '上海→洛杉矶', value: 2230.75, change: -5.32, changePercent: -0.24 },
     { code: 'FBX02', name: '宁波→鹿特丹', value: 2767, change: -21.3, changePercent: -0.77 },
-    { code: 'FBX03', name: '青岛→汉堡', value: 1417.75, change: -33.03, changePercent: -2.33 },
-    { code: 'FBX04', name: '天津→纽约', value: 3978.75, change: -305.44, changePercent: -7.68 },
+    { code: 'FBX03', name: '青岛→汉�?, value: 1417.75, change: -33.03, changePercent: -2.33 },
+    { code: 'FBX04', name: '天津→纽�?, value: 3978.75, change: -305.44, changePercent: -7.68 },
     { code: 'FBX05', name: '厦门→费利克斯托', value: 3543.25, change: -63.09, changePercent: -1.78 },
     { code: 'FBX06', name: '深圳→鹿特丹', value: 2360.75, change: -218.72, changePercent: -8.42 },
-    { code: 'FBX07', name: '广州→汉堡', value: 3301.5, change: -180.28, changePercent: -5.18 },
-    { code: 'FBX08', name: '大连→安特卫普', value: 3253.25, change: 97.60, changePercent: 3.09 },
-    { code: 'FBX09', name: '连云港→费利克斯托', value: 3576.5, change: -111.25, changePercent: -3.01 },
-    { code: 'FBX10', name: '烟台→勒阿弗尔', value: 3346.75, change: 195.36, changePercent: 6.19 },
+    { code: 'FBX07', name: '广州→汉�?, value: 3301.5, change: -180.28, changePercent: -5.18 },
+    { code: 'FBX08', name: '大连→安特卫�?, value: 3253.25, change: 97.60, changePercent: 3.09 },
+    { code: 'FBX09', name: '连云港→费利克斯�?, value: 3576.5, change: -111.25, changePercent: -3.01 },
+    { code: 'FBX10', name: '烟台→勒阿弗�?, value: 3346.75, change: 195.36, changePercent: 6.19 },
     { code: 'FBX11', name: '宁波→洛杉矶', value: 2360.75, change: -8.42, changePercent: -0.42 },
-    { code: 'FBX12', name: '上海→汉堡', value: 3301.5, change: -5.18, changePercent: -5.18 },
-    { code: 'FBX13', name: '深圳→纽约', value: 3253.25, change: 3, changePercent: 3 },
+    { code: 'FBX12', name: '上海→汉�?, value: 3301.5, change: -5.18, changePercent: -5.18 },
+    { code: 'FBX13', name: '深圳→纽�?, value: 3253.25, change: 3, changePercent: 3 },
     { code: 'FBX14', name: '青岛→鹿特丹', value: 3576.5, change: -3.01, changePercent: -3.01 },
-    { code: 'FBX21', name: '天津→长滩', value: 3346.75, change: 6.19, changePercent: 6.19 }
+    { code: 'FBX21', name: '天津→长�?, value: 3346.75, change: 6.19, changePercent: 6.19 }
   ]);
 
   // 运价指数数据更新
   useEffect(() => {
     const updateFreightIndices = () => {
       setFreightIndices(prev => prev.map(item => {
-        // 随机变化 -5% 到 +5%
+        // 随机变化 -5% �?+5%
         const changePercent = (Math.random() - 0.5) * 10;
         const change = item.value * (changePercent / 100);
         const newValue = Math.max(1000, item.value + change);
@@ -50,8 +48,7 @@ const ControlTowerPanel: React.FC = () => {
       }));
     };
 
-    // 每30秒更新一次运价指数
-    const interval = setInterval(updateFreightIndices, 3000);
+    // �?0秒更新一次运价指�?    const interval = setInterval(updateFreightIndices, 3000);
     return () => clearInterval(interval);
   }, []);
 
@@ -65,8 +62,7 @@ const ControlTowerPanel: React.FC = () => {
         // Map registration completed
       } catch (error) {
         console.error('Failed to load world map:', error);
-        // 如果加载失败，使用备用方案
-      }
+        // 如果加载失败，使用备用方�?      }
     };
 
     registerWorldMap();
@@ -95,8 +91,7 @@ const ControlTowerPanel: React.FC = () => {
           source: source,
           time: time
         }, ...prev];
-        // 保持最多15条记录
-        return newOrders.slice(0, 15);
+        // 保持最�?5条记�?        return newOrders.slice(0, 15);
       });
     };
 
@@ -105,7 +100,7 @@ const ControlTowerPanel: React.FC = () => {
       setTimeout(() => generateOrder(), i * 500);
     }
 
-    // 每4-7秒随机生成一条新订单
+    // �?-7秒随机生成一条新订单
     const interval = setInterval(() => {
       generateOrder();
     }, Math.random() * 3000 + 4000);
@@ -115,7 +110,7 @@ const ControlTowerPanel: React.FC = () => {
 
   // 实时任务生成
   useEffect(() => {
-    const tasks = ['待报价', '待确认提单', '待确认账单', '待提交VGM'];
+    const tasks = ['待报�?, '待确认提�?, '待确认账�?, '待提交VGM'];
     
     const generateTask = () => {
       const orderNumber = `WO${Date.now().toString().slice(-8)}${Math.floor(Math.random() * 100).toString().padStart(2, '0')}`;
@@ -128,8 +123,7 @@ const ControlTowerPanel: React.FC = () => {
           task: task,
           time: time
         }, ...prev];
-        // 保持最多15条记录
-        return newTasks.slice(0, 15);
+        // 保持最�?5条记�?        return newTasks.slice(0, 15);
       });
     };
 
@@ -138,7 +132,7 @@ const ControlTowerPanel: React.FC = () => {
       setTimeout(() => generateTask(), i * 800);
     }
 
-    // 每5-9秒随机生成一条新任务
+    // �?-9秒随机生成一条新任务
     const interval = setInterval(() => {
       generateTask();
     }, Math.random() * 4000 + 5000);
@@ -154,7 +148,7 @@ const ControlTowerPanel: React.FC = () => {
     const chart = echarts.init(chartElement);
     
     // 生成初始数据
-    const ports = ['上海港', '宁波舟山港', '深圳港', '青岛港', '广州港', '天津港', '厦门港', '大连港'];
+    const ports = ['上海�?, '宁波舟山�?, '深圳�?, '青岛�?, '广州�?, '天津�?, '厦门�?, '大连�?];
     let anomalyData = ports.map(() => Math.floor(Math.random() * 30) + 5);
 
     const option = {
@@ -205,7 +199,7 @@ const ControlTowerPanel: React.FC = () => {
       },
       yAxis: {
         type: 'value',
-        name: '异常订单数',
+        name: '异常订单�?,
         nameTextStyle: {
           color: '#ff6b6b',
           fontSize: 14
@@ -262,10 +256,8 @@ const ControlTowerPanel: React.FC = () => {
           data: anomalyData
         }]
       });
-    }, 10000); // 每10秒更新一次
-
-    // 响应式处理
-    const handleResize = () => {
+    }, 10000); // �?0秒更新一�?
+    // 响应式处�?    const handleResize = () => {
       chart.resize();
     };
     window.addEventListener('resize', handleResize);
@@ -466,10 +458,8 @@ const ControlTowerPanel: React.FC = () => {
           { data: dealData }
         ]
       });
-    }, 15000); // 每15秒更新一次
-
-    // 响应式处理
-    const handleResize = () => {
+    }, 15000); // �?5秒更新一�?
+    // 响应式处�?    const handleResize = () => {
       chart.resize();
     };
     window.addEventListener('resize', handleResize);
@@ -488,27 +478,26 @@ const ControlTowerPanel: React.FC = () => {
       
       // 热门航线数据
       const hotRoutes = [
-        { route: 'Shanghai → Los Angeles', count: Math.floor(Math.random() * 200) + 300, rank: 1 },
-        { route: 'Qingdao → Rotterdam', count: Math.floor(Math.random() * 180) + 250, rank: 2 },
-        { route: 'Shenzhen → Hamburg', count: Math.floor(Math.random() * 160) + 220, rank: 3 },
-        { route: 'Ningbo → Long Beach', count: Math.floor(Math.random() * 150) + 200, rank: 4 },
-        { route: 'Tianjin → Dubai', count: Math.floor(Math.random() * 140) + 180, rank: 5 },
-        { route: 'Xiamen → Singapore', count: Math.floor(Math.random() * 130) + 160, rank: 6 },
-        { route: 'Dalian → Antwerp', count: Math.floor(Math.random() * 120) + 140, rank: 7 },
-        { route: 'Guangzhou → New York', count: Math.floor(Math.random() * 110) + 120, rank: 8 },
-        { route: 'Yantai → Felixstowe', count: Math.floor(Math.random() * 100) + 100, rank: 9 },
-        { route: 'Lianyungang → Le Havre', count: Math.floor(Math.random() * 90) + 80, rank: 10 }
+        { route: 'Shanghai �?Los Angeles', count: Math.floor(Math.random() * 200) + 300, rank: 1 },
+        { route: 'Qingdao �?Rotterdam', count: Math.floor(Math.random() * 180) + 250, rank: 2 },
+        { route: 'Shenzhen �?Hamburg', count: Math.floor(Math.random() * 160) + 220, rank: 3 },
+        { route: 'Ningbo �?Long Beach', count: Math.floor(Math.random() * 150) + 200, rank: 4 },
+        { route: 'Tianjin �?Dubai', count: Math.floor(Math.random() * 140) + 180, rank: 5 },
+        { route: 'Xiamen �?Singapore', count: Math.floor(Math.random() * 130) + 160, rank: 6 },
+        { route: 'Dalian �?Antwerp', count: Math.floor(Math.random() * 120) + 140, rank: 7 },
+        { route: 'Guangzhou �?New York', count: Math.floor(Math.random() * 110) + 120, rank: 8 },
+        { route: 'Yantai �?Felixstowe', count: Math.floor(Math.random() * 100) + 100, rank: 9 },
+        { route: 'Lianyungang �?Le Havre', count: Math.floor(Math.random() * 90) + 80, rank: 10 }
       ];
 
       const renderRanking = () => {
-        // 重新排序（基于count降序）
-        const sortedRoutes = [...hotRoutes].sort((a, b) => b.count - a.count);
+        // 重新排序（基于count降序�?        const sortedRoutes = [...hotRoutes].sort((a, b) => b.count - a.count);
         
         const rankingHTML = sortedRoutes.map((item, index) => {
           const rank = index + 1;
           const rankClass = rank <= 3 ? `top-${rank}` : 'normal';
           const trendClass = Math.random() > 0.5 ? 'up' : 'down';
-          const trendIcon = trendClass === 'up' ? '↗' : '↘';
+          const trendIcon = trendClass === 'up' ? '�? : '�?;
           
           return `
             <div class="ranking-item ${rankClass}" style="animation-delay: ${index * 0.1}s;">
@@ -519,7 +508,7 @@ const ControlTowerPanel: React.FC = () => {
               <div class="route-info">
                 <div class="route-name">${item.route}</div>
                 <div class="route-meta">
-                  <span class="inquiry-count">${item.count} 次询价</span>
+                  <span class="inquiry-count">${item.count} 次询�?/span>
                   <span class="trend ${trendClass}">${trendIcon} ${Math.floor(Math.random() * 20) + 5}%</span>
                 </div>
               </div>
@@ -538,23 +527,19 @@ const ControlTowerPanel: React.FC = () => {
 
       // 定时更新数据
       const updateInterval = setInterval(() => {
-        // 随机更新部分航线的询价次数
-        hotRoutes.forEach(route => {
-          const change = Math.floor(Math.random() * 20) - 10; // -10 到 +10 的变化
-          route.count = Math.max(50, route.count + change); // 确保最小值为50
+        // 随机更新部分航线的询价次�?        hotRoutes.forEach(route => {
+          const change = Math.floor(Math.random() * 20) - 10; // -10 �?+10 的变�?          route.count = Math.max(50, route.count + change); // 确保最小值为50
         });
         
         renderRanking();
-      }, 20000); // 每20秒更新一次
-
+      }, 20000); // �?0秒更新一�?
       return () => {
         clearInterval(updateInterval);
       };
     }
   }, []);
 
-  // 销售报价时效排行榜初始化
-  useEffect(() => {
+  // 销售报价时效排行榜初始�?  useEffect(() => {
     const contentElement = document.getElementById('sales-quote-efficiency-content');
     if (contentElement) {
       
@@ -562,25 +547,24 @@ const ControlTowerPanel: React.FC = () => {
       const salesQuoteData = [
         { name: '张明', avgTime: '0.8h', efficiency: 95, orders: 142, rank: 1 },
         { name: '李思雨', avgTime: '1.2h', efficiency: 89, orders: 128, rank: 2 },
-        { name: '王建华', avgTime: '1.5h', efficiency: 84, orders: 115, rank: 3 },
-        { name: '陈晓东', avgTime: '1.8h', efficiency: 78, orders: 98, rank: 4 },
-        { name: '赵美玲', avgTime: '2.1h', efficiency: 72, orders: 87, rank: 5 },
-        { name: '刘志强', avgTime: '2.4h', efficiency: 68, orders: 76, rank: 6 },
-        { name: '周雪婷', avgTime: '2.7h', efficiency: 63, orders: 69, rank: 7 },
-        { name: '孙浩然', avgTime: '3.1h', efficiency: 58, orders: 58, rank: 8 },
-        { name: '吴佳琪', avgTime: '3.5h', efficiency: 52, orders: 45, rank: 9 },
-        { name: '胡锦涛', avgTime: '4.2h', efficiency: 46, orders: 38, rank: 10 }
+        { name: '王建�?, avgTime: '1.5h', efficiency: 84, orders: 115, rank: 3 },
+        { name: '陈晓�?, avgTime: '1.8h', efficiency: 78, orders: 98, rank: 4 },
+        { name: '赵美�?, avgTime: '2.1h', efficiency: 72, orders: 87, rank: 5 },
+        { name: '刘志�?, avgTime: '2.4h', efficiency: 68, orders: 76, rank: 6 },
+        { name: '周雪�?, avgTime: '2.7h', efficiency: 63, orders: 69, rank: 7 },
+        { name: '孙浩�?, avgTime: '3.1h', efficiency: 58, orders: 58, rank: 8 },
+        { name: '吴佳�?, avgTime: '3.5h', efficiency: 52, orders: 45, rank: 9 },
+        { name: '胡锦�?, avgTime: '4.2h', efficiency: 46, orders: 38, rank: 10 }
       ];
 
       const renderSalesQuoteRanking = () => {
-        // 按效率重新排序
-        const sortedData = [...salesQuoteData].sort((a, b) => b.efficiency - a.efficiency);
+        // 按效率重新排�?        const sortedData = [...salesQuoteData].sort((a, b) => b.efficiency - a.efficiency);
         
         const rankingHTML = sortedData.map((item, index) => {
           const rank = index + 1;
           const rankClass = rank <= 3 ? `top-${rank}` : 'normal';
           const trendClass = Math.random() > 0.5 ? 'up' : 'down';
-          const trendIcon = trendClass === 'up' ? '↗' : '↘';
+          const trendIcon = trendClass === 'up' ? '�? : '�?;
           
           return `
             <div class="ranking-item ${rankClass}" style="animation-delay: ${index * 0.1}s;">
@@ -612,40 +596,36 @@ const ControlTowerPanel: React.FC = () => {
       const updateInterval = setInterval(() => {
         // 随机更新销售员数据
         salesQuoteData.forEach(sales => {
-          const efficiencyChange = Math.floor(Math.random() * 10) - 5; // -5 到 +5 的变化
-          sales.efficiency = Math.max(30, Math.min(100, sales.efficiency + efficiencyChange)); // 30-100范围
-          const avgTimeChange = (Math.random() - 0.5) * 0.5; // -0.25h 到 +0.25h 的变化
-          const currentTime = parseFloat(sales.avgTime.replace('h', ''));
+          const efficiencyChange = Math.floor(Math.random() * 10) - 5; // -5 �?+5 的变�?          sales.efficiency = Math.max(30, Math.min(100, sales.efficiency + efficiencyChange)); // 30-100范围
+          const avgTimeChange = (Math.random() - 0.5) * 0.5; // -0.25h �?+0.25h 的变�?          const currentTime = parseFloat(sales.avgTime.replace('h', ''));
           const newTime = Math.max(0.5, currentTime + avgTimeChange);
           sales.avgTime = `${newTime.toFixed(1)}h`;
         });
         
         renderSalesQuoteRanking();
-      }, 25000); // 每25秒更新一次
-
+      }, 25000); // �?5秒更新一�?
       return () => {
         clearInterval(updateInterval);
       };
     }
   }, []);
 
-  // 成交订单量客户排行榜初始化
-  useEffect(() => {
+  // 成交订单量客户排行榜初始�?  useEffect(() => {
     const contentElement = document.getElementById('customer-orders-ranking-content');
     if (contentElement) {
       
       // 客户成交订单数据
       const customerOrdersData = [
-        { company: '华为技术有限公司', orders: 2847, revenue: '¥1.24亿', growth: 15.6, rank: 1 },
-        { company: '阿里巴巴集团', orders: 2156, revenue: '¥9680万', growth: 12.3, rank: 2 },
-        { company: '腾讯科技', orders: 1893, revenue: '¥8520万', growth: 8.9, rank: 3 },
-        { company: '比亚迪股份', orders: 1647, revenue: '¥7410万', growth: 22.1, rank: 4 },
-        { company: '海康威视', orders: 1425, revenue: '¥6380万', growth: -3.2, rank: 5 },
-        { company: '小米集团', orders: 1238, revenue: '¥5560万', growth: 18.7, rank: 6 },
-        { company: '京东集团', orders: 1089, revenue: '¥4890万', growth: 5.4, rank: 7 },
-        { company: '宁德时代', orders: 947, revenue: '¥4250万', growth: 28.9, rank: 8 },
-        { company: '美的集团', orders: 856, revenue: '¥3840万', growth: 7.2, rank: 9 },
-        { company: '格力电器', orders: 723, revenue: '¥3250万', growth: -1.8, rank: 10 }
+        { company: '华为技术有限公�?, orders: 2847, revenue: '¥1.24�?, growth: 15.6, rank: 1 },
+        { company: '阿里巴巴集团', orders: 2156, revenue: '¥9680�?, growth: 12.3, rank: 2 },
+        { company: '腾讯科技', orders: 1893, revenue: '¥8520�?, growth: 8.9, rank: 3 },
+        { company: '比亚迪股�?, orders: 1647, revenue: '¥7410�?, growth: 22.1, rank: 4 },
+        { company: '海康威视', orders: 1425, revenue: '¥6380�?, growth: -3.2, rank: 5 },
+        { company: '小米集团', orders: 1238, revenue: '¥5560�?, growth: 18.7, rank: 6 },
+        { company: '京东集团', orders: 1089, revenue: '¥4890�?, growth: 5.4, rank: 7 },
+        { company: '宁德时代', orders: 947, revenue: '¥4250�?, growth: 28.9, rank: 8 },
+        { company: '美的集团', orders: 856, revenue: '¥3840�?, growth: 7.2, rank: 9 },
+        { company: '格力电器', orders: 723, revenue: '¥3250�?, growth: -1.8, rank: 10 }
       ];
 
       const renderCustomerOrdersRanking = () => {
@@ -656,7 +636,7 @@ const ControlTowerPanel: React.FC = () => {
           const rank = index + 1;
           const rankClass = rank <= 3 ? `top-${rank}` : 'normal';
           const trendClass = item.growth >= 0 ? 'up' : 'down';
-          const trendIcon = trendClass === 'up' ? '↗' : '↘';
+          const trendIcon = trendClass === 'up' ? '�? : '�?;
           
           return `
             <div class="ranking-item ${rankClass}" style="animation-delay: ${index * 0.1}s;">
@@ -688,15 +668,12 @@ const ControlTowerPanel: React.FC = () => {
       const updateInterval = setInterval(() => {
         // 随机更新客户订单数据
         customerOrdersData.forEach(customer => {
-          const orderChange = Math.floor(Math.random() * 40) - 20; // -20 到 +20 的变化
-          customer.orders = Math.max(500, customer.orders + orderChange); // 确保最小值为500
-          const growthChange = (Math.random() - 0.5) * 10; // -5% 到 +5% 的变化
-          customer.growth = Math.round((customer.growth + growthChange) * 10) / 10;
+          const orderChange = Math.floor(Math.random() * 40) - 20; // -20 �?+20 的变�?          customer.orders = Math.max(500, customer.orders + orderChange); // 确保最小值为500
+          const growthChange = (Math.random() - 0.5) * 10; // -5% �?+5% 的变�?          customer.growth = Math.round((customer.growth + growthChange) * 10) / 10;
         });
         
         renderCustomerOrdersRanking();
-      }, 30000); // 每30秒更新一次
-
+      }, 30000); // �?0秒更新一�?
       return () => {
         clearInterval(updateInterval);
       };
@@ -705,16 +682,16 @@ const ControlTowerPanel: React.FC = () => {
 
   // 数据总览配置
   const overviewData = [
-    { title: '总订单数', value: 4823, change: 156, trend: 'up', unit: '单' },
-    { title: '在途订单', value: 1247, change: 23, trend: 'up', unit: '单' },
-    { title: '待处理任务', value: 89, change: -12, trend: 'down', unit: '个' },
-    { title: '逾期任务', value: 15, change: -8, trend: 'down', unit: '个' },
-    { title: '异常预警订单', value: 6, change: 2, trend: 'up', unit: '单' },
+    { title: '总订单数', value: 4823, change: 156, trend: 'up', unit: '�? },
+    { title: '在途订�?, value: 1247, change: 23, trend: 'up', unit: '�? },
+    { title: '待处理任�?, value: 89, change: -12, trend: 'down', unit: '�? },
+    { title: '逾期任务', value: 15, change: -8, trend: 'down', unit: '�? },
+    { title: '异常预警订单', value: 6, change: 2, trend: 'up', unit: '�? },
   ];
 
   return (
     <div className="control-tower-panel">
-      {/* 运价指数滚动条 */}
+      {/* 运价指数滚动�?*/}
       <div className="freight-ticker">
         <div className="ticker-content">
           {[...freightIndices, ...freightIndices].map((item, index) => (
@@ -723,19 +700,19 @@ const ControlTowerPanel: React.FC = () => {
               <span className="ticker-name">{item.name}</span>
               <span className="ticker-value">${item.value}</span>
               <span className={`ticker-change ${item.changePercent >= 0 ? 'up' : 'down'}`}>
-                {item.changePercent >= 0 ? '↗' : '↘'} {Math.abs(item.changePercent)}%
+                {item.changePercent >= 0 ? '�? : '�?} {Math.abs(item.changePercent)}%
               </span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* 顶部标题栏 */}
+      {/* 顶部标题�?*/}
       <div className="panel-header">
         <div className="header-left">
           <div className="panel-title">
-            <span className="title-icon">◆</span>
-            <span>Wo AI 控制塔面板</span>
+            <span className="title-icon">�?/span>
+            <span>Wo AI 控制塔面�?/span>
           </div>
         </div>
         <div className="header-center">
@@ -781,12 +758,12 @@ const ControlTowerPanel: React.FC = () => {
 
         {/* 图表区域 */}
         <div className="charts-section">
-          {/* 三列布局：实时订单列表 + 全球订单流向图 + 实时任务列表 */}
+          {/* 三列布局：实时订单列�?+ 全球订单流向�?+ 实时任务列表 */}
           <div className="charts-row three-column">
             {/* 左侧实时订单列表 */}
             <div className="chart-card realtime-orders">
               <div className="chart-title">
-                <span className="title-icon">◆</span>
+                <span className="title-icon">�?/span>
                 实时订单
               </div>
               <div className="orders-list">
@@ -807,7 +784,7 @@ const ControlTowerPanel: React.FC = () => {
               </div>
             </div>
             
-            {/* 中间全球订单流向图 */}
+            {/* 中间全球订单流向�?*/}
             <div className="chart-card map-container">
               <LeafletMap height="600px" />
             </div>
@@ -815,7 +792,7 @@ const ControlTowerPanel: React.FC = () => {
             {/* 右侧实时任务列表 */}
             <div className="chart-card realtime-tasks">
               <div className="chart-title">
-                <span className="title-icon">◆</span>
+                <span className="title-icon">�?/span>
                 实时任务
               </div>
               <div className="tasks-list">
@@ -837,20 +814,20 @@ const ControlTowerPanel: React.FC = () => {
             </div>
           </div>
 
-          {/* 通关异常订单直方图 */}
+          {/* 通关异常订单直方�?*/}
           <div className="charts-row two-column">
             <div className="chart-card customs-anomaly-chart">
               <div className="chart-title">
-                <span className="title-icon">◆</span>
+                <span className="title-icon">�?/span>
                 通关异常订单统计
               </div>
               <div id="customs-anomaly-bar-chart" style={{ width: '100%', height: '300px' }}></div>
             </div>
 
-            {/* 询价成交趋势折线图 */}
+            {/* 询价成交趋势折线�?*/}
             <div className="chart-card inquiry-deal-chart">
               <div className="chart-title">
-                <span className="title-icon">◆</span>
+                <span className="title-icon">�?/span>
                 询价成交趋势
               </div>
               <div id="inquiry-deal-line-chart" style={{ width: '100%', height: '300px' }}></div>
@@ -859,16 +836,16 @@ const ControlTowerPanel: React.FC = () => {
 
           {/* 三个排行榜并排布局 */}
           <div className="charts-row three-column">
-            {/* 热门询价排行榜 */}
+            {/* 热门询价排行�?*/}
             <div className="chart-card hot-inquiry-ranking">
               <div className="chart-title">
-                <span className="title-icon">◆</span>
-                热门询价排行榜 TOP10
+                <span className="title-icon">�?/span>
+                热门询价排行�?TOP10
               </div>
               <div className="ranking-list">
-                {/* 排行榜内容将通过useEffect动态生成 */}
+                {/* 排行榜内容将通过useEffect动态生�?*/}
                 <div id="hot-inquiry-ranking-content" className="ranking-content">
-                  {/* 动态内容 */}
+                  {/* 动态内�?*/}
                 </div>
               </div>
             </div>
@@ -876,12 +853,12 @@ const ControlTowerPanel: React.FC = () => {
             {/* 销售报价时效排行榜 */}
             <div className="chart-card sales-quote-efficiency-ranking">
               <div className="chart-title">
-                <span className="title-icon">◆</span>
+                <span className="title-icon">�?/span>
                 销售报价时效排行榜 TOP10
               </div>
               <div className="ranking-list">
                 <div id="sales-quote-efficiency-content" className="ranking-content">
-                  {/* 动态内容 */}
+                  {/* 动态内�?*/}
                 </div>
               </div>
             </div>
@@ -889,12 +866,12 @@ const ControlTowerPanel: React.FC = () => {
             {/* 成交订单量客户排行榜 */}
             <div className="chart-card customer-orders-ranking">
               <div className="chart-title">
-                <span className="title-icon">◆</span>
+                <span className="title-icon">�?/span>
                 成交订单量客户排行榜 TOP10
               </div>
               <div className="ranking-list">
                 <div id="customer-orders-ranking-content" className="ranking-content">
-                  {/* 动态内容 */}
+                  {/* 动态内�?*/}
                 </div>
               </div>
             </div>
