@@ -9,7 +9,6 @@ import 'echarts-countries-js/echarts-countries-js/world';
 
 const ControlTowerPanel: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [mapRegistered, setMapRegistered] = useState(false);
   const [realtimeOrders, setRealtimeOrders] = useState<Array<{id: string, source: string, time: string}>>([]);
   const [realtimeTasks, setRealtimeTasks] = useState<Array<{id: string, task: string, time: string}>>([]);
   
@@ -170,7 +169,7 @@ const ControlTowerPanel: React.FC = () => {
         textStyle: {
           color: '#ffffff'
         },
-        formatter: (params: any) => {
+        formatter: (params: unknown) => {
           const dataArray = Array.isArray(params) ? params : [params];
           const data = dataArray[0] as { name: string; value: number };
           return `${data.name}<br/>异常订单: ${data.value} 单`;
