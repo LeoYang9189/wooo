@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
+import ControlTowerPanel from './pages/ControlTowerPanel';
 import FreightRateQuery from './pages/FreightRateQuery';
 import InquiryManagement from './pages/InquiryManagement';
 import BillingManagement from './pages/BillingManagement';
@@ -16,6 +17,7 @@ const ControlTowerRoutes: React.FC = () => {
     <Routes>
       <Route path="/" element={<Dashboard />} />
       <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/control-tower-panel" element={<ControlTowerPanel />} />
       <Route path="/freight-rate-query" element={<FreightRateQuery />} />
       <Route path="/inquiry-management" element={<InquiryManagement />} />
       <Route path="/order-management" element={<OrderManagement />} />

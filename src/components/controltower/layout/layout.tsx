@@ -59,6 +59,9 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
       case 'dashboard':
         breadcrumbs.push({ title: '仪表盘', path: '/controltower/dashboard' });
         break;
+      case 'control-tower-panel':
+        breadcrumbs.push({ title: '控制塔面板', path: '/controltower/control-tower-panel' });
+        break;
       case 'freight-rate-query':
         breadcrumbs.push(
           { title: '运价中心', path: '/controltower/freight' },
@@ -160,6 +163,10 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
           <MenuItem key="dashboard">
             <IconDashboard />
             <span>仪表盘</span>
+          </MenuItem>
+          <MenuItem key="control-tower-panel">
+            <IconApps />
+            <span>控制塔面板</span>
           </MenuItem>
           <SubMenu
             key="freight"
