@@ -1,16 +1,162 @@
 import React, { useState, useEffect } from 'react';
-import { IconArrowUp, IconArrowDown } from '@arco-design/web-react/icon';
+import { IconArrowUp, IconArrowDown, IconEye, IconClose, IconArrowRight } from '@arco-design/web-react/icon';
 import LeafletMap from './LeafletMap';
 import './ControlTowerPanelStyles.css';
 import * as echarts from 'echarts';
+import { useNavigate } from 'react-router-dom';
 
 // 注册世界地图
 import 'echarts-countries-js/echarts-countries-js/world';
+
+// 任务类型定义
+interface TaskItem {
+  id: string;
+  orderNumber: string;
+  taskType: string;
+  customerName: string;
+  deadline: Date;
+  overdueHours?: number;
+  status: 'pending' | 'overdue';
+  priority: 'high' | 'medium' | 'low';
+}
+
+// 任务弹窗组件
+const TaskModal: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  title: string;
+  tasks: TaskItem[];
+}> = ({ isOpen, onClose, title, tasks }) => {
+  const navigate = useNavigate();
+  if (!isOpen) return null;
+
+  const formatDeadline = (deadline: Date) => {
+    return deadline.toLocaleString('zh-CN', {
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const formatOverdueTime = (hours: number) => {
+    if (hours < 24) {
+      return `${hours}小时`;
+    } else {
+      const days = Math.floor(hours / 24);
+      const remainingHours = hours % 24;
+      return remainingHours > 0 ? `${days}天${remainingHours}小时` : `${days}天`;
+    }
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'high': return '#ff4d4f';
+      case 'medium': return '#faad14';
+      case 'low': return '#52c41a';
+      default: return '#1890ff';
+    }
+  };
+
+  const getTaskTypeColor = (taskType: string) => {
+    const colors = {
+      '待报价': '#ff9500',
+      '待确认提单': '#1890ff',
+      '待确认账单': '#722ed1',
+      '待提交VGM': '#eb2f96',
+      '待上传SI': '#13c2c2',
+      '待补充文件': '#faad14',
+      '待客户确认': '#52c41a',
+      '待海关放行': '#f5222d'
+    };
+    return colors[taskType as keyof typeof colors] || '#1890ff';
+  };
+
+  return (
+    <div className="task-modal-overlay" onClick={onClose}>
+      <div className="task-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="task-modal-header">
+          <h3>{title}</h3>
+          <button className="close-button" onClick={onClose}>
+            <IconClose />
+          </button>
+        </div>
+        <div className="task-modal-content">
+          <div className="task-list">
+            {tasks.map((task, index) => (
+              <div key={task.id} className={`task-modal-item ${task.status}`}>
+                {/* 优先级绸带 */}
+                <div className={`task-priority-ribbon ${task.priority}`}>
+                  {task.priority === 'high' ? '高' : task.priority === 'medium' ? '中' : '低'}
+                </div>
+                
+                <div className="task-main-info">
+                  <div className="task-left">
+                    <div className="task-order-info">
+                      <span className="task-order-number">{task.orderNumber}</span>
+                      <span className="task-customer">{task.customerName}</span>
+                    </div>
+                    <div className="task-type-info">
+                      <span 
+                        className="task-type-tag"
+                        style={{ 
+                          backgroundColor: `${getTaskTypeColor(task.taskType)}20`,
+                          borderColor: getTaskTypeColor(task.taskType),
+                          color: getTaskTypeColor(task.taskType)
+                        }}
+                      >
+                        {task.taskType}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="task-right">
+                    <div className="task-deadline">
+                      <span className="deadline-label">截止时间</span>
+                      <span className="deadline-time">{formatDeadline(task.deadline)}</span>
+                    </div>
+                    {task.status === 'overdue' && task.overdueHours && (
+                      <div className="task-overdue">
+                        <span className="overdue-label">逾期时间</span>
+                        <span className="overdue-time">{formatOverdueTime(task.overdueHours)}</span>
+                      </div>
+                    )}
+                    <button 
+                      className="view-button"
+                      onClick={() => navigate(`/controltower/order-detail/ORD000001`)}
+                      title="查看订单详情"
+                    >
+                      <IconArrowRight />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="task-modal-footer">
+          <div className="task-summary">
+            共 {tasks.length} 个任务
+            {title.includes('逾期') && (
+              <span className="overdue-summary">
+                ，逾期总时长：{tasks.reduce((total, task) => total + (task.overdueHours || 0), 0)}小时
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const ControlTowerPanel: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [realtimeOrders, setRealtimeOrders] = useState<Array<{id: string, source: string, time: string}>>([]);
   const [realtimeTasks, setRealtimeTasks] = useState<Array<{id: string, task: string, time: string}>>([]);
+  
+  // 弹窗状态
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+  const [taskModalTitle, setTaskModalTitle] = useState('');
+  const [taskModalData, setTaskModalData] = useState<TaskItem[]>([]);
   
   // 运价指数数据状态
   const [freightIndices, setFreightIndices] = useState([
@@ -49,23 +195,29 @@ const ControlTowerPanel: React.FC = () => {
       }));
     };
 
-    // 每30秒更新一次运价指数
+    // 立即执行一次更新，确保数据变化
+    updateFreightIndices();
+
+    // 每3秒更新一次运价指数
     const interval = setInterval(updateFreightIndices, 3000);
     return () => clearInterval(interval);
   }, []);
 
-  // 注册世界地图数据
+  // 注册世界地图数据（使用懒加载避免阻塞）
   useEffect(() => {
-    const registerWorldMap = async () => {
-      try {
-        // 使用CDN加载世界地图GeoJSON数据
-        await fetch('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson');
-        
-        // Map registration completed
-      } catch (error) {
-        console.error('Failed to load world map:', error);
-        // 如果加载失败，使用备用方案
-      }
+    const registerWorldMap = () => {
+      // 延迟加载地图数据，避免阻塞初始渲染
+      setTimeout(async () => {
+        try {
+          // 使用CDN加载世界地图GeoJSON数据
+          await fetch('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson');
+          
+          // Map registration completed
+        } catch (error) {
+          console.error('Failed to load world map:', error);
+          // 如果加载失败，使用备用方案
+        }
+      }, 1000); // 延迟1秒加载，确保界面先渲染
     };
 
     registerWorldMap();
@@ -711,6 +863,99 @@ const ControlTowerPanel: React.FC = () => {
     { title: '异常预警订单', value: 6, change: 2, trend: 'up', unit: '单' },
   ];
 
+  // 生成虚拟任务数据
+  const generateTaskData = (type: 'pending' | 'overdue', count: number): TaskItem[] => {
+    const taskTypes = ['待报价', '待确认提单', '待确认账单', '待提交VGM', '待上传SI', '待补充文件', '待客户确认', '待海关放行'];
+    const customers = ['华为技术有限公司', '阿里巴巴集团', '腾讯科技', '比亚迪股份', '海康威视', '小米集团', '京东集团', '宁德时代'];
+    const priorities: ('high' | 'medium' | 'low')[] = ['high', 'medium', 'low'];
+    
+    const tasks: TaskItem[] = [];
+    
+    for (let i = 0; i < count; i++) {
+      const now = new Date();
+      const taskType = taskTypes[Math.floor(Math.random() * taskTypes.length)];
+      const customer = customers[Math.floor(Math.random() * customers.length)];
+      const priority = priorities[Math.floor(Math.random() * priorities.length)];
+      
+      let deadline: Date;
+      let overdueHours: number | undefined;
+      
+      if (type === 'pending') {
+        // 待处理任务：截止时间在未来1-48小时内
+        deadline = new Date(now.getTime() + (Math.random() * 48 + 1) * 60 * 60 * 1000);
+      } else {
+        // 逾期任务：截止时间在过去，逾期1-168小时（1周）
+        overdueHours = Math.floor(Math.random() * 168) + 1;
+        deadline = new Date(now.getTime() - overdueHours * 60 * 60 * 1000);
+      }
+      
+      const orderNumber = `WO${Date.now().toString().slice(-8)}${Math.floor(Math.random() * 100).toString().padStart(2, '0')}`;
+      
+      tasks.push({
+        id: `task-${i}-${Date.now()}`,
+        orderNumber,
+        taskType,
+        customerName: customer,
+        deadline,
+        overdueHours,
+        status: type,
+        priority
+      });
+    }
+    
+    // 按优先级和截止时间排序
+    return tasks.sort((a, b) => {
+      // 优先级排序：high > medium > low
+      const priorityOrder = { high: 3, medium: 2, low: 1 };
+      const priorityDiff = priorityOrder[b.priority] - priorityOrder[a.priority];
+      if (priorityDiff !== 0) return priorityDiff;
+      
+      // 同优先级按截止时间排序
+      if (type === 'pending') {
+        return a.deadline.getTime() - b.deadline.getTime(); // 即将到期的在前
+      } else {
+        return (b.overdueHours || 0) - (a.overdueHours || 0); // 逾期时间长的在前
+      }
+    });
+  };
+  
+  // 打开任务弹窗
+  const openTaskModal = (type: 'pending' | 'overdue') => {
+    if (type === 'pending') {
+      setTaskModalTitle('待处理任务列表');
+      setTaskModalData(generateTaskData('pending', 89));
+    } else {
+      setTaskModalTitle('逾期任务列表');
+      setTaskModalData(generateTaskData('overdue', 15));
+    }
+    setIsTaskModalOpen(true);
+  };
+
+  // 关闭任务弹窗
+  const closeTaskModal = () => {
+    setIsTaskModalOpen(false);
+    setTaskModalTitle('');
+    setTaskModalData([]);
+  };
+
+  // 在实时任务列表中添加"查看"按钮
+  const openRealtimeTaskModal = (taskId: string) => {
+    const task = realtimeTasks.find(t => t.id === taskId);
+    if (task) {
+      setTaskModalTitle(`任务详情 - ${task.id}`);
+      setTaskModalData([{
+        id: task.id,
+        orderNumber: task.id,
+        taskType: task.task,
+        customerName: '未知客户', // 假设没有客户信息
+        deadline: new Date(), // 假设没有截止时间
+        status: 'pending',
+        priority: 'medium' // 假设中等优先级
+      }]);
+      setIsTaskModalOpen(true);
+    }
+  };
+
   return (
     <div className="control-tower-panel">
       {/* 运价指数滚动条 */}
@@ -765,9 +1010,20 @@ const ControlTowerPanel: React.FC = () => {
             <div key={index} className="overview-card">
               <div className="card-header">
                 <span className="card-title">{item.title}</span>
-                <div className={`trend-indicator ${item.trend}`}>
-                  {item.trend === 'up' ? <IconArrowUp /> : <IconArrowDown />}
-                  {Math.abs(item.change)}
+                <div className="card-header-right">
+                  <div className={`trend-indicator ${item.trend}`}>
+                    {item.trend === 'up' ? <IconArrowUp /> : <IconArrowDown />}
+                    {Math.abs(item.change)}
+                  </div>
+                  {(item.title === '待处理任务' || item.title === '逾期任务') && (
+                    <button 
+                      className="view-button"
+                      onClick={() => openTaskModal(item.title === '待处理任务' ? 'pending' : 'overdue')}
+                      title={`查看${item.title}详情`}
+                    >
+                      <IconEye />
+                    </button>
+                  )}
                 </div>
               </div>
               <div className="card-value">
@@ -823,6 +1079,13 @@ const ControlTowerPanel: React.FC = () => {
                     <div className="task-header">
                       <span className="task-order-number">{task.id}</span>
                       <span className="task-time">{task.time}</span>
+                      <button 
+                        className="view-button"
+                        onClick={() => openRealtimeTaskModal(task.id)}
+                        title="查看任务详情"
+                      >
+                        <IconEye />
+                      </button>
                     </div>
                     <div className="task-content">
                       <span className={`task-tag task-${task.task}`}>{task.task}</span>
@@ -900,6 +1163,16 @@ const ControlTowerPanel: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* 任务弹窗 */}
+      {isTaskModalOpen && (
+        <TaskModal
+          isOpen={isTaskModalOpen}
+          onClose={closeTaskModal}
+          title={taskModalTitle}
+          tasks={taskModalData}
+        />
+      )}
     </div>
   );
 };

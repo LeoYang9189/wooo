@@ -157,6 +157,12 @@
   font-weight: 500;
 }
 
+.card-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .trend-indicator {
   display: flex;
   align-items: center;
@@ -195,6 +201,384 @@
 .unit {
   font-size: 14px;
   color: #99ccff;
+}
+
+.view-button {
+  background: rgba(0, 247, 255, 0.1);
+  border: 1px solid rgba(0, 247, 255, 0.3);
+  border-radius: 6px;
+  padding: 4px 6px;
+  color: #00f7ff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.view-button:hover {
+  background: rgba(0, 247, 255, 0.2);
+  border-color: rgba(0, 247, 255, 0.5);
+  box-shadow: 0 0 8px rgba(0, 247, 255, 0.3);
+  transform: scale(1.05);
+}
+
+/* 任务弹窗样式 */
+.task-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(5px);
+}
+
+.task-modal {
+  background: linear-gradient(135deg, rgba(0, 20, 40, 0.95) 0%, rgba(0, 40, 80, 0.9) 100%);
+  border: 2px solid rgba(0, 247, 255, 0.4);
+  border-radius: 16px;
+  width: 95%;
+  max-width: 1200px;
+  max-height: 85vh;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(0, 247, 255, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.task-modal-header {
+  padding: 16px 24px 12px;
+  border-bottom: 1px solid rgba(0, 247, 255, 0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.task-modal-header::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 20px;
+  right: 20px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #00f7ff, transparent);
+}
+
+.task-modal-header h3 {
+  color: #00f7ff;
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+  text-shadow: 0 0 10px rgba(0, 247, 255, 0.5);
+}
+
+.close-button {
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 6px;
+  padding: 6px;
+  color: #ff6b6b;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.close-button:hover {
+  background: rgba(255, 107, 107, 0.2);
+  border-color: rgba(255, 107, 107, 0.5);
+  box-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
+  transform: scale(1.1);
+}
+
+.task-modal-content {
+  flex: 1;
+  padding: 0 24px;
+  overflow-y: auto;
+  max-height: calc(85vh - 120px);
+}
+
+.task-modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.task-modal-content::-webkit-scrollbar-track {
+  background: rgba(0, 20, 40, 0.8);
+  border-radius: 4px;
+}
+
+.task-modal-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00f7ff, #0099cc);
+  border-radius: 4px;
+  box-shadow: 0 0 5px rgba(0, 247, 255, 0.5);
+}
+
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 0;
+}
+
+.task-modal-item {
+  background: rgba(0, 102, 204, 0.1);
+  border: 1px solid rgba(0, 153, 255, 0.3);
+  border-radius: 8px;
+  padding: 12px 16px 12px 60px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.task-modal-item.overdue {
+  border-color: rgba(255, 107, 107, 0.5);
+  background: rgba(255, 107, 107, 0.05);
+}
+
+.task-modal-item:hover {
+  background: rgba(0, 102, 204, 0.15);
+  border-color: rgba(0, 247, 255, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(0, 247, 255, 0.2);
+}
+
+.task-modal-item.overdue:hover {
+  background: rgba(255, 107, 107, 0.1);
+  border-color: rgba(255, 107, 107, 0.7);
+  box-shadow: 0 3px 10px rgba(255, 107, 107, 0.2);
+}
+
+/* 优先级绸带样式 */
+.task-priority-ribbon {
+  position: absolute;
+  top: 10px;
+  left: -8px;
+  padding: 4px 22px 4px 14px;
+  font-size: 10px;
+  font-weight: bold;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  transform: rotate(-12deg);
+  transform-origin: center;
+  z-index: 2;
+  min-width: 50px;
+  text-align: center;
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    0 1px 2px rgba(0, 0, 0, 0.5);
+  border-radius: 0 4px 4px 0;
+  transition: all 0.3s ease;
+}
+
+.task-priority-ribbon.high {
+  background: linear-gradient(135deg, #ff4d4f 0%, #cf1322 100%);
+  border: 1px solid #a8071a;
+  box-shadow: 
+    0 2px 6px rgba(255, 77, 79, 0.4),
+    0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.task-priority-ribbon.medium {
+  background: linear-gradient(135deg, #faad14 0%, #d48806 100%);
+  border: 1px solid #ad6800;
+  box-shadow: 
+    0 2px 6px rgba(250, 173, 20, 0.4),
+    0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.task-priority-ribbon.low {
+  background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
+  border: 1px solid #237804;
+  box-shadow: 
+    0 2px 6px rgba(82, 196, 26, 0.4),
+    0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* 绸带右侧折叠效果 */
+.task-priority-ribbon::before {
+  content: '';
+  position: absolute;
+  right: -6px;
+  top: 0;
+  width: 0;
+  height: 0;
+  border-top: 14px solid;
+  border-bottom: 14px solid;
+  border-left: 6px solid transparent;
+  z-index: -1;
+}
+
+.task-priority-ribbon.high::before {
+  border-top-color: #8c0009;
+  border-bottom-color: #8c0009;
+}
+
+.task-priority-ribbon.medium::before {
+  border-top-color: #8c5700;
+  border-bottom-color: #8c5700;
+}
+
+.task-priority-ribbon.low::before {
+  border-top-color: #135200;
+  border-bottom-color: #135200;
+}
+
+/* 绸带左侧折叠效果 */
+.task-priority-ribbon::after {
+  content: '';
+  position: absolute;
+  left: -8px;
+  bottom: -6px;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 6px solid rgba(0, 0, 0, 0.3);
+}
+
+/* 鼠标悬停时绸带效果 */
+.task-modal-item:hover .task-priority-ribbon {
+  transform: rotate(-12deg) scale(1.05);
+  box-shadow: 
+    0 3px 8px rgba(0, 0, 0, 0.4),
+    0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.task-main-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.task-left {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.task-order-info {
+  min-width: 180px;
+}
+
+.task-order-number {
+  color: #00f7ff;
+  font-weight: bold;
+  font-size: 14px;
+  text-shadow: 0 0 5px rgba(0, 247, 255, 0.3);
+  display: block;
+  margin-bottom: 2px;
+}
+
+.task-customer {
+  color: #99ccff;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.task-type-info {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  min-width: 200px;
+}
+
+.task-type-tag {
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: bold;
+  border: 1px solid;
+  white-space: nowrap;
+}
+
+.task-right {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  text-align: right;
+  min-width: 280px;
+}
+
+.task-deadline,
+.task-overdue {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 90px;
+}
+
+.deadline-label,
+.overdue-label {
+  color: #99ccff;
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+.deadline-time {
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.overdue-time {
+  color: #ff6b6b;
+  font-weight: bold;
+  font-size: 12px;
+  text-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
+}
+
+.task-modal-footer {
+  padding: 12px 24px 16px;
+  border-top: 1px solid rgba(0, 247, 255, 0.2);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.task-modal-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20px;
+  right: 20px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #00f7ff, transparent);
+}
+
+.task-summary {
+  color: #99ccff;
+  font-size: 14px;
+  text-align: center;
+}
+
+.overdue-summary {
+  color: #ff6b6b;
+  font-weight: bold;
 }
 
 /* 图表区域 */
@@ -355,25 +739,6 @@
   }
 }
 
-/* 科技感动画效果 */
-@keyframes dataFlow {
-  0% { opacity: 0.3; }
-  50% { opacity: 1; }
-  100% { opacity: 0.3; }
-}
-
-.chart-card {
-  animation: dataFlow 4s ease-in-out infinite;
-}
-
-.chart-card:nth-child(2) {
-  animation-delay: 1s;
-}
-
-.chart-card:nth-child(3) {
-  animation-delay: 2s;
-}
-
 /* 边框发光效果 */
 .chart-card, .overview-card {
   position: relative;
@@ -407,6 +772,60 @@
   width: calc(50% - 30px);
   max-width: calc(50% - 30px);
   margin: 0 10px;
+  background: linear-gradient(135deg, rgba(0, 20, 40, 0.9) 0%, rgba(0, 40, 80, 0.7) 100%);
+  border: 2px solid rgba(0, 247, 255, 0.4);
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 
+    0 8px 32px rgba(0, 247, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.map-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00f7ff, transparent);
+  animation: scan 3s ease-in-out infinite;
+  z-index: 1;
+}
+
+/* Leaflet地图样式增强 */
+.map-container .leaflet-container {
+  background: rgba(15, 25, 35, 0.95) !important;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 247, 255, 0.2);
+  box-shadow: inset 0 0 20px rgba(0, 247, 255, 0.1);
+}
+
+.map-container .leaflet-tile {
+  filter: brightness(1.2) contrast(1.1) saturate(1.3) !important;
+}
+
+.map-container .leaflet-control-zoom {
+  background: rgba(0, 20, 40, 0.9) !important;
+  border: 1px solid rgba(0, 247, 255, 0.3) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 15px rgba(0, 247, 255, 0.2) !important;
+}
+
+.map-container .leaflet-control-zoom a {
+  background: rgba(0, 40, 80, 0.8) !important;
+  color: #00f7ff !important;
+  border: 1px solid rgba(0, 247, 255, 0.2) !important;
+  text-shadow: 0 0 5px rgba(0, 247, 255, 0.5) !important;
+  transition: all 0.3s ease !important;
+}
+
+.map-container .leaflet-control-zoom a:hover {
+  background: rgba(0, 247, 255, 0.2) !important;
+  border-color: rgba(0, 247, 255, 0.5) !important;
+  box-shadow: 0 0 10px rgba(0, 247, 255, 0.4) !important;
 }
 
 .realtime-tasks {
@@ -874,10 +1293,10 @@
 
 @keyframes scroll-left {
   0% {
-    transform: translateX(100%);
+    transform: translateX(0%);
   }
   100% {
-    transform: translateX(-100%);
+    transform: translateX(-200%);
   }
 }
 
