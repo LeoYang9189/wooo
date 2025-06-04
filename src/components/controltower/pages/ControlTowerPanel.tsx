@@ -49,15 +49,6 @@ const TaskModal: React.FC<{
     }
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high': return '#ff4d4f';
-      case 'medium': return '#faad14';
-      case 'low': return '#52c41a';
-      default: return '#1890ff';
-    }
-  };
-
   const getTaskTypeColor = (taskType: string) => {
     const colors = {
       '待报价': '#ff9500',
@@ -83,7 +74,7 @@ const TaskModal: React.FC<{
         </div>
         <div className="task-modal-content">
           <div className="task-list">
-            {tasks.map((task, index) => (
+            {tasks.map((task) => (
               <div key={task.id} className={`task-modal-item ${task.status}`}>
                 {/* 优先级绸带 */}
                 <div className={`task-priority-ribbon ${task.priority}`}>
