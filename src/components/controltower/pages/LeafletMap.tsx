@@ -20,21 +20,55 @@ const createCustomIcon = (color: string) => {
   });
 };
 
-const portIcon = createCustomIcon('#00f7ff');
-
 // 曲线航线组件
-const FlowingRoutes: React.FC = () => {
+const FlowingRoutes: React.FC<{ isDarkTheme: boolean }> = ({ isDarkTheme }) => {
   const map = useMap();
 
   useEffect(() => {
-    // 航线数据，使用明确的元组类型
+    // 航线数据，使用明确的元组类型，根据主题调整颜色
     const routes = [
-      { from: [31.22, 121.48] as [number, number], to: [34.05, -118.24] as [number, number], color: '#00ff88', name: '上海-洛杉矶', orders: Math.floor(Math.random() * 500) + 200 },
-      { from: [31.22, 121.48] as [number, number], to: [51.92, 4.47] as [number, number], color: '#00f7ff', name: '上海-鹿特丹', orders: Math.floor(Math.random() * 400) + 150 },
-      { from: [22.62, 114.07] as [number, number], to: [33.77, -118.19] as [number, number], color: '#ffcc00', name: '深圳-长滩', orders: Math.floor(Math.random() * 350) + 180 },
-      { from: [22.62, 114.07] as [number, number], to: [53.55, 9.99] as [number, number], color: '#6633ff', name: '深圳-汉堡', orders: Math.floor(Math.random() * 300) + 120 },
-      { from: [1.29, 103.85] as [number, number], to: [51.92, 4.47] as [number, number], color: '#ff66cc', name: '新加坡-鹿特丹', orders: Math.floor(Math.random() * 280) + 100 },
-      { from: [1.29, 103.85] as [number, number], to: [25.25, 55.27] as [number, number], color: '#00ccff', name: '新加坡-迪拜', orders: Math.floor(Math.random() * 220) + 80 }
+      { 
+        from: [31.22, 121.48] as [number, number], 
+        to: [34.05, -118.24] as [number, number], 
+        color: isDarkTheme ? '#00ff88' : '#10b981', 
+        name: '上海-洛杉矶', 
+        orders: Math.floor(Math.random() * 500) + 200 
+      },
+      { 
+        from: [31.22, 121.48] as [number, number], 
+        to: [51.92, 4.47] as [number, number], 
+        color: isDarkTheme ? '#00f7ff' : '#3b82f6', 
+        name: '上海-鹿特丹', 
+        orders: Math.floor(Math.random() * 400) + 150 
+      },
+      { 
+        from: [22.62, 114.07] as [number, number], 
+        to: [33.77, -118.19] as [number, number], 
+        color: isDarkTheme ? '#ffcc00' : '#f59e0b', 
+        name: '深圳-长滩', 
+        orders: Math.floor(Math.random() * 350) + 180 
+      },
+      { 
+        from: [22.62, 114.07] as [number, number], 
+        to: [53.55, 9.99] as [number, number], 
+        color: isDarkTheme ? '#6633ff' : '#7c3aed', 
+        name: '深圳-汉堡', 
+        orders: Math.floor(Math.random() * 300) + 120 
+      },
+      { 
+        from: [1.29, 103.85] as [number, number], 
+        to: [51.92, 4.47] as [number, number], 
+        color: isDarkTheme ? '#ff66cc' : '#ec4899', 
+        name: '新加坡-鹿特丹', 
+        orders: Math.floor(Math.random() * 280) + 100 
+      },
+      { 
+        from: [1.29, 103.85] as [number, number], 
+        to: [25.25, 55.27] as [number, number], 
+        color: isDarkTheme ? '#00ccff' : '#06b6d4', 
+        name: '新加坡-迪拜', 
+        orders: Math.floor(Math.random() * 220) + 80 
+      }
     ];
 
     // 创建曲线路径的函数
@@ -103,8 +137,20 @@ const FlowingRoutes: React.FC = () => {
 
       const pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       
+      // 存储当前的文本和矩形元素引用，用于清理
+      let currentTextElement: SVGTextElement | null = null;
+      let currentRectElement: SVGRectElement | null = null;
+      
       // 将经纬度转换为像素坐标
       const convertToPixels = () => {
+        // 清理之前的标签元素
+        if (currentTextElement && currentTextElement.parentNode) {
+          currentTextElement.parentNode.removeChild(currentTextElement);
+        }
+        if (currentRectElement && currentRectElement.parentNode) {
+          currentRectElement.parentNode.removeChild(currentRectElement);
+        }
+        
         const pixelPoints = path.map(point => {
           const latLng = L.latLng(point[0], point[1]);
           return map.latLngToContainerPoint(latLng);
@@ -150,12 +196,16 @@ const FlowingRoutes: React.FC = () => {
         linearGradient.appendChild(stop2);
         linearGradient.appendChild(stop3);
         gradient.appendChild(linearGradient);
-        svgElement.appendChild(gradient);
+        
+        // 只在第一次添加渐变定义
+        if (!svgElement.querySelector('defs')) {
+          svgElement.appendChild(gradient);
+        }
         
         pathElement.setAttribute('stroke', `url(#gradient-${index})`);
         pathElement.style.animation = `flow-${index} 3s linear infinite`;
         
-        // 添加订单数量标签
+        // 创建新的订单数量标签
         const textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         const midPointIndex = Math.floor(pixelPoints.length / 2);
         const midPoint = pixelPoints[midPointIndex];
@@ -167,26 +217,35 @@ const FlowingRoutes: React.FC = () => {
         textElement.setAttribute('font-weight', 'bold');
         textElement.setAttribute('text-anchor', 'middle');
         textElement.setAttribute('dominant-baseline', 'middle');
-        textElement.style.filter = `drop-shadow(0 0 3px ${route.color})`;
+        // 根据主题条件性地应用外发光效果
+        if (isDarkTheme) {
+          textElement.style.filter = `drop-shadow(0 0 3px ${route.color})`;
+        }
         textElement.style.fontFamily = 'Arial, sans-serif';
         textElement.textContent = `${route.orders}票订单`;
         
-        // 添加背景矩形
+        // 创建新的背景矩形
         const rectElement = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
         const textWidth = route.orders.toString().length * 8 + 40; // 估算文字宽度
         rectElement.setAttribute('x', (midPoint.x - textWidth/2).toString());
         rectElement.setAttribute('y', (midPoint.y - 18).toString());
         rectElement.setAttribute('width', textWidth.toString());
         rectElement.setAttribute('height', '20');
-        rectElement.setAttribute('fill', 'rgba(0, 20, 40, 0.8)');
+        rectElement.setAttribute('fill', isDarkTheme ? 'rgba(0, 20, 40, 0.8)' : 'rgba(248, 250, 252, 0.9)');
         rectElement.setAttribute('stroke', route.color);
         rectElement.setAttribute('stroke-width', '1');
         rectElement.setAttribute('rx', '8');
         rectElement.setAttribute('ry', '8');
-        rectElement.style.filter = `drop-shadow(0 0 5px ${route.color})`;
+        // 根据主题调整外发光强度
+        rectElement.style.filter = isDarkTheme 
+          ? `drop-shadow(0 0 5px ${route.color})` 
+          : `drop-shadow(0 1px 3px rgba(0, 0, 0, 0.2))`;
         
+        // 将新元素添加到SVG并更新引用
         svgElement.appendChild(rectElement);
         svgElement.appendChild(textElement);
+        currentRectElement = rectElement;
+        currentTextElement = textElement;
       };
 
       // 添加CSS动画 - 实线流动效果
@@ -218,6 +277,13 @@ const FlowingRoutes: React.FC = () => {
 
       return () => {
         map.removeLayer(baseLine);
+        // 清理SVG元素和标签
+        if (currentTextElement && currentTextElement.parentNode) {
+          currentTextElement.parentNode.removeChild(currentTextElement);
+        }
+        if (currentRectElement && currentRectElement.parentNode) {
+          currentRectElement.parentNode.removeChild(currentRectElement);
+        }
         if (svgElement.parentNode) {
           svgElement.parentNode.removeChild(svgElement);
         }
@@ -238,16 +304,17 @@ const FlowingRoutes: React.FC = () => {
     return () => {
       cleanupFunctions.forEach(cleanup => cleanup());
     };
-  }, [map]);
+  }, [map, isDarkTheme]);
 
   return null;
 };
 
 interface LeafletMapProps {
   height?: string;
+  isDarkTheme?: boolean;
 }
 
-const LeafletMap: React.FC<LeafletMapProps> = ({ height = '600px' }) => {
+const LeafletMap: React.FC<LeafletMapProps> = ({ height = '600px', isDarkTheme = true }) => {
   // 港口数据 - 添加英文名称
   const ports = [
     { name: '上海港', englishName: 'Port of Shanghai', position: [31.22, 121.48] as [number, number] },
@@ -260,6 +327,9 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ height = '600px' }) => {
     { name: '迪拜港', englishName: 'Port of Dubai', position: [25.25, 55.27] as [number, number] }
   ];
 
+  // 根据主题创建港口图标
+  const portIcon = createCustomIcon(isDarkTheme ? '#00f7ff' : '#3b82f6');
+
   return (
     <div style={{ height, width: '100%' }}>
       <style>{`
@@ -267,14 +337,14 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ height = '600px' }) => {
           background: transparent !important;
         }
         .leaflet-tile-pane {
-          opacity: 0.3;
+          opacity: ${isDarkTheme ? '0.3' : '0.8'};
         }
         .flowing-route {
           pointer-events: none;
           z-index: 1000;
         }
         .port-popup {
-          color: #00f7ff;
+          color: ${isDarkTheme ? '#00f7ff' : '#3b82f6'};
           font-weight: bold;
           text-align: center;
           min-width: 150px;
@@ -287,26 +357,26 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ height = '600px' }) => {
         }
         .port-name-english {
           font-size: 12px;
-          color: #99ccff;
+          color: ${isDarkTheme ? '#99ccff' : '#64748b'};
           font-weight: normal;
         }
         .leaflet-tooltip {
           z-index: 2000 !important;
-          background: rgba(0, 20, 40, 0.95) !important;
-          border: 1px solid #00f7ff !important;
+          background: ${isDarkTheme ? 'rgba(0, 20, 40, 0.95)' : 'rgba(248, 250, 252, 0.95)'} !important;
+          border: 1px solid ${isDarkTheme ? '#00f7ff' : '#3b82f6'} !important;
           border-radius: 6px !important;
-          box-shadow: 0 0 15px rgba(0, 247, 255, 0.5) !important;
+          box-shadow: 0 0 15px ${isDarkTheme ? 'rgba(0, 247, 255, 0.5)' : 'rgba(59, 130, 246, 0.3)'} !important;
         }
         .leaflet-tooltip-top:before {
-          border-top-color: #00f7ff !important;
+          border-top-color: ${isDarkTheme ? '#00f7ff' : '#3b82f6'} !important;
         }
         .map-title {
-          color: #00f7ff;
+          color: ${isDarkTheme ? '#00f7ff' : '#1e293b'};
           font-size: 16px;
           font-weight: normal;
           text-align: center;
           margin-bottom: 20px;
-          text-shadow: 0 0 5px rgba(0, 247, 255, 0.5);
+          text-shadow: 0 0 5px ${isDarkTheme ? 'rgba(0, 247, 255, 0.5)' : 'rgba(30, 41, 59, 0.3)'};
         }
       `}</style>
       
@@ -321,7 +391,7 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ height = '600px' }) => {
         attributionControl={false}
       >
         <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          url={`https://{s}.basemaps.cartocdn.com/${isDarkTheme ? 'dark_all' : 'light_all'}/{z}/{x}/{y}{r}.png`}
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         />
         
@@ -338,7 +408,7 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ height = '600px' }) => {
         ))}
         
         {/* 流动航线组件 */}
-        <FlowingRoutes />
+        <FlowingRoutes isDarkTheme={isDarkTheme} />
       </MapContainer>
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { IconArrowUp, IconArrowDown, IconEye, IconClose, IconArrowRight } from '@arco-design/web-react/icon';
+import { IconArrowUp, IconArrowDown, IconEye, IconClose, IconArrowRight, IconSun, IconMoon } from '@arco-design/web-react/icon';
 import LeafletMap from './LeafletMap';
 import './ControlTowerPanelStyles.css';
 import * as echarts from 'echarts';
@@ -144,6 +144,9 @@ const ControlTowerPanel: React.FC = () => {
   const [realtimeOrders, setRealtimeOrders] = useState<Array<{id: string, source: string, time: string}>>([]);
   const [realtimeTasks, setRealtimeTasks] = useState<Array<{id: string, task: string, time: string}>>([]);
   
+  // 主题状态
+  const [isDarkTheme, setIsDarkTheme] = useState(true);
+  
   // 弹窗状态
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [taskModalTitle, setTaskModalTitle] = useState('');
@@ -199,15 +202,15 @@ const ControlTowerPanel: React.FC = () => {
     const registerWorldMap = () => {
       // 延迟加载地图数据，避免阻塞初始渲染
       setTimeout(async () => {
-        try {
-          // 使用CDN加载世界地图GeoJSON数据
-          await fetch('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson');
-          
-          // Map registration completed
-        } catch (error) {
-          console.error('Failed to load world map:', error);
-          // 如果加载失败，使用备用方案
-        }
+      try {
+        // 使用CDN加载世界地图GeoJSON数据
+        await fetch('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson');
+        
+        // Map registration completed
+      } catch (error) {
+        console.error('Failed to load world map:', error);
+        // 如果加载失败，使用备用方案
+      }
       }, 1000); // 延迟1秒加载，确保界面先渲染
     };
 
@@ -299,111 +302,111 @@ const ControlTowerPanel: React.FC = () => {
     const ports = ['上海港', '宁波舟山港', '深圳港', '青岛港', '广州港', '天津港', '厦门港', '大连港'];
     let anomalyData = ports.map(() => Math.floor(Math.random() * 30) + 5);
 
-    const option = {
-      backgroundColor: 'transparent',
-      title: {
-        show: false
-      },
-      tooltip: {
-        trigger: 'axis',
-        backgroundColor: 'rgba(0, 20, 40, 0.9)',
-        borderColor: '#ff6b6b',
-        borderWidth: 1,
-        textStyle: {
-          color: '#ffffff'
+    const updateChart = () => {
+      const option = {
+        backgroundColor: 'transparent',
+        title: {
+          show: false
         },
-        formatter: (params: unknown) => {
-          const dataArray = Array.isArray(params) ? params : [params];
-          const data = dataArray[0] as { name: string; value: number };
-          return `${data.name}<br/>异常订单: ${data.value} 单`;
-        }
-      },
-      grid: {
-        left: '10%',
-        right: '10%',
-        bottom: '15%',
-        top: '10%',
-        containLabel: true
-      },
-      xAxis: {
-        type: 'category',
-        data: ports,
-        axisLine: {
-          lineStyle: {
-            color: '#ff6b6b'
+        tooltip: {
+          trigger: 'axis',
+          backgroundColor: isDarkTheme ? 'rgba(0, 20, 40, 0.9)' : 'rgba(255, 255, 255, 0.95)',
+          borderColor: isDarkTheme ? '#ff6b6b' : '#ef4444',
+          borderWidth: 1,
+          textStyle: {
+            color: isDarkTheme ? '#ffffff' : '#1e293b'
+          },
+          formatter: (params: unknown) => {
+            const dataArray = Array.isArray(params) ? params : [params];
+            const data = dataArray[0] as { name: string; value: number };
+            return `${data.name}<br/>异常订单: ${data.value} 单`;
           }
         },
-        axisLabel: {
-          color: '#99ccff',
-          fontSize: 12,
-          rotate: 30
+        grid: {
+          left: '10%',
+          right: '10%',
+          bottom: '15%',
+          top: '10%',
+          containLabel: true
         },
-        axisTick: {
-          alignWithLabel: true,
-          lineStyle: {
-            color: '#ff6b6b'
+        xAxis: {
+          type: 'category',
+          data: ports,
+          axisLine: {
+            lineStyle: {
+              color: isDarkTheme ? '#ff6b6b' : '#ef4444'
+            }
+          },
+          axisLabel: {
+            color: isDarkTheme ? '#99ccff' : '#475569',
+            fontSize: 12,
+            rotate: 30
+          },
+          axisTick: {
+            alignWithLabel: true,
+            lineStyle: {
+              color: isDarkTheme ? '#ff6b6b' : '#ef4444'
+            }
           }
-        }
-      },
-      yAxis: {
-        type: 'value',
-        name: '异常订单数',
-        nameTextStyle: {
-          color: '#ff6b6b',
-          fontSize: 14
         },
-        axisLine: {
-          lineStyle: {
-            color: '#ff6b6b'
+        yAxis: {
+          type: 'value',
+          name: '异常订单数',
+          nameTextStyle: {
+            color: isDarkTheme ? '#ff6b6b' : '#ef4444',
+            fontSize: 14
+          },
+          axisLine: {
+            lineStyle: {
+              color: isDarkTheme ? '#ff6b6b' : '#ef4444'
+            }
+          },
+          axisLabel: {
+            color: isDarkTheme ? '#99ccff' : '#475569',
+            fontSize: 12
+          },
+          splitLine: {
+            lineStyle: {
+              color: isDarkTheme ? 'rgba(255, 107, 107, 0.2)' : 'rgba(239, 68, 68, 0.2)',
+              type: 'dashed'
+            }
           }
         },
-        axisLabel: {
-          color: '#99ccff',
-          fontSize: 12
-        },
-        splitLine: {
-          lineStyle: {
-            color: 'rgba(255, 107, 107, 0.2)',
-            type: 'dashed'
-          }
-        }
-      },
-      series: [{
-        type: 'bar',
-        data: anomalyData,
-        itemStyle: {
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: '#ff6b6b' },
-            { offset: 1, color: '#ff9999' }
-          ]),
-          borderRadius: [4, 4, 0, 0],
-          shadowColor: 'rgba(255, 107, 107, 0.5)',
-          shadowBlur: 10,
-          shadowOffsetY: 3
-        },
-        emphasis: {
+        series: [{
+          type: 'bar',
+          data: anomalyData,
           itemStyle: {
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              { offset: 0, color: '#ff5555' },
-              { offset: 1, color: '#ff8888' }
-            ])
-          }
-        },
-        animationDelay: (idx: number) => idx * 100,
-        animationEasing: 'elasticOut'
-      }]
+              { offset: 0, color: isDarkTheme ? '#ff6b6b' : '#ef4444' },
+              { offset: 1, color: isDarkTheme ? '#ff9999' : '#fca5a5' }
+            ]),
+            borderRadius: [4, 4, 0, 0],
+            shadowColor: isDarkTheme ? 'rgba(255, 107, 107, 0.5)' : 'rgba(239, 68, 68, 0.3)',
+            shadowBlur: 10,
+            shadowOffsetY: 3
+          },
+          emphasis: {
+            itemStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: isDarkTheme ? '#ff5555' : '#dc2626' },
+                { offset: 1, color: isDarkTheme ? '#ff8888' : '#f87171' }
+              ])
+            }
+          },
+          animationDelay: (idx: number) => idx * 100,
+          animationEasing: 'elasticOut'
+        }]
+      };
+
+      chart.setOption(option);
     };
 
-    chart.setOption(option);
+    updateChart();
 
     // 定时更新数据
     const updateInterval = setInterval(() => {
       anomalyData = anomalyData.map(() => Math.floor(Math.random() * 30) + 5);
-      chart.setOption({
-        series: [{
-          data: anomalyData
-        }]
-      });
+      updateChart();
     }, 10000); // 每10秒更新一次
 
     // 响应式处理
@@ -417,7 +420,7 @@ const ControlTowerPanel: React.FC = () => {
       window.removeEventListener('resize', handleResize);
       chart.dispose();
     };
-  }, []);
+  }, [isDarkTheme]);
 
   // 询价成交趋势折线图初始化
   useEffect(() => {
@@ -449,141 +452,145 @@ const ControlTowerPanel: React.FC = () => {
 
     const { dates, inquiryData, dealData } = generateDateRange(30);
 
-    const option = {
-      backgroundColor: 'transparent',
-      title: {
-        show: false
-      },
-      tooltip: {
-        trigger: 'axis',
-        backgroundColor: 'rgba(0, 20, 40, 0.9)',
-        borderColor: '#00f7ff',
-        borderWidth: 1,
-        textStyle: {
-          color: '#ffffff'
+    const updateChart = () => {
+      const option = {
+        backgroundColor: 'transparent',
+        title: {
+          show: false
         },
-        axisPointer: {
-          type: 'cross',
-          lineStyle: {
-            color: '#00f7ff',
-            width: 1,
-            type: 'dashed'
-          }
-        }
-      },
-      legend: {
-        data: ['询价数量', '成交数量'],
-        textStyle: {
-          color: '#99ccff'
-        },
-        top: 'top',
-        right: '10%'
-      },
-      grid: {
-        left: '8%',
-        right: '8%',
-        bottom: '15%',
-        top: '20%',
-        containLabel: true
-      },
-      xAxis: {
-        type: 'category',
-        data: dates,
-        axisLine: {
-          lineStyle: {
-            color: '#00f7ff'
+        tooltip: {
+          trigger: 'axis',
+          backgroundColor: isDarkTheme ? 'rgba(0, 20, 40, 0.9)' : 'rgba(255, 255, 255, 0.95)',
+          borderColor: isDarkTheme ? '#00f7ff' : '#3b82f6',
+          borderWidth: 1,
+          textStyle: {
+            color: isDarkTheme ? '#ffffff' : '#1e293b'
+          },
+          axisPointer: {
+            type: 'cross',
+            lineStyle: {
+              color: isDarkTheme ? '#00f7ff' : '#3b82f6',
+              width: 1,
+              type: 'dashed'
+            }
           }
         },
-        axisLabel: {
-          color: '#99ccff',
-          fontSize: 12,
-          rotate: 45
+        legend: {
+          data: ['询价数量', '成交数量'],
+          textStyle: {
+            color: isDarkTheme ? '#99ccff' : '#475569'
+          },
+          top: 'top',
+          right: '10%'
         },
-        axisTick: {
-          alignWithLabel: true,
-          lineStyle: {
-            color: '#00f7ff'
+        grid: {
+          left: '8%',
+          right: '8%',
+          bottom: '15%',
+          top: '20%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          data: dates,
+          axisLine: {
+            lineStyle: {
+              color: isDarkTheme ? '#00f7ff' : '#3b82f6'
+            }
+          },
+          axisLabel: {
+            color: isDarkTheme ? '#99ccff' : '#475569',
+            fontSize: 12,
+            rotate: 45
+          },
+          axisTick: {
+            alignWithLabel: true,
+            lineStyle: {
+              color: isDarkTheme ? '#00f7ff' : '#3b82f6'
+            }
           }
-        }
-      },
-      yAxis: {
-        type: 'value',
-        name: '数量',
-        nameTextStyle: {
-          color: '#00f7ff',
-          fontSize: 14
         },
-        axisLine: {
-          lineStyle: {
-            color: '#00f7ff'
+        yAxis: {
+          type: 'value',
+          name: '数量',
+          nameTextStyle: {
+            color: isDarkTheme ? '#00f7ff' : '#3b82f6',
+            fontSize: 14
+          },
+          axisLine: {
+            lineStyle: {
+              color: isDarkTheme ? '#00f7ff' : '#3b82f6'
+            }
+          },
+          axisLabel: {
+            color: isDarkTheme ? '#99ccff' : '#475569',
+            fontSize: 12
+          },
+          splitLine: {
+            lineStyle: {
+              color: isDarkTheme ? 'rgba(0, 247, 255, 0.2)' : 'rgba(59, 130, 246, 0.2)',
+              type: 'dashed'
+            }
           }
         },
-        axisLabel: {
-          color: '#99ccff',
-          fontSize: 12
-        },
-        splitLine: {
-          lineStyle: {
-            color: 'rgba(0, 247, 255, 0.2)',
-            type: 'dashed'
+        series: [
+          {
+            name: '询价数量',
+            type: 'line',
+            data: inquiryData,
+            lineStyle: {
+              color: isDarkTheme ? '#00f7ff' : '#3b82f6',
+              width: 3,
+              shadowColor: isDarkTheme ? 'rgba(0, 247, 255, 0.5)' : 'rgba(59, 130, 246, 0.3)',
+              shadowBlur: 10
+            },
+            itemStyle: {
+              color: isDarkTheme ? '#00f7ff' : '#3b82f6',
+              borderColor: '#ffffff',
+              borderWidth: 2
+            },
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: isDarkTheme ? 'rgba(0, 247, 255, 0.3)' : 'rgba(59, 130, 246, 0.3)' },
+                { offset: 1, color: isDarkTheme ? 'rgba(0, 247, 255, 0.05)' : 'rgba(59, 130, 246, 0.05)' }
+              ])
+            },
+            smooth: true,
+            symbol: 'circle',
+            symbolSize: 6
+          },
+          {
+            name: '成交数量',
+            type: 'line',
+            data: dealData,
+            lineStyle: {
+              color: isDarkTheme ? '#00ff88' : '#10b981',
+              width: 3,
+              shadowColor: isDarkTheme ? 'rgba(0, 255, 136, 0.5)' : 'rgba(16, 185, 129, 0.3)',
+              shadowBlur: 10
+            },
+            itemStyle: {
+              color: isDarkTheme ? '#00ff88' : '#10b981',
+              borderColor: '#ffffff',
+              borderWidth: 2
+            },
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: isDarkTheme ? 'rgba(0, 255, 136, 0.3)' : 'rgba(16, 185, 129, 0.3)' },
+                { offset: 1, color: isDarkTheme ? 'rgba(0, 255, 136, 0.05)' : 'rgba(16, 185, 129, 0.05)' }
+              ])
+            },
+            smooth: true,
+            symbol: 'circle',
+            symbolSize: 6
           }
-        }
-      },
-      series: [
-        {
-          name: '询价数量',
-          type: 'line',
-          data: inquiryData,
-          lineStyle: {
-            color: '#00f7ff',
-            width: 3,
-            shadowColor: 'rgba(0, 247, 255, 0.5)',
-            shadowBlur: 10
-          },
-          itemStyle: {
-            color: '#00f7ff',
-            borderColor: '#ffffff',
-            borderWidth: 2
-          },
-          areaStyle: {
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              { offset: 0, color: 'rgba(0, 247, 255, 0.3)' },
-              { offset: 1, color: 'rgba(0, 247, 255, 0.05)' }
-            ])
-          },
-          smooth: true,
-          symbol: 'circle',
-          symbolSize: 6
-        },
-        {
-          name: '成交数量',
-          type: 'line',
-          data: dealData,
-          lineStyle: {
-            color: '#00ff88',
-            width: 3,
-            shadowColor: 'rgba(0, 255, 136, 0.5)',
-            shadowBlur: 10
-          },
-          itemStyle: {
-            color: '#00ff88',
-            borderColor: '#ffffff',
-            borderWidth: 2
-          },
-          areaStyle: {
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              { offset: 0, color: 'rgba(0, 255, 136, 0.3)' },
-              { offset: 1, color: 'rgba(0, 255, 136, 0.05)' }
-            ])
-          },
-          smooth: true,
-          symbol: 'circle',
-          symbolSize: 6
-        }
-      ]
+        ]
+      };
+
+      chart.setOption(option);
     };
 
-    chart.setOption(option);
+    updateChart();
 
     // 定时更新数据
     const updateInterval = setInterval(() => {
@@ -601,13 +608,7 @@ const ControlTowerPanel: React.FC = () => {
       inquiryData.push(newInquiry);
       dealData.push(newDeal);
       
-      chart.setOption({
-        xAxis: { data: dates },
-        series: [
-          { data: inquiryData },
-          { data: dealData }
-        ]
-      });
+      updateChart();
     }, 15000); // 每15秒更新一次
 
     // 响应式处理
@@ -621,7 +622,7 @@ const ControlTowerPanel: React.FC = () => {
       window.removeEventListener('resize', handleResize);
       chart.dispose();
     };
-  }, []);
+  }, [isDarkTheme]);
 
   // 热门询价排行榜初始化
   useEffect(() => {
@@ -947,8 +948,13 @@ const ControlTowerPanel: React.FC = () => {
     }
   };
 
+  // 主题切换函数
+  const toggleTheme = () => {
+    setIsDarkTheme(!isDarkTheme);
+  };
+
   return (
-    <div className="control-tower-panel">
+    <div className={`control-tower-panel ${isDarkTheme ? 'dark-theme' : 'light-theme'}`}>
       {/* 运价指数滚动条 */}
       <div className="freight-ticker">
         <div className="ticker-content">
@@ -986,6 +992,9 @@ const ControlTowerPanel: React.FC = () => {
           </div>
         </div>
         <div className="header-right">
+          <button className="theme-toggle-button" onClick={toggleTheme} title={isDarkTheme ? '切换到浅色主题' : '切换到深色主题'}>
+            {isDarkTheme ? <IconSun /> : <IconMoon />}
+          </button>
           <div className="system-status">
             <span className="status-indicator online"></span>
             订单流转正常
@@ -1002,9 +1011,9 @@ const ControlTowerPanel: React.FC = () => {
               <div className="card-header">
                 <span className="card-title">{item.title}</span>
                 <div className="card-header-right">
-                  <div className={`trend-indicator ${item.trend}`}>
-                    {item.trend === 'up' ? <IconArrowUp /> : <IconArrowDown />}
-                    {Math.abs(item.change)}
+                <div className={`trend-indicator ${item.trend}`}>
+                  {item.trend === 'up' ? <IconArrowUp /> : <IconArrowDown />}
+                  {Math.abs(item.change)}
                   </div>
                   {(item.title === '待处理任务' || item.title === '逾期任务') && (
                     <button 
@@ -1055,7 +1064,7 @@ const ControlTowerPanel: React.FC = () => {
             
             {/* 中间全球订单流向图 */}
             <div className="chart-card map-container">
-              <LeafletMap height="600px" />
+              <LeafletMap height="600px" isDarkTheme={isDarkTheme} />
             </div>
 
             {/* 右侧实时任务列表 */}
@@ -1111,7 +1120,7 @@ const ControlTowerPanel: React.FC = () => {
           </div>
 
           {/* 三个排行榜并排布局 */}
-          <div className="charts-row three-column">
+          <div className="charts-row three-column-equal">
             {/* 热门询价排行榜 */}
             <div className="chart-card hot-inquiry-ranking">
               <div className="chart-title">
