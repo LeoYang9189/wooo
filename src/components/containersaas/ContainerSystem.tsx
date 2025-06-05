@@ -5,6 +5,10 @@ import DashboardPage from './pages/DashboardPage';
 import ReleaseManagementPage from './pages/ReleaseManagementPage';
 import ReportingPage from './pages/ReportingPage';
 import ContainerManagementPage from './pages/ContainerManagementPage';
+import DynamicSettingsPage from './pages/DynamicSettingsPage';
+import DynamicQueryPage from './pages/DynamicQueryPage';
+import SystemConfigPage from './pages/SystemConfigPage';
+import YardManagementPage from './pages/YardManagementPage';
 import { Breadcrumb } from '@arco-design/web-react';
 import { Link } from 'react-router-dom';
 
@@ -23,7 +27,9 @@ const pageTitleMap: Record<string, { title: string, parent?: string }> = {
   'edi': { title: 'EDI中心' },
   'customer': { title: '客户中心' },
   'reporting': { title: '报表中心' },
-  'system': { title: '系统设置' },
+  'dynamic-settings': { title: '动态设置', parent: '系统设置' },
+  'system-config': { title: '系统配置', parent: '系统设置' },
+  'yard-management': { title: '堆场管理', parent: '设备管理' },
 };
 
 // 生成面包屑导航组件
@@ -63,7 +69,7 @@ const ContainerSystem: React.FC = () => {
         path="/dynamic-query" 
         element={
           <ContainerLayout breadcrumb={generateBreadcrumb('/dynamic-query')}>
-            <div className="bg-white p-6 rounded-lg shadow-sm">动态查询页面</div>
+            <DynamicQueryPage />
           </ContainerLayout>
         } 
       />
@@ -156,10 +162,26 @@ const ContainerSystem: React.FC = () => {
         } 
       />
       <Route 
-        path="/system" 
+        path="/dynamic-settings" 
         element={
-          <ContainerLayout breadcrumb={generateBreadcrumb('/system')}>
-            <div className="bg-white p-6 rounded-lg shadow-sm">系统设置页面</div>
+          <ContainerLayout breadcrumb={generateBreadcrumb('/dynamic-settings')}>
+            <DynamicSettingsPage />
+          </ContainerLayout>
+        } 
+      />
+      <Route 
+        path="/system-config" 
+        element={
+          <ContainerLayout breadcrumb={generateBreadcrumb('/system-config')}>
+            <SystemConfigPage />
+          </ContainerLayout>
+        } 
+      />
+      <Route 
+        path="/yard-management" 
+        element={
+          <ContainerLayout breadcrumb={generateBreadcrumb('/yard-management')}>
+            <YardManagementPage />
           </ContainerLayout>
         } 
       />

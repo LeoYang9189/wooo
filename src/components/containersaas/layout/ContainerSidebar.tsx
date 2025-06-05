@@ -130,25 +130,37 @@ const ContainerSidebar: React.FC<ContainerSidebarProps> = ({ collapsed }) => {
           <span>费用管理</span>
         </MenuItem>
         
-        <MenuItem key="edi">
-          <IconLink className="mr-2" />
-          <span>EDI中心</span>
-        </MenuItem>
-        
-        <MenuItem key="customer">
-          <IconUser className="mr-2" />
-          <span>客户中心</span>
-        </MenuItem>
+        <SubMenu
+          key="customer-sub"
+          title={
+            <span>
+              <IconUser className="mr-2" />
+              <span>客商管理</span>
+            </span>
+          }
+        >
+          <MenuItem key="yard-management">堆场管理</MenuItem>
+          <MenuItem key="customer-management">客户管理</MenuItem>
+          <MenuItem key="supplier-management">供应商管理</MenuItem>
+        </SubMenu>
         
         <MenuItem key="reporting">
           <IconBook className="mr-2" />
           <span>报表中心</span>
         </MenuItem>
         
-        <MenuItem key="system">
-          <IconSettings className="mr-2" />
-          <span>系统设置</span>
-        </MenuItem>
+        <SubMenu
+          key="system-sub"
+          title={
+            <span>
+              <IconSettings className="mr-2" />
+              <span>系统设置</span>
+            </span>
+          }
+        >
+          <MenuItem key="dynamic-settings">动态设置</MenuItem>
+          <MenuItem key="system-config">系统配置</MenuItem>
+        </SubMenu>
       </Menu>
 
       {/* 底部按钮 */}
