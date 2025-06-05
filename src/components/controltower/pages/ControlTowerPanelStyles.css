@@ -419,11 +419,23 @@
   font-size: 14px;
 }
 
+.light-theme .view-button {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: #3b82f6;
+}
+
 .view-button:hover {
   background: rgba(0, 247, 255, 0.2);
   border-color: rgba(0, 247, 255, 0.5);
   box-shadow: 0 0 8px rgba(0, 247, 255, 0.3);
   transform: scale(1.05);
+}
+
+.light-theme .view-button:hover {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.5);
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
 }
 
 /* 任务弹窗样式 */
