@@ -6,10 +6,8 @@ import {
   Card,
   Typography,
   Input,
-  Timeline,
   Tag,
   Empty,
-  Descriptions,
   Badge,
   DatePicker,
   Select
@@ -17,7 +15,6 @@ import {
 import {
   IconSearch,
   IconRefresh,
-  IconCalendar,
   IconLocation,
   IconUser,
   IconHistory,
@@ -43,32 +40,12 @@ interface ContainerHistoryRecord {
   terminal?: string;
 }
 
-// 动态代码类型（从动态设置页面引用）
-interface DynamicCodeItem {
-  code: string;
-  name: string;
-  description: string;
-  category: string;
-  isActive: boolean;
-}
-
 const DynamicQueryPage: React.FC = () => {
   const [containerNo, setContainerNo] = useState('');
   const [historyRecords, setHistoryRecords] = useState<ContainerHistoryRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [dateRange, setDateRange] = useState<any>(null);
   const [selectedLocation, setSelectedLocation] = useState('');
-
-  // 模拟动态代码数据（实际应该从动态设置页面获取）
-  const dynamicCodes: DynamicCodeItem[] = [
-    { code: 'NBCU', name: '新箱启用', description: '新购买的集装箱启用操作', category: '操作类型', isActive: true },
-    { code: 'DCHE', name: '空箱卸船', description: '空集装箱从船上卸载到港口', category: '操作类型', isActive: true },
-    { code: 'DCHF', name: '重箱卸船', description: '载货集装箱从船上卸载到港口', category: '操作类型', isActive: true },
-    { code: 'GATE', name: '闸口作业', description: '集装箱通过闸口的进出操作', category: '操作类型', isActive: true },
-    { code: 'MOVE', name: '场内移动', description: '集装箱在堆场内位置移动', category: '操作类型', isActive: true },
-    { code: 'LOAD', name: '装船', description: '集装箱装载到船舶', category: '操作类型', isActive: true },
-    { code: 'RELE', name: '放箱', description: '集装箱放行给客户', category: '操作类型', isActive: true }
-  ];
 
   // 模拟历史记录数据
   const mockHistoryData: ContainerHistoryRecord[] = [
@@ -492,7 +469,7 @@ const DynamicQueryPage: React.FC = () => {
                   />
                 )}
                 
-                {historyRecords.map((record, index) => (
+                {historyRecords.map((record) => (
                   <div key={record.id} className="flex flex-col items-center" style={{ minWidth: '200px', position: 'relative' }}>
                     
                     {/* 时间节点 */}

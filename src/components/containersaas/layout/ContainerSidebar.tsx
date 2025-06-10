@@ -10,7 +10,6 @@ import {
   IconBook,
   IconPoweroff,
   IconFile,
-  IconLink,
   IconUser,
   IconSettings
 } from '@arco-design/web-react/icon';

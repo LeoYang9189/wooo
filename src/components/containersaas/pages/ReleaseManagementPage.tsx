@@ -11,12 +11,7 @@ import {
   Message,
   Popconfirm,
   Badge,
-  Select,
-  Tag,
-  Tooltip,
-  Checkbox,
-  DatePicker,
-  Divider
+  Select
 } from '@arco-design/web-react';
 import {
   IconPlus,
@@ -24,9 +19,7 @@ import {
   IconDelete,
   IconRefresh,
   IconSearch,
-  IconSave,
   IconCheck,
-  IconClose,
   IconLocation,
   IconCalendar,
   IconPrinter,
@@ -37,7 +30,7 @@ import QRCode from 'qrcode';
 const { Title } = Typography;
 const FormItem = Form.Item;
 const { Option } = Select;
-const { RangePicker } = DatePicker;
+
 
 // 放箱记录数据类型
 interface ReleaseRecord {

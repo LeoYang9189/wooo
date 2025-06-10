@@ -1,6 +1,23 @@
 import React, { useState } from 'react';
 import { Layout, Menu, Button, Avatar, Badge, Breadcrumb, Dropdown, Divider } from '@arco-design/web-react';
-import { IconDashboard, IconList, IconApps, IconUser, IconNotification, IconMenuFold, IconMenuUnfold, IconMessage, IconDown, IconPoweroff, IconSettings as IconSettingsOutline, IconLanguage, IconQuestionCircle } from '@arco-design/web-react/icon';
+import { 
+  IconDashboard, 
+  IconList, 
+  IconApps, 
+  IconUser, 
+  IconNotification, 
+  IconMenuFold, 
+  IconMenuUnfold, 
+  IconMessage, 
+  IconDown, 
+  IconPoweroff, 
+  IconSettings as IconSettingsOutline, 
+  IconLanguage, 
+  IconQuestionCircle,
+  IconFile,
+  IconStorage,
+  IconSettings
+} from '@arco-design/web-react/icon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileInvoiceDollar, faRobot, faShip } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -30,7 +47,14 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
 
   // 菜单点击
   const handleMenuItemClick = (key: string) => {
-    navigate(key === 'dashboard' ? '/controltower' : `/controltower/${key}`);
+    if (key === 'dashboard') {
+      navigate('/controltower');
+    } else if (key.startsWith('saas/')) {
+      // 超级运价页面路由处理
+      navigate(`/controltower/${key}`);
+    } else {
+      navigate(key === 'dashboard' ? '/controltower' : `/controltower/${key}`);
+    }
   };
 
   // 根据当前路由生成面包屑
@@ -49,6 +73,82 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
         { title: '订单管理', path: '/controltower/order-management' },
         { title: orderId, path: undefined } // 当前订单，无链接
       );
+      return breadcrumbs;
+    }
+
+    // 处理超级运价系统页面
+    if (path.startsWith('saas/')) {
+      const saasPath = path.replace('saas/', '');
+      switch (saasPath) {
+        case 'super-freight-dashboard':
+          breadcrumbs.push({ title: '超级运价', path: '/controltower/saas/super-freight-dashboard' });
+          break;
+        case 'fcl-rates':
+          breadcrumbs.push(
+            { title: '超级运价', path: '/controltower/saas/super-freight-dashboard' },
+            { title: '运价管理', path: undefined },
+            { title: '海运整箱', path: '/controltower/saas/fcl-rates' }
+          );
+          break;
+        case 'rate-query':
+          breadcrumbs.push(
+            { title: '超级运价', path: '/controltower/saas/super-freight-dashboard' },
+            { title: '运价管理', path: undefined },
+            { title: '运价查询', path: '/controltower/saas/rate-query' }
+          );
+          break;
+        case 'precarriage-rates':
+          breadcrumbs.push(
+            { title: '超级运价', path: '/controltower/saas/super-freight-dashboard' },
+            { title: '门点服务管理', path: undefined },
+            { title: '港前运价', path: '/controltower/saas/precarriage-rates' }
+          );
+          break;
+        case 'lastmile-rates':
+          breadcrumbs.push(
+            { title: '超级运价', path: '/controltower/saas/super-freight-dashboard' },
+            { title: '门点服务管理', path: undefined },
+            { title: '尾程运价', path: '/controltower/saas/lastmile-rates' }
+          );
+          break;
+        case 'inquiry-management':
+          breadcrumbs.push(
+            { title: '超级运价', path: '/controltower/saas/super-freight-dashboard' },
+            { title: '询价报价', path: undefined },
+            { title: '询价管理', path: '/controltower/saas/inquiry-management' }
+          );
+          break;
+        case 'route-management':
+          breadcrumbs.push(
+            { title: '超级运价', path: '/controltower/saas/super-freight-dashboard' },
+            { title: '基础数据', path: undefined },
+            { title: '航线管理', path: '/controltower/saas/route-management' }
+          );
+          break;
+        case 'region-management':
+          breadcrumbs.push(
+            { title: '超级运价', path: '/controltower/saas/super-freight-dashboard' },
+            { title: '基础数据', path: undefined },
+            { title: '行政区划', path: '/controltower/saas/region-management' }
+          );
+          break;
+        case 'zipcode-management':
+          breadcrumbs.push(
+            { title: '超级运价', path: '/controltower/saas/super-freight-dashboard' },
+            { title: '基础数据', path: undefined },
+            { title: '邮编管理', path: '/controltower/saas/zipcode-management' }
+          );
+          break;
+        case 'fba-warehouse':
+          breadcrumbs.push(
+            { title: '超级运价', path: '/controltower/saas/super-freight-dashboard' },
+            { title: '基础数据', path: undefined },
+            { title: 'FBA仓库', path: '/controltower/saas/fba-warehouse' }
+          );
+          break;
+        default:
+          break;
+      }
       return breadcrumbs;
     }
 
@@ -156,7 +256,9 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
           )}
         </div>
         <Menu
-          selectedKeys={[location.pathname.replace('/controltower/', '').replace('/', '') || 'dashboard']}
+          selectedKeys={[
+            location.pathname.replace('/controltower/', '').replace('/', '') || 'dashboard'
+          ]}
           onClickMenuItem={handleMenuItemClick}
           style={{ width: '100%' }}
         >
@@ -168,6 +270,106 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
             <IconApps />
             <span>控制塔面板</span>
           </MenuItem>
+          
+          {/* 超级运价系统菜单 */}
+          <SubMenu
+            key="super-freight"
+            title={
+              <span>
+                <IconFile />
+                <span>超级运价</span>
+              </span>
+            }
+          >
+            <MenuItem key="saas/super-freight-dashboard">控制台</MenuItem>
+            <MenuItem key="saas/data-analysis">数据分析</MenuItem>
+            <SubMenu
+              key="rate-management"
+              title={
+                <span>
+                  <IconFile />
+                  <span>运价管理</span>
+                </span>
+              }
+            >
+              <MenuItem key="saas/fcl-rates">海运整箱</MenuItem>
+              <MenuItem key="saas/lcl-rates">海运拼箱</MenuItem>
+              <MenuItem key="saas/air-rates">空运运价</MenuItem>
+              <MenuItem key="saas/fcl-surcharge">整箱附加费</MenuItem>
+              <MenuItem key="saas/lcl-surcharge">拼箱附加费</MenuItem>
+              <MenuItem key="saas/air-surcharge">空运附加费</MenuItem>
+              <MenuItem key="saas/rate-query">运价查询</MenuItem>
+            </SubMenu>
+            <SubMenu
+              key="door-service"
+              title={
+                <span>
+                  <IconFile />
+                  <span>门点服务管理</span>
+                </span>
+              }
+            >
+              <MenuItem key="saas/precarriage-rates">港前运价</MenuItem>
+              <MenuItem key="saas/lastmile-rates">尾程运价</MenuItem>
+            </SubMenu>
+            <SubMenu
+              key="inquiry-quote"
+              title={
+                <span>
+                  <IconStorage />
+                  <span>询价报价</span>
+                </span>
+              }
+            >
+              <MenuItem key="saas/inquiry-management">询价管理</MenuItem>
+              <MenuItem key="saas/quote-management">报价管理</MenuItem>
+              <MenuItem key="saas/quote-approval">报价审核</MenuItem>
+            </SubMenu>
+            <SubMenu
+              key="space-management"
+              title={
+                <span>
+                  <IconFile />
+                  <span>舱位管理</span>
+                </span>
+              }
+            >
+              <MenuItem key="saas/space-query">舱位查询</MenuItem>
+              <MenuItem key="saas/space-booking">舱位预订</MenuItem>
+              <MenuItem key="saas/space-statistics">舱位统计</MenuItem>
+            </SubMenu>
+            <SubMenu
+              key="base-data"
+              title={
+                <span>
+                  <IconStorage />
+                  <span>基础数据</span>
+                </span>
+              }
+            >
+              <MenuItem key="saas/shipping-company">船公司管理</MenuItem>
+              <MenuItem key="saas/port-management">港口管理</MenuItem>
+              <MenuItem key="saas/route-management">航线管理</MenuItem>
+              <MenuItem key="saas/currency-management">货币管理</MenuItem>
+              <MenuItem key="saas/region-management">行政区划</MenuItem>
+              <MenuItem key="saas/zipcode-management">邮编管理</MenuItem>
+              <MenuItem key="saas/fba-warehouse">FBA仓库</MenuItem>
+            </SubMenu>
+            <MenuItem key="saas/contract-management">
+              <IconFile />
+              <span>合约管理</span>
+            </MenuItem>
+            <MenuItem key="saas/customer-management">
+              <IconFile />
+              <span>客户管理</span>
+            </MenuItem>
+            <MenuItem key="saas/system-settings">
+              <IconSettings />
+              <span>系统设置</span>
+            </MenuItem>
+          </SubMenu>
+          
+          {/* 原有控制塔菜单 */}
           <SubMenu
             key="freight"
             title={

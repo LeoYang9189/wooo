@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import {
   Typography,
   Card,
-  DatePicker,
   Button,
-  Select,
   Table,
   Space,
   Tabs,
@@ -17,7 +15,6 @@ import {
 } from '@arco-design/web-react';
 import {
   IconDownload,
-  IconSearch,
   IconRefresh,
   IconCalendar,
   IconFile,
@@ -28,8 +25,6 @@ import {
 } from '@arco-design/web-react/icon';
 
 const { Title } = Typography;
-const { RangePicker } = DatePicker;
-const { Option } = Select;
 const TabPane = Tabs.TabPane;
 
 // 报表类型枚举

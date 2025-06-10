@@ -10,7 +10,6 @@ import {
   Input,
   Message,
   Popconfirm,
-  Badge,
   Switch,
   Select
 } from '@arco-design/web-react';
@@ -19,7 +18,6 @@ import {
   IconEdit,
   IconDelete,
   IconRefresh,
-  IconSearch,
   IconSave
 } from '@arco-design/web-react/icon';
 
