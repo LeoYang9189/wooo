@@ -14,9 +14,7 @@ import {
   IconSettings as IconSettingsOutline, 
   IconLanguage, 
   IconQuestionCircle,
-  IconFile,
-  IconStorage,
-  IconSettings
+  IconFile
 } from '@arco-design/web-react/icon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileInvoiceDollar, faRobot } from '@fortawesome/free-solid-svg-icons';
