@@ -241,7 +241,7 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
         className="border-r border-gray-200 relative"
       >
         {/* 绸带标签 - 放在侧边栏左上角 */}
-        <div className="absolute top-0 left-0 bg-orange-500 text-white px-3 py-1 text-xs font-bold shadow-lg transform origin-top-left rotate-0 ribbon z-20">
+        <div className="absolute top-4 left-0 bg-orange-500 text-white text-xs font-bold ribbon z-20">
           运营
         </div>
         
