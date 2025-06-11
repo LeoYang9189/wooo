@@ -82,68 +82,71 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
     if (path.startsWith('saas/')) {
       const saasPath = path.replace('saas/', '');
       switch (saasPath) {
+        // 控制台和数据分析页面面包屑已删除
+        /*
         case 'super-freight-dashboard':
           breadcrumbs.push({ title: '超级运价', path: '/controltower/saas/super-freight-dashboard' });
           break;
+        */
         case 'fcl-rates':
           breadcrumbs.push(
-            { title: '超级运价', path: '/controltower/saas/super-freight-dashboard' },
+            { title: '超级运价', path: undefined },
             { title: '运价管理', path: undefined },
             { title: '海运整箱', path: '/controltower/saas/fcl-rates' }
           );
           break;
         case 'rate-query':
           breadcrumbs.push(
-            { title: '超级运价', path: '/controltower/saas/super-freight-dashboard' },
+            { title: '超级运价', path: undefined },
             { title: '运价管理', path: undefined },
             { title: '运价查询', path: '/controltower/saas/rate-query' }
           );
           break;
         case 'precarriage-rates':
           breadcrumbs.push(
-            { title: '超级运价', path: '/controltower/saas/super-freight-dashboard' },
+            { title: '超级运价', path: undefined },
             { title: '门点服务管理', path: undefined },
             { title: '港前运价', path: '/controltower/saas/precarriage-rates' }
           );
           break;
         case 'lastmile-rates':
           breadcrumbs.push(
-            { title: '超级运价', path: '/controltower/saas/super-freight-dashboard' },
+            { title: '超级运价', path: undefined },
             { title: '门点服务管理', path: undefined },
             { title: '尾程运价', path: '/controltower/saas/lastmile-rates' }
           );
           break;
         case 'inquiry-management':
           breadcrumbs.push(
-            { title: '超级运价', path: '/controltower/saas/super-freight-dashboard' },
+            { title: '超级运价', path: undefined },
             { title: '询价报价', path: undefined },
             { title: '询价管理', path: '/controltower/saas/inquiry-management' }
           );
           break;
         case 'route-management':
           breadcrumbs.push(
-            { title: '超级运价', path: '/controltower/saas/super-freight-dashboard' },
+            { title: '超级运价', path: undefined },
             { title: '基础数据', path: undefined },
             { title: '航线管理', path: '/controltower/saas/route-management' }
           );
           break;
         case 'region-management':
           breadcrumbs.push(
-            { title: '超级运价', path: '/controltower/saas/super-freight-dashboard' },
+            { title: '超级运价', path: undefined },
             { title: '基础数据', path: undefined },
             { title: '行政区划', path: '/controltower/saas/region-management' }
           );
           break;
         case 'zipcode-management':
           breadcrumbs.push(
-            { title: '超级运价', path: '/controltower/saas/super-freight-dashboard' },
+            { title: '超级运价', path: undefined },
             { title: '基础数据', path: undefined },
             { title: '邮编管理', path: '/controltower/saas/zipcode-management' }
           );
           break;
         case 'fba-warehouse':
           breadcrumbs.push(
-            { title: '超级运价', path: '/controltower/saas/super-freight-dashboard' },
+            { title: '超级运价', path: undefined },
             { title: '基础数据', path: undefined },
             { title: 'FBA仓库', path: '/controltower/saas/fba-warehouse' }
           );
@@ -286,8 +289,10 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
               </span>
             }
           >
+            {/* 控制台和数据分析菜单已删除
             <MenuItem key="saas/super-freight-dashboard">控制台</MenuItem>
             <MenuItem key="saas/data-analysis">数据分析</MenuItem>
+            */}
             <SubMenu
               key="rate-management"
               title={
