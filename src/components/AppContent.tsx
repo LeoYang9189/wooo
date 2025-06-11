@@ -37,6 +37,7 @@ const ZipcodeManagement = lazy(() => import('./saas/ZipcodeManagement'));
 const FbaWarehouseManagement = lazy(() => import('./saas/FbaWarehouseManagement'));
 const ContainerSystem = lazy(() => import('./containersaas/ContainerSystem'));
 const ControlTower = lazy(() => import('./controltower/ControlTower'));
+const PlatformAdmin = lazy(() => import('./platformadmin/PlatformAdmin'));
 const RateQuery = lazy(() => import('./saas/RateQuery'));
 const CombinationRateQuery = lazy(() => import('./saas/CombinationRateQuery'));
 const CreateAirInquiry = lazy(() => import('./saas/CreateAirInquiry'));
@@ -90,6 +91,7 @@ const AppContent = ({}: AppContentProps) => {
         <Route path="/saas/fba-warehouse" element={<FbaWarehouseManagement />} />
         <Route path="/smartainer/*" element={<ContainerSystem />} />
         <Route path="/controltower/*" element={<ControlTower />} />
+        <Route path="/platformadmin/*" element={<PlatformAdmin />} />
         <Route path="/rate-query" element={<RateQuery />} />
         <Route path="/combination-rate-query" element={<CombinationRateQuery />} />
         <Route path="/saas/inquiry-detail/:type/:id" element={<InquiryDetail />} />

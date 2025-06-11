@@ -147,7 +147,8 @@ const Header = () => {
       ]
     },
     { label: '关于我们', href: '#' },
-    { label: 'API接口', href: '#' }
+    { label: 'API接口', href: '#' },
+    { label: '平台运营后台', href: '/platformadmin' }
   ];
 
   const toggleMenu = () => {
