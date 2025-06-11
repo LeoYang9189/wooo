@@ -1,6 +1,5 @@
 import React from 'react';
-import { Card, Grid, Statistic, Typography, Divider } from '@arco-design/web-react';
-import { IconUser, IconList, IconSettings } from '@arco-design/web-react/icon';
+import { Card, Grid, Statistic, Typography } from '@arco-design/web-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers, faBuilding, faShip, faBullhorn } from '@fortawesome/free-solid-svg-icons';
 

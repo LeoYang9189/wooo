@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Layout, Menu, Button, Avatar, Badge, Breadcrumb, Dropdown, Divider } from '@arco-design/web-react';
 import { 
   IconDashboard, 
-  IconList, 
   IconApps, 
   IconUser, 
   IconNotification, 
@@ -14,13 +13,10 @@ import {
   IconSettings as IconSettingsOutline, 
   IconLanguage, 
   IconQuestionCircle,
-  IconFile,
-  IconStorage,
-  IconSettings,
-  IconCustomerService
+  IconSettings
 } from '@arco-design/web-react/icon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRobot, faUsers, faBuilding, faShip, faBullhorn } from '@fortawesome/free-solid-svg-icons';
+import { faRobot, faUsers, faShip, faBullhorn } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../PlatformAdminStyles.css';
 
