@@ -241,7 +241,7 @@ const ControlTowerClientLayout: React.FC<LayoutProps> = ({ children }) => {
         className="border-r border-gray-200 relative"
       >
         {/* 绸带标签 - 放在侧边栏左上角 */}
-        <div className="absolute top-4 left-0 bg-green-500 text-white text-xs font-bold ribbon z-20">
+        <div className="ribbon green">
           客户端
         </div>
         
@@ -294,94 +294,10 @@ const ControlTowerClientLayout: React.FC<LayoutProps> = ({ children }) => {
               </span>
             }
           >
-            {/* 控制台和数据分析菜单已删除
-            <MenuItem key="saas/super-freight-dashboard">控制台</MenuItem>
-            <MenuItem key="saas/data-analysis">数据分析</MenuItem>
-            */}
-            <SubMenu
-              key="rate-management"
-              title={
-                <span>
-                  <IconFile />
-                  <span>运价管理</span>
-                </span>
-              }
-            >
-              <MenuItem key="saas/fcl-rates">海运整箱</MenuItem>
-              <MenuItem key="saas/lcl-rates">海运拼箱</MenuItem>
-              <MenuItem key="saas/air-rates">空运运价</MenuItem>
-              <MenuItem key="saas/fcl-surcharge">整箱附加费</MenuItem>
-              <MenuItem key="saas/lcl-surcharge">拼箱附加费</MenuItem>
-              <MenuItem key="saas/air-surcharge">空运附加费</MenuItem>
-              <MenuItem key="saas/rate-query">运价查询</MenuItem>
-            </SubMenu>
-            <SubMenu
-              key="door-service"
-              title={
-                <span>
-                  <IconFile />
-                  <span>门点服务管理</span>
-                </span>
-              }
-            >
-              <MenuItem key="saas/precarriage-rates">港前运价</MenuItem>
-              <MenuItem key="saas/lastmile-rates">尾程运价</MenuItem>
-            </SubMenu>
-            <SubMenu
-              key="inquiry-quote"
-              title={
-                <span>
-                  <IconStorage />
-                  <span>询价报价</span>
-                </span>
-              }
-            >
-              <MenuItem key="saas/inquiry-management">询价管理</MenuItem>
-              <MenuItem key="saas/quote-management">报价管理</MenuItem>
-              <MenuItem key="saas/quote-approval">报价审核</MenuItem>
-            </SubMenu>
-            <SubMenu
-              key="space-management"
-              title={
-                <span>
-                  <IconFile />
-                  <span>舱位管理</span>
-                </span>
-              }
-            >
-              <MenuItem key="saas/space-query">舱位查询</MenuItem>
-              <MenuItem key="saas/space-booking">舱位预订</MenuItem>
-              <MenuItem key="saas/space-statistics">舱位统计</MenuItem>
-            </SubMenu>
-            <SubMenu
-              key="base-data"
-              title={
-                <span>
-                  <IconStorage />
-                  <span>基础数据</span>
-                </span>
-              }
-            >
-              <MenuItem key="saas/shipping-company">船公司管理</MenuItem>
-              <MenuItem key="saas/port-management">港口管理</MenuItem>
-              <MenuItem key="saas/route-management">航线管理</MenuItem>
-              <MenuItem key="saas/currency-management">货币管理</MenuItem>
-              <MenuItem key="saas/region-management">行政区划</MenuItem>
-              <MenuItem key="saas/zipcode-management">邮编管理</MenuItem>
-              <MenuItem key="saas/fba-warehouse">FBA仓库</MenuItem>
-            </SubMenu>
-            <MenuItem key="saas/contract-management">
-              <IconFile />
-              <span>合约管理</span>
-            </MenuItem>
-            <MenuItem key="saas/customer-management">
-              <IconFile />
-              <span>客户管理</span>
-            </MenuItem>
-            <MenuItem key="saas/system-settings">
-              <IconSettings />
-              <span>系统设置</span>
-            </MenuItem>
+            {/* 保留运价查询，直接作为超级运价的子菜单 */}
+            <MenuItem key="saas/rate-query">运价查询</MenuItem>
+            {/* 询价管理上提一级 */}
+            <MenuItem key="saas/inquiry-management">询价管理</MenuItem>
           </SubMenu>
           
           {/* 原有控制塔菜单 */}

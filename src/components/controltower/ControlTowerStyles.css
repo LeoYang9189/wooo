@@ -1,39 +1,58 @@
 /* 绸带标签样式 */
 .ribbon {
-  position: relative;
-  padding: 8px 16px 8px 8px;
-  margin-left: 0;
-  background: linear-gradient(45deg, currentColor 0%, rgba(255, 255, 255, 0.1) 50%, currentColor 100%);
+  position: absolute;
+  top: 12px;
+  left: -8px;
+  padding: 4px 20px;
+  background: linear-gradient(135deg, #ff7d00 0%, #ff9900 50%, #ff7d00 100%);
+  color: white !important;
+  font-size: 11px;
+  font-weight: bold;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   box-shadow: 
     0 2px 4px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  z-index: 100;
+  transform: rotate(-45deg);
+  transform-origin: center;
+  min-width: 80px;
+  text-align: center;
 }
 
-/* 左边的三角形切口 */
+/* 左下角阴影 */
 .ribbon::before {
   content: '';
   position: absolute;
-  left: -8px;
-  top: 0;
+  left: -1px;
+  bottom: -1px;
   width: 0;
   height: 0;
-  border-top: 16px solid transparent;
-  border-bottom: 16px solid transparent;
-  border-right: 8px solid currentColor;
-  filter: brightness(0.8);
+  border-left: 4px solid rgba(0, 0, 0, 0.2);
+  border-top: 4px solid transparent;
+  z-index: -1;
 }
 
-/* 右边的折叠效果 */
+/* 右上角阴影 */
 .ribbon::after {
   content: '';
   position: absolute;
-  right: 0;
-  bottom: -6px;
+  right: -1px;
+  top: -1px;
   width: 0;
   height: 0;
-  border-left: 6px solid rgba(0, 0, 0, 0.3);
-  border-top: 6px solid transparent;
-  border-bottom: 6px solid transparent;
+  border-right: 4px solid rgba(0, 0, 0, 0.2);
+  border-bottom: 4px solid transparent;
+  z-index: -1;
+}
+
+/* 运营绸带 */
+.ribbon.orange {
+  background: linear-gradient(135deg, #ff7d00 0%, #ff9900 50%, #ff7d00 100%);
+}
+
+/* 客户端绸带 */
+.ribbon.green {
+  background: linear-gradient(135deg, #00b42a 0%, #00d935 50%, #00b42a 100%);
 }
 
 .control-tower-layout {
