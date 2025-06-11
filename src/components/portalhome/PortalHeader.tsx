@@ -13,9 +13,8 @@ const PortalHeader: React.FC = () => {
 
   const navItems = [
     { label: '首页', href: '/portal' },
-    { label: '货物跟踪', href: '#tracking' },
+    { label: '控制塔', href: '/controltower' },
     { label: '业务介绍', href: '#services' },
-    { label: '运价中心', href: '/saas-system' },
     { label: '资讯中心', href: '#news' },
     { label: '关于我们', href: '#about' },
   ];
