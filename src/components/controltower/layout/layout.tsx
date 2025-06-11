@@ -51,6 +51,9 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
   const handleMenuItemClick = (key: string) => {
     if (key === 'dashboard') {
       navigate('/controltower');
+    } else if (key === 'web-portal') {
+      // 跳转到Portal首页
+      navigate('/portal');
     } else if (key.startsWith('saas/')) {
       // 超级运价页面路由处理
       navigate(`/controltower/${key}`);
@@ -429,6 +432,29 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
           >
             <MenuItem key="user-profile">个人信息</MenuItem>
             <MenuItem key="company-profile">企业信息</MenuItem>
+          </SubMenu>
+          <SubMenu
+            key="products"
+            title={
+              <span>
+                <IconApps />
+                <span>产品功能</span>
+              </span>
+            }
+          >
+            <SubMenu
+              key="smart-logistics"
+              title={
+                <span>
+                  <IconSettings />
+                  <span>智慧物流系统</span>
+                </span>
+              }
+            >
+              <MenuItem key="web-portal">Web门户</MenuItem>
+              <MenuItem key="control-tower">控制塔</MenuItem>
+              <MenuItem key="smart-container">智慧集装箱</MenuItem>
+            </SubMenu>
           </SubMenu>
           <MenuItem key="application">
             <IconApps />
