@@ -2,8 +2,9 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import ControlTowerPanel from './pages/ControlTowerPanel';
-import FreightRateQuery from './pages/FreightRateQuery';
-import InquiryManagement from './pages/InquiryManagement';
+// 运价中心相关组件暂时注释
+// import FreightRateQuery from './pages/FreightRateQuery';
+// import InquiryManagement from './pages/InquiryManagement';
 import BillingManagement from './pages/BillingManagement';
 import InvoiceManagement from './pages/InvoiceManagement';
 import UserProfile from './pages/UserProfile';
@@ -33,8 +34,10 @@ const ControlTowerRoutes: React.FC = () => {
       <Route path="/" element={<Dashboard />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/control-tower-panel" element={<ControlTowerPanel />} />
+      {/* 运价中心相关路由已暂时注释
       <Route path="/freight-rate-query" element={<FreightRateQuery />} />
       <Route path="/inquiry-management" element={<InquiryManagement />} />
+      */}
       <Route path="/order-management" element={<OrderManagement />} />
       <Route path="/order-detail/:orderId" element={<OrderDetail />} />
       <Route path="/bl-addition/:orderId" element={<BLAddition />} />

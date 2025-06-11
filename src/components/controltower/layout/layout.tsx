@@ -19,7 +19,9 @@ import {
   IconSettings
 } from '@arco-design/web-react/icon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileInvoiceDollar, faRobot, faShip } from '@fortawesome/free-solid-svg-icons';
+import { faFileInvoiceDollar, faRobot } from '@fortawesome/free-solid-svg-icons';
+// faShip 导入已暂时注释，因为运价中心菜单被注释了
+// import { faShip } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../ControlTowerStyles.css';
 import AIAssistant from './ai';
@@ -162,6 +164,8 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
       case 'control-tower-panel':
         breadcrumbs.push({ title: '控制塔面板', path: '/controltower/control-tower-panel' });
         break;
+      // 运价中心相关页面面包屑已暂时注释
+      /*
       case 'freight-rate-query':
         breadcrumbs.push(
           { title: '运价中心', path: '/controltower/freight' },
@@ -174,6 +178,7 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
           { title: '询价管理', path: '/controltower/inquiry-management' }
         );
         break;
+      */
       case 'billing-management':
         breadcrumbs.push(
           { title: '财务中心', path: '/controltower/finance' },
@@ -370,6 +375,7 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
           </SubMenu>
           
           {/* 原有控制塔菜单 */}
+          {/* 运价中心菜单已暂时注释
           <SubMenu
             key="freight"
             title={
@@ -382,6 +388,7 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
             <MenuItem key="freight-rate-query">运价查询</MenuItem>
             <MenuItem key="inquiry-management">询价管理</MenuItem>
           </SubMenu>
+          */}
           <SubMenu
             key="order"
             title={
