@@ -23,7 +23,7 @@ import { faFileInvoiceDollar, faRobot } from '@fortawesome/free-solid-svg-icons'
 // faShip 导入已暂时注释，因为运价中心菜单被注释了
 // import { faShip } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from 'react-router-dom';
-import '../ControlTowerStyles.css';
+import '../ControlTowerClientStyles.css';
 import AIAssistant from './ai';
 
 const { Header, Sider, Content } = Layout;
@@ -39,7 +39,7 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
-const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
+const ControlTowerClientLayout: React.FC<LayoutProps> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [aiChatVisible, setAiChatVisible] = useState(false);
   const navigate = useNavigate();
@@ -50,29 +50,29 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
   // 菜单点击
   const handleMenuItemClick = (key: string) => {
     if (key === 'dashboard') {
-      navigate('/controltower');
+      navigate('/controltower-client');
     } else if (key.startsWith('saas/')) {
       // 超级运价页面路由处理
-      navigate(`/controltower/${key}`);
+      navigate(`/controltower-client/${key}`);
     } else {
-      navigate(key === 'dashboard' ? '/controltower' : `/controltower/${key}`);
+      navigate(key === 'dashboard' ? '/controltower-client' : `/controltower-client/${key}`);
     }
   };
 
   // 根据当前路由生成面包屑
   const getBreadcrumbs = (): BreadcrumbItem[] => {
-    const path = location.pathname.replace('/controltower/', '');
+    const path = location.pathname.replace('/controltower-client/', '');
     const breadcrumbs: BreadcrumbItem[] = [
-      { title: '首页', path: '/controltower' },
-      { title: '控制塔系统', path: '/controltower' }
+      { title: '首页', path: '/controltower-client' },
+      { title: '控制塔系统', path: '/controltower-client' }
     ];
 
     // 检查是否是订单详情页面（格式：/order-detail/:orderId）
     if (path.startsWith('order-detail/')) {
       const orderId = path.split('/')[1]; // 获取订单ID
       breadcrumbs.push(
-        { title: '订单中心', path: '/controltower/order' },
-        { title: '订单管理', path: '/controltower/order-management' },
+        { title: '订单中心', path: '/controltower-client/order' },
+        { title: '订单管理', path: '/controltower-client/order-management' },
         { title: orderId, path: undefined } // 当前订单，无链接
       );
       return breadcrumbs;
@@ -241,8 +241,8 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
         className="border-r border-gray-200 relative"
       >
         {/* 绸带标签 - 放在侧边栏左上角 */}
-        <div className="absolute top-0 left-0 bg-orange-500 text-white px-3 py-1 text-xs font-bold shadow-lg transform origin-top-left rotate-0 ribbon z-20">
-          运营
+        <div className="absolute top-0 left-0 bg-green-500 text-white px-3 py-1 text-xs font-bold shadow-lg transform origin-top-left rotate-0 ribbon z-20">
+          客户端
         </div>
         
         <div className="p-4 flex items-center justify-center">
@@ -270,7 +270,7 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
         </div>
         <Menu
           selectedKeys={[
-            location.pathname.replace('/controltower/', '').replace('/', '') || 'dashboard'
+            location.pathname.replace('/controltower-client/', '').replace('/', '') || 'dashboard'
           ]}
           onClickMenuItem={handleMenuItemClick}
           style={{ width: '100%' }}
@@ -540,4 +540,4 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
   );
 };
 
-export default ControlTowerLayout; 
+export default ControlTowerClientLayout; 
