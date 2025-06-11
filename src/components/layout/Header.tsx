@@ -345,10 +345,10 @@ const Header = () => {
                                 <span className="font-bold text-gray-800 text-base pb-1 inline-block border-b-2 border-gradient-to-r from-blue-500 to-purple-500" style={{borderImage: 'linear-gradient(to right, #3b82f6, #8b5cf6) 1'}}>定制门户</span>
                               </div>
                               <div className="grid grid-cols-3 gap-4 pl-6">
-                                <a href="#web-portal" className="flex items-center py-2 text-sm text-gray-600 hover:text-primary">
+                                <Link to="/portal" className="flex items-center py-2 text-sm text-gray-600 hover:text-primary">
                                   <FontAwesomeIcon icon={faLaptopCode} className="mr-2 text-blue-500 w-4 h-4" />
                                   <span>Web门户</span>
-                                </a>
+                                </Link>
                                 <a href="#mini-program" className="flex items-center py-2 text-sm text-gray-600 hover:text-primary">
                                   <FontAwesomeIcon icon={faTools} className="mr-2 text-green-500 w-4 h-4" />
                                   <span>小程序</span>
