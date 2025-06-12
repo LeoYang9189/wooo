@@ -9,19 +9,14 @@ import {
   Breadcrumb,
   Typography,
   Tag,
-
-
   Modal,
   Upload,
   Message,
   Progress,
-
-
-
-
   Switch,
   Grid,
-  Tooltip
+  Tooltip,
+  Tabs
 } from '@arco-design/web-react';
 import { 
   IconSearch, 
@@ -32,33 +27,18 @@ import {
   IconDelete, 
   IconRefresh, 
   IconFilter,
-
-
-
-
-
-
   IconRobot,
-
-
-
-
-
-
-
-
   IconList,
   IconDragDotVertical
 } from '@arco-design/web-react/icon';
 import '@arco-design/web-react/dist/css/arco.css';
-// import { useNavigate } from 'react-router-dom';
 import SaasLayout from './SaasLayout';
 import './InquiryManagement.css';
+import { useNavigate } from 'react-router-dom';
 
 const Title = Typography.Title;
 const Option = Select.Option;
 const RangePicker = DatePicker.RangePicker;
-
 
 const Row = Grid.Row;
 const Col = Grid.Col;
@@ -111,7 +91,6 @@ const waveAnimation = `
 
 const FclRates: React.FC = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
-
   const [aiModalVisible, setAiModalVisible] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [shipPosition, setShipPosition] = useState(0);
@@ -144,7 +123,8 @@ const FclRates: React.FC = () => {
     weight: false,
     bookingDeadline: false
   });
-
+  const [activeTab, setActiveTab] = useState<string>('fcl');
+  const navigate = useNavigate();
 
   // 打开AI识别弹窗
   const openAiModal = () => {
@@ -201,11 +181,6 @@ const FclRates: React.FC = () => {
           
           // 显示成功消息
           Message.success('合约识别成功，已提取运价信息');
-          
-          // 移除自动关闭弹窗的代码
-          // setTimeout(() => {
-          //   closeAiModal();
-          // }, 2000);
         }, 3000);
       }
     }, 100);
@@ -437,236 +412,246 @@ const FclRates: React.FC = () => {
     sizeOptions: [12, 50, 100, 200],
   };
 
-  return (
-    <SaasLayout menuSelectedKey="3" breadcrumb={
-      <Breadcrumb>
-        <Breadcrumb.Item>运价管理</Breadcrumb.Item>
-        <Breadcrumb.Item>海运整箱</Breadcrumb.Item>
-      </Breadcrumb>
-    }>
-      {/* 主内容区域 */}
-      <Card className="mb-4">
-        <Title heading={6} className="mb-4">筛选条件</Title>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div>
-            <div className="text-gray-500 text-sm mb-1">船公司</div>
-            <Select
-              placeholder="请选择船公司"
-              style={{ width: '100%' }}
-              allowClear
-            >
-              <Option value="SITC">SITC</Option>
-              <Option value="COSCO">COSCO</Option>
-              <Option value="MSK">MSK</Option>
-              <Option value="ONE">ONE</Option>
-            </Select>
-          </div>
-          
-          <div>
-            <div className="text-gray-500 text-sm mb-1">直达/中转</div>
-            <Select
-              placeholder="请选择直达/中转"
-              style={{ width: '100%' }}
-              allowClear
-            >
-              <Option value="direct">直达</Option>
-              <Option value="transit">中转</Option>
-            </Select>
-          </div>
-          
-          <div>
-            <div className="text-gray-500 text-sm mb-1">有效期</div>
-            <RangePicker style={{ width: '100%' }} />
-          </div>
-          
-          <div>
-            <div className="text-gray-500 text-sm mb-1">开始日期</div>
-            <RangePicker style={{ width: '100%' }} />
-          </div>
-          
-          <div>
-            <div className="text-gray-500 text-sm mb-1">航线名称</div>
-            <Select
-              placeholder="请选择航线名称"
-              style={{ width: '100%' }}
-              allowClear
-            >
-              <Option value="line1">亚洲区内航线</Option>
-              <Option value="line2">远东-东南亚航线</Option>
-              <Option value="line3">远东-中东航线</Option>
-            </Select>
-          </div>
-          
-          <div>
-            <div className="text-gray-500 text-sm mb-1">航线代码</div>
-            <Select
-              placeholder="请选择航线代码"
-              style={{ width: '100%' }}
-              allowClear
-            >
-              <Option value="CPX4">CPX4</Option>
-              <Option value="CPS">CPS</Option>
-              <Option value="CPX7">CPX7</Option>
-              <Option value="CPX6">CPX6</Option>
-            </Select>
-          </div>
-          
-          <div>
-            <div className="text-gray-500 text-sm mb-1">船名</div>
-            <Select
-              placeholder="请输入船名"
-              style={{ width: '100%' }}
-              allowClear
-            >
-              <Option value="MEDKON QUO">MEDKON QUO</Option>
-              <Option value="SITC PENANG">SITC PENANG</Option>
-              <Option value="SITC YOKOHAMA">SITC YOKOHAMA</Option>
-              <Option value="SITC XINCHENG">SITC XINCHENG</Option>
-            </Select>
-          </div>
-          
-          <div>
-            <div className="text-gray-500 text-sm mb-1">航次</div>
-            <Select
-              placeholder="请输入航次"
-              style={{ width: '100%' }}
-              allowClear
-            >
-              <Option value="2510S">2510S</Option>
-              <Option value="2514S">2514S</Option>
-              <Option value="2518S">2518S</Option>
-            </Select>
-          </div>
-          
-          <div>
-            <div className="text-gray-500 text-sm mb-1">起运港</div>
-            <Select
-              placeholder="请选择起运港"
-              style={{ width: '100%' }}
-              allowClear
-            >
-              <Option value="shanghai">上海</Option>
-              <Option value="ningbo">宁波</Option>
-              <Option value="qingdao">青岛</Option>
-            </Select>
-          </div>
-          
-          <div>
-            <div className="text-gray-500 text-sm mb-1">卸货港</div>
-            <Select
-              placeholder="请选择卸货港"
-              style={{ width: '100%' }}
-              allowClear
-            >
-              {['MANILA-NORTH', 'MANILA-SOUTH', 'SUBIC BAY', 'CEBU', 'ILOILO', 'CAGAYAN DE ORO', 'BATANGAS'].map((port) => (
-                <Option key={port} value={port}>{port}</Option>
-              ))}
-            </Select>
-          </div>
-          
-          <div>
-            <div className="text-gray-500 text-sm mb-1">舱位状态</div>
-            <Select
-              placeholder="请选择舱位状态"
-              style={{ width: '100%' }}
-              allowClear
-            >
-              <Option value="available">舱位充足</Option>
-              <Option value="reduced">运费下调</Option>
-              <Option value="limited">舱位有限</Option>
-            </Select>
-          </div>
-          
-          <div>
-            <div className="text-gray-500 text-sm mb-1">置顶推荐</div>
-            <Select
-              placeholder="请选择置顶推荐"
-              style={{ width: '100%' }}
-              allowClear
-            >
-              <Option value="top">是</Option>
-              <Option value="normal">否</Option>
-            </Select>
-          </div>
-          
-          <div>
-            <div className="text-gray-500 text-sm mb-1">状态</div>
-            <Select
-              placeholder="请选择状态"
-              style={{ width: '100%' }}
-              allowClear
-            >
-              <Option value="active">有效</Option>
-              <Option value="inactive">失效</Option>
-            </Select>
-          </div>
-          
-          <div>
-            <div className="text-gray-500 text-sm mb-1">更新时间</div>
-            <RangePicker style={{ width: '100%' }} />
-          </div>
-        </div>
-        
-        <div className="flex justify-end mt-4">
-          <Space>
-            <Button type="primary" icon={<IconSearch />}>查询</Button>
-            <Button icon={<IconRefresh />}>重置</Button>
-            <Button icon={<IconFilter />}>收起</Button>
-          </Space>
-        </div>
-      </Card>
-      
-      <Card>
-        <div className="flex justify-between mb-4">
-          <Space>
-            <Button type="primary" icon={<IconPlus />}>新增运价</Button>
-            <Button icon={<IconUpload />}>批量导入</Button>
-            <Button icon={<IconDownload />}>导出列表</Button>
-            
-            {/* AI识别按钮 */}
-            <Button 
-              type="primary"
-              style={{
-                background: 'linear-gradient(45deg, #1890ff, #4dabf5)',
-                border: 'none',
-                boxShadow: '0 4px 12px rgba(24, 144, 255, 0.35)',
-                padding: '0 28px',
-              }}
-              icon={<IconRobot />}
-              onClick={openAiModal}
-            >
-              AI智能识别
-            </Button>
-          </Space>
-          
-          {/* 自定义表格按钮改为文字链接样式 */}
-          <div 
-            className="flex items-center text-blue-500 cursor-pointer hover:text-blue-700"
-            onClick={openCustomTableModal}
-          >
-            <IconList className="mr-1" />
-            <span>自定义表格</span>
-          </div>
-        </div>
-        
+  // ====== 港前运价 columns & data ======
+  const precarriageColumns = [
+    { title: '港前运价编号', dataIndex: 'code', width: 120 },
+    { title: '运价类型', dataIndex: 'rateType', width: 100 },
+    { title: '支线类型', dataIndex: 'sublineType', width: 120, render: (v: string|null) => v || '-' },
+    { title: '起运地', dataIndex: 'origin', width: 180 },
+    { title: '起运港', dataIndex: 'destination', width: 150 },
+    { title: '码头', dataIndex: 'terminal', width: 120 },
+    { title: '供应商', dataIndex: 'vendor', width: 150 },
+    { title: '20GP', dataIndex: '20gp', width: 100 },
+    { title: '40GP', dataIndex: '40gp', width: 100 },
+    { title: '40HC', dataIndex: '40hc', width: 100 },
+    { title: '40NOR', dataIndex: '40nor', width: 100 },
+    { title: '45HC', dataIndex: '45hc', width: 100 },
+    { title: '有效期', dataIndex: 'validDateRange', width: 180 },
+    { title: '状态', dataIndex: 'status', width: 100 },
+    { title: '备注', dataIndex: 'remark', width: 150 },
+  ];
+  const precarriageData = [
+    { key: '1', code: 'PCR2024050001', rateType: '直拖', sublineType: null, origin: '浙江省杭州市萧山区', destination: 'CNSHA | SHANGHAI', terminal: '洋山', vendor: '安吉物流', '20gp': 800, '40gp': 1200, '40hc': 1300, '40nor': 1250, '45hc': 1500, validDateRange: '2024-05-01 至 2024-12-31', status: '正常', remark: '' },
+    { key: '2', code: 'PCR2024050002', rateType: '支线', sublineType: '湖州海铁', origin: '浙江省湖州市吴兴区', destination: 'CNNGB | NINGBO', terminal: '北仑', vendor: '中远海运', '20gp': 400, '40gp': 700, '40hc': 750, '40nor': 720, '45hc': 850, validDateRange: '2024-05-15 至 2024-11-30', status: '正常', remark: '' },
+    { key: '3', code: 'PCR2024050003', rateType: '直拖', sublineType: null, origin: '江苏省苏州市工业园区', destination: 'CNSHA | SHANGHAI', terminal: '外高桥', vendor: '德邦物流', '20gp': 850, '40gp': 1250, '40hc': 1350, '40nor': 1300, '45hc': 1550, validDateRange: '2024-04-01 至 2024-12-15', status: '正常', remark: '需提前24小时预约' },
+    { key: '4', code: 'PCR2024040001', rateType: '直拖', sublineType: null, origin: '上海市嘉定区', destination: 'CNSHA | SHANGHAI', terminal: '洋山', vendor: '顺丰物流', '20gp': 750, '40gp': 1150, '40hc': 1250, '40nor': 1200, '45hc': 1450, validDateRange: '2024-03-01 至 2024-05-31', status: '过期', remark: '' },
+    { key: '5', code: 'PCR2024050004', rateType: '支线', sublineType: '乍浦支线', origin: '浙江省嘉兴市平湖市', destination: 'CNSHA | SHANGHAI', terminal: '洋山', vendor: '海得航运', '20gp': 450, '40gp': 750, '40hc': 800, '40nor': 780, '45hc': 920, validDateRange: '2024-05-01 至 2024-10-31', status: '正常', remark: '周一、周四发船' },
+    { key: '6', code: 'PCR2024030001', rateType: '支线', sublineType: '海宁支线', origin: '浙江省嘉兴市海宁市', destination: 'CNNGB | NINGBO', terminal: '北仑', vendor: '浙江海洋航运', '20gp': 500, '40gp': 800, '40hc': 850, '40nor': 830, '45hc': 950, validDateRange: '2024-03-15 至 2024-04-30', status: '下架', remark: '已停运' },
+  ];
+  // ====== 尾程运价 columns & data ======
+  const oncarriageColumns = [
+    { title: '尾程运价编号', dataIndex: 'code', width: 120 },
+    { title: '目的港', dataIndex: 'origin', width: 150 },
+    { title: '配送地址类型', dataIndex: 'addressType', width: 120 },
+    { title: '邮编', dataIndex: 'zipCode', width: 100 },
+    { title: '地址', dataIndex: 'address', width: 180 },
+    { title: '仓库代码', dataIndex: 'warehouseCode', width: 120, render: (v: string|null) => v || '-' },
+    { title: '代理名称', dataIndex: 'agentName', width: 150 },
+    { title: '20GP', dataIndex: '20gp', width: 100 },
+    { title: '40GP', dataIndex: '40gp', width: 100 },
+    { title: '40HC', dataIndex: '40hc', width: 100 },
+    { title: '40NOR', dataIndex: '40nor', width: 100 },
+    { title: '45HC', dataIndex: '45hc', width: 100 },
+    { title: '有效期', dataIndex: 'validDateRange', width: 180 },
+    { title: '状态', dataIndex: 'status', width: 100 },
+    { title: '备注', dataIndex: 'remark', width: 150 },
+  ];
+  const oncarriageData = [
+    { key: '1', code: 'LMR2024050001', origin: 'USLAX | LOS ANGELES', addressType: '第三方地址', zipCode: '92101', address: 'San Diego, CA', warehouseCode: null, agentName: 'XPO TRUCK LLC', validDateRange: '2024-05-01 至 2024-12-31', remark: '', status: '正常', '20gp': 1200, '40gp': 1800, '40hc': 1900, '45hc': 2200, '40nor': 2000 },
+    { key: '2', code: 'LMR2024050002', origin: 'USNYC | NEW YORK', addressType: '亚马逊仓库', zipCode: '', address: '', warehouseCode: 'ONT8', agentName: 'DRAYEASY INC', validDateRange: '2024-05-15 至 2024-11-30', remark: '', status: '正常', '20gp': 980, '40gp': 1650, '40hc': 1750, '45hc': 2050, '40nor': 1800 },
+    { key: '3', code: 'LMR2024050003', origin: 'DEHAM | HAMBURG', addressType: '易仓', zipCode: '', address: '', warehouseCode: 'LAX203', agentName: 'AMERICAN FREIGHT SOLUTIONS', validDateRange: '2024-04-01 至 2024-12-15', remark: '需提前24小时预约', status: '正常', '20gp': 1300, '40gp': 1950, '40hc': 2050, '45hc': 2400, '40nor': 2100 },
+    { key: '4', code: 'LMR2024040001', origin: 'NLRTM | ROTTERDAM', addressType: '第三方地址', zipCode: '96001', address: 'Redding, CA', warehouseCode: null, agentName: 'WEST COAST CARRIERS LLC', validDateRange: '2024-03-01 至 2024-05-31', remark: '', status: '过期', '20gp': 1100, '40gp': 1700, '40hc': 1800, '45hc': 2150, '40nor': 1950 },
+  ];
+
+  // 新增运价按钮点击事件
+  const handleAddRate = () => {
+    if (activeTab === 'precarriage') {
+      navigate('/controltower/saas/create-precarriage-rate');
+      return;
+    }
+    if (activeTab === 'oncarriage') {
+      navigate('/controltower/saas/create-lastmile-rate');
+      return;
+    }
+    // 其它Tab可自定义跳转或提示
+    Message.info('请在对应Tab实现新增运价功能');
+  };
+
+  // 筛选区收起/展开状态
+  const [filterCollapsed, setFilterCollapsed] = useState(false);
+
+  // 切换筛选区收起/展开
+  const toggleFilterCollapse = () => {
+    setFilterCollapsed(!filterCollapsed);
+  };
+
+  // 修改内容区渲染逻辑
+  const renderContent = () => {
+    if (activeTab === 'precarriage') {
+      return (
         <Table
           rowKey="key"
-          loading={false}
-          columns={columns}
-          data={data}
-          rowSelection={{
-            selectedRowKeys,
-            onChange: onSelectChange,
-          }}
+          columns={precarriageColumns}
+          data={precarriageData}
           pagination={pagination}
           scroll={{ x: 1800 }}
           border={false}
           className="mt-4 inquiry-table-nowrap"
         />
-        
-        <div className="mt-2 text-gray-500 text-sm">共 9232 条</div>
-      </Card>
+      );
+    }
+    if (activeTab === 'oncarriage') {
+      return (
+        <Table
+          rowKey="key"
+          columns={oncarriageColumns}
+          data={oncarriageData}
+          pagination={pagination}
+          scroll={{ x: 1800 }}
+          border={false}
+          className="mt-4 inquiry-table-nowrap"
+        />
+      );
+    }
+    // 其它Tab保持原有内容
+    return (
+      <Table
+        rowKey="key"
+        loading={false}
+        columns={columns}
+        data={data}
+        rowSelection={{
+          selectedRowKeys,
+          onChange: onSelectChange,
+        }}
+        pagination={pagination}
+        scroll={{ x: 1800 }}
+        border={false}
+        className="mt-4 inquiry-table-nowrap"
+      />
+    );
+  };
 
+  return (
+    <SaasLayout menuSelectedKey="2" breadcrumb={
+      <Breadcrumb>
+        <Breadcrumb.Item>运价管理</Breadcrumb.Item>
+        <Breadcrumb.Item>运价维护</Breadcrumb.Item>
+      </Breadcrumb>
+    }>
+      <Card>
+        <Tabs activeTab={activeTab} onChange={setActiveTab} className="mb-4">
+          <Tabs.TabPane key="fcl" title="整箱运价" />
+          <Tabs.TabPane key="lcl" title="拼箱运价" />
+          <Tabs.TabPane key="air" title="空运运价" />
+          <Tabs.TabPane key="precarriage" title="港前运价" />
+          <Tabs.TabPane key="oncarriage" title="尾程运价" />
+        </Tabs>
+        <Card className="mb-4">
+          <Title heading={6} className="mb-4">筛选条件</Title>
+          {!filterCollapsed && (
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <div className="text-gray-500 text-sm mb-1">船公司</div>
+                <Select placeholder="请选择船公司" style={{ width: '100%' }} allowClear>
+                  <Option value="SITC">SITC</Option>
+                  <Option value="COSCO">COSCO</Option>
+                  <Option value="MSK">MSK</Option>
+                  <Option value="ONE">ONE</Option>
+                </Select>
+              </div>
+              <div>
+                <div className="text-gray-500 text-sm mb-1">直达/中转</div>
+                <Select placeholder="请选择直达/中转" style={{ width: '100%' }} allowClear>
+                  <Option value="direct">直达</Option>
+                  <Option value="transit">中转</Option>
+                </Select>
+              </div>
+              <div>
+                <div className="text-gray-500 text-sm mb-1">起运港</div>
+                <Select placeholder="请选择起运港" style={{ width: '100%' }} allowClear>
+                  <Option value="CNSHA">上海</Option>
+                  <Option value="CNNGB">宁波</Option>
+                  <Option value="CNQIN">青岛</Option>
+                </Select>
+              </div>
+              <div>
+                <div className="text-gray-500 text-sm mb-1">卸货港</div>
+                <Select placeholder="请选择卸货港" style={{ width: '100%' }} allowClear>
+                  <Option value="USLAX">洛杉矶</Option>
+                  <Option value="USNYC">纽约</Option>
+                  <Option value="DEHAM">汉堡</Option>
+                </Select>
+              </div>
+              <div>
+                <div className="text-gray-500 text-sm mb-1">开船日期</div>
+                <RangePicker style={{ width: '100%' }} />
+              </div>
+              <div>
+                <div className="text-gray-500 text-sm mb-1">航线</div>
+                <Select placeholder="请选择航线" style={{ width: '100%' }} allowClear>
+                  <Option value="asia-america">亚洲-美洲</Option>
+                  <Option value="asia-europe">亚洲-欧洲</Option>
+                </Select>
+              </div>
+              <div>
+                <div className="text-gray-500 text-sm mb-1">船名</div>
+                <Select placeholder="请选择船名" style={{ width: '100%' }} allowClear>
+                  <Option value="COSCO SHIPPING UNIVERSE">COSCO SHIPPING UNIVERSE</Option>
+                  <Option value="MSC GULSUN">MSC GULSUN</Option>
+                </Select>
+              </div>
+              <div>
+                <div className="text-gray-500 text-sm mb-1">航次</div>
+                <Select placeholder="请选择航次" style={{ width: '100%' }} allowClear>
+                  <Option value="001E">001E</Option>
+                  <Option value="002W">002W</Option>
+                </Select>
+              </div>
+            </div>
+          )}
+          <div className="flex justify-end mt-4">
+            <Space>
+              <Button type="primary" icon={<IconSearch />}>查询</Button>
+              <Button icon={<IconRefresh />}>重置</Button>
+              <Button icon={<IconFilter />} onClick={toggleFilterCollapse}>
+                {filterCollapsed ? '展开' : '收起'}
+              </Button>
+            </Space>
+          </div>
+        </Card>
+        <Card>
+          <div className="flex justify-between mb-4">
+            <Space>
+              <Button type="primary" icon={<IconPlus />} onClick={handleAddRate}>新增运价</Button>
+              <Button icon={<IconUpload />}>批量导入</Button>
+              <Button icon={<IconDownload />}>导出列表</Button>
+              <Button 
+                type="primary"
+                style={{
+                  background: 'linear-gradient(45deg, #1890ff, #4dabf5)',
+                  border: 'none',
+                  boxShadow: '0 4px 12px rgba(24, 144, 255, 0.35)',
+                  padding: '0 28px',
+                }}
+                icon={<IconRobot />}
+                onClick={openAiModal}
+              >
+                AI智能识别
+              </Button>
+            </Space>
+            <div 
+              className="flex items-center text-blue-500 cursor-pointer hover:text-blue-700"
+              onClick={openCustomTableModal}
+            >
+              <IconList className="mr-1" />
+              <span>自定义表格</span>
+            </div>
+          </div>
+          {renderContent()}
+          <div className="mt-2 text-gray-500 text-sm">共 9232 条</div>
+        </Card>
+      </Card>
       {/* 自定义表格弹窗 */}
       <Modal
         title="表头设置"

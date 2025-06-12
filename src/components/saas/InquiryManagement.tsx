@@ -91,6 +91,14 @@ const InquiryManagement: React.FC = () => {
     setSelectedRowKeys([]);
   };
 
+  // 筛选区收起/展开状态
+  const [filterCollapsed, setFilterCollapsed] = useState(false);
+
+  // 切换筛选区收起/展开
+  const toggleFilterCollapse = () => {
+    setFilterCollapsed(!filterCollapsed);
+  };
+
   // 表格数据（示例）
   // 根据Tab获取当前要显示的列
   const getColumns = () => {
@@ -445,163 +453,171 @@ const InquiryManagement: React.FC = () => {
         <Breadcrumb.Item>询价管理</Breadcrumb.Item>
       </Breadcrumb>
     }>
-      <Card className="mb-4">
-        <Title heading={6} className="mb-4">筛选条件</Title>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {/* 第一行 */}
-          <div>
-            <div className="text-gray-500 text-sm mb-1">约号</div>
-            <Select placeholder="等于" style={{ width: '100%' }} allowClear />
-          </div>
-          <div>
-            <div className="text-gray-500 text-sm mb-1">船公司</div>
-            <Select placeholder="等于" style={{ width: '100%' }} allowClear />
-          </div>
-          <div>
-            <div className="text-gray-500 text-sm mb-1">询价来源</div>
-            <Select placeholder="等于" style={{ width: '100%' }} allowClear />
-          </div>
-          <div>
-            <div className="text-gray-500 text-sm mb-1">干线报价状态</div>
-            <Select placeholder="等于" style={{ width: '100%' }} allowClear />
-          </div>
-          {/* 第二行 */}
-          <div>
-            <div className="text-gray-500 text-sm mb-1">头程报价状态</div>
-            <Select placeholder="等于" style={{ width: '100%' }} allowClear />
-          </div>
-          <div>
-            <div className="text-gray-500 text-sm mb-1">尾程报价状态</div>
-            <Select placeholder="等于" style={{ width: '100%' }} allowClear />
-          </div>
-          <div>
-            <div className="text-gray-500 text-sm mb-1">询价状态</div>
-            <Select placeholder="等于" style={{ width: '100%' }} allowClear />
-          </div>
-          <div>
-            <div className="text-gray-500 text-sm mb-1">货好时间</div>
-            <Select placeholder="等于" style={{ width: '100%' }} allowClear />
-          </div>
-          {/* 第三行 */}
-          <div>
-            <div className="text-gray-500 text-sm mb-1">询价人</div>
-            <Select placeholder="等于" style={{ width: '100%' }} allowClear />
-          </div>
-          <div>
-            <div className="text-gray-500 text-sm mb-1">货盘性质</div>
-            <Select placeholder="等于" style={{ width: '100%' }} allowClear />
-          </div>
-          <div>
-            <div className="text-gray-500 text-sm mb-1">直达/中转</div>
-            <Select placeholder="等于" style={{ width: '100%' }} allowClear />
-          </div>
-          <div>
-            <div className="text-gray-500 text-sm mb-1">航线</div>
-            <Select placeholder="等于" style={{ width: '100%' }} allowClear />
-          </div>
-          <div>
-            <div className="text-gray-500 text-sm mb-1">起运港</div>
-            <Select placeholder="等于" style={{ width: '100%' }} allowClear />
-          </div>
-          {/* 第四行 */}
-          <div>
-            <div className="text-gray-500 text-sm mb-1">卸货港</div>
-            <Select placeholder="等于" style={{ width: '100%' }} allowClear />
-          </div>
-          <div>
-            <div className="text-gray-500 text-sm mb-1">创建时间</div>
-            <Select placeholder="等于" style={{ width: '100%' }} allowClear />
-          </div>
-          <div>
-            <div className="text-gray-500 text-sm mb-1">委托单位名称</div>
-            <Select placeholder="等于" style={{ width: '100%' }} allowClear />
-          </div>
-        </div>
-        <div className="flex justify-end mt-4">
-          <Space>
-            <Button type="primary" icon={<IconSearch />}>查询</Button>
-            <Button icon={<IconRefresh />}>重置</Button>
-            <Button icon={<IconFilter />}>收起</Button>
-          </Space>
-        </div>
-      </Card>
       <Card>
         <Tabs activeTab={activeTab} onChange={handleTabChange} className="mb-4">
-          <TabPane key="fcl" title="海运整箱" />
-          <TabPane key="lcl" title="海运拼箱" />
-          <TabPane key="air" title="空运" />
+          <TabPane key="fcl" title="整箱询价" />
+          <TabPane key="lcl" title="拼箱询价" />
+          <TabPane key="air" title="空运询价" />
+          <TabPane key="precarriage" title="港前询价" />
+          <TabPane key="oncarriage" title="尾程询价" />
         </Tabs>
-        <div className="flex justify-between mb-4">
-          <Space>
-            {/* 新增询价按钮 - 直接使用当前Tab类型 */}
-            <Button 
-              type="primary" 
-              icon={<IconPlus />} 
-              onClick={navigateToInquiryForm}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-              }}
-            >
-              {activeTab === 'fcl' ? '新增整箱询价' : 
-               activeTab === 'lcl' ? '新增拼箱询价' : '新增空运询价'}
-            </Button>
-            
-            {/* 导出列表按钮 */}
-            <Button icon={<IconDownload />}>导出列表</Button>
-          </Space>
-          <div 
-            className="flex items-center text-blue-500 cursor-pointer hover:text-blue-700"
-            onClick={() => setCustomTableModalVisible(true)}
-          >
-            <IconList className="mr-1" />
-            <span>自定义表格</span>
+        <Card className="mb-4">
+          <Title heading={6} className="mb-4">筛选条件</Title>
+          {!filterCollapsed && (
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              {/* 第一行 */}
+              <div>
+                <div className="text-gray-500 text-sm mb-1">约号</div>
+                <Select placeholder="等于" style={{ width: '100%' }} allowClear />
+              </div>
+              <div>
+                <div className="text-gray-500 text-sm mb-1">船公司</div>
+                <Select placeholder="等于" style={{ width: '100%' }} allowClear />
+              </div>
+              <div>
+                <div className="text-gray-500 text-sm mb-1">询价来源</div>
+                <Select placeholder="等于" style={{ width: '100%' }} allowClear />
+              </div>
+              <div>
+                <div className="text-gray-500 text-sm mb-1">干线报价状态</div>
+                <Select placeholder="等于" style={{ width: '100%' }} allowClear />
+              </div>
+              {/* 第二行 */}
+              <div>
+                <div className="text-gray-500 text-sm mb-1">头程报价状态</div>
+                <Select placeholder="等于" style={{ width: '100%' }} allowClear />
+              </div>
+              <div>
+                <div className="text-gray-500 text-sm mb-1">尾程报价状态</div>
+                <Select placeholder="等于" style={{ width: '100%' }} allowClear />
+              </div>
+              <div>
+                <div className="text-gray-500 text-sm mb-1">询价状态</div>
+                <Select placeholder="等于" style={{ width: '100%' }} allowClear />
+              </div>
+              <div>
+                <div className="text-gray-500 text-sm mb-1">货好时间</div>
+                <Select placeholder="等于" style={{ width: '100%' }} allowClear />
+              </div>
+              {/* 第三行 */}
+              <div>
+                <div className="text-gray-500 text-sm mb-1">询价人</div>
+                <Select placeholder="等于" style={{ width: '100%' }} allowClear />
+              </div>
+              <div>
+                <div className="text-gray-500 text-sm mb-1">货盘性质</div>
+                <Select placeholder="等于" style={{ width: '100%' }} allowClear />
+              </div>
+              <div>
+                <div className="text-gray-500 text-sm mb-1">直达/中转</div>
+                <Select placeholder="等于" style={{ width: '100%' }} allowClear />
+              </div>
+              <div>
+                <div className="text-gray-500 text-sm mb-1">航线</div>
+                <Select placeholder="等于" style={{ width: '100%' }} allowClear />
+              </div>
+              <div>
+                <div className="text-gray-500 text-sm mb-1">起运港</div>
+                <Select placeholder="等于" style={{ width: '100%' }} allowClear />
+              </div>
+              {/* 第四行 */}
+              <div>
+                <div className="text-gray-500 text-sm mb-1">卸货港</div>
+                <Select placeholder="等于" style={{ width: '100%' }} allowClear />
+              </div>
+              <div>
+                <div className="text-gray-500 text-sm mb-1">创建时间</div>
+                <Select placeholder="等于" style={{ width: '100%' }} allowClear />
+              </div>
+              <div>
+                <div className="text-gray-500 text-sm mb-1">委托单位名称</div>
+                <Select placeholder="等于" style={{ width: '100%' }} allowClear />
+              </div>
+            </div>
+          )}
+          <div className="flex justify-end mt-4">
+            <Space>
+              <Button type="primary" icon={<IconSearch />}>查询</Button>
+              <Button icon={<IconRefresh />}>重置</Button>
+              <Button icon={<IconFilter />} onClick={toggleFilterCollapse}>
+                {filterCollapsed ? '展开' : '收起'}
+              </Button>
+            </Space>
           </div>
-        </div>
-        <Table
-          rowKey="inquiryNo"
-          loading={false}
-          columns={columns}
-          data={data}
-          rowSelection={{ selectedRowKeys, onChange: onSelectChange }}
-          pagination={pagination}
-          scroll={{ x: 2800 }}
-          border={false}
-          className="mt-4 inquiry-table-nowrap"
-        />
-        <div className="mt-2 text-gray-500 text-sm">共 {data.length} 条记录，每页 {pageSize} 条，共 {Math.ceil(data.length / pageSize)} 页</div>
-      </Card>
-      {/* 自定义表格弹窗 */}
-      <Modal
-        title="表头设置"
-        visible={customTableModalVisible}
-        onCancel={() => setCustomTableModalVisible(false)}
-        footer={[
-          <Button key="reset" onClick={resetCustomFields} style={{ float: 'left' }}>重置</Button>,
-          <Button key="cancel" onClick={() => setCustomTableModalVisible(false)}>取消</Button>,
-          <Button key="apply" type="primary" onClick={() => setCustomTableModalVisible(false)}>确认</Button>,
-        ]}
-        style={{ width: 800 }}
-      >
-        <div className="p-4">
-          <Row gutter={[16, 16]}>
-            {fieldList.map((field) => (
-              <Col span={8} key={field.key}>
-                <div className="custom-column-item border border-gray-200 rounded p-4 mt-3">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center">
-                      <IconDragDotVertical className="text-gray-400 mr-2" />
-                      <span>{field.label}</span>
+        </Card>
+        <Card>
+          <div className="flex justify-between mb-4">
+            <Space>
+              {/* 新增询价按钮 - 直接使用当前Tab类型 */}
+              <Button 
+                type="primary" 
+                icon={<IconPlus />} 
+                onClick={navigateToInquiryForm}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                }}
+              >
+                {activeTab === 'fcl' ? '新增整箱询价' : 
+                 activeTab === 'lcl' ? '新增拼箱询价' : '新增空运询价'}
+              </Button>
+              
+              {/* 导出列表按钮 */}
+              <Button icon={<IconDownload />}>导出列表</Button>
+            </Space>
+            <div 
+              className="flex items-center text-blue-500 cursor-pointer hover:text-blue-700"
+              onClick={() => setCustomTableModalVisible(true)}
+            >
+              <IconList className="mr-1" />
+              <span>自定义表格</span>
+            </div>
+          </div>
+          <Table
+            rowKey="inquiryNo"
+            loading={false}
+            columns={columns}
+            data={data}
+            rowSelection={{ selectedRowKeys, onChange: onSelectChange }}
+            pagination={pagination}
+            scroll={{ x: 2800 }}
+            border={false}
+            className="mt-4 inquiry-table-nowrap"
+          />
+          <div className="mt-2 text-gray-500 text-sm">共 {data.length} 条记录，每页 {pageSize} 条，共 {Math.ceil(data.length / pageSize)} 页</div>
+        </Card>
+        {/* 自定义表格弹窗 */}
+        <Modal
+          title="表头设置"
+          visible={customTableModalVisible}
+          onCancel={() => setCustomTableModalVisible(false)}
+          footer={[
+            <Button key="reset" onClick={resetCustomFields} style={{ float: 'left' }}>重置</Button>,
+            <Button key="cancel" onClick={() => setCustomTableModalVisible(false)}>取消</Button>,
+            <Button key="apply" type="primary" onClick={() => setCustomTableModalVisible(false)}>确认</Button>,
+          ]}
+          style={{ width: 800 }}
+        >
+          <div className="p-4">
+            <Row gutter={[16, 16]}>
+              {fieldList.map((field) => (
+                <Col span={8} key={field.key}>
+                  <div className="custom-column-item border border-gray-200 rounded p-4 mt-3">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center">
+                        <IconDragDotVertical className="text-gray-400 mr-2" />
+                        <span>{field.label}</span>
+                      </div>
+                      <Switch checked={customFields[field.key]} onChange={checked => handleFieldSwitch(field.key, checked)} />
                     </div>
-                    <Switch checked={customFields[field.key]} onChange={checked => handleFieldSwitch(field.key, checked)} />
                   </div>
-                </div>
-              </Col>
-            ))}
-          </Row>
-        </div>
-      </Modal>
+                </Col>
+              ))}
+            </Row>
+          </div>
+        </Modal>
+      </Card>
     </SaasLayout>
   );
 };

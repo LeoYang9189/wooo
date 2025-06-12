@@ -136,6 +136,14 @@ const RateQuery: React.FC = () => {
     bookingDeadline: false
   });
 
+  // 筛选区收起/展开状态
+  const [filterCollapsed, setFilterCollapsed] = useState(false);
+
+  // 切换筛选区收起/展开
+  const toggleFilterCollapse = () => {
+    setFilterCollapsed(!filterCollapsed);
+  };
+
   // 打开自定义表格弹窗
   const openCustomTableModal = () => {
     setCustomTableModalVisible(true);
@@ -1053,7 +1061,7 @@ const RateQuery: React.FC = () => {
   ];
 
   // 获取表格数据
-  const getTableData = () => {
+  const getTableData = (): any => {
     switch (activeTab) {
       case 'lcl':
         return lclData;
@@ -1070,7 +1078,7 @@ const RateQuery: React.FC = () => {
   };
 
   // 获取表格列
-  const getTableColumns = () => {
+  const getTableColumns = (): any => {
     switch (activeTab) {
       case 'lcl':
         return lclAirColumns;
@@ -1099,6 +1107,227 @@ const RateQuery: React.FC = () => {
     sizeOptions: [12, 50, 100, 200],
   };
 
+  // 定义每个tab下的筛选表单内容
+  const renderFilterForm = () => {
+    switch (activeTab) {
+      case 'fcl':
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <div className="text-gray-500 text-sm mb-1">船公司</div>
+              <Select placeholder="请选择船公司" style={{ width: '100%' }} allowClear>
+                <Option value="SITC">SITC</Option>
+                <Option value="COSCO">COSCO</Option>
+                <Option value="MSK">MSK</Option>
+                <Option value="ONE">ONE</Option>
+              </Select>
+            </div>
+            <div>
+              <div className="text-gray-500 text-sm mb-1">直达/中转</div>
+              <Select placeholder="请选择直达/中转" style={{ width: '100%' }} allowClear>
+                <Option value="direct">直达</Option>
+                <Option value="transit">中转</Option>
+              </Select>
+            </div>
+            <div>
+              <div className="text-gray-500 text-sm mb-1">有效期</div>
+              <RangePicker style={{ width: '100%' }} />
+            </div>
+            <div>
+              <div className="text-gray-500 text-sm mb-1">开始日期</div>
+              <RangePicker style={{ width: '100%' }} />
+            </div>
+            <div>
+              <div className="text-gray-500 text-sm mb-1">航线名称</div>
+              <Select placeholder="请选择航线名称" style={{ width: '100%' }} allowClear>
+                <Option value="line1">亚洲区内航线</Option>
+                <Option value="line2">远东-东南亚航线</Option>
+                <Option value="line3">远东-中东航线</Option>
+              </Select>
+            </div>
+            <div>
+              <div className="text-gray-500 text-sm mb-1">航线代码</div>
+              <Select placeholder="请选择航线代码" style={{ width: '100%' }} allowClear>
+                <Option value="CPX4">CPX4</Option>
+                <Option value="CPS">CPS</Option>
+                <Option value="CPX7">CPX7</Option>
+                <Option value="CPX6">CPX6</Option>
+              </Select>
+            </div>
+            <div>
+              <div className="text-gray-500 text-sm mb-1">船名</div>
+              <Select placeholder="请输入船名" style={{ width: '100%' }} allowClear>
+                <Option value="MEDKON QUO">MEDKON QUO</Option>
+                <Option value="SITC PENANG">SITC PENANG</Option>
+                <Option value="SITC YOKOHAMA">SITC YOKOHAMA</Option>
+                <Option value="SITC XINCHENG">SITC XINCHENG</Option>
+              </Select>
+            </div>
+            <div>
+              <div className="text-gray-500 text-sm mb-1">航次</div>
+              <Select placeholder="请输入航次" style={{ width: '100%' }} allowClear>
+                <Option value="2510S">2510S</Option>
+                <Option value="2514S">2514S</Option>
+                <Option value="2518S">2518S</Option>
+              </Select>
+            </div>
+            <div>
+              <div className="text-gray-500 text-sm mb-1">起运港</div>
+              <Select placeholder="请选择起运港" style={{ width: '100%' }} allowClear>
+                <Option value="shanghai">上海</Option>
+                <Option value="ningbo">宁波</Option>
+                <Option value="qingdao">青岛</Option>
+              </Select>
+            </div>
+            <div>
+              <div className="text-gray-500 text-sm mb-1">卸货港</div>
+              <Select placeholder="请选择卸货港" style={{ width: '100%' }} allowClear>
+                {['MANILA-NORTH', 'MANILA-SOUTH', 'SUBIC BAY', 'CEBU', 'ILOILO', 'CAGAYAN DE ORO', 'BATANGAS'].map((port) => (
+                  <Option key={port} value={port}>{port}</Option>
+                ))}
+              </Select>
+            </div>
+            <div>
+              <div className="text-gray-500 text-sm mb-1">舱位状态</div>
+              <Select placeholder="请选择舱位状态" style={{ width: '100%' }} allowClear>
+                <Option value="available">舱位充足</Option>
+                <Option value="reduced">运费下调</Option>
+                <Option value="limited">舱位有限</Option>
+              </Select>
+            </div>
+            <div>
+              <div className="text-gray-500 text-sm mb-1">置顶推荐</div>
+              <Select placeholder="请选择置顶推荐" style={{ width: '100%' }} allowClear>
+                <Option value="top">是</Option>
+                <Option value="normal">否</Option>
+              </Select>
+            </div>
+            <div>
+              <div className="text-gray-500 text-sm mb-1">状态</div>
+              <Select placeholder="请选择状态" style={{ width: '100%' }} allowClear>
+                <Option value="active">有效</Option>
+                <Option value="inactive">失效</Option>
+              </Select>
+            </div>
+            <div>
+              <div className="text-gray-500 text-sm mb-1">更新时间</div>
+              <RangePicker style={{ width: '100%' }} />
+            </div>
+          </div>
+        );
+      case 'lcl':
+      case 'air':
+      case 'precarriage':
+      case 'oncarriage':
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <div className="text-gray-500 text-sm mb-1">船公司</div>
+              <Select placeholder="请选择船公司" style={{ width: '100%' }} allowClear>
+                <Option value="SITC">SITC</Option>
+                <Option value="COSCO">COSCO</Option>
+                <Option value="MSK">MSK</Option>
+                <Option value="ONE">ONE</Option>
+              </Select>
+            </div>
+            <div>
+              <div className="text-gray-500 text-sm mb-1">直达/中转</div>
+              <Select placeholder="请选择直达/中转" style={{ width: '100%' }} allowClear>
+                <Option value="direct">直达</Option>
+                <Option value="transit">中转</Option>
+              </Select>
+            </div>
+            <div>
+              <div className="text-gray-500 text-sm mb-1">有效期</div>
+              <RangePicker style={{ width: '100%' }} />
+            </div>
+            <div>
+              <div className="text-gray-500 text-sm mb-1">开始日期</div>
+              <RangePicker style={{ width: '100%' }} />
+            </div>
+            <div>
+              <div className="text-gray-500 text-sm mb-1">航线名称</div>
+              <Select placeholder="请选择航线名称" style={{ width: '100%' }} allowClear>
+                <Option value="line1">亚洲区内航线</Option>
+                <Option value="line2">远东-东南亚航线</Option>
+                <Option value="line3">远东-中东航线</Option>
+              </Select>
+            </div>
+            <div>
+              <div className="text-gray-500 text-sm mb-1">航线代码</div>
+              <Select placeholder="请选择航线代码" style={{ width: '100%' }} allowClear>
+                <Option value="CPX4">CPX4</Option>
+                <Option value="CPS">CPS</Option>
+                <Option value="CPX7">CPX7</Option>
+                <Option value="CPX6">CPX6</Option>
+              </Select>
+            </div>
+            <div>
+              <div className="text-gray-500 text-sm mb-1">船名</div>
+              <Select placeholder="请输入船名" style={{ width: '100%' }} allowClear>
+                <Option value="MEDKON QUO">MEDKON QUO</Option>
+                <Option value="SITC PENANG">SITC PENANG</Option>
+                <Option value="SITC YOKOHAMA">SITC YOKOHAMA</Option>
+                <Option value="SITC XINCHENG">SITC XINCHENG</Option>
+              </Select>
+            </div>
+            <div>
+              <div className="text-gray-500 text-sm mb-1">航次</div>
+              <Select placeholder="请输入航次" style={{ width: '100%' }} allowClear>
+                <Option value="2510S">2510S</Option>
+                <Option value="2514S">2514S</Option>
+                <Option value="2518S">2518S</Option>
+              </Select>
+            </div>
+            <div>
+              <div className="text-gray-500 text-sm mb-1">起运港</div>
+              <Select placeholder="请选择起运港" style={{ width: '100%' }} allowClear>
+                <Option value="shanghai">上海</Option>
+                <Option value="ningbo">宁波</Option>
+                <Option value="qingdao">青岛</Option>
+              </Select>
+            </div>
+            <div>
+              <div className="text-gray-500 text-sm mb-1">卸货港</div>
+              <Select placeholder="请选择卸货港" style={{ width: '100%' }} allowClear>
+                {['MANILA-NORTH', 'MANILA-SOUTH', 'SUBIC BAY', 'CEBU', 'ILOILO', 'CAGAYAN DE ORO', 'BATANGAS'].map((port) => (
+                  <Option key={port} value={port}>{port}</Option>
+                ))}
+              </Select>
+            </div>
+            <div>
+              <div className="text-gray-500 text-sm mb-1">舱位状态</div>
+              <Select placeholder="请选择舱位状态" style={{ width: '100%' }} allowClear>
+                <Option value="available">舱位充足</Option>
+                <Option value="reduced">运费下调</Option>
+                <Option value="limited">舱位有限</Option>
+              </Select>
+            </div>
+            <div>
+              <div className="text-gray-500 text-sm mb-1">置顶推荐</div>
+              <Select placeholder="请选择置顶推荐" style={{ width: '100%' }} allowClear>
+                <Option value="top">是</Option>
+                <Option value="normal">否</Option>
+              </Select>
+            </div>
+            <div>
+              <div className="text-gray-500 text-sm mb-1">状态</div>
+              <Select placeholder="请选择状态" style={{ width: '100%' }} allowClear>
+                <Option value="active">有效</Option>
+                <Option value="inactive">失效</Option>
+              </Select>
+            </div>
+            <div>
+              <div className="text-gray-500 text-sm mb-1">更新时间</div>
+              <RangePicker style={{ width: '100%' }} />
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <SaasLayout menuSelectedKey="3" breadcrumb={
       <Breadcrumb>
@@ -1106,180 +1335,7 @@ const RateQuery: React.FC = () => {
         <Breadcrumb.Item>运价查询</Breadcrumb.Item>
       </Breadcrumb>
     }>
-      {/* 主内容区域 */}
-      <Card className="mb-4">
-        <Title heading={6} className="mb-4">筛选条件</Title>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div>
-            <div className="text-gray-500 text-sm mb-1">船公司</div>
-            <Select
-              placeholder="请选择船公司"
-              style={{ width: '100%' }}
-              allowClear
-            >
-              <Option value="SITC">SITC</Option>
-              <Option value="COSCO">COSCO</Option>
-              <Option value="MSK">MSK</Option>
-              <Option value="ONE">ONE</Option>
-            </Select>
-          </div>
-          
-          <div>
-            <div className="text-gray-500 text-sm mb-1">直达/中转</div>
-            <Select
-              placeholder="请选择直达/中转"
-              style={{ width: '100%' }}
-              allowClear
-            >
-              <Option value="direct">直达</Option>
-              <Option value="transit">中转</Option>
-            </Select>
-          </div>
-          
-          <div>
-            <div className="text-gray-500 text-sm mb-1">有效期</div>
-            <RangePicker style={{ width: '100%' }} />
-          </div>
-          
-          <div>
-            <div className="text-gray-500 text-sm mb-1">开始日期</div>
-            <RangePicker style={{ width: '100%' }} />
-          </div>
-          
-          <div>
-            <div className="text-gray-500 text-sm mb-1">航线名称</div>
-            <Select
-              placeholder="请选择航线名称"
-              style={{ width: '100%' }}
-              allowClear
-            >
-              <Option value="line1">亚洲区内航线</Option>
-              <Option value="line2">远东-东南亚航线</Option>
-              <Option value="line3">远东-中东航线</Option>
-            </Select>
-          </div>
-          
-          <div>
-            <div className="text-gray-500 text-sm mb-1">航线代码</div>
-            <Select
-              placeholder="请选择航线代码"
-              style={{ width: '100%' }}
-              allowClear
-            >
-              <Option value="CPX4">CPX4</Option>
-              <Option value="CPS">CPS</Option>
-              <Option value="CPX7">CPX7</Option>
-              <Option value="CPX6">CPX6</Option>
-            </Select>
-          </div>
-          
-          <div>
-            <div className="text-gray-500 text-sm mb-1">船名</div>
-            <Select
-              placeholder="请输入船名"
-              style={{ width: '100%' }}
-              allowClear
-            >
-              <Option value="MEDKON QUO">MEDKON QUO</Option>
-              <Option value="SITC PENANG">SITC PENANG</Option>
-              <Option value="SITC YOKOHAMA">SITC YOKOHAMA</Option>
-              <Option value="SITC XINCHENG">SITC XINCHENG</Option>
-            </Select>
-          </div>
-          
-          <div>
-            <div className="text-gray-500 text-sm mb-1">航次</div>
-            <Select
-              placeholder="请输入航次"
-              style={{ width: '100%' }}
-              allowClear
-            >
-              <Option value="2510S">2510S</Option>
-              <Option value="2514S">2514S</Option>
-              <Option value="2518S">2518S</Option>
-            </Select>
-          </div>
-          
-          <div>
-            <div className="text-gray-500 text-sm mb-1">起运港</div>
-            <Select
-              placeholder="请选择起运港"
-              style={{ width: '100%' }}
-              allowClear
-            >
-              <Option value="shanghai">上海</Option>
-              <Option value="ningbo">宁波</Option>
-              <Option value="qingdao">青岛</Option>
-            </Select>
-          </div>
-          
-          <div>
-            <div className="text-gray-500 text-sm mb-1">卸货港</div>
-            <Select
-              placeholder="请选择卸货港"
-              style={{ width: '100%' }}
-              allowClear
-            >
-              {['MANILA-NORTH', 'MANILA-SOUTH', 'SUBIC BAY', 'CEBU', 'ILOILO', 'CAGAYAN DE ORO', 'BATANGAS'].map((port) => (
-                <Option key={port} value={port}>{port}</Option>
-              ))}
-            </Select>
-          </div>
-          
-          <div>
-            <div className="text-gray-500 text-sm mb-1">舱位状态</div>
-            <Select
-              placeholder="请选择舱位状态"
-              style={{ width: '100%' }}
-              allowClear
-            >
-              <Option value="available">舱位充足</Option>
-              <Option value="reduced">运费下调</Option>
-              <Option value="limited">舱位有限</Option>
-            </Select>
-          </div>
-          
-          <div>
-            <div className="text-gray-500 text-sm mb-1">置顶推荐</div>
-            <Select
-              placeholder="请选择置顶推荐"
-              style={{ width: '100%' }}
-              allowClear
-            >
-              <Option value="top">是</Option>
-              <Option value="normal">否</Option>
-            </Select>
-          </div>
-          
-          <div>
-            <div className="text-gray-500 text-sm mb-1">状态</div>
-            <Select
-              placeholder="请选择状态"
-              style={{ width: '100%' }}
-              allowClear
-            >
-              <Option value="active">有效</Option>
-              <Option value="inactive">失效</Option>
-            </Select>
-          </div>
-          
-          <div>
-            <div className="text-gray-500 text-sm mb-1">更新时间</div>
-            <RangePicker style={{ width: '100%' }} />
-          </div>
-        </div>
-        
-        <div className="flex justify-end mt-4">
-          <Space>
-            <Button type="primary" icon={<IconSearch />}>查询</Button>
-            <Button icon={<IconRefresh />}>重置</Button>
-            <Button icon={<IconFilter />}>收起</Button>
-          </Space>
-        </div>
-      </Card>
-      
       <Card>
-        {/* 添加Tab切换 */}
         <Tabs activeTab={activeTab} onChange={handleTabChange} className="mb-4">
           <TabPane key="fcl" title="整箱运价" />
           <TabPane key="lcl" title="拼箱运价" />
@@ -1287,51 +1343,59 @@ const RateQuery: React.FC = () => {
           <TabPane key="precarriage" title="港前运价" />
           <TabPane key="oncarriage" title="尾程运价" />
         </Tabs>
-        
-        <div className="flex justify-between mb-4">
-          <Space>
-            {/* 组合方案查询按钮仅在整箱、拼箱和空运tab下显示 */}
-            {(activeTab === 'fcl' || activeTab === 'lcl' || activeTab === 'air') && (
-              <Button 
-                type="primary" 
-                icon={<IconSearch />}
-                onClick={openCombinationQuery}
-              >
-                组合方案查询
+        <Card className="mb-4">
+          <Title heading={6} className="mb-4">筛选条件</Title>
+          {!filterCollapsed && renderFilterForm()}
+          <div className="flex justify-end mt-4">
+            <Space>
+              <Button type="primary" icon={<IconSearch />}>查询</Button>
+              <Button icon={<IconRefresh />}>重置</Button>
+              <Button icon={<IconFilter />} onClick={toggleFilterCollapse}>
+                {filterCollapsed ? '展开' : '收起'}
               </Button>
-            )}
-            <Button icon={<IconUpload />}>批量导入</Button>
-            <Button icon={<IconDownload />}>导出列表</Button>
-          </Space>
-          
-          {/* 自定义表格按钮改为文字链接样式 */}
-          <div 
-            className="flex items-center text-blue-500 cursor-pointer hover:text-blue-700"
-            onClick={openCustomTableModal}
-          >
-            <IconList className="mr-1" />
-            <span>自定义表格</span>
+            </Space>
           </div>
-        </div>
-        
-        <Table
-          rowKey="key"
-          loading={false}
-          columns={getTableColumns() as any}
-          data={getTableData() as any}
-          rowSelection={{
-            selectedRowKeys,
-            onChange: onSelectChange,
-          }}
-          pagination={pagination}
-          scroll={{ x: 1800 }}
-          border={false}
-          className="mt-4 inquiry-table-nowrap"
-        />
-        
-        <div className="mt-2 text-gray-500 text-sm">共 9232 条</div>
+        </Card>
+        <Card>
+          <div className="flex justify-between mb-4">
+            <Space>
+              {(activeTab === 'fcl' || activeTab === 'lcl' || activeTab === 'air') && (
+                <Button 
+                  type="primary" 
+                  icon={<IconSearch />} 
+                  onClick={openCombinationQuery}
+                >
+                  组合方案查询
+                </Button>
+              )}
+              <Button icon={<IconUpload />}>批量导入</Button>
+              <Button icon={<IconDownload />}>导出列表</Button>
+            </Space>
+            <div 
+              className="flex items-center text-blue-500 cursor-pointer hover:text-blue-700"
+              onClick={openCustomTableModal}
+            >
+              <IconList className="mr-1" />
+              <span>自定义表格</span>
+            </div>
+          </div>
+          <Table
+            rowKey="key"
+            loading={false}
+            columns={getTableColumns()}
+            data={getTableData()}
+            rowSelection={{
+              selectedRowKeys,
+              onChange: onSelectChange,
+            }}
+            pagination={pagination}
+            scroll={{ x: 1800 }}
+            border={false}
+            className="mt-4 inquiry-table-nowrap"
+          />
+          <div className="mt-2 text-gray-500 text-sm">共 9232 条</div>
+        </Card>
       </Card>
-
       {/* 自定义表格弹窗 */}
       <Modal
         title="表头设置"

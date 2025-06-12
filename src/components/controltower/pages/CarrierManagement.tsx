@@ -22,9 +22,7 @@ import {
   IconSettings,
   IconMinus,
   IconSearch,
-  IconRefresh,
-  IconUpload,
-  IconDownload
+  IconRefresh
 } from '@arco-design/web-react/icon';
 
 const { TabPane } = Tabs;
@@ -768,9 +766,6 @@ const CarrierManagement: React.FC = () => {
                 <Button type="primary" icon={<IconPlus />} onClick={handleAdd}>
                   新增船公司
                 </Button>
-                <Button icon={<IconUpload />}>
-                  批量导入
-                </Button>
               </div>
               {selectedRowKeys.length > 0 && (
                 <div style={{ 
@@ -789,9 +784,6 @@ const CarrierManagement: React.FC = () => {
                 </div>
               )}
             </div>
-            <Button icon={<IconDownload />}>
-              导出数据
-            </Button>
           </div>
 
           <Table
@@ -820,7 +812,7 @@ const CarrierManagement: React.FC = () => {
                   onChange={(value) => setSearchParams(prev => ({ ...prev, keyword: value }))}
                 />
               </div>
-    <div>
+              <div>
                 <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>状态</div>
                 <Select
                   placeholder="选择状态"
@@ -841,7 +833,7 @@ const CarrierManagement: React.FC = () => {
                 </Button>
               </div>
             </div>
-      </Card>
+          </Card>
 
           {/* 操作按钮区域 */}
           <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -849,9 +841,6 @@ const CarrierManagement: React.FC = () => {
               <div style={{ display: 'flex', gap: '8px' }}>
                 <Button type="primary" icon={<IconPlus />} onClick={handleAdd}>
                   新增航空公司
-                </Button>
-                <Button icon={<IconUpload />}>
-                  批量导入
                 </Button>
               </div>
               {selectedRowKeys.length > 0 && (
@@ -871,9 +860,6 @@ const CarrierManagement: React.FC = () => {
                 </div>
               )}
             </div>
-            <Button icon={<IconDownload />}>
-              导出数据
-            </Button>
           </div>
 
           <Table
@@ -1047,7 +1033,7 @@ const CarrierManagement: React.FC = () => {
                   >
                     添加EDI代码
                   </Button>
-    </div>
+                </div>
               )}
             </Form.List>
           </Form.Item>

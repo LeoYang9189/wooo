@@ -19,7 +19,7 @@ import {
   IconSettings
 } from '@arco-design/web-react/icon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileInvoiceDollar, faRobot } from '@fortawesome/free-solid-svg-icons';
+import { faRobot, faUsers } from '@fortawesome/free-solid-svg-icons';
 // faShip 导入已暂时注释，因为运价中心菜单被注释了
 // import { faShip } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -149,6 +149,19 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
             { title: '超级运价', path: undefined },
             { title: '基础数据', path: undefined },
             { title: 'FBA仓库', path: '/controltower/saas/fba-warehouse' }
+          );
+          break;
+        case 'pricing-rule-management':
+          breadcrumbs.push(
+            { title: '超级运价', path: undefined },
+            { title: '加价规则维护', path: '/controltower/saas/pricing-rule-management' }
+          );
+          break;
+        case 'surcharge':
+          breadcrumbs.push(
+            { title: '超级运价', path: undefined },
+            { title: '运价管理', path: undefined },
+            { title: '附加费维护', path: '/controltower/saas/surcharge' }
           );
           break;
         default:
@@ -294,94 +307,26 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
               </span>
             }
           >
-            {/* 控制台和数据分析菜单已删除
-            <MenuItem key="saas/super-freight-dashboard">控制台</MenuItem>
-            <MenuItem key="saas/data-analysis">数据分析</MenuItem>
-            */}
-            <SubMenu
-              key="rate-management"
-              title={
-                <span>
-                  <IconFile />
-                  <span>运价管理</span>
-                </span>
-              }
-            >
-              <MenuItem key="saas/fcl-rates">海运整箱</MenuItem>
-              <MenuItem key="saas/lcl-rates">海运拼箱</MenuItem>
-              <MenuItem key="saas/air-rates">空运运价</MenuItem>
-              <MenuItem key="saas/fcl-surcharge">整箱附加费</MenuItem>
-              <MenuItem key="saas/lcl-surcharge">拼箱附加费</MenuItem>
-              <MenuItem key="saas/air-surcharge">空运附加费</MenuItem>
-              <MenuItem key="saas/rate-query">运价查询</MenuItem>
-            </SubMenu>
-            <SubMenu
-              key="door-service"
-              title={
-                <span>
-                  <IconFile />
-                  <span>门点服务管理</span>
-                </span>
-              }
-            >
-              <MenuItem key="saas/precarriage-rates">港前运价</MenuItem>
-              <MenuItem key="saas/lastmile-rates">尾程运价</MenuItem>
-            </SubMenu>
+            <MenuItem key="saas/fcl-rates">运价维护</MenuItem>
+            <MenuItem key="saas/rate-query">运价查询</MenuItem>
             <SubMenu
               key="inquiry-quote"
-              title={
-                <span>
-                  <IconStorage />
-                  <span>询价报价</span>
-                </span>
-              }
+              title="询价报价"
             >
               <MenuItem key="saas/inquiry-management">询价管理</MenuItem>
               <MenuItem key="saas/quote-management">报价管理</MenuItem>
-              <MenuItem key="saas/quote-approval">报价审核</MenuItem>
             </SubMenu>
             <SubMenu
               key="space-management"
-              title={
-                <span>
-                  <IconFile />
-                  <span>舱位管理</span>
-                </span>
-              }
+              title="舱位管理"
             >
               <MenuItem key="saas/space-query">舱位查询</MenuItem>
               <MenuItem key="saas/space-booking">舱位预订</MenuItem>
               <MenuItem key="saas/space-statistics">舱位统计</MenuItem>
             </SubMenu>
-            <SubMenu
-              key="base-data"
-              title={
-                <span>
-                  <IconStorage />
-                  <span>基础数据</span>
-                </span>
-              }
-            >
-              <MenuItem key="saas/shipping-company">船公司管理</MenuItem>
-              <MenuItem key="saas/port-management">港口管理</MenuItem>
-              <MenuItem key="saas/route-management">航线管理</MenuItem>
-              <MenuItem key="saas/currency-management">货币管理</MenuItem>
-              <MenuItem key="saas/region-management">行政区划</MenuItem>
-              <MenuItem key="saas/zipcode-management">邮编管理</MenuItem>
-              <MenuItem key="saas/fba-warehouse">FBA仓库</MenuItem>
-            </SubMenu>
-            <MenuItem key="saas/contract-management">
-              <IconFile />
-              <span>合约管理</span>
-            </MenuItem>
-            <MenuItem key="saas/customer-management">
-              <IconFile />
-              <span>客户管理</span>
-            </MenuItem>
-            <MenuItem key="saas/system-settings">
-              <IconSettings />
-              <span>系统设置</span>
-            </MenuItem>
+            <MenuItem key="saas/contract-management">合约管理</MenuItem>
+            <MenuItem key="saas/surcharge">附加费维护</MenuItem>
+            <MenuItem key="saas/pricing-rule-management">加价规则维护</MenuItem>
           </SubMenu>
           
           {/* 原有控制塔菜单 */}
@@ -411,18 +356,21 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
             <MenuItem key="order-management">订单管理</MenuItem>
             <MenuItem key="order-tracking">状态追踪</MenuItem>
           </SubMenu>
+
+          {/* 客户中心 */}
           <SubMenu
-            key="finance"
+            key="customer"
             title={
               <span>
-                <FontAwesomeIcon icon={faFileInvoiceDollar} className="mr-2" />
-                <span>财务中心</span>
+                <FontAwesomeIcon icon={faUsers} className="mr-2" />
+                <span>客户中心</span>
               </span>
             }
           >
-            <MenuItem key="billing-management">账单管理</MenuItem>
-            <MenuItem key="invoice-management">发票管理</MenuItem>
+            <MenuItem key="user-management">用户管理</MenuItem>
+            <MenuItem key="company-management">企业管理</MenuItem>
           </SubMenu>
+
           <SubMenu
             key="user"
             title={
@@ -439,6 +387,82 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
             <IconApps />
             <span>应用中心</span>
           </MenuItem>
+
+          {/* 系统设置 */}
+          <SubMenu
+            key="system-settings"
+            title={
+              <span>
+                <IconSettings />
+                <span>系统设置</span>
+              </span>
+            }
+          >
+            <MenuItem key="role-management">角色管理</MenuItem>
+            <MenuItem key="staff-management">员工管理</MenuItem>
+            <MenuItem key="department-management">部门管理</MenuItem>
+            <MenuItem key="post-management">岗位管理</MenuItem>
+          </SubMenu>
+
+          {/* 基础资料维护 */}
+          <SubMenu
+            key="basic-data"
+            title={
+              <span>
+                <IconStorage />
+                <span>基础资料维护</span>
+              </span>
+            }
+          >
+            <MenuItem key="port-management">
+              <span>港口管理</span>
+            </MenuItem>
+            <MenuItem key="carrier-management">
+              <span>承运人管理</span>
+            </MenuItem>
+            <MenuItem key="country-region-management">
+              <span>国家（地区）</span>
+            </MenuItem>
+            <MenuItem key="china-administrative">
+              <span>中国行政区划</span>
+            </MenuItem>
+            <MenuItem key="overseas-warehouse">
+              <span>海外仓库</span>
+            </MenuItem>
+            <MenuItem key="zipcode-management">
+              <span>邮编管理</span>
+            </MenuItem>
+            <MenuItem key="route-management">
+              <span>航线管理</span>
+            </MenuItem>
+            <MenuItem key="container-management">
+              <span>集装箱管理</span>
+            </MenuItem>
+            <MenuItem key="package-unit">
+              <span>包装单位</span>
+            </MenuItem>
+            <MenuItem key="transport-terms">
+              <span>运输条款</span>
+            </MenuItem>
+            <MenuItem key="trade-terms">
+              <span>贸易条款</span>
+            </MenuItem>
+            <MenuItem key="calculation-unit">
+              <span>计费单位</span>
+            </MenuItem>
+            <MenuItem key="charge-management">
+              <span>费用管理</span>
+            </MenuItem>
+            <MenuItem key="ship-agent">
+              <span>船舶代理</span>
+            </MenuItem>
+            <MenuItem key="ship-data">
+              <span>船舶资料</span>
+            </MenuItem>
+            <MenuItem key="terminal-management">
+              <span>码头管理</span>
+            </MenuItem>
+          </SubMenu>
         </Menu>
         <div className="absolute bottom-20 w-full px-4 flex justify-center">
           <Button 
