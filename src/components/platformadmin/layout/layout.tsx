@@ -13,10 +13,22 @@ import {
   IconSettings as IconSettingsOutline, 
   IconLanguage, 
   IconQuestionCircle,
-  IconSettings
+  IconSettings,
+  IconStorage,
+  IconTool,
+  IconUserGroup,
+  IconSafe,
+  IconLock,
+  IconLocation,
+  IconHome,
+  IconNav,
+  IconBranch,
+  IconDriveFile,
+  IconTag,
+  IconThunderbolt
 } from '@arco-design/web-react/icon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRobot, faUsers, faShip, faBullhorn } from '@fortawesome/free-solid-svg-icons';
+import { faUsers, faShip, faBullhorn } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../PlatformAdminStyles.css';
 
@@ -90,6 +102,116 @@ const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
       case 'product-center':
         breadcrumbs.push({ title: '产品中心', path: '/platformadmin/product-center' });
         break;
+      // 基础资料维护
+      case 'port-management':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '港口管理', path: '/platformadmin/port-management' }
+        );
+        break;
+      case 'carrier-management-basic':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '承运人管理', path: '/platformadmin/carrier-management-basic' }
+        );
+        break;
+      case 'country-region-management':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '国家（地区）', path: '/platformadmin/country-region-management' }
+        );
+        break;
+      case 'china-administrative':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '中国行政区划', path: '/platformadmin/china-administrative' }
+        );
+        break;
+      case 'overseas-warehouse':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '海外仓库', path: '/platformadmin/overseas-warehouse' }
+        );
+        break;
+      case 'zipcode-management':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '邮编管理', path: '/platformadmin/zipcode-management' }
+        );
+        break;
+      case 'route-management':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '航线管理', path: '/platformadmin/route-management' }
+        );
+        break;
+      case 'container-management':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '集装箱管理', path: '/platformadmin/container-management' }
+        );
+        break;
+      case 'package-unit':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '包装单位', path: '/platformadmin/package-unit' }
+        );
+        break;
+      case 'transport-terms':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '运输条款', path: '/platformadmin/transport-terms' }
+        );
+        break;
+      case 'calculation-unit':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '计算单位', path: '/platformadmin/calculation-unit' }
+        );
+        break;
+      case 'fee-management':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '费用管理', path: '/platformadmin/fee-management' }
+        );
+        break;
+      case 'ship-agent':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '船舶代理', path: '/platformadmin/ship-agent' }
+        );
+        break;
+      case 'ship-data':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '船舶资料', path: '/platformadmin/ship-data' }
+        );
+        break;
+      case 'terminal-management':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '码头管理', path: '/platformadmin/terminal-management' }
+        );
+        break;
+      // 系统设置
+      case 'staff-management':
+        breadcrumbs.push(
+          { title: '系统设置', path: undefined },
+          { title: '员工管理', path: '/platformadmin/staff-management' }
+        );
+        break;
+      case 'role-management':
+        breadcrumbs.push(
+          { title: '系统设置', path: undefined },
+          { title: '角色管理', path: '/platformadmin/role-management' }
+        );
+        break;
+      case 'permission-management':
+        breadcrumbs.push(
+          { title: '系统设置', path: undefined },
+          { title: '权限管理', path: '/platformadmin/permission-management' }
+        );
+        break;
       default:
         break;
     }
@@ -112,22 +234,22 @@ const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
         <div className="p-4 flex items-center justify-center">
           {!collapsed ? (
             <div className="flex items-center">
-              <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white w-10 h-10 rounded-lg flex items-center justify-center mr-4 relative overflow-hidden shadow-lg">
+              <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white w-10 h-10 rounded-lg flex items-center justify-center mr-4 relative overflow-hidden shadow-lg">
                 <span className="text-xl font-bold">P</span>
                 <div className="absolute bottom-0 right-0 w-3 h-3 bg-white rounded-tl-lg flex items-center justify-center">
-                  <span className="text-xs text-purple-600 font-bold">A</span>
+                  <span className="text-xs text-blue-600 font-bold">A</span>
                 </div>
               </div>
               <div>
-                <div className="text-lg font-bold text-purple-600 leading-relaxed tracking-wide">平台运营后台</div>
+                <div className="text-lg font-bold text-blue-600 leading-relaxed tracking-wide">平台运营后台</div>
                 <div className="text-xs text-gray-500 mt-0.5 tracking-wider">Admin Platform</div>
               </div>
             </div>
           ) : (
-            <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white w-10 h-10 rounded-lg flex items-center justify-center relative overflow-hidden shadow-lg">
+            <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white w-10 h-10 rounded-lg flex items-center justify-center relative overflow-hidden shadow-lg">
               <span className="text-xl font-bold">P</span>
               <div className="absolute bottom-0 right-0 w-3 h-3 bg-white rounded-tl-lg flex items-center justify-center">
-                <span className="text-xs text-purple-600 font-bold">A</span>
+                <span className="text-xs text-blue-600 font-bold">A</span>
               </div>
             </div>
           )}
@@ -184,37 +306,103 @@ const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
             <IconApps />
             <span>产品中心</span>
           </MenuItem>
-        </Menu>
-        
-        <div className="absolute bottom-20 w-full px-4 flex justify-center">
-          <Button 
-            type="outline" 
-            shape="circle"
-            className="flex items-center justify-center ai-assistant-btn shadow-md hover:shadow-lg"
-            icon={<FontAwesomeIcon icon={faRobot} className="text-purple-500 text-xl" />}
-            style={{ 
-              width: '54px', 
-              height: '54px', 
-              background: 'linear-gradient(135deg, #faf0ff 0%, #f3e8ff 100%)',
-              border: '2px solid #c084fc',
-              zIndex: 2
-            }}
-          />
-          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-purple-500 text-white px-3 py-1 rounded-full text-xs font-medium animate-bounce shadow-sm">
-            智能助手
-          </div>
-        </div>
-        <div className="absolute bottom-5 w-full px-4">
-          <Button 
-            type="primary" 
-            long 
-            icon={<IconPoweroff />}
-            className="flex items-center justify-center bg-gradient-to-r from-purple-600 to-pink-600 border-0"
-            onClick={() => navigate('/portal')}
+
+          {/* 基础资料维护 */}
+          <SubMenu
+            key="basic-data"
+            title={
+              <span>
+                <IconStorage />
+                <span>基础资料维护</span>
+              </span>
+            }
           >
-            返回门户首页
-          </Button>
-        </div>
+            <MenuItem key="port-management">
+              <IconLocation className="mr-2" />
+              <span>港口管理</span>
+            </MenuItem>
+            <MenuItem key="carrier-management-basic">
+              <FontAwesomeIcon icon={faShip} className="mr-2" />
+              <span>承运人管理</span>
+            </MenuItem>
+            <MenuItem key="country-region-management">
+              <IconNav className="mr-2" />
+              <span>国家（地区）</span>
+            </MenuItem>
+            <MenuItem key="china-administrative">
+              <IconHome className="mr-2" />
+              <span>中国行政区划</span>
+            </MenuItem>
+            <MenuItem key="overseas-warehouse">
+              <IconStorage className="mr-2" />
+              <span>海外仓库</span>
+            </MenuItem>
+            <MenuItem key="zipcode-management">
+              <IconTag className="mr-2" />
+              <span>邮编管理</span>
+            </MenuItem>
+            <MenuItem key="route-management">
+              <IconBranch className="mr-2" />
+              <span>航线管理</span>
+            </MenuItem>
+            <MenuItem key="container-management">
+              <IconDriveFile className="mr-2" />
+              <span>集装箱管理</span>
+            </MenuItem>
+            <MenuItem key="package-unit">
+              <IconTag className="mr-2" />
+              <span>包装单位</span>
+            </MenuItem>
+            <MenuItem key="transport-terms">
+              <IconDriveFile className="mr-2" />
+              <span>运输条款</span>
+            </MenuItem>
+            <MenuItem key="calculation-unit">
+              <IconTool className="mr-2" />
+              <span>计算单位</span>
+            </MenuItem>
+            <MenuItem key="fee-management">
+              <IconThunderbolt className="mr-2" />
+              <span>费用管理</span>
+            </MenuItem>
+            <MenuItem key="ship-agent">
+              <FontAwesomeIcon icon={faShip} className="mr-2" />
+              <span>船舶代理</span>
+            </MenuItem>
+            <MenuItem key="ship-data">
+              <FontAwesomeIcon icon={faShip} className="mr-2" />
+              <span>船舶资料</span>
+            </MenuItem>
+            <MenuItem key="terminal-management">
+              <IconLocation className="mr-2" />
+              <span>码头管理</span>
+            </MenuItem>
+          </SubMenu>
+
+          {/* 系统设置 */}
+          <SubMenu
+            key="system-settings"
+            title={
+              <span>
+                <IconTool />
+                <span>系统设置</span>
+              </span>
+            }
+          >
+            <MenuItem key="staff-management">
+              <IconUserGroup className="mr-2" />
+              <span>员工管理</span>
+            </MenuItem>
+            <MenuItem key="role-management">
+              <IconSafe className="mr-2" />
+              <span>角色管理</span>
+            </MenuItem>
+            <MenuItem key="permission-management">
+              <IconLock className="mr-2" />
+              <span>权限管理</span>
+            </MenuItem>
+          </SubMenu>
+        </Menu>
       </Sider>
       <Layout>
         {/* 顶部导航 */}
@@ -231,7 +419,7 @@ const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
                 <Breadcrumb.Item
                   key={index}
                   onClick={() => item.path && navigate(item.path)}
-                  className={item.path ? "cursor-pointer hover:text-purple-500" : "text-purple-600 font-medium"}
+                  className={item.path ? "cursor-pointer hover:text-blue-500" : "text-blue-600 font-medium"}
                 >
                   {item.title}
                 </Breadcrumb.Item>
@@ -269,14 +457,14 @@ const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
               position="br"
             >
               <div className="flex items-center cursor-pointer ml-3">
-                <Avatar className="bg-purple-500 mr-2"><IconUser /></Avatar>
+                <Avatar className="bg-blue-500 mr-2"><IconUser /></Avatar>
                 <span className="mr-1">平台管理员</span>
                 <IconDown />
               </div>
             </Dropdown>
           </div>
         </Header>
-        <Content className="p-6 bg-gray-50 min-h-[calc(100vh-64px)] overflow-auto">
+        <Content className="p-4 bg-gray-50 min-h-[calc(100vh-64px)] overflow-auto">
           {children}
         </Content>
       </Layout>

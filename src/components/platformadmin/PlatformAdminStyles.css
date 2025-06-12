@@ -232,4 +232,88 @@
   display: flex;
   align-items: center;
   justify-content: center;
-} 
+}
+
+/* 产品中心样式 */
+.product-card {
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  min-height: 320px;
+}
+
+.product-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
+}
+
+.product-card.enabled {
+  border: 1px solid #165DFF;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+}
+
+.product-card.disabled {
+  border: 1px solid #E5E6EB;
+  background: #ffffff;
+  opacity: 0.8;
+}
+
+.product-card.enabled:hover {
+  border-color: #0E42D2;
+  box-shadow: 0 8px 24px rgba(22, 93, 255, 0.15);
+}
+
+.product-card.disabled:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* 统计卡片样式 */
+.stat-card-clickable {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card-clickable:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.stat-card-clickable:active {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.1s ease;
+}
+
+.stat-card-clickable.selected {
+  border: 2px solid #165DFF;
+  background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(22, 93, 255, 0.15);
+}
+
+.stat-card-clickable.selected:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 28px rgba(22, 93, 255, 0.2);
+}
+
+.stat-card-clickable::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(22, 93, 255, 0.05) 0%, rgba(22, 93, 255, 0.01) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.stat-card-clickable:hover::before {
+  opacity: 1;
+}
+
+.stat-card-clickable.selected::before {
+  opacity: 1;
+  background: linear-gradient(135deg, rgba(22, 93, 255, 0.08) 0%, rgba(22, 93, 255, 0.02) 100%);
+}

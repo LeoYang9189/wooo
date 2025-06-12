@@ -7,7 +7,7 @@ const PortalHero: React.FC = () => {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState('');
   const [chatMessages, setChatMessages] = useState([
-    { type: 'ai', content: '您好！我是您的AI智能助手，有任何关于运价、路线或货物跟踪的问题，都可以向我咨询。' },
+    { type: 'ai', content: '您好！我是您的AI智能助手，有任何关于运价、订单操作或货物跟踪的问题，都可以向我咨询。' },
   ]);
   const [isTyping, setIsTyping] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
