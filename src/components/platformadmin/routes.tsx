@@ -7,6 +7,10 @@ import CompanyForm from './pages/CompanyForm';
 import CarrierManagement from './pages/CarrierManagement';
 import AnnouncementManagement from './pages/AnnouncementManagement';
 import ProductCenter from './pages/ProductCenter';
+import ProductAuthorization from './pages/ProductAuthorization';
+import StaffManagement from './pages/StaffManagement';
+import RoleManagement from './pages/RoleManagement';
+import PermissionManagement from './pages/PermissionManagement';
 
 const PlatformAdminRoutes: React.FC = () => {
   return (
@@ -20,6 +24,10 @@ const PlatformAdminRoutes: React.FC = () => {
       <Route path="/carrier-management" element={<CarrierManagement />} />
       <Route path="/announcement-management" element={<AnnouncementManagement />} />
       <Route path="/product-center" element={<ProductCenter />} />
+      <Route path="/product-authorization/:productId" element={<ProductAuthorization />} />
+      <Route path="/staff-management" element={<StaffManagement />} />
+      <Route path="/role-management" element={<RoleManagement />} />
+      <Route path="/permission-management" element={<PermissionManagement />} />
     </Routes>
   );
 };

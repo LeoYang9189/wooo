@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Typography, Switch, Tag, Space, Button, Grid } from '@arco-design/web-react';
 import { IconSettings, IconThunderbolt, IconRobot } from '@arco-design/web-react/icon';
+import { useNavigate } from 'react-router-dom';
 
 const { Row, Col } = Grid;
 
@@ -17,6 +18,7 @@ interface ProductItem {
 }
 
 const ProductCenter: React.FC = () => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState<ProductItem[]>([
     {
       id: 'super-freight',
@@ -64,6 +66,10 @@ const ProductCenter: React.FC = () => {
       default:
         return <Tag color="gray">未知</Tag>;
     }
+  };
+
+  const handleAuthorizeCompanies = (productId: string) => {
+    navigate(`/platformadmin/product-authorization/${productId}`);
   };
 
   return (
@@ -146,11 +152,12 @@ const ProductCenter: React.FC = () => {
                       配置
                     </Button>
                     <Button 
-                      type="text" 
+                      type="primary" 
                       size="small"
                       disabled={!product.enabled}
+                      onClick={() => handleAuthorizeCompanies(product.id)}
                     >
-                      查看详情
+                      授权企业
                     </Button>
                   </Space>
                 </div>

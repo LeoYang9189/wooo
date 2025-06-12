@@ -3,7 +3,7 @@ import { Typography } from '@arco-design/web-react';
 
 const { Title, Text } = Typography;
 
-const Dashboard: React.FC = () => {
+const RoleManagement: React.FC = () => {
   return (
     <div style={{
       display: 'flex',
@@ -63,7 +63,7 @@ const Dashboard: React.FC = () => {
             fontSize: '36px'
           }}
         >
-          这个页面先不做哦~
+          角色管理页面先不做哦~
         </Title>
         
         <Text 
@@ -73,7 +73,7 @@ const Dashboard: React.FC = () => {
             lineHeight: '1.6'
           }}
         >
-          汪汪~ 主人，这个控制台页面还在施工中呢 🚧<br/>
+          汪汪~ 主人，角色管理功能还在策划中呢 🎭<br/>
           请先去其他页面玩耍吧，我们很快就会完成哒！✨
         </Text>
       </div>
@@ -87,7 +87,7 @@ const Dashboard: React.FC = () => {
         opacity: '0.3',
         animation: 'float 4s ease-in-out infinite reverse'
       }}>
-        🌟
+        👑
       </div>
       
       <div style={{
@@ -98,7 +98,7 @@ const Dashboard: React.FC = () => {
         opacity: '0.3',
         animation: 'float 3.5s ease-in-out infinite'
       }}>
-        ✨
+        🎭
       </div>
       
       <div style={{
@@ -109,7 +109,7 @@ const Dashboard: React.FC = () => {
         opacity: '0.3',
         animation: 'float 4.5s ease-in-out infinite reverse'
       }}>
-        🌙
+        ⚡
       </div>
 
       <style>
@@ -137,4 +137,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard; 
+export default RoleManagement; 

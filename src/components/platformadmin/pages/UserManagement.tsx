@@ -10,7 +10,6 @@ import {
   Space, 
   Tag, 
   Avatar, 
-
   Modal,
   Form,
   Message,
@@ -126,6 +125,9 @@ interface UserData {
   lastLogin: string;
   createTime: string;
   avatar?: string;
+  thirdPartyUserIds?: {
+    [systemName: string]: string;
+  };
 }
 
 const UserManagement: React.FC = () => {
@@ -137,8 +139,11 @@ const UserManagement: React.FC = () => {
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
   const [bindCompanyModalVisible, setBindCompanyModalVisible] = useState(false);
+  const [resetPasswordModalVisible, setResetPasswordModalVisible] = useState(false);
+  const [resetConfirmModalVisible, setResetConfirmModalVisible] = useState(false);
   const [currentUser, setCurrentUser] = useState<UserData | null>(null);
   const [selectedCard, setSelectedCard] = useState<string>('');
+  const [newPassword, setNewPassword] = useState<string>('');
   const [form] = Form.useForm();
   const [bindCompanyForm] = Form.useForm();
 
@@ -153,7 +158,11 @@ const UserManagement: React.FC = () => {
       role: 'super_admin',
       status: 'active',
       lastLogin: '2024-01-15 14:30:25',
-      createTime: '2023-12-01 09:15:30'
+      createTime: '2023-12-01 09:15:30',
+      thirdPartyUserIds: {
+        'CargoWare': 'huh768gh',
+        'eTower': 'ghuhi788'
+      }
     },
     {
       id: 'B7H4P1Y6R9L2',
@@ -164,7 +173,11 @@ const UserManagement: React.FC = () => {
       role: 'user',
       status: 'active',
       lastLogin: '2024-01-14 16:22:18',
-      createTime: '2023-11-15 11:20:45'
+      createTime: '2023-11-15 11:20:45',
+      thirdPartyUserIds: {
+        'CargoWare': 'sf987xyz',
+        'eTower': 'tower456'
+      }
     },
     {
       id: 'C8F5T3W9E1K4',
@@ -175,7 +188,11 @@ const UserManagement: React.FC = () => {
       role: 'user',
       status: 'inactive',
       lastLogin: '2024-01-10 10:15:32',
-      createTime: '2023-10-20 15:30:15'
+      createTime: '2023-10-20 15:30:15',
+      thirdPartyUserIds: {
+        'CargoWare': 'db123qwe',
+        'eTower': 'etw789asd'
+      }
     },
     {
       id: 'D2J6V8S3G7N1',
@@ -186,7 +203,10 @@ const UserManagement: React.FC = () => {
       role: 'user',
       status: 'pending',
       lastLogin: '从未登录',
-      createTime: '2024-01-12 13:45:20'
+      createTime: '2024-01-12 13:45:20',
+      thirdPartyUserIds: {
+        'eTower': 'zt456def'
+      }
     },
     {
       id: 'E9L4Z2M6X8Q3',
@@ -197,7 +217,11 @@ const UserManagement: React.FC = () => {
       role: 'user',
       status: 'active',
       lastLogin: '2024-01-13 09:45:12',
-      createTime: '2023-12-15 14:20:45'
+      createTime: '2023-12-15 14:20:45',
+      thirdPartyUserIds: {
+        'CargoWare': 'abc123def',
+        'eTower': 'xyz789uvw'
+      }
     },
     {
       id: 'F5R7U1H9C4P6',
@@ -208,7 +232,11 @@ const UserManagement: React.FC = () => {
       role: 'user',
       status: 'active',
       lastLogin: '2024-01-12 11:30:18',
-      createTime: '2023-11-20 16:15:30'
+      createTime: '2023-11-20 16:15:30',
+      thirdPartyUserIds: {
+        'CargoWare': 'sf999mmm',
+        'eTower': 'etw333nnn'
+      }
     },
     {
       id: 'G3T8Y5K2W7B9',
@@ -219,7 +247,10 @@ const UserManagement: React.FC = () => {
       role: 'user',
       status: 'active',
       lastLogin: '2024-01-11 13:22:45',
-      createTime: '2023-10-10 10:30:15'
+      createTime: '2023-10-10 10:30:15',
+      thirdPartyUserIds: {
+        'CargoWare': 'st777bbb'
+      }
     }
   ]);
 
@@ -305,6 +336,30 @@ const UserManagement: React.FC = () => {
   const handleDeleteUser = (userId: string) => {
     setUserData(prev => prev.filter(u => u.id !== userId));
     Message.success('用户已删除');
+  };
+
+  const handleResetPassword = (user: UserData) => {
+    setCurrentUser(user);
+    setResetConfirmModalVisible(true);
+  };
+
+  const confirmResetPassword = () => {
+    if (currentUser) {
+      // 生成8位随机密码
+      const generatePassword = () => {
+        const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+        let password = '';
+        for (let i = 0; i < 8; i++) {
+          password += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return password;
+      };
+
+      const newPwd = generatePassword();
+      setNewPassword(newPwd);
+      setResetConfirmModalVisible(false);
+      setResetPasswordModalVisible(true);
+    }
   };
 
   const handleCardClick = (cardType: string) => {
@@ -632,6 +687,13 @@ const UserManagement: React.FC = () => {
                           绑定企业
                         </Menu.Item>
                         <Menu.Item
+                          key="resetPassword"
+                          onClick={() => handleResetPassword(record)}
+                          style={{ color: '#FF7D00' }}
+                        >
+                          重置密码
+                        </Menu.Item>
+                        <Menu.Item
                           key="delete"
                           onClick={() => {
                             Modal.confirm({
@@ -866,6 +928,26 @@ const UserManagement: React.FC = () => {
               <Text copyable={{ text: currentUser.id }} style={{ fontFamily: 'monospace' }}>
                 {currentUser.id}
               </Text>
+
+              <Text type="secondary">第三方用户ID：</Text>
+              <div>
+                {currentUser.thirdPartyUserIds && Object.keys(currentUser.thirdPartyUserIds).length > 0 ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {Object.entries(currentUser.thirdPartyUserIds).map(([systemName, userId]) => (
+                      <div key={systemName} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <Tag color="blue" style={{ minWidth: '80px', textAlign: 'center' }}>
+                          {systemName}
+                        </Tag>
+                        <Text copyable={{ text: userId }} style={{ fontFamily: 'monospace' }}>
+                          {userId}
+                        </Text>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <Text type="secondary">暂无关联</Text>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -942,6 +1024,130 @@ const UserManagement: React.FC = () => {
               </Select>
             </Form.Item>
           </Form>
+        )}
+      </Modal>
+
+      {/* 重置密码确认弹窗 */}
+      <Modal
+        title="重置密码确认"
+        visible={resetConfirmModalVisible}
+        onCancel={() => {
+          setResetConfirmModalVisible(false);
+          setCurrentUser(null);
+        }}
+        onOk={confirmResetPassword}
+        okText="确认重置"
+        cancelText="取消"
+        style={{ width: 480 }}
+      >
+        {currentUser && (
+          <div style={{ padding: '16px 0' }}>
+            <div style={{ 
+              backgroundColor: '#FFF7E6', 
+              border: '1px solid #FFD591', 
+              borderRadius: '6px', 
+              padding: '16px',
+              marginBottom: '16px'
+            }}>
+              <Text style={{ fontSize: '16px', color: '#FA8C16', fontWeight: 'bold' }}>
+                ⚠️ 操作确认
+              </Text>
+            </div>
+            
+            <Text style={{ fontSize: '16px', lineHeight: '24px' }}>
+              将会重置用户 <Text style={{ fontWeight: 'bold', color: '#165DFF' }}>{currentUser.username}</Text> 的登录密码，是否确认？
+            </Text>
+            
+            <div style={{ 
+              backgroundColor: '#F6F6F6', 
+              borderRadius: '6px', 
+              padding: '12px',
+              marginTop: '16px'
+            }}>
+              <Text type="secondary" style={{ fontSize: '14px' }}>
+                注意：密码重置后将生成随机8位密码，并自动发送至用户邮箱
+              </Text>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* 重置密码成功提示弹窗 */}
+      <Modal
+        title="密码重置成功"
+        visible={resetPasswordModalVisible}
+        onCancel={() => {
+          setResetPasswordModalVisible(false);
+          setCurrentUser(null);
+          setNewPassword('');
+        }}
+        footer={
+          <Button type="primary" onClick={() => {
+            setResetPasswordModalVisible(false);
+            setCurrentUser(null);
+            setNewPassword('');
+          }}>
+            确定
+          </Button>
+        }
+        style={{ width: 500 }}
+      >
+        {currentUser && (
+          <div style={{ padding: '16px 0' }}>
+            <div style={{ 
+              backgroundColor: '#F0F9FF', 
+              border: '1px solid #BAE7FF', 
+              borderRadius: '6px', 
+              padding: '16px',
+              marginBottom: '16px'
+            }}>
+              <Text style={{ fontSize: '16px', color: '#1890FF', fontWeight: 'bold' }}>
+                🎉 密码重置成功！
+              </Text>
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <Text type="secondary" style={{ minWidth: '80px' }}>用户名称：</Text>
+                <Text style={{ fontWeight: 'bold' }}>{currentUser.username}</Text>
+              </div>
+              
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <Text type="secondary" style={{ minWidth: '80px' }}>新密码：</Text>
+                <Text 
+                  copyable={{ text: newPassword }} 
+                  style={{ 
+                    fontFamily: 'monospace', 
+                    fontSize: '16px', 
+                    backgroundColor: '#F6F6F6',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    fontWeight: 'bold',
+                    color: '#165DFF'
+                  }}
+                >
+                  {newPassword}
+                </Text>
+              </div>
+              
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <Text type="secondary" style={{ minWidth: '80px' }}>用户邮箱：</Text>
+                <Text copyable={{ text: currentUser.email }}>{currentUser.email}</Text>
+              </div>
+            </div>
+            
+            <div style={{ 
+              backgroundColor: '#F6FFED', 
+              border: '1px solid #B7EB8F', 
+              borderRadius: '6px', 
+              padding: '12px',
+              marginTop: '16px'
+            }}>
+              <Text style={{ fontSize: '14px', color: '#52C41A' }}>
+                ✅ 密码重置信息已自动发送至用户邮箱 {currentUser.email}
+              </Text>
+            </div>
+          </div>
         )}
       </Modal>
     </div>

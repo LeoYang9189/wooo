@@ -15,20 +15,10 @@ import {
   IconQuestionCircle,
   IconSettings,
   IconStorage,
-  IconTool,
-  IconUserGroup,
-  IconSafe,
-  IconLock,
-  IconLocation,
-  IconHome,
-  IconNav,
-  IconBranch,
-  IconDriveFile,
-  IconTag,
-  IconThunderbolt
+  IconTool
 } from '@arco-design/web-react/icon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUsers, faShip, faBullhorn } from '@fortawesome/free-solid-svg-icons';
+import { faUsers } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../PlatformAdminStyles.css';
 
@@ -292,11 +282,9 @@ const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
             }
           >
             <MenuItem key="carrier-management">
-              <FontAwesomeIcon icon={faShip} className="mr-2" />
               <span>船东维护</span>
             </MenuItem>
             <MenuItem key="announcement-management">
-              <FontAwesomeIcon icon={faBullhorn} className="mr-2" />
               <span>公告板管理</span>
             </MenuItem>
           </SubMenu>
@@ -318,63 +306,48 @@ const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
             }
           >
             <MenuItem key="port-management">
-              <IconLocation className="mr-2" />
               <span>港口管理</span>
             </MenuItem>
             <MenuItem key="carrier-management-basic">
-              <FontAwesomeIcon icon={faShip} className="mr-2" />
               <span>承运人管理</span>
             </MenuItem>
             <MenuItem key="country-region-management">
-              <IconNav className="mr-2" />
               <span>国家（地区）</span>
             </MenuItem>
             <MenuItem key="china-administrative">
-              <IconHome className="mr-2" />
               <span>中国行政区划</span>
             </MenuItem>
             <MenuItem key="overseas-warehouse">
-              <IconStorage className="mr-2" />
               <span>海外仓库</span>
             </MenuItem>
             <MenuItem key="zipcode-management">
-              <IconTag className="mr-2" />
               <span>邮编管理</span>
             </MenuItem>
             <MenuItem key="route-management">
-              <IconBranch className="mr-2" />
               <span>航线管理</span>
             </MenuItem>
             <MenuItem key="container-management">
-              <IconDriveFile className="mr-2" />
               <span>集装箱管理</span>
             </MenuItem>
             <MenuItem key="package-unit">
-              <IconTag className="mr-2" />
               <span>包装单位</span>
             </MenuItem>
             <MenuItem key="transport-terms">
-              <IconDriveFile className="mr-2" />
               <span>运输条款</span>
             </MenuItem>
             <MenuItem key="calculation-unit">
-              <IconTool className="mr-2" />
               <span>计算单位</span>
             </MenuItem>
             <MenuItem key="fee-management">
-              <IconThunderbolt className="mr-2" />
               <span>费用管理</span>
             </MenuItem>
             <MenuItem key="ship-agent">
-              <FontAwesomeIcon icon={faShip} className="mr-2" />
               <span>船舶代理</span>
             </MenuItem>
             <MenuItem key="ship-data">
-              <FontAwesomeIcon icon={faShip} className="mr-2" />
               <span>船舶资料</span>
             </MenuItem>
             <MenuItem key="terminal-management">
-              <IconLocation className="mr-2" />
               <span>码头管理</span>
             </MenuItem>
           </SubMenu>
@@ -390,15 +363,12 @@ const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
             }
           >
             <MenuItem key="staff-management">
-              <IconUserGroup className="mr-2" />
               <span>员工管理</span>
             </MenuItem>
             <MenuItem key="role-management">
-              <IconSafe className="mr-2" />
               <span>角色管理</span>
             </MenuItem>
             <MenuItem key="permission-management">
-              <IconLock className="mr-2" />
               <span>权限管理</span>
             </MenuItem>
           </SubMenu>

@@ -438,31 +438,31 @@ const CompanyManagement: React.FC = () => {
               title: '企业信息',
               dataIndex: 'name',
               key: 'name',
-              width: 280,
+              width: 240,
               render: (_, record) => (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <Avatar size={40} style={{ backgroundColor: '#165DFF' }}>
                     <IconHome />
                   </Avatar>
                   <div>
-                    <div style={{ fontWeight: 'bold', fontSize: '14px', marginBottom: '4px' }}>
+                    <div style={{ fontWeight: 'bold', fontSize: '14px', marginBottom: '2px' }}>
                       {record.name}
                     </div>
-                    <Text type="secondary" style={{ fontSize: '12px' }}>
-                      营业执照：{record.businessLicense}
+                    <Text type="secondary" style={{ fontSize: '12px', fontStyle: 'italic' }}>
+                      {record.englishName}
                     </Text>
                   </div>
                 </div>
               )
             },
             {
-              title: '英文名称',
-              dataIndex: 'englishName',
-              key: 'englishName',
-              width: 220,
-              render: (englishName) => (
-                <Text style={{ fontSize: '13px', fontStyle: 'italic' }}>
-                  {englishName}
+              title: '营业执照',
+              dataIndex: 'businessLicense',
+              key: 'businessLicense',
+              width: 140,
+              render: (businessLicense) => (
+                <Text copyable={{ text: businessLicense }} style={{ fontSize: '13px', fontFamily: 'monospace' }}>
+                  {businessLicense}
                 </Text>
               )
             },
@@ -470,6 +470,7 @@ const CompanyManagement: React.FC = () => {
               title: '联系信息',
               dataIndex: 'contactPerson',
               key: 'contactPerson',
+              width: 150,
               render: (_, record) => (
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
@@ -489,7 +490,7 @@ const CompanyManagement: React.FC = () => {
               title: '地址',
               dataIndex: 'address',
               key: 'address',
-              width: 200,
+              width: 180,
               render: (address) => (
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: '4px' }}>
                   <IconLocation style={{ fontSize: '12px', color: '#86909C', marginTop: '2px' }} />
@@ -503,6 +504,7 @@ const CompanyManagement: React.FC = () => {
               title: '用户数',
               dataIndex: 'userCount',
               key: 'userCount',
+              width: 80,
               render: (userCount, record) => (
                 <div style={{ textAlign: 'left' }}>
                   <div 
@@ -514,11 +516,11 @@ const CompanyManagement: React.FC = () => {
                       textDecoration: 'underline'
                     }}
                     onClick={() => {
-                      // 跳转到用户管理页面，并传递企业筛选条件
-                      navigate(`/platformadmin/user-management?company=${encodeURIComponent(record.name)}`);
-                      Message.info(`正在查看 ${record.name} 的用户`);
+                      // 跳转到编辑页面的关联用户tab
+                      navigate(`/platformadmin/company-management/edit/${record.id}?tab=relatedUsers`);
+                      Message.info(`正在查看 ${record.name} 的关联用户`);
                     }}
-                    title="点击查看该企业的用户"
+                    title="点击查看该企业的关联用户"
                   >
                     {userCount}
                   </div>
@@ -530,12 +532,14 @@ const CompanyManagement: React.FC = () => {
               title: '状态',
               dataIndex: 'status',
               key: 'status',
+              width: 90,
               render: (status) => getStatusTag(status)
             },
             {
               title: '最后活跃',
               dataIndex: 'lastActive',
               key: 'lastActive',
+              width: 140,
               render: (lastActive) => (
                 <Text style={{ fontSize: '12px' }}>
                   {lastActive}
@@ -545,7 +549,7 @@ const CompanyManagement: React.FC = () => {
             {
               title: '操作',
               key: 'actions',
-              width: 180,
+              width: 160,
               render: (_, record) => {
                 const moreMenuItems = [
                   {
@@ -592,13 +596,13 @@ const CompanyManagement: React.FC = () => {
                     >
                       详情
                     </Button>
-                                      <Button
-                    type="text"
-                    size="small"
-                    onClick={() => navigate(`/platformadmin/company-management/edit/${record.id}`)}
-                  >
-                    编辑
-                  </Button>
+                    <Button
+                      type="text"
+                      size="small"
+                      onClick={() => navigate(`/platformadmin/company-management/edit/${record.id}`)}
+                    >
+                      编辑
+                    </Button>
                     <Dropdown
                       droplist={
                         <Menu>
@@ -624,6 +628,7 @@ const CompanyManagement: React.FC = () => {
               }
             }
           ]}
+          scroll={{ x: 1200 }}
           pagination={{
             total: filteredData.length,
             pageSize: 10,
