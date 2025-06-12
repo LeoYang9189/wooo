@@ -156,13 +156,13 @@ const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
       case 'calculation-unit':
         breadcrumbs.push(
           { title: '基础资料维护', path: undefined },
-          { title: '计算单位', path: '/platformadmin/calculation-unit' }
+          { title: '计费单位', path: '/platformadmin/calculation-unit' }
         );
         break;
-      case 'fee-management':
+      case 'charge-management':
         breadcrumbs.push(
           { title: '基础资料维护', path: undefined },
-          { title: '费用管理', path: '/platformadmin/fee-management' }
+          { title: '费用管理', path: '/platformadmin/charge-management' }
         );
         break;
       case 'ship-agent':
@@ -335,10 +335,13 @@ const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
             <MenuItem key="transport-terms">
               <span>运输条款</span>
             </MenuItem>
-            <MenuItem key="calculation-unit">
-              <span>计算单位</span>
+            <MenuItem key="trade-terms">
+              <span>贸易条款</span>
             </MenuItem>
-            <MenuItem key="fee-management">
+            <MenuItem key="calculation-unit">
+              <span>计费单位</span>
+            </MenuItem>
+            <MenuItem key="charge-management">
               <span>费用管理</span>
             </MenuItem>
             <MenuItem key="ship-agent">
