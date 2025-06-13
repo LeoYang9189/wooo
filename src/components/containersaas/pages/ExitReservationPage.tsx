@@ -3,7 +3,7 @@ import { Typography } from '@arco-design/web-react';
 
 const { Title, Text } = Typography;
 
-const DashboardPage: React.FC = () => {
+const ExitReservationPage: React.FC = () => {
   return (
     <div style={{
       display: 'flex',
@@ -36,7 +36,7 @@ const DashboardPage: React.FC = () => {
             🐕‍🦺
           </span>
           
-          {/* 集装箱装饰 */}
+          {/* 出场装饰 */}
           <span style={{
             position: 'absolute',
             top: '-20px',
@@ -45,7 +45,7 @@ const DashboardPage: React.FC = () => {
             color: '#165DFF',
             animation: 'heartbeat 2s ease-in-out infinite'
           }}>
-            📦
+            🚪
           </span>
         </div>
       </div>
@@ -63,7 +63,7 @@ const DashboardPage: React.FC = () => {
             fontSize: '36px'
           }}
         >
-          智慧箱管控制台开发中~
+          出场预约管理开发中~
         </Title>
         
         <Text 
@@ -73,8 +73,8 @@ const DashboardPage: React.FC = () => {
             lineHeight: '1.6'
           }}
         >
-          汪汪~ 船长，这个智慧箱管控制台还在码头建设中呢 🚢<br/>
-          等我们把集装箱都整理好就可以开始管理啦！📊✨
+          汪汪~ 船长，这个出场预约管理页面还在建设中呢 🚢<br/>
+          等我们把进场预约完善好就开始做出场预约啦！🚪✨
         </Text>
       </div>
 
@@ -87,7 +87,7 @@ const DashboardPage: React.FC = () => {
         opacity: '0.3',
         animation: 'float 4s ease-in-out infinite reverse'
       }}>
-        🚢
+        🚚
       </div>
       
       <div style={{
@@ -98,7 +98,7 @@ const DashboardPage: React.FC = () => {
         opacity: '0.3',
         animation: 'float 3.5s ease-in-out infinite'
       }}>
-        📊
+        📋
       </div>
       
       <div style={{
@@ -120,7 +120,7 @@ const DashboardPage: React.FC = () => {
         opacity: '0.2',
         animation: 'float 5s ease-in-out infinite'
       }}>
-        🌊
+        ⏰
       </div>
 
       <div style={{
@@ -131,7 +131,7 @@ const DashboardPage: React.FC = () => {
         opacity: '0.3',
         animation: 'float 3.8s ease-in-out infinite reverse'
       }}>
-        ⚓
+        🚪
       </div>
 
       <style>
@@ -159,4 +159,4 @@ const DashboardPage: React.FC = () => {
   );
 };
 
-export default DashboardPage; 
+export default ExitReservationPage; 

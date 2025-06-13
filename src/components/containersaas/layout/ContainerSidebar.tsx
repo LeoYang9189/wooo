@@ -11,7 +11,8 @@ import {
   IconPoweroff,
   IconFile,
   IconUser,
-  IconSettings
+  IconSettings,
+  IconCalendar
 } from '@arco-design/web-react/icon';
 
 const MenuItem = Menu.Item;
@@ -85,7 +86,10 @@ const ContainerSidebar: React.FC<ContainerSidebarProps> = ({ collapsed }) => {
           }
         >
           <MenuItem key="dynamic-query">动态查询</MenuItem>
-          <MenuItem key="dynamic-maintenance">动态维护</MenuItem>
+          <SubMenu key="dynamic-maintenance-sub" title="动态维护">
+            <MenuItem key="single-container-maintenance">单箱维护</MenuItem>
+            <MenuItem key="batch-container-maintenance">批量维护</MenuItem>
+          </SubMenu>
         </SubMenu>
         
         <SubMenu
@@ -118,6 +122,19 @@ const ContainerSidebar: React.FC<ContainerSidebarProps> = ({ collapsed }) => {
           <IconInteraction className="mr-2" />
           <span>放箱管理</span>
         </MenuItem>
+        
+        <SubMenu
+          key="reservation-sub"
+          title={
+            <span>
+              <IconCalendar className="mr-2" />
+              <span>预约管理</span>
+            </span>
+          }
+        >
+          <MenuItem key="entry-reservation">进场预约</MenuItem>
+          <MenuItem key="exit-reservation">出场预约</MenuItem>
+        </SubMenu>
         
         <MenuItem key="order">
           <IconFile className="mr-2" />

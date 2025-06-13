@@ -9,6 +9,11 @@ import DynamicSettingsPage from './pages/DynamicSettingsPage';
 import DynamicQueryPage from './pages/DynamicQueryPage';
 import SystemConfigPage from './pages/SystemConfigPage';
 import YardManagementPage from './pages/YardManagementPage';
+import EntryReservationPage from './pages/EntryReservationPage';
+import ExitReservationPage from './pages/ExitReservationPage';
+import SingleContainerMaintenancePage from './pages/SingleContainerMaintenancePage';
+import BatchContainerMaintenancePage from './pages/BatchContainerMaintenancePage';
+import AddDynamicPage from './pages/AddDynamicPage';
 import { Breadcrumb } from '@arco-design/web-react';
 import { Link } from 'react-router-dom';
 
@@ -17,11 +22,16 @@ const pageTitleMap: Record<string, { title: string, parent?: string }> = {
   'dashboard': { title: '控制台' },
   'dynamic-query': { title: '动态查询', parent: '动态管理' },
   'dynamic-maintenance': { title: '动态维护', parent: '动态管理' },
+  'single-container-maintenance': { title: '单箱维护', parent: '动态维护' },
+  'batch-container-maintenance': { title: '批量维护', parent: '动态维护' },
+  'add-dynamic': { title: '新增动态', parent: '单箱维护' },
   'container-management': { title: '集装箱管理', parent: '设备管理' },
   'chassis-management': { title: '车架管理', parent: '设备管理' },
   'trailer-management': { title: '拖车管理', parent: '设备管理' },
   'repair-clean': { title: '修洗箱管理', parent: '设备维护' },
   'release': { title: '放箱管理' },
+  'entry-reservation': { title: '进场预约', parent: '预约管理' },
+  'exit-reservation': { title: '出场预约', parent: '预约管理' },
   'order': { title: '订单管理' },
   'cost': { title: '费用管理' },
   'edi': { title: 'EDI中心' },
@@ -82,6 +92,30 @@ const ContainerSystem: React.FC = () => {
         } 
       />
       <Route 
+        path="/single-container-maintenance" 
+        element={
+          <ContainerLayout breadcrumb={generateBreadcrumb('/single-container-maintenance')}>
+            <SingleContainerMaintenancePage />
+          </ContainerLayout>
+        } 
+      />
+      <Route 
+        path="/batch-container-maintenance" 
+        element={
+          <ContainerLayout breadcrumb={generateBreadcrumb('/batch-container-maintenance')}>
+            <BatchContainerMaintenancePage />
+          </ContainerLayout>
+        } 
+      />
+      <Route 
+        path="/add-dynamic" 
+        element={
+          <ContainerLayout breadcrumb={generateBreadcrumb('/add-dynamic')}>
+            <AddDynamicPage />
+          </ContainerLayout>
+        } 
+      />
+      <Route 
         path="/container-management" 
         element={
           <ContainerLayout breadcrumb={generateBreadcrumb('/container-management')}>
@@ -118,6 +152,22 @@ const ContainerSystem: React.FC = () => {
         element={
           <ContainerLayout breadcrumb={generateBreadcrumb('/release')}>
             <ReleaseManagementPage />
+          </ContainerLayout>
+        } 
+      />
+      <Route 
+        path="/entry-reservation" 
+        element={
+          <ContainerLayout breadcrumb={generateBreadcrumb('/entry-reservation')}>
+            <EntryReservationPage />
+          </ContainerLayout>
+        } 
+      />
+      <Route 
+        path="/exit-reservation" 
+        element={
+          <ContainerLayout breadcrumb={generateBreadcrumb('/exit-reservation')}>
+            <ExitReservationPage />
           </ContainerLayout>
         } 
       />
