@@ -35,6 +35,7 @@ const { Option } = Select;
 
 interface CompanyData {
   id: string;
+  companyCode?: string; // 企业编码，新建时不存在
   name: string;
   englishName: string;
   contactPerson: string;
@@ -55,18 +56,20 @@ const CompanyManagement: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [industryFilter, setIndustryFilter] = useState('all');
+
   const [detailModalVisible, setDetailModalVisible] = useState(false);
   const [auditModalVisible, setAuditModalVisible] = useState(false);
-  const [bindTenantModalVisible, setBindTenantModalVisible] = useState(false);
+  const [toggleStatusModalVisible, setToggleStatusModalVisible] = useState(false);
+
   const [currentCompany, setCurrentCompany] = useState<CompanyData | null>(null);
   const [auditForm] = Form.useForm();
-  const [bindForm] = Form.useForm();
+
 
   // 模拟企业数据
   const [companyData, setCompanyData] = useState<CompanyData[]>([
     {
       id: '1',
+      companyCode: 'COMP001',
       name: '货拉拉物流科技有限公司',
       englishName: 'Huolala Logistics Technology Co., Ltd.',
       contactPerson: '张经理',
@@ -83,6 +86,7 @@ const CompanyManagement: React.FC = () => {
     },
     {
       id: '2',
+      companyCode: 'COMP002',
       name: '顺丰速运集团',
       englishName: 'SF Express Group',
       contactPerson: '李总监',
@@ -99,6 +103,7 @@ const CompanyManagement: React.FC = () => {
     },
     {
       id: '3',
+      // 待审核状态，没有企业编码
       name: '德邦物流股份有限公司',
       englishName: 'Deppon Logistics Co., Ltd.',
       contactPerson: '王主管',
@@ -109,12 +114,13 @@ const CompanyManagement: React.FC = () => {
       scale: '中型企业',
       businessLicense: '91310000456789123B',
       status: 'pending',
-      userCount: 89,
+      userCount: 0, // 待审核企业用户数量为0
       createTime: '2024-01-10 14:22:18',
       lastActive: '2024-01-12 10:15:30'
     },
           {
         id: '4',
+        // 审核拒绝状态，没有企业编码
         name: '中通快递股份有限公司',
         englishName: 'ZTO Express Co., Ltd.',
         contactPerson: '赵副总',
@@ -125,12 +131,13 @@ const CompanyManagement: React.FC = () => {
         scale: '大型企业',
         businessLicense: '91330000654321987C',
         status: 'rejected',
-        userCount: 45,
+        userCount: 0, // 审核拒绝企业用户数量为0
         createTime: '2023-11-05 16:45:30',
         lastActive: '2023-12-20 09:30:15'
       },
       {
         id: '5',
+        companyCode: 'COMP005', // 虽然已停用，但之前审核通过过，所以有企业编码
         name: '申通快递有限公司',
         englishName: 'STO Express Co., Ltd.',
         contactPerson: '陈经理',
@@ -147,6 +154,7 @@ const CompanyManagement: React.FC = () => {
       },
       {
         id: '6',
+        // 审核拒绝状态，没有企业编码
         name: '韵达速递有限公司',
         englishName: 'Yunda Express Co., Ltd.',
         contactPerson: '刘总',
@@ -157,7 +165,7 @@ const CompanyManagement: React.FC = () => {
         scale: '中型企业',
         businessLicense: '91310000789456123E',
         status: 'rejected',
-        userCount: 67,
+        userCount: 0, // 审核拒绝企业用户数量为0
         createTime: '2023-08-12 10:30:25',
         lastActive: '2023-09-15 14:20:10'
       }
@@ -187,11 +195,23 @@ const CompanyManagement: React.FC = () => {
 
 
   const handleToggleStatus = (company: CompanyData) => {
-    const newStatus = company.status === 'active' ? 'inactive' : 'active';
+    setCurrentCompany(company);
+    setToggleStatusModalVisible(true);
+  };
+
+  const handleConfirmToggleStatus = () => {
+    if (!currentCompany) return;
+    
+    const newStatus = currentCompany.status === 'active' ? 'inactive' : 'active';
+    const actionText = newStatus === 'active' ? '启用' : '停用';
+    
     setCompanyData(prev => prev.map(c => 
-      c.id === company.id ? { ...c, status: newStatus } : c
+      c.id === currentCompany.id ? { ...c, status: newStatus } : c
     ));
-    Message.success(`企业状态已${newStatus === 'active' ? '启用' : '停用'}`);
+    
+    setToggleStatusModalVisible(false);
+    setCurrentCompany(null);
+    Message.success(`企业状态已${actionText}`);
   };
 
   const handleDeleteCompany = (companyId: string) => {
@@ -208,16 +228,7 @@ const CompanyManagement: React.FC = () => {
     setAuditModalVisible(true);
   };
 
-  const handleBindTenant = (company: CompanyData) => {
-    setCurrentCompany(company);
-    bindForm.setFieldsValue({
-      tenantId: '',
-      tenantName: '',
-      tenantType: '',
-      bindNote: ''
-    });
-    setBindTenantModalVisible(true);
-  };
+
 
   const getStatusTag = (status: string) => {
     switch (status) {
@@ -234,28 +245,15 @@ const CompanyManagement: React.FC = () => {
     }
   };
 
-  const getScaleTag = (scale: string) => {
-    switch (scale) {
-      case '大型企业':
-        return <Tag color="blue">大型企业</Tag>;
-      case '中型企业':
-        return <Tag color="cyan">中型企业</Tag>;
-      case '小型企业':
-        return <Tag color="gray">小型企业</Tag>;
-      default:
-        return <Tag color="gray">未知</Tag>;
-    }
-  };
+
 
   const filteredData = companyData.filter(company => {
     const matchesKeyword = !searchKeyword || 
       company.name.includes(searchKeyword) || 
-      company.contactPerson.includes(searchKeyword) ||
-      company.industry.includes(searchKeyword);
+      company.contactPerson.includes(searchKeyword);
     const matchesStatus = statusFilter === 'all' || company.status === statusFilter;
-    const matchesIndustry = industryFilter === 'all' || company.industry === industryFilter;
     
-    return matchesKeyword && matchesStatus && matchesIndustry;
+    return matchesKeyword && matchesStatus;
   });
 
   return (
@@ -272,7 +270,7 @@ const CompanyManagement: React.FC = () => {
           <Space size="medium">
             <Input
               style={{ width: 280 }}
-              placeholder="搜索企业名称、联系人或行业"
+              placeholder="搜索企业名称、联系人"
               value={searchKeyword}
               onChange={(value) => setSearchKeyword(value)}
               prefix={<IconSearch />}
@@ -290,18 +288,7 @@ const CompanyManagement: React.FC = () => {
               <Option value="pending">待审核</Option>
               <Option value="rejected">审核拒绝</Option>
             </Select>
-            <Select
-              placeholder="行业筛选"
-              value={industryFilter}
-              onChange={setIndustryFilter}
-              style={{ width: 120 }}
-            >
-              <Option value="all">全部行业</Option>
-              <Option value="物流运输">物流运输</Option>
-              <Option value="快递服务">快递服务</Option>
-              <Option value="仓储服务">仓储服务</Option>
-              <Option value="供应链">供应链</Option>
-            </Select>
+
             <Button type="primary" icon={<IconSearch />} onClick={handleSearch}>
               搜索
             </Button>
@@ -435,6 +422,31 @@ const CompanyManagement: React.FC = () => {
           data={filteredData}
           columns={[
             {
+              title: '企业编码',
+              dataIndex: 'companyCode',
+              key: 'companyCode',
+              width: 120,
+              render: (companyCode) => (
+                companyCode ? (
+                  <Text 
+                    copyable={{ text: companyCode }} 
+                    style={{ 
+                      fontSize: '13px', 
+                      fontFamily: 'monospace',
+                      fontWeight: 'bold',
+                      color: '#165DFF'
+                    }}
+                  >
+                    {companyCode}
+                  </Text>
+                ) : (
+                  <Text type="secondary" style={{ fontSize: '12px' }}>
+                    待审核
+                  </Text>
+                )
+              )
+            },
+            {
               title: '企业信息',
               dataIndex: 'name',
               key: 'name',
@@ -558,12 +570,7 @@ const CompanyManagement: React.FC = () => {
                     style: { color: '#165DFF' },
                     onClick: () => handleToggleStatus(record)
                   },
-                  {
-                    key: 'bind-tenant',
-                    title: '绑定租户',
-                    style: { color: '#165DFF' },
-                    onClick: () => handleBindTenant(record)
-                  },
+
                   ...(record.status === 'pending' ? [{
                     key: 'audit',
                     title: '审核认证',
@@ -678,6 +685,22 @@ const CompanyManagement: React.FC = () => {
             column={2} 
             labelStyle={{ fontWeight: 'bold' }}
             data={[
+              ...(currentCompany.companyCode ? [{
+                label: '企业编码',
+                value: (
+                  <Text 
+                    copyable={{ text: currentCompany.companyCode }} 
+                    style={{ 
+                      fontSize: '14px', 
+                      fontFamily: 'monospace',
+                      fontWeight: 'bold',
+                      color: '#165DFF'
+                    }}
+                  >
+                    {currentCompany.companyCode}
+                  </Text>
+                )
+              }] : []),
               {
                 label: '企业名称',
                 value: currentCompany.name
@@ -705,16 +728,6 @@ const CompanyManagement: React.FC = () => {
                     {currentCompany.email}
                   </Text>
                 )
-              },
-              {
-                label: '行业类型',
-                value: (
-                  <Tag color="arcoblue">{currentCompany.industry}</Tag>
-                )
-              },
-              {
-                label: '企业规模',
-                value: getScaleTag(currentCompany.scale)
               },
               {
                 label: '企业状态',
@@ -791,6 +804,24 @@ const CompanyManagement: React.FC = () => {
             }}>
                              <Text style={{ fontSize: '14px', fontWeight: 'bold' }}>待审核企业信息</Text>
               <div style={{ marginTop: '8px' }}>
+                {currentCompany.companyCode && (
+                  <>
+                    <Text>企业编码：
+                      <Text 
+                        copyable={{ text: currentCompany.companyCode }} 
+                        style={{ 
+                          fontFamily: 'monospace',
+                          fontWeight: 'bold',
+                          color: '#165DFF',
+                          marginLeft: '8px'
+                        }}
+                      >
+                        {currentCompany.companyCode}
+                      </Text>
+                    </Text>
+                    <br />
+                  </>
+                )}
                 <Text>企业名称：{currentCompany.name}</Text>
                 <br />
                 <Text>营业执照：{currentCompany.businessLicense}</Text>
@@ -842,107 +873,55 @@ const CompanyManagement: React.FC = () => {
         )}
       </Modal>
 
-      {/* 绑定第三方租户模态框 */}
+      {/* 启用/停用确认模态框 */}
       <Modal
-        title="绑定第三方租户"
-        visible={bindTenantModalVisible}
+        title={currentCompany ? `确定要${currentCompany.status === 'active' ? '停用' : '启用'}这家企业吗？` : '确认操作'}
+        visible={toggleStatusModalVisible}
         onCancel={() => {
-          setBindTenantModalVisible(false);
+          setToggleStatusModalVisible(false);
           setCurrentCompany(null);
-          bindForm.resetFields();
         }}
-        onOk={() => {
-          bindForm.validate().then((values) => {
-            // 这里可以调用实际的绑定API
-            Message.success(`已成功为 ${currentCompany?.name} 绑定第三方租户：${values.tenantName}`);
-            setBindTenantModalVisible(false);
-            setCurrentCompany(null);
-            bindForm.resetFields();
-          }).catch((error) => {
-            console.error('绑定表单验证失败:', error);
-          });
-        }}
-        okText="确定绑定"
+        onOk={handleConfirmToggleStatus}
+        okText={currentCompany ? `确定${currentCompany.status === 'active' ? '停用' : '启用'}` : '确定'}
         cancelText="取消"
-        style={{ width: 600 }}
+        okButtonProps={{
+          style: currentCompany ? {
+            backgroundColor: currentCompany.status === 'active' ? '#F53F3F' : '#00B42A',
+            borderColor: currentCompany.status === 'active' ? '#F53F3F' : '#00B42A'
+          } : {}
+        }}
+        style={{ width: 500 }}
       >
         {currentCompany && (
-          <div>
-            <div style={{ 
-              background: '#f0f9ff', 
-              padding: '16px', 
-              borderRadius: '6px', 
-              marginBottom: '16px',
-              border: '1px solid #91d5ff'
-            }}>
-                             <Text style={{ fontSize: '14px', color: '#1890ff', fontWeight: 'bold' }}>
-                 🏢 当前企业：{currentCompany.name}
-               </Text>
-              <div style={{ marginTop: '8px' }}>
-                <Text type="secondary">将为此企业绑定第三方租户系统</Text>
-              </div>
+          <div style={{ marginTop: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+              <span style={{ fontWeight: 'bold' }}>企业名称：</span>
+              <span>{currentCompany.name}</span>
             </div>
-            
-            <Form
-              form={bindForm}
-              layout="vertical"
-              autoComplete="off"
-            >
-              <Form.Item
-                label="租户ID"
-                field="tenantId"
-                rules={[
-                  { required: true, message: '请输入租户ID' }
-                ]}
-              >
-                <Input placeholder="请输入第三方系统的租户ID" />
-              </Form.Item>
-
-              <Form.Item
-                label="租户名称"
-                field="tenantName"
-                rules={[
-                  { required: true, message: '请输入租户名称' }
-                ]}
-              >
-                <Input placeholder="请输入租户的显示名称" />
-              </Form.Item>
-
-              <Form.Item
-                label="租户类型"
-                field="tenantType"
-                rules={[
-                  { required: true, message: '请选择租户类型' }
-                ]}
-              >
-                <Select placeholder="请选择第三方系统类型">
-                  <Option value="erp">ERP系统</Option>
-                  <Option value="wms">WMS仓储系统</Option>
-                  <Option value="tms">TMS运输系统</Option>
-                  <Option value="crm">CRM客户系统</Option>
-                  <Option value="oms">OMS订单系统</Option>
-                  <Option value="other">其他系统</Option>
-                </Select>
-              </Form.Item>
-
-              <Form.Item
-                label="绑定说明"
-                field="bindNote"
-                rules={[
-                  { required: false }
-                ]}
-              >
-                <Input.TextArea 
-                  placeholder="请输入绑定的相关说明（可选）"
-                  rows={3}
-                  maxLength={300}
-                  showWordLimit
-                />
-              </Form.Item>
-            </Form>
+            {currentCompany.companyCode && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                <span style={{ fontWeight: 'bold' }}>企业编码：</span>
+                <span style={{ fontFamily: 'monospace', color: '#165DFF' }}>{currentCompany.companyCode}</span>
+              </div>
+            )}
+            <div style={{ 
+              padding: '12px', 
+              backgroundColor: currentCompany.status === 'active' ? '#fff2f0' : '#f6ffed',
+              border: `1px solid ${currentCompany.status === 'active' ? '#F53F3F' : '#00B42A'}20`,
+              borderRadius: '6px',
+              marginTop: '12px'
+            }}>
+              <span style={{ 
+                color: currentCompany.status === 'active' ? '#F53F3F' : '#00B42A', 
+                fontWeight: 'bold' 
+              }}>
+                {currentCompany.status === 'active' ? '停用' : '启用'}后，该企业将{currentCompany.status === 'active' ? '无法正常使用系统功能' : '恢复正常使用权限'}
+              </span>
+            </div>
           </div>
         )}
       </Modal>
+
     </div>
   );
 };

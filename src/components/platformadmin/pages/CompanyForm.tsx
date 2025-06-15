@@ -18,7 +18,8 @@ import {
   Modal,
   Upload,
   Cascader,
-  Image
+  Image,
+  Spin
 } from '@arco-design/web-react';
 import { 
   IconArrowLeft,
@@ -34,8 +35,9 @@ import {
   IconUpload,
   IconEye,
   IconFile,
-  IconImport,
-  IconSync
+  IconSync,
+  IconExclamationCircleFill,
+  IconExclamation
 } from '@arco-design/web-react/icon';
 
 const { Title, Text } = Typography;
@@ -147,12 +149,14 @@ const addressOptions = [
 
 interface CompanyFormData {
   id?: string;
+  companyCode?: string; // 企业编码，新建时不存在，编辑时系统自动生成
   name: string;
   englishName: string;
   businessLicense: string;
   description: string;
   status: 'active' | 'inactive' | 'pending' | 'rejected';
-  // 五级行政区划
+  // 国家和五级行政区划
+  country: string;
   province: string;
   city: string;
   district: string;
@@ -248,6 +252,18 @@ const CompanyForm: React.FC = () => {
   const [financialEditMode, setFinancialEditMode] = useState(false);
   const [businessLicenseModalVisible, setBusinessLicenseModalVisible] = useState(false);
   const [businessLicenseUploadVisible, setBusinessLicenseUploadVisible] = useState(false);
+  const [aiRecognizing, setAiRecognizing] = useState(false);
+  const [recognitionSuccess, setRecognitionSuccess] = useState(false);
+  const [setDefaultModalVisible, setSetDefaultModalVisible] = useState(false);
+  const [targetDefaultContact, setTargetDefaultContact] = useState<ContactPerson | null>(null);
+  const [deleteContactModalVisible, setDeleteContactModalVisible] = useState(false);
+  const [targetDeleteContact, setTargetDeleteContact] = useState<ContactPerson | null>(null);
+  const [removeUserModalVisible, setRemoveUserModalVisible] = useState(false);
+  const [targetRemoveUser, setTargetRemoveUser] = useState<RelatedUser | null>(null);
+  const [addUserModalVisible, setAddUserModalVisible] = useState(false);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [productToggleModalVisible, setProductToggleModalVisible] = useState(false);
+  const [targetProduct, setTargetProduct] = useState<{ product: AuthorizedProduct; enabled: boolean } | null>(null);
   const [thirdPartyModalVisible, setThirdPartyModalVisible] = useState(false);
   const [editingThirdParty, setEditingThirdParty] = useState<ThirdPartySystem | null>(null);
   const [viewingThirdParty, setViewingThirdParty] = useState<ThirdPartySystem | null>(null);
@@ -291,6 +307,7 @@ const CompanyForm: React.FC = () => {
     businessLicense: '',
     description: '',
     status: 'pending',
+    country: '中国',
     province: '',
     city: '',
     district: '',
@@ -396,6 +413,70 @@ const CompanyForm: React.FC = () => {
     }
   ]);
 
+  // 模拟可选择的用户数据（排除已关联的用户）
+  const availableUsers: RelatedUser[] = [
+    {
+      id: 'USR_001',
+      username: '张三',
+      email: 'zhangsan@example.com',
+      phone: '13800138001',
+      role: 'user' as const,
+      status: 'active' as const,
+      lastLogin: '2024-01-15 09:30:00',
+      createTime: '2024-01-01 10:00:00'
+    },
+    {
+      id: 'USR_002',
+      username: '李四',
+      email: 'lisi@example.com',
+      phone: '13800138002',
+      role: 'user' as const,
+      status: 'active' as const,
+      lastLogin: '2024-01-14 16:45:00',
+      createTime: '2024-01-02 11:00:00'
+    },
+    {
+      id: 'USR_003',
+      username: '王五',
+      email: 'wangwu@example.com',
+      phone: '13800138003',
+      role: 'user' as const,
+      status: 'active' as const,
+      lastLogin: '2024-01-13 14:20:00',
+      createTime: '2024-01-03 09:30:00'
+    },
+    {
+      id: 'USR_004',
+      username: '赵六',
+      email: 'zhaoliu@example.com',
+      phone: '13800138004',
+      role: 'user' as const,
+      status: 'inactive' as const,
+      lastLogin: '2024-01-10 11:15:00',
+      createTime: '2024-01-04 14:00:00'
+    },
+    {
+      id: 'USR_005',
+      username: 'John Smith',
+      email: 'john.smith@example.com',
+      phone: '13800138005',
+      role: 'user' as const,
+      status: 'active' as const,
+      lastLogin: '2024-01-12 10:30:00',
+      createTime: '2024-01-05 15:30:00'
+    },
+    {
+      id: 'USR_006',
+      username: '陈七',
+      email: 'chenqi@example.com',
+      phone: '13800138006',
+      role: 'user' as const,
+      status: 'pending' as const,
+      lastLogin: '2024-01-11 13:25:00',
+      createTime: '2024-01-06 16:45:00'
+    }
+  ].filter(user => !relatedUsers.some(relatedUser => relatedUser.id === user.id));
+
   useEffect(() => {
     // 处理URL参数中的tab
     const searchParams = new URLSearchParams(location.search);
@@ -429,21 +510,59 @@ const CompanyForm: React.FC = () => {
       // 模拟加载企业数据
       setLoading(true);
       setTimeout(() => {
-        const mockData: CompanyFormData = {
-          id: id,
-          name: '货拉拉物流科技有限公司',
-          englishName: 'Huolala Logistics Technology Co., Ltd.',
-          businessLicense: '91110000123456789X',
-          description: '专业的物流科技服务提供商，致力于为客户提供高效、便捷的物流解决方案。',
-          status: 'active',
-          province: '北京市',
-          city: '北京市',
-          district: '朝阳区',
-          street: '建国门外街道',
-          detailAddress: '建国路88号SOHO现代城',
-          businessLicenseFile: '/uploads/business-license-91110000123456789X.jpg',
-          businessLicenseUploadTime: '2023-12-01 10:30:00'
+        // 模拟不同状态的企业数据
+        const getCompanyDataById = (id: string) => {
+          const baseData = {
+            id: id,
+            name: '货拉拉物流科技有限公司',
+            englishName: 'Huolala Logistics Technology Co., Ltd.',
+            businessLicense: '91110000123456789X',
+            description: '专业的物流科技服务提供商，致力于为客户提供高效、便捷的物流解决方案。',
+            country: '中国',
+            province: '北京市',
+            city: '北京市',
+            district: '朝阳区',
+            street: '建国门外街道',
+            detailAddress: '建国路88号SOHO现代城',
+            businessLicenseFile: '/uploads/business-license-91110000123456789X.jpg',
+            businessLicenseUploadTime: '2023-12-01 10:30:00'
+          };
+
+          // 根据ID模拟不同状态
+          switch (id) {
+            case '1':
+            case '2':
+              return {
+                ...baseData,
+                status: 'active' as const,
+                companyCode: `COMP${id.toString().padStart(3, '0')}` // 审核通过，有企业编码
+              };
+            case '3':
+              return {
+                ...baseData,
+                status: 'pending' as const,
+                name: '德邦物流股份有限公司',
+                englishName: 'Deppon Logistics Co., Ltd.'
+                // 待审核，没有企业编码
+              };
+            case '5':
+              return {
+                ...baseData,
+                status: 'inactive' as const,
+                companyCode: `COMP${id.toString().padStart(3, '0')}`, // 虽然已停用，但之前审核通过过，所以有企业编码
+                name: '申通快递有限公司',
+                englishName: 'STO Express Co., Ltd.'
+              };
+            default:
+              return {
+                ...baseData,
+                status: 'rejected' as const,
+                // 审核拒绝，没有企业编码
+              };
+          }
         };
+
+        const mockData = getCompanyDataById(id || '1');
         setCompanyData(mockData);
         form.setFieldsValue({
           ...mockData,
@@ -519,12 +638,24 @@ const CompanyForm: React.FC = () => {
   };
 
   const handleProductToggle = (productId: string, enabled: boolean) => {
-    setAuthorizedProducts(prev => 
-      prev.map(product => 
-        product.id === productId ? { ...product, enabled } : product
-      )
-    );
-    Message.success(`产品授权已${enabled ? '启用' : '停用'}`);
+    const product = authorizedProducts.find(p => p.id === productId);
+    if (!product) return;
+    
+    setTargetProduct({ product, enabled });
+    setProductToggleModalVisible(true);
+  };
+
+  const handleConfirmProductToggle = () => {
+    if (targetProduct) {
+      setAuthorizedProducts(prev => 
+        prev.map(product => 
+          product.id === targetProduct.product.id ? { ...product, enabled: targetProduct.enabled } : product
+        )
+      );
+      Message.success(`产品 ${targetProduct.product.name} 已${targetProduct.enabled ? '启用' : '停用'}`);
+      setProductToggleModalVisible(false);
+      setTargetProduct(null);
+    }
   };
 
   const handleAddContact = () => {
@@ -540,24 +671,56 @@ const CompanyForm: React.FC = () => {
   };
 
   const handleDeleteContact = (contactId: string) => {
-    Modal.confirm({
-      title: '确定要删除这个联系人吗？',
-      content: '删除后将无法恢复',
-      okText: '确定',
-      cancelText: '取消',
-      onOk: () => {
-        setContacts(prev => prev.filter(c => c.id !== contactId));
-        Message.success('联系人已删除');
-      }
-    });
+    const targetContact = contacts.find(c => c.id === contactId);
+    
+    if (!targetContact) return;
+    
+    // 默认联系人不能删除
+    if (targetContact.isDefault) {
+      Message.warning('默认联系人不能删除，请先设置其他联系人为默认');
+      return;
+    }
+    
+    // 设置目标联系人并显示确认弹窗
+    setTargetDeleteContact(targetContact);
+    setDeleteContactModalVisible(true);
+  };
+
+  const handleConfirmDeleteContact = () => {
+    if (targetDeleteContact) {
+      setContacts(prev => prev.filter(c => c.id !== targetDeleteContact.id));
+      Message.success(`联系人 ${targetDeleteContact.name} 已删除`);
+      setDeleteContactModalVisible(false);
+      setTargetDeleteContact(null);
+    }
   };
 
   const handleSetDefaultContact = (contactId: string) => {
-    setContacts(prev => prev.map(contact => ({
-      ...contact,
-      isDefault: contact.id === contactId
-    })));
-    Message.success('已设置为默认联系人');
+    const targetContact = contacts.find(c => c.id === contactId);
+    
+    if (!targetContact) return;
+    
+    // 如果已经是默认联系人，不需要操作
+    if (targetContact.isDefault) {
+      Message.info('该联系人已经是默认联系人');
+      return;
+    }
+    
+    // 设置目标联系人并显示确认弹窗
+    setTargetDefaultContact(targetContact);
+    setSetDefaultModalVisible(true);
+  };
+
+  const handleConfirmSetDefault = () => {
+    if (targetDefaultContact) {
+      setContacts(prev => prev.map(contact => ({
+        ...contact,
+        isDefault: contact.id === targetDefaultContact.id
+      })));
+      Message.success(`已将 ${targetDefaultContact.name} 设置为默认联系人`);
+      setSetDefaultModalVisible(false);
+      setTargetDefaultContact(null);
+    }
   };
 
   const handleContactSubmit = () => {
@@ -659,13 +822,41 @@ const CompanyForm: React.FC = () => {
   };
 
   const handleBusinessLicenseUpload = (file: File) => {
-    // 模拟文件上传
-    const formData = form.getFieldsValue();
-    const newFile = `/uploads/business-license-${formData.businessLicense || file.name}.jpg`;
-    form.setFieldValue('businessLicenseFile', newFile);
-    form.setFieldValue('businessLicenseUploadTime', new Date().toLocaleString('zh-CN'));
-    setBusinessLicenseUploadVisible(false);
-    Message.success('营业执照上传成功');
+    // 开始AI识别流程
+    setAiRecognizing(true);
+    setRecognitionSuccess(false);
+    
+    // 模拟AI识别过程，3秒后完成
+    setTimeout(() => {
+      setAiRecognizing(false);
+      setRecognitionSuccess(true);
+      
+      // 模拟识别结果，自动填充表单
+      const formData = form.getFieldsValue();
+      const newFile = `/uploads/business-license-${formData.businessLicense || file.name}.jpg`;
+      form.setFieldValue('businessLicenseFile', newFile);
+      form.setFieldValue('businessLicenseUploadTime', new Date().toLocaleString('zh-CN'));
+      
+      // 模拟AI识别出的企业信息
+      if (!formData.name) {
+        form.setFieldValue('name', '货拉拉物流科技有限公司');
+      }
+      if (!formData.englishName) {
+        form.setFieldValue('englishName', 'Huolala Logistics Technology Co., Ltd.');
+      }
+      if (!formData.businessLicense) {
+        form.setFieldValue('businessLicense', '91110000123456789X');
+      }
+      
+      Message.success('AI识别成功，已自动填充企业信息');
+      
+      // 2秒后关闭弹窗
+      setTimeout(() => {
+        setBusinessLicenseUploadVisible(false);
+        setRecognitionSuccess(false);
+      }, 2000);
+    }, 3000);
+    
     return false; // 阻止默认上传行为
   };
 
@@ -813,16 +1004,35 @@ const CompanyForm: React.FC = () => {
   };
 
   const handleRemoveUser = (user: RelatedUser) => {
-    Modal.confirm({
-      title: '确定要移除这个用户吗？',
-      content: `移除后 ${user.username} 将无法访问该企业的相关功能`,
-      okText: '确定',
-      cancelText: '取消',
-      onOk: () => {
-        setRelatedUsers(prev => prev.filter(u => u.id !== user.id));
-        Message.success(`${user.username} 已从企业中移除`);
-      }
-    });
+    setTargetRemoveUser(user);
+    setRemoveUserModalVisible(true);
+  };
+
+  const handleConfirmRemoveUser = () => {
+    if (targetRemoveUser) {
+      setRelatedUsers(prev => prev.filter(u => u.id !== targetRemoveUser.id));
+      Message.success(`${targetRemoveUser.username} 已从企业中移除`);
+      setRemoveUserModalVisible(false);
+      setTargetRemoveUser(null);
+    }
+  };
+
+  const handleAddUser = () => {
+    setAddUserModalVisible(true);
+    setSelectedUsers([]);
+  };
+
+  const handleConfirmAddUser = () => {
+    if (selectedUsers.length === 0) {
+      Message.warning('请选择要添加的用户');
+      return;
+    }
+
+    const usersToAdd = availableUsers.filter(user => selectedUsers.includes(user.id));
+    setRelatedUsers(prev => [...prev, ...usersToAdd]);
+    Message.success(`成功添加 ${usersToAdd.length} 个用户`);
+    setAddUserModalVisible(false);
+    setSelectedUsers([]);
   };
 
   // 处理第三方同步
@@ -887,6 +1097,24 @@ const CompanyForm: React.FC = () => {
         layout="vertical"
         autoComplete="off"
       >
+        {/* 企业编码 - 只在编辑时显示 */}
+        {isEdit && form.getFieldValue('companyCode') && (
+          <Form.Item
+            label="企业编码"
+            field="companyCode"
+          >
+            <Input 
+              placeholder="系统自动生成"
+              disabled
+              style={{ 
+                color: '#165DFF',
+                fontFamily: 'monospace',
+                fontWeight: 'bold'
+              }}
+            />
+          </Form.Item>
+        )}
+
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
           <Form.Item
             label="企业名称"
@@ -981,8 +1209,39 @@ const CompanyForm: React.FC = () => {
           </div>
         </Form.Item>
 
-        {/* 五级行政区划 */}
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '16px' }}>
+        {/* 国家和地址信息 */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr 1fr', gap: '16px' }}>
+          <Form.Item
+            label="国家"
+            field="country"
+            rules={[
+              { required: true, message: '请选择国家' }
+            ]}
+          >
+            <Select placeholder="请选择国家" defaultValue="中国">
+              <Option value="中国">中国</Option>
+              <Option value="美国">美国</Option>
+              <Option value="日本">日本</Option>
+              <Option value="韩国">韩国</Option>
+              <Option value="新加坡">新加坡</Option>
+              <Option value="马来西亚">马来西亚</Option>
+              <Option value="泰国">泰国</Option>
+              <Option value="印度尼西亚">印度尼西亚</Option>
+              <Option value="菲律宾">菲律宾</Option>
+              <Option value="越南">越南</Option>
+              <Option value="德国">德国</Option>
+              <Option value="英国">英国</Option>
+              <Option value="法国">法国</Option>
+              <Option value="荷兰">荷兰</Option>
+              <Option value="意大利">意大利</Option>
+              <Option value="澳大利亚">澳大利亚</Option>
+              <Option value="加拿大">加拿大</Option>
+              <Option value="巴西">巴西</Option>
+              <Option value="阿根廷">阿根廷</Option>
+              <Option value="其他">其他</Option>
+            </Select>
+          </Form.Item>
+
           <Form.Item
             label="企业地址（省市区街道）"
             field="addressCascader"
@@ -1040,12 +1299,53 @@ const CompanyForm: React.FC = () => {
         style={{ width: '600px' }}
       >
         <div style={{ textAlign: 'center', padding: '20px' }}>
-          <Image
-            src={form.getFieldValue('businessLicenseFile')}
-            alt="营业执照"
-            style={{ maxWidth: '100%', maxHeight: '400px' }}
-            preview={false}
-          />
+          {form.getFieldValue('businessLicenseFile') ? (
+            <Image
+              src={form.getFieldValue('businessLicenseFile')}
+              alt="营业执照"
+              style={{ maxWidth: '100%', maxHeight: '400px' }}
+              preview={false}
+            />
+          ) : (
+            /* 占位图 */
+            <div style={{
+              width: '100%',
+              height: '300px',
+              backgroundColor: '#F7F8FA',
+              border: '2px dashed #C9CDD4',
+              borderRadius: '12px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '16px'
+            }}>
+              <div style={{
+                width: '80px',
+                height: '80px',
+                backgroundColor: '#E5E6EB',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <IconFile style={{ fontSize: '32px', color: '#86909C' }} />
+              </div>
+              <div style={{
+                fontSize: '16px',
+                color: '#86909C',
+                fontWeight: '500'
+              }}>
+                暂无营业执照
+              </div>
+              <div style={{
+                fontSize: '14px',
+                color: '#C9CDD4'
+              }}>
+                请先上传营业执照文件
+              </div>
+            </div>
+          )}
         </div>
       </Modal>
 
@@ -1098,65 +1398,142 @@ const CompanyForm: React.FC = () => {
           </div>
 
           {/* 上传区域 */}
-          <Upload
-            accept="image/*,.pdf"
-            beforeUpload={handleBusinessLicenseUpload}
-            showUploadList={false}
-            drag
-          >
+          {aiRecognizing ? (
+            /* AI识别中状态 */
             <div style={{ 
               padding: '48px 24px',
-              border: '2px dashed #C9CDD4',
+              border: '2px solid #165DFF',
               borderRadius: '12px',
-              backgroundColor: '#FBFCFD',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = '#165DFF';
-              e.currentTarget.style.backgroundColor = '#F2F3FF';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = '#C9CDD4';
-              e.currentTarget.style.backgroundColor = '#FBFCFD';
-            }}
-            >
-              {/* 上传图标 */}
-              <div style={{ 
-                width: '80px', 
-                height: '80px', 
-                margin: '0 auto 16px',
-                background: 'linear-gradient(135deg, #165DFF 0%, #246FFF 100%)',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 8px 24px rgba(22, 93, 255, 0.2)'
-              }}>
-                <IconUpload style={{ fontSize: '32px', color: '#FFFFFF' }} />
-              </div>
-              
-              {/* 主要文字 */}
+              backgroundColor: '#F2F3FF',
+              textAlign: 'center'
+            }}>
+              <Spin size={60} />
               <div style={{ 
                 fontSize: '18px', 
                 fontWeight: '600',
-                color: '#1D2129',
+                color: '#165DFF',
+                marginTop: '24px',
                 marginBottom: '8px'
               }}>
-                点击选择文件或拖拽到此处
+                AI识别中...
               </div>
-              
-              {/* 副文字 */}
               <div style={{ 
                 fontSize: '14px', 
                 color: '#86909C',
                 lineHeight: '1.5'
               }}>
-                <div>将营业执照文件拖拽到此区域</div>
-                <div>或点击选择文件上传</div>
+                正在智能识别营业执照信息，请稍候
               </div>
             </div>
-          </Upload>
+          ) : recognitionSuccess ? (
+            /* 识别成功状态 */
+            <div style={{ 
+              padding: '48px 24px',
+              border: '2px solid #00B42A',
+              borderRadius: '12px',
+              backgroundColor: '#F6FFED',
+              textAlign: 'center'
+            }}>
+              <div style={{ 
+                width: '80px', 
+                height: '80px', 
+                margin: '0 auto 16px',
+                background: 'linear-gradient(135deg, #00B42A 0%, #23C343 100%)',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 8px 24px rgba(0, 180, 42, 0.2)'
+              }}>
+                <div style={{ 
+                  fontSize: '32px', 
+                  color: '#FFFFFF',
+                  fontWeight: 'bold'
+                }}>
+                  ✓
+                </div>
+              </div>
+              
+              <div style={{ 
+                fontSize: '18px', 
+                fontWeight: '600',
+                color: '#00B42A',
+                marginBottom: '8px'
+              }}>
+                识别成功！
+              </div>
+              
+              <div style={{ 
+                fontSize: '14px', 
+                color: '#86909C',
+                lineHeight: '1.5'
+              }}>
+                <div>已成功识别营业执照信息</div>
+                <div>企业信息已自动填充到表单中</div>
+              </div>
+            </div>
+          ) : (
+            /* 正常上传状态 */
+            <Upload
+              accept="image/*,.pdf"
+              beforeUpload={handleBusinessLicenseUpload}
+              showUploadList={false}
+              drag
+            >
+              <div style={{ 
+                padding: '48px 24px',
+                border: '2px dashed #C9CDD4',
+                borderRadius: '12px',
+                backgroundColor: '#FBFCFD',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = '#165DFF';
+                e.currentTarget.style.backgroundColor = '#F2F3FF';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = '#C9CDD4';
+                e.currentTarget.style.backgroundColor = '#FBFCFD';
+              }}
+              >
+                {/* 上传图标 */}
+                <div style={{ 
+                  width: '80px', 
+                  height: '80px', 
+                  margin: '0 auto 16px',
+                  background: 'linear-gradient(135deg, #165DFF 0%, #246FFF 100%)',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 8px 24px rgba(22, 93, 255, 0.2)'
+                }}>
+                  <IconUpload style={{ fontSize: '32px', color: '#FFFFFF' }} />
+                </div>
+                
+                {/* 主要文字 */}
+                <div style={{ 
+                  fontSize: '18px', 
+                  fontWeight: '600',
+                  color: '#1D2129',
+                  marginBottom: '8px'
+                }}>
+                  点击选择文件或拖拽到此处
+                </div>
+                
+                {/* 副文字 */}
+                <div style={{ 
+                  fontSize: '14px', 
+                  color: '#86909C',
+                  lineHeight: '1.5'
+                }}>
+                  <div>将营业执照文件拖拽到此区域</div>
+                  <div>或点击选择文件上传，AI将自动识别企业信息</div>
+                </div>
+              </div>
+            </Upload>
+          )}
 
           {/* 底部按钮 */}
           <div style={{ 
@@ -1167,25 +1544,32 @@ const CompanyForm: React.FC = () => {
           }}>
             <Button 
               size="large"
-              onClick={() => setBusinessLicenseUploadVisible(false)}
+              onClick={() => {
+                setBusinessLicenseUploadVisible(false);
+                setAiRecognizing(false);
+                setRecognitionSuccess(false);
+              }}
               style={{ minWidth: '100px' }}
+              disabled={aiRecognizing}
             >
               取消
             </Button>
-            <Upload
-              accept="image/*,.pdf"
-              beforeUpload={handleBusinessLicenseUpload}
-              showUploadList={false}
-            >
-              <Button 
-                type="primary" 
-                size="large"
-                icon={<IconUpload />}
-                style={{ minWidth: '120px' }}
+            {!aiRecognizing && !recognitionSuccess && (
+              <Upload
+                accept="image/*,.pdf"
+                beforeUpload={handleBusinessLicenseUpload}
+                showUploadList={false}
               >
-                选择文件
-              </Button>
-            </Upload>
+                <Button 
+                  type="primary" 
+                  size="large"
+                  icon={<IconUpload />}
+                  style={{ minWidth: '120px' }}
+                >
+                  选择文件
+                </Button>
+              </Upload>
+            )}
           </div>
         </div>
       </Modal>
@@ -1288,16 +1672,17 @@ const CompanyForm: React.FC = () => {
                 >
                   编辑
                 </Button>
-                <Button 
-                  type="text" 
-                  size="small" 
-                  status="danger"
-                  icon={<IconDelete />}
-                  onClick={() => handleDeleteContact(record.id)}
-                  disabled={contacts.length === 1}
-                >
-                  删除
-                </Button>
+                {!record.isDefault && (
+                  <Button 
+                    type="text" 
+                    size="small" 
+                    status="danger"
+                    icon={<IconDelete />}
+                    onClick={() => handleDeleteContact(record.id)}
+                  >
+                    删除
+                  </Button>
+                )}
               </Space>
             )
           }
@@ -1379,6 +1764,74 @@ const CompanyForm: React.FC = () => {
           </div>
         </Form>
       </Modal>
+
+      {/* 设置默认联系人确认弹窗 */}
+      <Modal
+        title="确认设置默认联系人"
+        visible={setDefaultModalVisible}
+        onCancel={() => {
+          setSetDefaultModalVisible(false);
+          setTargetDefaultContact(null);
+        }}
+        onOk={handleConfirmSetDefault}
+        okText="确定设置"
+        cancelText="取消"
+        okButtonProps={{ type: 'primary' }}
+      >
+        {targetDefaultContact && (
+          <div style={{ padding: '8px 0' }}>
+            <div style={{ marginBottom: '12px' }}>
+              确定要将 <strong style={{ color: '#165DFF' }}>{targetDefaultContact.name}</strong> 设置为默认联系人吗？
+            </div>
+            {contacts.find(c => c.isDefault) && (
+              <div style={{ 
+                padding: '12px', 
+                backgroundColor: '#FFF7E6', 
+                borderRadius: '6px',
+                border: '1px solid #FFD591',
+                fontSize: '14px',
+                color: '#D25F00'
+              }}>
+                <div style={{ fontWeight: '500', marginBottom: '4px' }}>注意：</div>
+                <div>当前默认联系人 <strong>{contacts.find(c => c.isDefault)?.name}</strong> 将被取消默认状态</div>
+              </div>
+            )}
+          </div>
+        )}
+      </Modal>
+
+      {/* 删除联系人确认弹窗 */}
+      <Modal
+        title="确认删除联系人"
+        visible={deleteContactModalVisible}
+        onCancel={() => {
+          setDeleteContactModalVisible(false);
+          setTargetDeleteContact(null);
+        }}
+        onOk={handleConfirmDeleteContact}
+        okText="确定删除"
+        cancelText="取消"
+        okButtonProps={{ status: 'danger' }}
+      >
+        {targetDeleteContact && (
+          <div style={{ padding: '8px 0' }}>
+            <div style={{ marginBottom: '12px' }}>
+              确定要删除联系人 <strong style={{ color: '#F53F3F' }}>{targetDeleteContact.name}</strong> 吗？
+            </div>
+            <div style={{ 
+              padding: '12px', 
+              backgroundColor: '#FFECE8', 
+              borderRadius: '6px',
+              border: '1px solid #FFBCB7',
+              fontSize: '14px',
+              color: '#CB2634'
+            }}>
+              <div style={{ fontWeight: '500', marginBottom: '4px' }}>注意：</div>
+              <div>删除后将无法恢复，请谨慎操作</div>
+            </div>
+          </div>
+        )}
+      </Modal>
     </Card>
   );
 
@@ -1391,10 +1844,10 @@ const CompanyForm: React.FC = () => {
         </Title>
         <Space>
           <Button 
-            icon={<IconImport />}
-            onClick={() => Message.info('批量导入功能开发中')}
+            icon={<IconPlus />}
+            onClick={handleAddUser}
           >
-            批量导入
+            新增用户
           </Button>
           <Button 
             type="primary"
@@ -1728,6 +2181,173 @@ const CompanyForm: React.FC = () => {
            </div>
          )}
        </Modal>
+
+       {/* 移除用户确认弹窗 */}
+       <Modal
+         title="移除用户确认"
+         visible={removeUserModalVisible}
+         onCancel={() => {
+           setRemoveUserModalVisible(false);
+           setTargetRemoveUser(null);
+         }}
+         footer={[
+           <Button key="cancel" onClick={() => {
+             setRemoveUserModalVisible(false);
+             setTargetRemoveUser(null);
+           }}>
+             取消
+           </Button>,
+           <Button key="confirm" type="primary" status="danger" onClick={handleConfirmRemoveUser}>
+             确定移除
+           </Button>
+         ]}
+       >
+         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+             <IconExclamationCircleFill style={{ color: '#F53F3F', fontSize: '16px' }} />
+             <Text>确定要移除用户 <Text style={{ color: '#F53F3F', fontWeight: 'bold' }}>{targetRemoveUser?.username}</Text> 吗？</Text>
+           </div>
+           
+           <div style={{ 
+             padding: '12px', 
+             backgroundColor: '#FFF7E6', 
+             border: '1px solid #FFD666',
+             borderRadius: '6px'
+           }}>
+             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+               <IconExclamation style={{ color: '#FF7D00', fontSize: '14px' }} />
+               <Text style={{ color: '#FF7D00', fontWeight: 'bold', fontSize: '14px' }}>注意</Text>
+             </div>
+             <Text style={{ color: '#86909C', fontSize: '13px' }}>
+               移除后该用户将无法访问该企业的相关功能，此操作不可撤销。
+             </Text>
+           </div>
+         </div>
+       </Modal>
+
+       {/* 新增用户弹窗 */}
+       <Modal
+         title="新增用户"
+         visible={addUserModalVisible}
+         onCancel={() => {
+           setAddUserModalVisible(false);
+           setSelectedUsers([]);
+         }}
+         footer={[
+           <Button key="cancel" onClick={() => {
+             setAddUserModalVisible(false);
+             setSelectedUsers([]);
+           }}>
+             取消
+           </Button>,
+           <Button key="confirm" type="primary" onClick={handleConfirmAddUser}>
+             确定添加 ({selectedUsers.length})
+           </Button>
+         ]}
+         style={{ width: '800px' }}
+       >
+         <div style={{ marginBottom: '16px' }}>
+           <Text type="secondary">请从下列用户中选择要添加到企业的用户：</Text>
+         </div>
+         
+         <Table
+           data={availableUsers}
+           rowSelection={{
+             type: 'checkbox',
+             selectedRowKeys: selectedUsers,
+             onChange: (selectedRowKeys) => {
+               setSelectedUsers(selectedRowKeys as string[]);
+             }
+           }}
+           columns={[
+             {
+               title: '用户信息',
+               dataIndex: 'username',
+               key: 'username',
+               width: 300,
+               render: (_, record) => (
+                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                   <Avatar size={32} style={{ backgroundColor: '#165DFF' }}>
+                     <IconUser />
+                   </Avatar>
+                   <div>
+                     <div style={{ fontWeight: 'bold', fontSize: '14px' }}>
+                       {record.username}
+                     </div>
+                     <Text type="secondary" style={{ fontSize: '12px', fontFamily: 'monospace' }}>
+                       ID: {record.id}
+                     </Text>
+                   </div>
+                 </div>
+               )
+             },
+             {
+               title: '联系方式',
+               dataIndex: 'contact',
+               key: 'contact',
+               width: 200,
+               render: (_, record) => (
+                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                     <IconPhone style={{ fontSize: '12px', color: '#86909C' }} />
+                     <Text style={{ fontSize: '12px' }}>{record.phone}</Text>
+                   </div>
+                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                     <IconEmail style={{ fontSize: '12px', color: '#86909C' }} />
+                     <Text style={{ fontSize: '12px' }}>{record.email}</Text>
+                   </div>
+                 </div>
+               )
+             },
+             {
+               title: '状态',
+               dataIndex: 'status',
+               key: 'status',
+               width: 90,
+               render: (status) => getStatusTag(status)
+             },
+             {
+               title: '最后登录',
+               dataIndex: 'lastLogin',
+               key: 'lastLogin',
+               width: 140,
+               render: (lastLogin) => (
+                 <Text style={{ fontSize: '12px' }}>
+                   {lastLogin}
+                 </Text>
+               )
+             }
+           ]}
+           pagination={false}
+           border
+           scroll={{ x: 730 }}
+           style={{ maxHeight: '400px', overflow: 'auto' }}
+         />
+         
+         {selectedUsers.length > 0 && (
+           <div style={{ 
+             marginTop: '16px', 
+             padding: '12px', 
+             backgroundColor: '#F8F9FF', 
+             border: '1px solid #E5E6EB',
+             borderRadius: '6px'
+           }}>
+             <Text style={{ color: '#165DFF', fontWeight: 'bold' }}>
+               已选择 {selectedUsers.length} 个用户
+             </Text>
+             <div style={{ marginTop: '8px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+               {selectedUsers.map(userId => {
+                 const user = availableUsers.find(u => u.id === userId);
+                 return user ? (
+                   <Tag key={userId} color="blue" style={{ margin: 0 }}>
+                     {user.id} | {user.username} | {user.phone} | {user.email}
+                   </Tag>
+                 ) : null;
+               })}
+             </div>
+           </div>
+         )}
+       </Modal>
      </Card>
    );
 
@@ -1771,6 +2391,70 @@ const CompanyForm: React.FC = () => {
           </Card>
         ))}
       </div>
+
+      {/* 产品开关确认弹窗 */}
+      <Modal
+        title="产品授权确认"
+        visible={productToggleModalVisible}
+        onCancel={() => {
+          setProductToggleModalVisible(false);
+          setTargetProduct(null);
+        }}
+        footer={[
+          <Button key="cancel" onClick={() => {
+            setProductToggleModalVisible(false);
+            setTargetProduct(null);
+          }}>
+            取消
+          </Button>,
+          <Button key="confirm" type="primary" onClick={handleConfirmProductToggle}>
+            确定{targetProduct?.enabled ? '启用' : '停用'}
+          </Button>
+        ]}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <IconExclamationCircleFill style={{ color: '#165DFF', fontSize: '16px' }} />
+            <Text>
+              确定要{targetProduct?.enabled ? '启用' : '停用'}产品 
+              <Text style={{ color: '#165DFF', fontWeight: 'bold' }}> {targetProduct?.product.name} </Text>
+              吗？
+            </Text>
+          </div>
+          
+          {targetProduct?.enabled ? (
+            <div style={{ 
+              padding: '12px', 
+              backgroundColor: '#F8F9FF', 
+              border: '1px solid #B8D4FF',
+              borderRadius: '6px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                <IconExclamation style={{ color: '#165DFF', fontSize: '14px' }} />
+                <Text style={{ color: '#165DFF', fontWeight: 'bold', fontSize: '14px' }}>启用说明</Text>
+              </div>
+              <Text style={{ color: '#86909C', fontSize: '13px' }}>
+                启用后，该企业将可以使用此产品的所有功能，直到产品到期时间：{targetProduct?.product.expireDate}
+              </Text>
+            </div>
+          ) : (
+            <div style={{ 
+              padding: '12px', 
+              backgroundColor: '#FFF7E6', 
+              border: '1px solid #FFD666',
+              borderRadius: '6px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                <IconExclamation style={{ color: '#FF7D00', fontSize: '14px' }} />
+                <Text style={{ color: '#FF7D00', fontWeight: 'bold', fontSize: '14px' }}>停用警告</Text>
+              </div>
+              <Text style={{ color: '#86909C', fontSize: '13px' }}>
+                停用后，该企业将无法使用此产品的任何功能，请确认是否继续操作。
+              </Text>
+            </div>
+          )}
+        </div>
+      </Modal>
     </Card>
   );
 

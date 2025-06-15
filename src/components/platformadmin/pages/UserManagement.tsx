@@ -142,6 +142,8 @@ const UserManagement: React.FC = () => {
   const [resetPasswordModalVisible, setResetPasswordModalVisible] = useState(false);
   const [resetConfirmModalVisible, setResetConfirmModalVisible] = useState(false);
   const [currentUser, setCurrentUser] = useState<UserData | null>(null);
+  const [toggleStatusModalVisible, setToggleStatusModalVisible] = useState(false);
+  const [targetUser, setTargetUser] = useState<UserData | null>(null);
   const [selectedCard, setSelectedCard] = useState<string>('');
   const [newPassword, setNewPassword] = useState<string>('');
   const [form] = Form.useForm();
@@ -326,11 +328,20 @@ const UserManagement: React.FC = () => {
   };
 
   const handleToggleStatus = (user: UserData) => {
-    const newStatus = user.status === 'active' ? 'inactive' : 'active';
-    setUserData(prev => prev.map(u => 
-      u.id === user.id ? { ...u, status: newStatus } : u
-    ));
-    Message.success(`用户状态已${newStatus === 'active' ? '启用' : '禁用'}`);
+    setTargetUser(user);
+    setToggleStatusModalVisible(true);
+  };
+
+  const handleConfirmToggleStatus = () => {
+    if (targetUser) {
+      const newStatus = targetUser.status === 'active' ? 'inactive' : 'active';
+      setUserData(prev => prev.map(u => 
+        u.id === targetUser.id ? { ...u, status: newStatus } : u
+      ));
+      Message.success(`用户 ${targetUser.username} 已${newStatus === 'active' ? '启用' : '禁用'}`);
+      setToggleStatusModalVisible(false);
+      setTargetUser(null);
+    }
   };
 
   const handleDeleteUser = (userId: string) => {
@@ -1070,6 +1081,102 @@ const UserManagement: React.FC = () => {
             </div>
           </div>
         )}
+      </Modal>
+
+      {/* 用户状态切换确认弹窗 */}
+      <Modal
+        title="用户状态确认"
+        visible={toggleStatusModalVisible}
+        onCancel={() => {
+          setToggleStatusModalVisible(false);
+          setTargetUser(null);
+        }}
+        footer={[
+          <Button key="cancel" onClick={() => {
+            setToggleStatusModalVisible(false);
+            setTargetUser(null);
+          }}>
+            取消
+          </Button>,
+          <Button key="confirm" type="primary" onClick={handleConfirmToggleStatus}>
+            确定{targetUser?.status === 'active' ? '禁用' : '启用'}
+          </Button>
+        ]}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ 
+              width: '16px', 
+              height: '16px', 
+              borderRadius: '50%', 
+              backgroundColor: targetUser?.status === 'active' ? '#FF7D00' : '#165DFF',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <Text style={{ color: 'white', fontSize: '12px', fontWeight: 'bold' }}>
+                {targetUser?.status === 'active' ? '!' : '✓'}
+              </Text>
+            </div>
+            <Text>
+              确定要{targetUser?.status === 'active' ? '禁用' : '启用'}用户 
+              <Text style={{ color: '#165DFF', fontWeight: 'bold' }}> {targetUser?.username} </Text>
+              吗？
+            </Text>
+          </div>
+          
+          {targetUser?.status === 'active' ? (
+            <div style={{ 
+              padding: '12px', 
+              backgroundColor: '#FFF7E6', 
+              border: '1px solid #FFD666',
+              borderRadius: '6px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                <Text style={{ color: '#FF7D00', fontWeight: 'bold', fontSize: '14px' }}>⚠️ 禁用警告</Text>
+              </div>
+              <Text style={{ color: '#86909C', fontSize: '13px' }}>
+                禁用后，该用户将无法登录系统，所有正在进行的操作将被中断。
+              </Text>
+            </div>
+          ) : (
+            <div style={{ 
+              padding: '12px', 
+              backgroundColor: '#F8F9FF', 
+              border: '1px solid #B8D4FF',
+              borderRadius: '6px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                <Text style={{ color: '#165DFF', fontWeight: 'bold', fontSize: '14px' }}>✓ 启用说明</Text>
+              </div>
+              <Text style={{ color: '#86909C', fontSize: '13px' }}>
+                启用后，该用户将恢复正常的系统访问权限，可以重新登录使用系统。
+              </Text>
+            </div>
+          )}
+          
+          <div style={{ 
+            padding: '12px', 
+            backgroundColor: '#F7F8FA', 
+            border: '1px solid #E5E6EB',
+            borderRadius: '6px'
+          }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Text type="secondary">用户信息：</Text>
+                <Text>{targetUser?.username}</Text>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Text type="secondary">所属企业：</Text>
+                <Text>{targetUser?.company}</Text>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Text type="secondary">当前状态：</Text>
+                {targetUser && getStatusTag(targetUser.status)}
+              </div>
+            </div>
+          </div>
+        </div>
       </Modal>
 
       {/* 重置密码成功提示弹窗 */}
