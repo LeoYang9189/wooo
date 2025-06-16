@@ -14,12 +14,14 @@ const Home = lazy(() => import('./home/Home'));
 const Auth = lazy(() => import('./pages/Auth'));
 const Terms = lazy(() => import('./pages/Terms'));
 const Privacy = lazy(() => import('./pages/Privacy'));
+const About = lazy(() => import('./pages/About'));
 const CookieSettings = lazy(() => import('./pages/CookieSettings'));
 const FMCQualification = lazy(() => import('./pages/FMCQualification'));
 const SuperFreight = lazy(() => import('./pages/SuperFreight'));
 const SaasSystem = lazy(() => import('./saas/SaasSystem'));
 const FclRates = lazy(() => import('./saas/FclRates'));
 const Portal = lazy(() => import('./portalhome/Portal'));
+const AuthPage = lazy(() => import('./portalhome/AuthPage'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const InquiryManagement = lazy(() => import('./saas/InquiryManagement'));
 const CreateFclInquiry = lazy(() => import('./saas/CreateFclInquiry'));
@@ -68,12 +70,14 @@ const AppContent = ({}: AppContentProps) => {
         <Route path="/auth/*" element={<Auth />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/privacy" element={<Privacy />} />
+        <Route path="/about" element={<About />} />
         <Route path="/cookie-settings" element={<CookieSettings />} />
         <Route path="/fmc-qualification" element={<FMCQualification />} />
         <Route path="/super-freight" element={<SuperFreight />} />
         <Route path="/saas-system" element={<SaasSystem />} />
         <Route path="/fcl-rates" element={<FclRates />} />
         <Route path="/portal" element={<Portal />} />
+        <Route path="/portal/auth" element={<AuthPage />} />
         <Route path="/inquiry-management" element={<InquiryManagement />} />
         <Route path="/saas/create-inquiry/fcl" element={<CreateFclInquiry />} />
         <Route path="/saas/create-inquiry/lcl" element={<CreateLclInquiry />} />

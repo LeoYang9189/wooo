@@ -1,5 +1,3 @@
-import octopusAvatar from '../../assets/octopus-avatar-new.svg';
-
 const Footer = () => {
   const footerLinks = [
     {
@@ -32,7 +30,7 @@ const Footer = () => {
     {
       title: '公司',
       links: [
-        { label: '关于我们', href: '#' },
+        { label: '关于我们', href: '/about' },
         { label: '新闻中心', href: '#' },
         { label: '加入我们', href: '#' },
         { label: '联系我们', href: '#' }
@@ -47,17 +45,15 @@ const Footer = () => {
           {/* 公司信息 */}
           <div className="md:col-span-1">
             <div className="flex items-center mb-4">
-              <img src={octopusAvatar} alt="AI沃宝" className="h-8 w-8" />
-              <span className="ml-2 text-xl font-bold" style={{
-                fontFamily: "'Montserrat', 'Segoe UI', sans-serif",
-                fontWeight: "800",
-                letterSpacing: "1px",
-                background: "linear-gradient(45deg, #FF6B6B, #7466F0, #19D3AE)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                display: "inline-block",
-                textShadow: "0 0 5px rgba(255,255,255,0.3)"
-              }}>Wo AI！</span>
+              <div className="bg-gradient-to-r from-blue-600 to-blue-400 text-white w-10 h-10 rounded-lg flex items-center justify-center mr-3 relative overflow-hidden shadow-lg">
+                <span className="text-xl font-bold">Y</span>
+                <div className="absolute bottom-0 right-0 w-3 h-3 bg-white rounded-tl-lg flex items-center justify-center">
+                  <span className="text-xs text-blue-600 font-bold">L</span>
+                </div>
+              </div>
+              <div>
+                <div className="text-lg font-bold text-gray-800 leading-tight tracking-wide">Your LOGO</div>
+              </div>
             </div>
             <p className="text-gray-600 text-sm mb-4">
               为全球国际物流提供智能化解决方案

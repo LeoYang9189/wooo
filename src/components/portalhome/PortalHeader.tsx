@@ -55,7 +55,7 @@ const PortalHeader: React.FC = () => {
           <Button 
             type="primary" 
             className="bg-gradient-to-r from-blue-600 to-blue-400 border-0"
-            onClick={() => navigate('/controltower-client')}
+            onClick={() => navigate('/portal/auth')}
           >
             注册/登录
           </Button>
@@ -86,7 +86,7 @@ const PortalHeader: React.FC = () => {
             <Button 
               type="primary" 
               className="bg-gradient-to-r from-blue-600 to-blue-400 border-0 mt-2"
-              onClick={() => navigate('/controltower-client')}
+              onClick={() => navigate('/portal/auth')}
             >
               注册/登录
             </Button>

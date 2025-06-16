@@ -4,7 +4,6 @@ import Footer from '../layout/Footer';
 import PortalHero from './PortalHero';
 import PortalFeatures from './PortalFeatures';
 import PortalSolutions from './PortalSolutions';
-import PortalTestimonials from './PortalTestimonials';
 import PortalCTA from './PortalCTA';
 import './PortalStyles.css';
 
@@ -16,7 +15,6 @@ const Portal: React.FC = () => {
         <PortalHero />
         <PortalFeatures />
         <PortalSolutions />
-        <PortalTestimonials />
         <PortalCTA />
       </main>
       <Footer />

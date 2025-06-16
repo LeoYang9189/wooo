@@ -5,13 +5,11 @@ import {
   Button,
   Space,
   Tag,
-  Checkbox,
   Modal,
   Form,
   Input,
   Select,
   Message,
-  Popconfirm,
   Typography,
   Dropdown
 } from '@arco-design/web-react';
@@ -110,6 +108,10 @@ const ContractManagement: React.FC = () => {
   const [detailModalVisible, setDetailModalVisible] = useState(false);
   const [currentContract, setCurrentContract] = useState<Contract | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [confirmModalVisible, setConfirmModalVisible] = useState(false);
+  const [batchAction, setBatchAction] = useState<'enable' | 'disable'>('enable');
+  const [singleConfirmModalVisible, setSingleConfirmModalVisible] = useState(false);
+  const [currentToggleRecord, setCurrentToggleRecord] = useState<Contract | null>(null);
   const [searchParams, setSearchParams] = useState<SearchParams>({
     keyword: '',
     shipCompany: '',
@@ -286,48 +288,32 @@ const ContractManagement: React.FC = () => {
     setSelectedRowKeys([]);
   };
 
-  // 切换状态
-  const handleToggleStatus = (id: string, currentStatus: 'enabled' | 'disabled') => {
-    const newStatus = currentStatus === 'enabled' ? 'disabled' : 'enabled';
-    const newData = contractData.map(item =>
-      item.id === id ? { ...item, status: newStatus } : item
-    );
-    setContractData(newData as Contract[]);
-    setFilteredData(newData as Contract[]);
-    Message.success(`已${newStatus === 'enabled' ? '启用' : '禁用'}`);
+  // 显示单个切换状态确认弹窗
+  const handleToggleStatus = (id: string) => {
+    const record = contractData.find(item => item.id === id);
+    if (record) {
+      setCurrentToggleRecord(record);
+      setSingleConfirmModalVisible(true);
+    }
+  };
+
+  // 确认单个切换状态操作
+  const handleConfirmSingleToggle = () => {
+    if (currentToggleRecord) {
+      const newStatus = currentToggleRecord.status === 'enabled' ? 'disabled' : 'enabled';
+      const newData = contractData.map(item =>
+        item.id === currentToggleRecord.id ? { ...item, status: newStatus } : item
+      );
+      setContractData(newData as Contract[]);
+      setFilteredData(newData as Contract[]);
+      setSingleConfirmModalVisible(false);
+      setCurrentToggleRecord(null);
+      Message.success(`已${newStatus === 'enabled' ? '启用' : '禁用'}`);
+    }
   };
 
   // 表格列定义
   const columns = [
-    {
-      title: (
-        <Checkbox
-          indeterminate={selectedRowKeys.length > 0 && selectedRowKeys.length < filteredData.length}
-          checked={selectedRowKeys.length === filteredData.length && filteredData.length > 0}
-          onChange={(checked) => {
-            if (checked) {
-              setSelectedRowKeys(filteredData.map(item => item.id));
-            } else {
-              setSelectedRowKeys([]);
-            }
-          }}
-        />
-      ),
-      dataIndex: 'checkbox',
-      width: 60,
-      render: (_: unknown, record: Contract) => (
-        <Checkbox
-          checked={selectedRowKeys.includes(record.id)}
-          onChange={(checked) => {
-            if (checked) {
-              setSelectedRowKeys([...selectedRowKeys, record.id]);
-            } else {
-              setSelectedRowKeys(selectedRowKeys.filter(key => key !== record.id));
-            }
-          }}
-        />
-      ),
-    },
     {
       title: '船公司约号',
       dataIndex: 'shipCompanyNumber',
@@ -405,12 +391,18 @@ const ContractManagement: React.FC = () => {
           </Button>
           <Dropdown
             droplist={
-              <div style={{ padding: '4px 0' }}>
+              <div style={{ 
+                padding: '4px 0',
+                backgroundColor: '#fff',
+                border: '1px solid #e5e6e7',
+                borderRadius: '4px',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+              }}>
                 <Button
                   type="text"
                   size="small"
                   style={{ width: '100%', justifyContent: 'flex-start' }}
-                  onClick={() => handleToggleStatus(record.id, record.status)}
+                  onClick={() => handleToggleStatus(record.id)}
                 >
                   {record.status === 'enabled' ? '禁用' : '启用'}
                 </Button>
@@ -455,13 +447,29 @@ const ContractManagement: React.FC = () => {
 
 
 
-  // 批量删除
-  const handleBatchDelete = () => {
-    const newData = contractData.filter(item => !selectedRowKeys.includes(item.id));
+  // 批量启用
+  const handleBatchEnable = () => {
+    setBatchAction('enable');
+    setConfirmModalVisible(true);
+  };
+
+  // 批量禁用
+  const handleBatchDisable = () => {
+    setBatchAction('disable');
+    setConfirmModalVisible(true);
+  };
+
+  // 确认批量操作
+  const handleConfirmBatchAction = () => {
+    const newStatus = batchAction === 'enable' ? 'enabled' : 'disabled';
+    const newData = contractData.map(item =>
+      selectedRowKeys.includes(item.id) ? { ...item, status: newStatus as 'enabled' | 'disabled' } : item
+    );
     setContractData(newData);
     setFilteredData(newData);
     setSelectedRowKeys([]);
-    Message.success(`已删除 ${selectedRowKeys.length} 条记录`);
+    setConfirmModalVisible(false);
+    Message.success(`已${batchAction === 'enable' ? '启用' : '禁用'} ${selectedRowKeys.length} 条记录`);
   };
 
   // 保存合约
@@ -578,14 +586,20 @@ const ContractManagement: React.FC = () => {
               borderLeft: '1px solid #e5e6e7',
               marginLeft: '4px'
             }}>
-              <Popconfirm
-                title={`确定要删除选中的 ${selectedRowKeys.length} 条记录吗？`}
-                onOk={handleBatchDelete}
+              <Button 
+                type="outline" 
+                status="success"
+                onClick={handleBatchEnable}
               >
-                <Button type="outline" status="danger">
-                  批量删除 ({selectedRowKeys.length})
-                </Button>
-              </Popconfirm>
+                批量启用 ({selectedRowKeys.length})
+              </Button>
+              <Button 
+                type="outline" 
+                status="warning"
+                onClick={handleBatchDisable}
+              >
+                批量禁用 ({selectedRowKeys.length})
+              </Button>
             </div>
           )}
         </div>
@@ -596,6 +610,12 @@ const ContractManagement: React.FC = () => {
         data={filteredData}
         rowKey="id"
         scroll={{ x: 1600 }}
+        rowSelection={{
+          selectedRowKeys,
+          onChange: (selectedRowKeys) => {
+            setSelectedRowKeys(selectedRowKeys as string[]);
+          },
+        }}
         pagination={{
           pageSize: 10,
           showTotal: true,
@@ -603,6 +623,57 @@ const ContractManagement: React.FC = () => {
           sizeCanChange: true,
         }}
       />
+
+      {/* 批量操作确认弹窗 */}
+      <Modal
+        title={`批量${batchAction === 'enable' ? '启用' : '禁用'}确认`}
+        visible={confirmModalVisible}
+        onCancel={() => setConfirmModalVisible(false)}
+        onOk={handleConfirmBatchAction}
+        okText="确认"
+        cancelText="取消"
+        style={{ width: '400px' }}
+        mask={true}
+        maskClosable={false}
+        autoFocus={false}
+        focusLock={true}
+      >
+        <div style={{ padding: '16px 0' }}>
+          <p>
+            确定要{batchAction === 'enable' ? '启用' : '禁用'}选中的 {selectedRowKeys.length} 条合约记录吗？
+          </p>
+          <p style={{ color: '#999', fontSize: '12px', marginTop: '8px' }}>
+            此操作将会{batchAction === 'enable' ? '启用' : '禁用'}所有选中的合约，请确认后操作。
+          </p>
+        </div>
+      </Modal>
+
+      {/* 单个操作确认弹窗 */}
+      <Modal
+        title={`${currentToggleRecord?.status === 'enabled' ? '禁用' : '启用'}确认`}
+        visible={singleConfirmModalVisible}
+        onCancel={() => {
+          setSingleConfirmModalVisible(false);
+          setCurrentToggleRecord(null);
+        }}
+        onOk={handleConfirmSingleToggle}
+        okText="确认"
+        cancelText="取消"
+        style={{ width: '400px' }}
+        mask={true}
+        maskClosable={false}
+        autoFocus={false}
+        focusLock={true}
+      >
+        <div style={{ padding: '16px 0' }}>
+          <p>
+            确定要{currentToggleRecord?.status === 'enabled' ? '禁用' : '启用'}合约记录 "{currentToggleRecord?.shipCompanyNumber}" 吗？
+          </p>
+          <p style={{ color: '#999', fontSize: '12px', marginTop: '8px' }}>
+            此操作将会{currentToggleRecord?.status === 'enabled' ? '禁用' : '启用'}该合约，请确认后操作。
+          </p>
+        </div>
+      </Modal>
 
       {/* 详情弹窗 */}
       <Modal
