@@ -164,7 +164,21 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
             { title: '附加费维护', path: '/controltower/saas/surcharge' }
           );
           break;
+        case 'contract-management':
+          breadcrumbs.push(
+            { title: '超级运价', path: undefined },
+            { title: '合约管理', path: '/controltower/saas/contract-management' }
+          );
+          break;
         default:
+          if (saasPath.startsWith('contract/')) {
+            const isEdit = saasPath.includes('edit');
+            breadcrumbs.push(
+              { title: '超级运价', path: undefined },
+              { title: '合约管理', path: '/controltower/saas/contract-management' },
+              { title: isEdit ? '编辑合约' : '新增合约', path: undefined }
+            );
+          }
           break;
       }
       return breadcrumbs;

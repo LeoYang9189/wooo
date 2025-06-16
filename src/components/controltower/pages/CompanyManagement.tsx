@@ -219,18 +219,7 @@ const CompanyManagement: React.FC = () => {
     }
   };
 
-  const getScaleTag = (scale: string) => {
-    switch (scale) {
-      case '大型企业':
-        return <Tag color="blue">大型企业</Tag>;
-      case '中型企业':
-        return <Tag color="cyan">中型企业</Tag>;
-      case '小型企业':
-        return <Tag color="gray">小型企业</Tag>;
-      default:
-        return <Tag color="gray">未知</Tag>;
-    }
-  };
+
 
   const filteredData = companyData.filter(company => {
     const matchesKeyword = !searchKeyword || 
@@ -688,14 +677,6 @@ const CompanyManagement: React.FC = () => {
                 value: (
                   <Tag color="arcoblue">{currentCompany.industry}</Tag>
                 )
-              },
-              {
-                label: '企业规模',
-                value: getScaleTag(currentCompany.scale)
-              },
-              {
-                label: '企业状态',
-                value: getStatusTag(currentCompany.status)
               },
               {
                 label: '用户数量',

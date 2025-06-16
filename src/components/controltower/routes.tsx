@@ -25,6 +25,7 @@ import ZipcodeManagement from '../saas/ZipcodeManagement';
 import FbaWarehouseManagement from '../saas/FbaWarehouseManagement';
 import QuoteManagement from '../saas/QuoteManagement';
 import ContractManagement from '../saas/ContractManagement';
+import ContractForm from '../saas/ContractForm';
 import PricingRuleManagement from '../saas/PricingRuleManagement';
 import PricingRuleForm from '../saas/PricingRuleForm';
 import SurchargeManagement from '../saas/SurchargeManagement';
@@ -116,6 +117,16 @@ const ControlTowerRoutes: React.FC = () => {
       <Route path="/saas/contract-management" element={
         <SaasPageWrapper>
           <ContractManagement />
+        </SaasPageWrapper>
+      } />
+      <Route path="/saas/contract/add" element={
+        <SaasPageWrapper>
+          <ContractForm />
+        </SaasPageWrapper>
+      } />
+      <Route path="/saas/contract/edit/:id" element={
+        <SaasPageWrapper>
+          <ContractForm />
         </SaasPageWrapper>
       } />
       <Route path="/saas/pricing-rule-management" element={

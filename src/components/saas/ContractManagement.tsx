@@ -6,12 +6,12 @@ import {
   Space,
   Tag,
   Modal,
-  Form,
   Input,
   Select,
   Message,
   Typography,
-  Dropdown
+  Dropdown,
+  Tooltip
 } from '@arco-design/web-react';
 import {
   IconPlus,
@@ -19,6 +19,7 @@ import {
   IconRefresh,
   IconMore
 } from '@arco-design/web-react/icon';
+import { useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
 const { Title } = Typography;
@@ -27,10 +28,11 @@ const { Title } = Typography;
 interface Contract {
   id: string;
   shipCompanyNumber: string; // 船公司约号
-  applicableRoute: string; // 适用航线
+  applicableRoute: string[]; // 适用航线（改为数组支持多选）
   shipCompany: string; // 船公司
   contractNature: string; // 约价性质
   destinationName: string; // 适用品名
+  nacs: string[]; // NAC列表（新增字段）
   mqc: string; // MQC
   configuration: string; // 舱保
   effectiveDate: string; // 有效期
@@ -50,47 +52,18 @@ const shipCompanyOptions = [
   { value: 'EVERGREEN', label: 'EVERGREEN | 长荣海运' }
 ];
 
-// 约价性质选项
+// 约价性质选项（按截图更新）
 const contractNatureOptions = [
-  { value: '客户内约', label: '客户内约' },
-  { value: '供应商内约', label: '供应商内约' },
-  { value: 'AFC内约', label: 'AFC内约' }
+  { value: '自有约价', label: '自有约价' },
+  { value: '客户约价', label: '客户约价' },
+  { value: '海外代理约价', label: '海外代理约价' },
+  { value: '无约价', label: '无约价' },
+  { value: '同行约价', label: '同行约价' },
+  { value: 'AFC约价', label: 'AFC约价' },
+  { value: 'AFG约价', label: 'AFG约价' }
 ];
 
-// 适用航线选项
-const applicableRouteOptions = [
-  { value: '亚欧航线', label: '亚欧航线' },
-  { value: '跨太平洋航线', label: '跨太平洋航线' },
-  { value: '亚美航线', label: '亚美航线' },
-  { value: '地中海航线', label: '地中海航线' },
-  { value: '亚洲区域航线', label: '亚洲区域航线' },
-  { value: '中东航线', label: '中东航线' },
-  { value: '非洲航线', label: '非洲航线' },
-  { value: '欧美航线', label: '欧美航线' },
-  { value: '波罗的海航线', label: '波罗的海航线' },
-  { value: '南美航线', label: '南美航线' }
-];
-
-// 适用品名选项
-const destinationNameOptions = [
-  { value: '化工品', label: '化工品' },
-  { value: '普通货物', label: '普通货物' },
-  { value: '电子产品', label: '电子产品' },
-  { value: '冷冻食品', label: '冷冻食品' },
-  { value: '纺织品', label: '纺织品' },
-  { value: '机械设备', label: '机械设备' },
-  { value: '其他（电子产品）', label: '其他（电子产品）' },
-  { value: '其他（机械设备）', label: '其他（机械设备）' }
-];
-
-// 舱保选项
-const configurationOptions = [
-  { value: '有（20 TEU/月）', label: '有（20 TEU/月）' },
-  { value: '有（50 TEU/月）', label: '有（50 TEU/月）' },
-  { value: '有（100 TEU/月）', label: '有（100 TEU/月）' },
-  { value: '有（300 TEU/月）', label: '有（300 TEU/月）' },
-  { value: '无', label: '无' }
-];
+// 删除未使用的常量定义以修复构建错误
 
 // 搜索筛选参数
 interface SearchParams {
@@ -101,13 +74,12 @@ interface SearchParams {
 }
 
 const ContractManagement: React.FC = () => {
+  const navigate = useNavigate();
   const [contractData, setContractData] = useState<Contract[]>([]);
   const [filteredData, setFilteredData] = useState<Contract[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
-  const [editModalVisible, setEditModalVisible] = useState(false);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
   const [currentContract, setCurrentContract] = useState<Contract | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
   const [confirmModalVisible, setConfirmModalVisible] = useState(false);
   const [batchAction, setBatchAction] = useState<'enable' | 'disable'>('enable');
   const [singleConfirmModalVisible, setSingleConfirmModalVisible] = useState(false);
@@ -118,18 +90,18 @@ const ContractManagement: React.FC = () => {
     contractNature: '',
     status: ''
   });
-  const [editForm] = Form.useForm();
 
-  // 初始化示例数据
+  // 初始化示例数据（更新数据结构）
   useEffect(() => {
     const mockData = [
       {
         id: '1',
         shipCompanyNumber: '888888',
-        applicableRoute: '亚欧航线',
+        applicableRoute: ['亚欧航线'],
         shipCompany: 'MSC',
-        contractNature: '客户内约',
+        contractNature: '客户约价',
         destinationName: '化工品',
+        nacs: ['NAC001', 'NAC002', 'NAC003'],
         mqc: '140',
         configuration: '有（20 TEU/月）',
         effectiveDate: '2024-01-01 至 2024-12-31',
@@ -138,10 +110,11 @@ const ContractManagement: React.FC = () => {
       {
         id: '2',
         shipCompanyNumber: '20240510',
-        applicableRoute: '跨太平洋航线',
+        applicableRoute: ['跨太平洋航线', '亚美航线'],
         shipCompany: 'COSCO',
-        contractNature: '供应商内约',
-        destinationName: '普通货物',
+        contractNature: '海外代理约价',
+        destinationName: 'FAK',
+        nacs: ['NAC004'],
         mqc: '220',
         configuration: '无',
         effectiveDate: '2024-05-10 至 2025-05-09',
@@ -150,10 +123,11 @@ const ContractManagement: React.FC = () => {
       {
         id: '3',
         shipCompanyNumber: 'WT2383333',
-        applicableRoute: '亚美航线',
+        applicableRoute: ['亚美航线'],
         shipCompany: 'OOCL',
-        contractNature: 'AFC内约',
-        destinationName: '电子产品',
+        contractNature: 'AFC约价',
+        destinationName: '特种柜',
+        nacs: ['NAC005', 'NAC006'],
         mqc: '140',
         configuration: '有（20 TEU/月）',
         effectiveDate: '2024-04-01 至 2024-10-31',
@@ -162,10 +136,11 @@ const ContractManagement: React.FC = () => {
       {
         id: '4',
         shipCompanyNumber: '4',
-        applicableRoute: '地中海航线',
+        applicableRoute: ['地中海航线'],
         shipCompany: 'CMA',
-        contractNature: '客户内约',
-        destinationName: '冷冻食品',
+        contractNature: '自有约价',
+        destinationName: '冷冻货',
+        nacs: ['NAC007', 'NAC008', 'NAC009', 'NAC010'],
         mqc: '120',
         configuration: '无',
         effectiveDate: '2024-03-15 至 2024-09-14',
@@ -174,74 +149,15 @@ const ContractManagement: React.FC = () => {
       {
         id: '5',
         shipCompanyNumber: 'MJ1',
-        applicableRoute: '亚洲区域航线',
+        applicableRoute: ['亚洲区域航线'],
         shipCompany: 'ONE',
-        contractNature: '供应商内约',
+        contractNature: '同行约价',
         destinationName: '纺织品',
+        nacs: ['NAC011'],
         mqc: '240',
         configuration: '有（100 TEU/月）',
         effectiveDate: '2024-02-15 至 2024-08-14',
         status: 'enabled'
-      },
-      {
-        id: '6',
-        shipCompanyNumber: '1',
-        applicableRoute: '中东航线',
-        shipCompany: 'HAPAG',
-        contractNature: 'AFC内约',
-        destinationName: '机械设备',
-        mqc: '145',
-        configuration: '有（20 TEU/月）',
-        effectiveDate: '2024-06-01 至 2024-12-31',
-        status: 'enabled'
-      },
-      {
-        id: '7',
-        shipCompanyNumber: '100',
-        applicableRoute: '非洲航线',
-        shipCompany: 'ZIM',
-        contractNature: '客户内约',
-        destinationName: '其他（电子产品）',
-        mqc: '240',
-        configuration: '有（300 TEU/月）',
-        effectiveDate: '2024-01-15 至 2024-12-31',
-        status: 'disabled'
-      },
-      {
-        id: '8',
-        shipCompanyNumber: '001',
-        applicableRoute: '欧美航线',
-        shipCompany: 'MAERSK',
-        contractNature: '供应商内约',
-        destinationName: '其他（机械设备）',
-        mqc: '120',
-        configuration: '无',
-        effectiveDate: '2024-04-15 至 2025-04-14',
-        status: 'enabled'
-      },
-      {
-        id: '9',
-        shipCompanyNumber: '298822264',
-        applicableRoute: '波罗的海航线',
-        shipCompany: 'MAERSK',
-        contractNature: '供应商内约',
-        destinationName: '普通货物',
-        mqc: '340',
-        configuration: '有（300 TEU/月）',
-        effectiveDate: '2024-03-01 至 2024-08-31',
-        status: 'enabled'
-      },
-      {
-        id: '10',
-        shipCompanyNumber: '12345',
-        applicableRoute: '南美航线',
-        shipCompany: 'EVERGREEN',
-        contractNature: 'AFC内约',
-        destinationName: '化工品',
-        mqc: '140',
-        configuration: '无',
-        effectiveDate: '2024-05-01 至 2024-10-31',
-        status: 'disabled'
       }
     ];
 
@@ -256,7 +172,8 @@ const ContractManagement: React.FC = () => {
     if (searchParams.keyword) {
       filtered = filtered.filter(item =>
         item.shipCompanyNumber.toLowerCase().includes(searchParams.keyword.toLowerCase()) ||
-        item.destinationName.includes(searchParams.keyword)
+        item.destinationName.includes(searchParams.keyword) ||
+        item.nacs.some(nac => nac.toLowerCase().includes(searchParams.keyword.toLowerCase()))
       );
     }
 
@@ -312,6 +229,43 @@ const ContractManagement: React.FC = () => {
     }
   };
 
+  // NAC显示渲染函数
+  const renderNacs = (nacs: string[]) => {
+    if (!nacs || nacs.length === 0) {
+      return <span style={{ color: '#999' }}>-</span>;
+    }
+
+    if (nacs.length === 1) {
+      return <Tag color="blue">{nacs[0]}</Tag>;
+    }
+
+    const firstNac = nacs[0];
+    const remainingCount = nacs.length - 1;
+
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+        <Tag color="blue">{firstNac}</Tag>
+        <Tooltip
+          content={
+            <div style={{ maxWidth: '200px' }}>
+              <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>所有NAC：</div>
+              {nacs.map((nac, index) => (
+                <div key={index} style={{ padding: '2px 0' }}>
+                  <Tag color="blue" size="small">{nac}</Tag>
+                </div>
+              ))}
+            </div>
+          }
+          position="top"
+        >
+          <Tag color="gray" style={{ cursor: 'pointer' }}>
+            +{remainingCount}
+          </Tag>
+        </Tooltip>
+      </div>
+    );
+  };
+
   // 表格列定义
   const columns = [
     {
@@ -323,6 +277,38 @@ const ContractManagement: React.FC = () => {
       title: '适用航线',
       dataIndex: 'applicableRoute',
       width: 150,
+      render: (routes: string[]) => {
+        if (!routes || routes.length === 0) {
+          return <span style={{ color: '#999' }}>-</span>;
+        }
+        if (routes.length === 1) {
+          return <Tag color="blue">{routes[0]}</Tag>;
+        }
+        const firstRoute = routes[0];
+        const remainingCount = routes.length - 1;
+        return (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <Tag color="blue">{firstRoute}</Tag>
+            <Tooltip
+              content={
+                <div style={{ maxWidth: '200px' }}>
+                  <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>所有适用航线：</div>
+                  {routes.map((route, index) => (
+                    <div key={index} style={{ padding: '2px 0' }}>
+                      <Tag color="blue" size="small">{route}</Tag>
+                    </div>
+                  ))}
+                </div>
+              }
+              position="top"
+            >
+              <Tag color="gray" style={{ cursor: 'pointer' }}>
+                +{remainingCount}
+              </Tag>
+            </Tooltip>
+          </div>
+        );
+      }
     },
     {
       title: '船公司',
@@ -341,7 +327,13 @@ const ContractManagement: React.FC = () => {
     {
       title: '适用品名',
       dataIndex: 'destinationName',
+      width: 120,
+    },
+    {
+      title: 'NAC',
+      dataIndex: 'nacs',
       width: 150,
+      render: renderNacs
     },
     {
       title: 'MQC',
@@ -429,23 +421,15 @@ const ContractManagement: React.FC = () => {
     setDetailModalVisible(true);
   };
 
-  // 编辑处理
+  // 编辑处理（跳转到页面）
   const handleEdit = (record: Contract) => {
-    setCurrentContract(record);
-    setIsEditing(true);
-    editForm.setFieldsValue(record);
-    setEditModalVisible(true);
+    navigate(`/controltower/saas/contract/edit/${record.id}`);
   };
 
-  // 新增处理
+  // 新增处理（跳转到页面）
   const handleAdd = () => {
-    setCurrentContract(null);
-    setIsEditing(false);
-    editForm.resetFields();
-    setEditModalVisible(true);
+    navigate('/controltower/saas/contract/add');
   };
-
-
 
   // 批量启用
   const handleBatchEnable = () => {
@@ -472,38 +456,6 @@ const ContractManagement: React.FC = () => {
     Message.success(`已${batchAction === 'enable' ? '启用' : '禁用'} ${selectedRowKeys.length} 条记录`);
   };
 
-  // 保存合约
-  const handleSave = async () => {
-    try {
-      const values = await editForm.validate();
-      
-      if (isEditing && currentContract) {
-        // 编辑模式
-        const newData = contractData.map(item =>
-          item.id === currentContract.id ? { ...item, ...values, status: values.status as 'enabled' | 'disabled' } : item
-        );
-        setContractData(newData);
-        setFilteredData(newData);
-        Message.success('编辑成功');
-      } else {
-        // 新增模式
-        const newContract: Contract = {
-          id: Date.now().toString(),
-          ...values,
-          status: 'enabled' as 'enabled' | 'disabled'
-        };
-        const newData = [...contractData, newContract];
-        setContractData(newData);
-        setFilteredData(newData);
-        Message.success('新增成功');
-      }
-      
-      setEditModalVisible(false);
-    } catch (error) {
-      console.error('保存失败:', error);
-    }
-  };
-
   return (
     <Card>
       <div style={{ marginBottom: '20px' }}>
@@ -516,7 +468,7 @@ const ContractManagement: React.FC = () => {
           <div>
             <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>关键词搜索</div>
             <Input
-              placeholder="船公司约号、适用品名"
+              placeholder="船公司约号、适用品名、NAC"
               value={searchParams.keyword}
               onChange={(value) => setSearchParams(prev => ({ ...prev, keyword: value }))}
             />
@@ -609,7 +561,7 @@ const ContractManagement: React.FC = () => {
         columns={columns}
         data={filteredData}
         rowKey="id"
-        scroll={{ x: 1600 }}
+        scroll={{ x: 1800 }}
         rowSelection={{
           selectedRowKeys,
           onChange: (selectedRowKeys) => {
@@ -696,7 +648,7 @@ const ContractManagement: React.FC = () => {
               </div>
               <div>
                 <div style={{ marginBottom: '8px', fontWeight: 'bold' }}>适用航线</div>
-                <div>{currentContract.applicableRoute}</div>
+                <div>{currentContract.applicableRoute.join(', ')}</div>
               </div>
               <div>
                 <div style={{ marginBottom: '8px', fontWeight: 'bold' }}>船公司</div>
@@ -709,6 +661,10 @@ const ContractManagement: React.FC = () => {
               <div>
                 <div style={{ marginBottom: '8px', fontWeight: 'bold' }}>适用品名</div>
                 <div>{currentContract.destinationName}</div>
+              </div>
+              <div>
+                <div style={{ marginBottom: '8px', fontWeight: 'bold' }}>NAC</div>
+                <div>{renderNacs(currentContract.nacs)}</div>
               </div>
               <div>
                 <div style={{ marginBottom: '8px', fontWeight: 'bold' }}>MQC</div>
@@ -733,114 +689,6 @@ const ContractManagement: React.FC = () => {
             </div>
           </div>
         )}
-      </Modal>
-
-      {/* 编辑/新增弹窗 */}
-      <Modal
-        title={isEditing ? '编辑合约' : '新增合约'}
-        visible={editModalVisible}
-        onOk={handleSave}
-        onCancel={() => setEditModalVisible(false)}
-        autoFocus={false}
-        focusLock={true}
-        style={{ width: '600px' }}
-      >
-        <Form form={editForm} layout="vertical">
-          <Form.Item
-            label="船公司约号"
-            field="shipCompanyNumber"
-            rules={[{ required: true, message: '请输入船公司约号' }]}
-          >
-            <Input placeholder="请输入船公司约号" />
-          </Form.Item>
-          
-          <Form.Item
-            label="适用航线"
-            field="applicableRoute"
-            rules={[{ required: true, message: '请选择适用航线' }]}
-          >
-            <Select placeholder="请选择适用航线">
-              {applicableRouteOptions.map(option => (
-                <Option key={option.value} value={option.value}>{option.label}</Option>
-              ))}
-            </Select>
-          </Form.Item>
-          
-          <Form.Item
-            label="船公司"
-            field="shipCompany"
-            rules={[{ required: true, message: '请选择船公司' }]}
-          >
-            <Select placeholder="请选择船公司">
-              {shipCompanyOptions.map(option => (
-                <Option key={option.value} value={option.value}>{option.label}</Option>
-              ))}
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-            label="约价性质"
-            field="contractNature"
-            rules={[{ required: true, message: '请选择约价性质' }]}
-          >
-            <Select placeholder="请选择约价性质">
-              {contractNatureOptions.map(option => (
-                <Option key={option.value} value={option.value}>{option.label}</Option>
-              ))}
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-            label="适用品名"
-            field="destinationName"
-            rules={[{ required: true, message: '请选择适用品名' }]}
-          >
-            <Select placeholder="请选择适用品名">
-              {destinationNameOptions.map(option => (
-                <Option key={option.value} value={option.value}>{option.label}</Option>
-              ))}
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-            label="MQC"
-            field="mqc"
-            rules={[{ required: true, message: '请输入MQC' }]}
-          >
-            <Input placeholder="请输入MQC" />
-          </Form.Item>
-
-          <Form.Item
-            label="舱保"
-            field="configuration"
-            rules={[{ required: true, message: '请选择舱保' }]}
-          >
-            <Select placeholder="请选择舱保">
-              {configurationOptions.map(option => (
-                <Option key={option.value} value={option.value}>{option.label}</Option>
-              ))}
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-            label="有效期"
-            field="effectiveDate"
-            rules={[{ required: true, message: '请输入有效期' }]}
-          >
-            <Input placeholder="请输入有效期" />
-          </Form.Item>
-
-          <Form.Item
-            label="状态"
-            field="status"
-            rules={[{ required: true, message: '请选择状态' }]}
-          >
-            <Select placeholder="请选择状态">
-              <Option value="enabled">启用</Option>
-              <Option value="disabled">禁用</Option>
-            </Select>
-          </Form.Item>
-        </Form>
       </Modal>
     </Card>
   );

@@ -33,8 +33,7 @@ import {
   IconUpload,
   IconEye,
   IconFile,
-  IconImport,
-  IconSync
+
 } from '@arco-design/web-react/icon';
 
 const { Title, Text } = Typography;
@@ -235,53 +234,21 @@ interface Coordinator {
 }
 
 const CompanyForm: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
   const location = useLocation();
-  const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState('basic');
-  const [form] = Form.useForm();
-  const [contactForm] = Form.useForm();
-  const [financialForm] = Form.useForm();
-  const [setAdminModalVisible, setSetAdminModalVisible] = useState(false);
-  const [targetUser, setTargetUser] = useState<RelatedUser | null>(null);
-  const [financialEditMode, setFinancialEditMode] = useState(false);
-  const [businessLicenseModalVisible, setBusinessLicenseModalVisible] = useState(false);
-  const [businessLicenseUploadVisible, setBusinessLicenseUploadVisible] = useState(false);
-
-  
-  // 第三方同步相关状态
-  const [syncModalVisible, setSyncModalVisible] = useState(false);
-  const [syncForm] = Form.useForm();
-  const [syncing, setSyncing] = useState(false);
-  
-  // 用户详情弹窗相关状态
-  const [userDetailModalVisible, setUserDetailModalVisible] = useState(false);
-  const [currentViewingUser, setCurrentViewingUser] = useState<RelatedUser | null>(null);
-  const [financialData, setFinancialData] = useState<FinancialInfo>({
-    invoiceCompanyName: '',
-    invoiceTaxNumber: '',
-    invoiceAddress: '',
-    invoicePhone: '',
-    invoiceBankName: '',
-    invoiceBankAccount: '',
-    cnyBankName: '',
-    cnyBankAccount: '',
-    cnyAccountName: '',
-    cnySwiftCode: '',
-    cnyBankAddress: '',
-    usdBankName: '',
-    usdBankAccount: '',
-    usdAccountName: '',
-    usdSwiftCode: '',
-    usdBankAddress: '',
-    reconciliationContactId: ''
-  });
-  
   const isEdit = Boolean(id && id !== 'add');
   const pageTitle = isEdit ? '编辑企业' : '添加企业';
 
-  // 模拟企业数据
+  const [form] = Form.useForm();
+  const [contactForm] = Form.useForm();
+  const [financialForm] = Form.useForm();
+  const [coordinatorForm] = Form.useForm();
+  
+  const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('basic');
+  
+  // 基本信息状态
   const [, setCompanyData] = useState<CompanyFormData>({
     name: '',
     englishName: '',
@@ -295,12 +262,12 @@ const CompanyForm: React.FC = () => {
     detailAddress: ''
   });
 
-  // 联系人数据
+  // 联系人状态
   const [contacts, setContacts] = useState<ContactPerson[]>([]);
   const [contactModalVisible, setContactModalVisible] = useState(false);
   const [editingContact, setEditingContact] = useState<ContactPerson | null>(null);
 
-  // 模拟关联用户数据
+  // 关联用户状态
   const [relatedUsers, setRelatedUsers] = useState<RelatedUser[]>([
     {
       id: 'A3K9M2X7N8Q5',
@@ -332,8 +299,47 @@ const CompanyForm: React.FC = () => {
     }
   ]);
 
-  // 模拟第三方系统数据
-  const [thirdPartySystems] = useState<ThirdPartySystem[]>([
+  // 财务信息状态
+  const [financialInfo, setFinancialInfo] = useState<FinancialInfo>({
+    invoiceCompanyName: '',
+    invoiceTaxNumber: '',
+    invoiceAddress: '',
+    invoicePhone: '',
+    invoiceBankName: '',
+    invoiceBankAccount: '',
+    cnyBankName: '',
+    cnyBankAccount: '',
+    cnyAccountName: '',
+    cnySwiftCode: '',
+    cnyBankAddress: '',
+    usdBankName: '',
+    usdBankAccount: '',
+    usdAccountName: '',
+    usdSwiftCode: '',
+    usdBankAddress: '',
+    reconciliationContactId: ''
+  });
+  const [isFinancialEditing, setIsFinancialEditing] = useState(false);
+
+  // 对接人状态
+  const [coordinators, setCoordinators] = useState<Coordinator[]>([]);
+  const [coordinatorModalVisible, setCoordinatorModalVisible] = useState(false);
+  const [editingCoordinator, setEditingCoordinator] = useState<Coordinator | null>(null);
+
+  // 用户管理状态
+  const [adminModalVisible, setAdminModalVisible] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<RelatedUser | null>(null);
+  const [addUserModalVisible, setAddUserModalVisible] = useState(false);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [userDetailModalVisible, setUserDetailModalVisible] = useState(false);
+  const [currentViewingUser, setCurrentViewingUser] = useState<RelatedUser | null>(null);
+
+  // 营业执照状态
+  const [businessLicenseModalVisible, setBusinessLicenseModalVisible] = useState(false);
+  const [businessLicenseUploadVisible, setBusinessLicenseUploadVisible] = useState(false);
+
+  // 第三方系统数据
+  const [] = useState<ThirdPartySystem[]>([
     {
       id: 'sys-1',
       systemName: 'CargoWare',
@@ -376,6 +382,7 @@ const CompanyForm: React.FC = () => {
     { id: '4', name: '赵四', role: '商务', phone: '13800138004', email: 'zhaosi@company.com' },
     { id: '5', name: '钱五', role: '操作', phone: '13800138005', email: 'qianwu@company.com' },
   ];
+  
   const coordinatorTypes = [
     { value: 'sales', label: '专属销售' },
     { value: 'service', label: '专属客服' },
@@ -383,25 +390,24 @@ const CompanyForm: React.FC = () => {
     { value: 'biz', label: '专属商务' },
     { value: 'ops', label: '专属操作' },
   ];
-  const [coordinators, setCoordinators] = useState<Coordinator[]>([]);
-  const [coordinatorModalVisible, setCoordinatorModalVisible] = useState(false);
-  const [editingCoordinator, setEditingCoordinator] = useState<Coordinator | null>(null);
-  const [coordinatorForm] = Form.useForm();
 
   const handleAddCoordinator = () => {
     setEditingCoordinator(null);
     coordinatorForm.resetFields();
     setCoordinatorModalVisible(true);
   };
+  
   const handleEditCoordinator = (item: Coordinator) => {
     setEditingCoordinator(item);
     coordinatorForm.setFieldsValue(item);
     setCoordinatorModalVisible(true);
   };
+  
   const handleDeleteCoordinator = (id: string) => {
     setCoordinators(prev => prev.filter(c => c.id !== id));
     Message.success('已删除对接人');
   };
+  
   const handleCoordinatorSubmit = () => {
     coordinatorForm.validate().then(values => {
       if (editingCoordinator) {
@@ -409,7 +415,13 @@ const CompanyForm: React.FC = () => {
         Message.success('对接人信息已更新');
       } else {
         const staff = mockStaffList.find(s => s.id === values.staffId);
-        setCoordinators(prev => [...prev, { ...values, id: Date.now().toString(), name: staff?.name, phone: staff?.phone, email: staff?.email }]);
+        setCoordinators(prev => [...prev, { 
+          ...values, 
+          id: Date.now().toString(), 
+          name: staff?.name || '', 
+          phone: staff?.phone || '', 
+          email: staff?.email || '' 
+        }]);
         Message.success('对接人已添加');
       }
       setCoordinatorModalVisible(false);
@@ -515,7 +527,7 @@ const CompanyForm: React.FC = () => {
           usdBankAddress: '北京市朝阳区建国路88号SOHO现代城',
           reconciliationContactId: '1'
         };
-        setFinancialData(mockFinancial);
+        setFinancialInfo(mockFinancial);
         financialForm.setFieldsValue(mockFinancial);
 
         setLoading(false);
@@ -603,12 +615,12 @@ const CompanyForm: React.FC = () => {
 
   const handleFinancialSave = () => {
     financialForm.validate().then((values) => {
-      setFinancialData(values);
+      setFinancialInfo(values);
       // 更新对账联系人标记
       if (values.reconciliationContactId) {
         updateReconciliationContact(values.reconciliationContactId);
       }
-      setFinancialEditMode(false);
+      setIsFinancialEditing(false);
       Message.success('财务信息已保存');
     }).catch((error) => {
       console.error('财务信息表单验证失败:', error);
@@ -616,18 +628,18 @@ const CompanyForm: React.FC = () => {
   };
 
   const handleFinancialEdit = () => {
-    setFinancialEditMode(true);
-    financialForm.setFieldsValue(financialData);
+    setIsFinancialEditing(true);
+    financialForm.setFieldsValue(financialInfo);
   };
 
   const handleFinancialCancel = () => {
-    setFinancialEditMode(false);
+    setIsFinancialEditing(false);
     financialForm.resetFields();
   };
 
   const updateReconciliationContact = (contactId: string) => {
     // 更新财务数据中的对账联系人
-    setFinancialData(prev => ({ ...prev, reconciliationContactId: contactId }));
+    setFinancialInfo(prev => ({ ...prev, reconciliationContactId: contactId }));
     
     // 更新联系人的对账联系人标记
     setContacts(prev => prev.map(contact => ({
@@ -685,22 +697,22 @@ const CompanyForm: React.FC = () => {
 
 
   const handleSetAdmin = (user: RelatedUser) => {
-    setTargetUser(user);
-    setSetAdminModalVisible(true);
+    setSelectedUser(user);
+    setAdminModalVisible(true);
   };
 
   const handleConfirmSetAdmin = () => {
-    if (targetUser) {
+    if (selectedUser) {
       // 更新用户角色：将目标用户设为超级管理员，其他超级管理员改为普通用户
       setRelatedUsers(prev => prev.map(user => ({
         ...user,
-        role: user.id === targetUser.id ? 'super_admin' : 
+        role: user.id === selectedUser.id ? 'super_admin' : 
               (user.role === 'super_admin' ? 'user' : user.role)
       })));
       
-      Message.success(`${targetUser.username} 已设置为超级管理员`);
-      setSetAdminModalVisible(false);
-      setTargetUser(null);
+      Message.success(`${selectedUser.username} 已设置为超级管理员`);
+      setAdminModalVisible(false);
+      setSelectedUser(null);
     }
   };
 
@@ -722,29 +734,7 @@ const CompanyForm: React.FC = () => {
     });
   };
 
-  // 处理第三方同步
-  const handleThirdPartySync = () => {
-    setSyncModalVisible(true);
-    syncForm.resetFields();
-  };
 
-  const handleSyncSubmit = () => {
-    syncForm.validate().then((values) => {
-      const selectedSystem = thirdPartySystems.find(sys => sys.id === values.systemId);
-      setSyncing(true);
-      
-      // 模拟同步过程，5秒后完成
-      setTimeout(() => {
-        setSyncing(false);
-        const randomCount = Math.floor(Math.random() * 50) + 10; // 随机生成10-59条数据
-        Message.success(`从 ${selectedSystem?.systemName} 同步完成，同步成功 ${randomCount} 条用户数据`);
-        setSyncModalVisible(false);
-        syncForm.resetFields();
-      }, 5000);
-    }).catch((error) => {
-      console.error('表单验证失败:', error);
-    });
-  };
 
   const getRoleTag = (role: string) => {
     switch (role) {
@@ -770,19 +760,7 @@ const CompanyForm: React.FC = () => {
     }
   };
 
-  const getSystemTypeTag = (type: string) => {
-    const typeMap = {
-      'ERP': { color: 'blue', text: 'ERP系统' },
-      'WMS': { color: 'green', text: 'WMS系统' },
-      'TMS': { color: 'orange', text: 'TMS系统' },
-      'OMS': { color: 'purple', text: 'OMS系统' },
-      'CRM': { color: 'red', text: 'CRM系统' },
-      'FMS': { color: 'cyan', text: 'FMS系统' },
-      'OTHER': { color: 'gray', text: '其他系统' }
-    };
-    const config = typeMap[type as keyof typeof typeMap] || typeMap.OTHER;
-    return <Tag color={config.color}>{config.text}</Tag>;
-  };
+
 
   // 基本信息Tab内容
   const BasicInfoTab = () => (
@@ -1302,17 +1280,10 @@ const CompanyForm: React.FC = () => {
         </Title>
         <Space>
           <Button 
-            icon={<IconImport />}
-            onClick={() => Message.info('批量导入功能开发中')}
+            icon={<IconPlus />}
+            onClick={handleAddUser}
           >
-            批量导入
-          </Button>
-          <Button 
-            type="primary"
-            icon={<IconSync />}
-            onClick={handleThirdPartySync}
-          >
-            第三方同步
+            增加用户
           </Button>
         </Space>
       </div>
@@ -1441,129 +1412,129 @@ const CompanyForm: React.FC = () => {
         scroll={{ x: 1130 }}
       />
 
-      {/* 第三方同步弹窗 */}
+            {/* 新增用户弹窗 */}
       <Modal
-        title="第三方用户同步"
-        visible={syncModalVisible}
+        title="新增用户"
+        visible={addUserModalVisible}
         onCancel={() => {
-          if (!syncing) {
-            setSyncModalVisible(false);
-            syncForm.resetFields();
-          }
+          setAddUserModalVisible(false);
+          setSelectedUsers([]);
         }}
-        onOk={handleSyncSubmit}
-        okText="开始同步"
-        cancelText="取消"
-        confirmLoading={syncing}
-        closable={!syncing}
-        maskClosable={!syncing}
-        style={{ width: '500px' }}
-      >
-        {syncing ? (
-          <div style={{ 
-            textAlign: 'center', 
-            padding: '40px 20px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '16px'
+        footer={[
+          <Button key="cancel" onClick={() => {
+            setAddUserModalVisible(false);
+            setSelectedUsers([]);
           }}>
-            <div style={{ 
-              width: '40px', 
-              height: '40px', 
-              border: '3px solid #E5E6EB',
-              borderTop: '3px solid #165DFF',
-              borderRadius: '50%',
-              animation: 'spin 1s linear infinite'
-            }} />
-            <Text style={{ fontSize: '16px', color: '#165DFF' }}>
-              正在同步用户数据，请稍候...
+            取消
+          </Button>,
+          <Button key="confirm" type="primary" onClick={handleConfirmAddUser}>
+            确定添加 ({selectedUsers.length})
+          </Button>
+        ]}
+        style={{ width: '800px' }}
+      >
+        <div style={{ marginBottom: '16px' }}>
+          <Text type="secondary">请从下列用户中选择要添加到企业的用户：</Text>
+        </div>
+        
+        <Table
+          data={availableUsers}
+          rowSelection={{
+            type: 'checkbox',
+            selectedRowKeys: selectedUsers,
+            onChange: (selectedRowKeys) => {
+              setSelectedUsers(selectedRowKeys as string[]);
+            }
+          }}
+          columns={[
+            {
+              title: '用户信息',
+              dataIndex: 'username',
+              key: 'username',
+              width: 300,
+              render: (_, record) => (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <Avatar size={32} style={{ backgroundColor: '#165DFF' }}>
+                    <IconUser />
+                  </Avatar>
+                  <div>
+                    <div style={{ fontWeight: 'bold', fontSize: '14px' }}>
+                      {record.username}
+                    </div>
+                    <Text type="secondary" style={{ fontSize: '12px', fontFamily: 'monospace' }}>
+                      ID: {record.id}
+                    </Text>
+                  </div>
+                </div>
+              )
+            },
+            {
+              title: '联系方式',
+              dataIndex: 'contact',
+              key: 'contact',
+              width: 200,
+              render: (_, record) => (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <IconPhone style={{ fontSize: '12px', color: '#86909C' }} />
+                    <Text style={{ fontSize: '12px' }}>{record.phone}</Text>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <IconEmail style={{ fontSize: '12px', color: '#86909C' }} />
+                    <Text style={{ fontSize: '12px' }}>{record.email}</Text>
+                  </div>
+                </div>
+              )
+            },
+            {
+              title: '状态',
+              dataIndex: 'status',
+              key: 'status',
+              width: 90,
+              render: (status) => getStatusTag(status)
+            },
+            {
+              title: '最后登录',
+              dataIndex: 'lastLogin',
+              key: 'lastLogin',
+              width: 140,
+              render: (lastLogin) => (
+                <Text style={{ fontSize: '12px' }}>
+                  {lastLogin}
+                </Text>
+              )
+            }
+          ]}
+          pagination={false}
+          border
+          scroll={{ x: 730 }}
+          style={{ maxHeight: '400px', overflow: 'auto' }}
+        />
+        
+        {selectedUsers.length > 0 && (
+          <div style={{ 
+            marginTop: '16px', 
+            padding: '12px', 
+            backgroundColor: '#F8F9FF', 
+            border: '1px solid #E5E6EB',
+            borderRadius: '6px'
+          }}>
+            <Text style={{ color: '#165DFF', fontWeight: 'bold' }}>
+              已选择 {selectedUsers.length} 个用户
             </Text>
-            <Text type="secondary" style={{ fontSize: '14px' }}>
-              预计需要5秒钟完成同步
-            </Text>
-            <style>
-              {`
-                @keyframes spin {
-                  0% { transform: rotate(0deg); }
-                  100% { transform: rotate(360deg); }
-                }
-              `}
-            </style>
-          </div>
-        ) : (
-          <Form
-            form={syncForm}
-            layout="vertical"
-            autoComplete="off"
-          >
-                         <Form.Item
-               label="选择第三方系统"
-               field="systemId"
-               rules={[{ required: true, message: '请选择要同步的第三方系统' }]}
-             >
-               <Select 
-                 placeholder="请选择已授权的第三方系统"
-                 dropdownMenuStyle={{ 
-                   maxHeight: '300px'
-                 }}
-                 showSearch={false}
-                 size="large"
-               >
-                 {thirdPartySystems
-                   .filter(system => system.status === 'active')
-                   .map(system => (
-                     <Option key={system.id} value={system.id}>
-                       <div style={{ 
-                         display: 'flex', 
-                         alignItems: 'center', 
-                         gap: '12px',
-                         padding: '8px 4px',
-                         minHeight: '56px'
-                       }}>
-                         <Avatar size={32} style={{ backgroundColor: '#165DFF' }}>
-                           <IconFile />
-                         </Avatar>
-                         <div style={{ flex: 1 }}>
-                           <div style={{ 
-                             fontWeight: 'bold', 
-                             fontSize: '14px',
-                             marginBottom: '4px',
-                             color: '#1D2129'
-                           }}>
-                             {system.systemName}
-                           </div>
-                           <div style={{ 
-                             display: 'flex', 
-                             alignItems: 'center', 
-                             gap: '8px'
-                           }}>
-                             {getSystemTypeTag(system.systemType)}
-                             <Text type="secondary" style={{ fontSize: '12px' }}>
-                               ID: {system.systemId}
-                             </Text>
-                           </div>
-                         </div>
-                       </div>
-                     </Option>
-                   ))}
-               </Select>
-             </Form.Item>
-            
-            <div style={{ 
-              padding: '12px', 
-              backgroundColor: '#F7F8FA', 
-              border: '1px solid #E5E6EB',
-              borderRadius: '6px',
-              marginTop: '16px'
-            }}>
-              <Text style={{ fontSize: '13px', color: '#86909C' }}>
-                💡 同步说明：系统将从选定的第三方系统中获取用户数据，并自动匹配到企业关联用户列表中。同步过程可能需要几秒钟时间。
-              </Text>
+            <div style={{ marginTop: '8px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+              {selectedUsers.map(userId => {
+                const user = availableUsers.find(u => u.id === userId);
+                return user ? (
+                  <Tag key={userId} color="blue" style={{ margin: 0 }}>
+                    {user.id} | {user.username} | {user.phone} | {user.email}
+                  </Tag>
+                ) : null;
+              })}
             </div>
-          </Form>
-                 )}
-       </Modal>
+          </div>
+        )}
+      </Modal>
 
        {/* 用户详情弹窗 */}
        <Modal
@@ -1618,22 +1589,22 @@ const CompanyForm: React.FC = () => {
 
                <Text type="secondary">第三方用户ID：</Text>
                <div>
-                 {currentViewingUser.thirdPartyUserIds && Object.keys(currentViewingUser.thirdPartyUserIds).length > 0 ? (
-                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                     {Object.entries(currentViewingUser.thirdPartyUserIds).map(([systemName, userId]) => (
-                       <div key={systemName} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                         <Tag color="blue" style={{ minWidth: '80px', textAlign: 'center' }}>
-                           {systemName}
-                         </Tag>
-                         <Text copyable={{ text: userId }} style={{ fontFamily: 'monospace' }}>
-                           {userId}
-                         </Text>
-                       </div>
-                     ))}
-                   </div>
-                 ) : (
-                   <Text type="secondary">暂无关联</Text>
-                 )}
+                                   {currentViewingUser.thirdPartyUserIds && Object.keys(currentViewingUser.thirdPartyUserIds).length > 0 ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {Object.entries(currentViewingUser.thirdPartyUserIds).map(([systemName, userId]) => (
+                        <div key={systemName} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <Tag color="blue" style={{ minWidth: '80px', textAlign: 'center' }}>
+                            {systemName}
+                          </Tag>
+                          <Text copyable={{ text: String(userId) }} style={{ fontFamily: 'monospace' }}>
+                            {String(userId)}
+                          </Text>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <Text type="secondary">暂无关联</Text>
+                  )}
                </div>
              </div>
            </div>
@@ -1644,9 +1615,9 @@ const CompanyForm: React.FC = () => {
 
   // 财务信息Tab内容
   const FinancialInfoTab = () => {
-    const reconciliationContact = contacts.find(c => c.id === financialData.reconciliationContactId);
+    const reconciliationContact = contacts.find(c => c.id === financialInfo.reconciliationContactId);
     
-    if (!financialEditMode) {
+    if (!isFinancialEditing) {
       // 非编辑态 - 显示模式
       return (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
@@ -1654,7 +1625,7 @@ const CompanyForm: React.FC = () => {
           <Card title="开票信息" 
                 extra={
                   <Button type="text" size="small" onClick={() => copyToClipboard(
-                    `公司名称：${financialData.invoiceCompanyName}\n税号：${financialData.invoiceTaxNumber}\n地址：${financialData.invoiceAddress}\n电话：${financialData.invoicePhone}\n开户行：${financialData.invoiceBankName}\n账号：${financialData.invoiceBankAccount}`,
+                    `公司名称：${financialInfo.invoiceCompanyName}\n税号：${financialInfo.invoiceTaxNumber}\n地址：${financialInfo.invoiceAddress}\n电话：${financialInfo.invoicePhone}\n开户行：${financialInfo.invoiceBankName}\n账号：${financialInfo.invoiceBankAccount}`,
                     "开票信息"
                   )}>
                     复制全部
@@ -1664,28 +1635,28 @@ const CompanyForm: React.FC = () => {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Text type="secondary">公司名称：</Text>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Text copyable={{ text: financialData.invoiceCompanyName }}>{financialData.invoiceCompanyName || '-'}</Text>
+                  <Text copyable={{ text: financialInfo.invoiceCompanyName }}>{financialInfo.invoiceCompanyName || '-'}</Text>
                 </div>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Text type="secondary">税务登记号：</Text>
-                <Text copyable={{ text: financialData.invoiceTaxNumber }}>{financialData.invoiceTaxNumber || '-'}</Text>
+                <Text copyable={{ text: financialInfo.invoiceTaxNumber }}>{financialInfo.invoiceTaxNumber || '-'}</Text>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Text type="secondary">开票地址：</Text>
-                <Text copyable={{ text: financialData.invoiceAddress }}>{financialData.invoiceAddress || '-'}</Text>
+                <Text copyable={{ text: financialInfo.invoiceAddress }}>{financialInfo.invoiceAddress || '-'}</Text>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Text type="secondary">开票电话：</Text>
-                <Text copyable={{ text: financialData.invoicePhone }}>{financialData.invoicePhone || '-'}</Text>
+                <Text copyable={{ text: financialInfo.invoicePhone }}>{financialInfo.invoicePhone || '-'}</Text>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Text type="secondary">开户银行：</Text>
-                <Text copyable={{ text: financialData.invoiceBankName }}>{financialData.invoiceBankName || '-'}</Text>
+                <Text copyable={{ text: financialInfo.invoiceBankName }}>{financialInfo.invoiceBankName || '-'}</Text>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Text type="secondary">银行账号：</Text>
-                <Text copyable={{ text: financialData.invoiceBankAccount }}>{financialData.invoiceBankAccount || '-'}</Text>
+                <Text copyable={{ text: financialInfo.invoiceBankAccount }}>{financialInfo.invoiceBankAccount || '-'}</Text>
               </div>
             </div>
           </Card>
@@ -1694,7 +1665,7 @@ const CompanyForm: React.FC = () => {
           <Card title="人民币账户" 
                 extra={
                   <Button type="text" size="small" onClick={() => copyToClipboard(
-                    `银行名称：${financialData.cnyBankName}\n账号：${financialData.cnyBankAccount}\n账户名：${financialData.cnyAccountName}\nSWIFT：${financialData.cnySwiftCode}\n银行地址：${financialData.cnyBankAddress}`,
+                    `银行名称：${financialInfo.cnyBankName}\n账号：${financialInfo.cnyBankAccount}\n账户名：${financialInfo.cnyAccountName}\nSWIFT：${financialInfo.cnySwiftCode}\n银行地址：${financialInfo.cnyBankAddress}`,
                     "人民币账户信息"
                   )}>
                     复制全部
@@ -1703,23 +1674,23 @@ const CompanyForm: React.FC = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Text type="secondary">银行名称：</Text>
-                <Text copyable={{ text: financialData.cnyBankName }}>{financialData.cnyBankName || '-'}</Text>
+                <Text copyable={{ text: financialInfo.cnyBankName }}>{financialInfo.cnyBankName || '-'}</Text>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Text type="secondary">银行账号：</Text>
-                <Text copyable={{ text: financialData.cnyBankAccount }}>{financialData.cnyBankAccount || '-'}</Text>
+                <Text copyable={{ text: financialInfo.cnyBankAccount }}>{financialInfo.cnyBankAccount || '-'}</Text>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Text type="secondary">账户名称：</Text>
-                <Text copyable={{ text: financialData.cnyAccountName }}>{financialData.cnyAccountName || '-'}</Text>
+                <Text copyable={{ text: financialInfo.cnyAccountName }}>{financialInfo.cnyAccountName || '-'}</Text>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Text type="secondary">SWIFT代码：</Text>
-                <Text copyable={{ text: financialData.cnySwiftCode }}>{financialData.cnySwiftCode || '-'}</Text>
+                <Text copyable={{ text: financialInfo.cnySwiftCode }}>{financialInfo.cnySwiftCode || '-'}</Text>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Text type="secondary">银行地址：</Text>
-                <Text copyable={{ text: financialData.cnyBankAddress }}>{financialData.cnyBankAddress || '-'}</Text>
+                <Text copyable={{ text: financialInfo.cnyBankAddress }}>{financialInfo.cnyBankAddress || '-'}</Text>
               </div>
             </div>
           </Card>
@@ -1728,7 +1699,7 @@ const CompanyForm: React.FC = () => {
           <Card title="美金账户" 
                 extra={
                   <Button type="text" size="small" onClick={() => copyToClipboard(
-                    `银行名称：${financialData.usdBankName}\n账号：${financialData.usdBankAccount}\n账户名：${financialData.usdAccountName}\nSWIFT：${financialData.usdSwiftCode}\n银行地址：${financialData.usdBankAddress}`,
+                    `银行名称：${financialInfo.usdBankName}\n账号：${financialInfo.usdBankAccount}\n账户名：${financialInfo.usdAccountName}\nSWIFT：${financialInfo.usdSwiftCode}\n银行地址：${financialInfo.usdBankAddress}`,
                     "美金账户信息"
                   )}>
                     复制全部
@@ -1737,23 +1708,23 @@ const CompanyForm: React.FC = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Text type="secondary">银行名称：</Text>
-                <Text copyable={{ text: financialData.usdBankName }}>{financialData.usdBankName || '-'}</Text>
+                <Text copyable={{ text: financialInfo.usdBankName }}>{financialInfo.usdBankName || '-'}</Text>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Text type="secondary">银行账号：</Text>
-                <Text copyable={{ text: financialData.usdBankAccount }}>{financialData.usdBankAccount || '-'}</Text>
+                <Text copyable={{ text: financialInfo.usdBankAccount }}>{financialInfo.usdBankAccount || '-'}</Text>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Text type="secondary">账户名称：</Text>
-                <Text copyable={{ text: financialData.usdAccountName }}>{financialData.usdAccountName || '-'}</Text>
+                <Text copyable={{ text: financialInfo.usdAccountName }}>{financialInfo.usdAccountName || '-'}</Text>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Text type="secondary">SWIFT代码：</Text>
-                <Text copyable={{ text: financialData.usdSwiftCode }}>{financialData.usdSwiftCode || '-'}</Text>
+                <Text copyable={{ text: financialInfo.usdSwiftCode }}>{financialInfo.usdSwiftCode || '-'}</Text>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Text type="secondary">银行地址：</Text>
-                <Text copyable={{ text: financialData.usdBankAddress }}>{financialData.usdBankAddress || '-'}</Text>
+                <Text copyable={{ text: financialInfo.usdBankAddress }}>{financialInfo.usdBankAddress || '-'}</Text>
               </div>
             </div>
           </Card>
@@ -2074,6 +2045,88 @@ const CompanyForm: React.FC = () => {
     </Card>
   );
 
+  // 模拟可选择的用户数据（排除已关联的用户）
+  const availableUsers: RelatedUser[] = [
+    {
+      id: 'USR_001',
+      username: '张三',
+      email: 'zhangsan@example.com',
+      phone: '13800138001',
+      role: 'user' as const,
+      status: 'active' as const,
+      lastLogin: '2024-01-15 09:30:00',
+      createTime: '2024-01-01 10:00:00'
+    },
+    {
+      id: 'USR_002',
+      username: '李四',
+      email: 'lisi@example.com',
+      phone: '13800138002',
+      role: 'user' as const,
+      status: 'active' as const,
+      lastLogin: '2024-01-14 16:45:00',
+      createTime: '2024-01-02 11:00:00'
+    },
+    {
+      id: 'USR_003',
+      username: '王五',
+      email: 'wangwu@example.com',
+      phone: '13800138003',
+      role: 'user' as const,
+      status: 'active' as const,
+      lastLogin: '2024-01-13 14:20:00',
+      createTime: '2024-01-03 09:30:00'
+    },
+    {
+      id: 'USR_004',
+      username: '赵六',
+      email: 'zhaoliu@example.com',
+      phone: '13800138004',
+      role: 'user' as const,
+      status: 'inactive' as const,
+      lastLogin: '2024-01-10 11:15:00',
+      createTime: '2024-01-04 14:00:00'
+    },
+    {
+      id: 'USR_005',
+      username: 'John Smith',
+      email: 'john.smith@example.com',
+      phone: '13800138005',
+      role: 'user' as const,
+      status: 'active' as const,
+      lastLogin: '2024-01-12 10:30:00',
+      createTime: '2024-01-05 15:30:00'
+    },
+    {
+      id: 'USR_006',
+      username: '陈七',
+      email: 'chenqi@example.com',
+      phone: '13800138006',
+      role: 'user' as const,
+      status: 'pending' as const,
+      lastLogin: '2024-01-11 13:25:00',
+      createTime: '2024-01-06 16:45:00'
+    }
+  ].filter(user => !relatedUsers.some(relatedUser => relatedUser.id === user.id));
+
+  const handleAddUser = () => {
+    setAddUserModalVisible(true);
+    setSelectedUsers([]);
+  };
+
+  const handleConfirmAddUser = () => {
+    if (selectedUsers.length === 0) {
+      Message.warning('请选择要添加的用户');
+      return;
+    }
+
+    const usersToAdd = availableUsers.filter(user => selectedUsers.includes(user.id));
+    setRelatedUsers(prev => [...prev, ...usersToAdd]);
+    Message.success(`成功添加 ${usersToAdd.length} 个用户`);
+    setAddUserModalVisible(false);
+    setSelectedUsers([]);
+  };
+
   return (
     <div>
       {/* 面包屑导航 */}
@@ -2150,10 +2203,10 @@ const CompanyForm: React.FC = () => {
       {/* 设置管理员确认弹窗 */}
       <Modal
         title="设置超级管理员"
-        visible={setAdminModalVisible}
+        visible={adminModalVisible}
         onCancel={() => {
-          setSetAdminModalVisible(false);
-          setTargetUser(null);
+          setAdminModalVisible(false);
+          setSelectedUser(null);
         }}
         onOk={handleConfirmSetAdmin}
         okText="确定设置"
@@ -2162,7 +2215,7 @@ const CompanyForm: React.FC = () => {
       >
         <div style={{ padding: '8px 0' }}>
           <Text style={{ fontSize: '14px', lineHeight: '1.6' }}>
-            每家租户只能有一个超级管理员，设置 <Text bold style={{ color: '#165DFF' }}>{targetUser?.username}</Text> 为超级管理员后，
+            每家租户只能有一个超级管理员，设置 <Text bold style={{ color: '#165DFF' }}>{selectedUser?.username}</Text> 为超级管理员后，
             原先的超级管理员将被撤销，改为普通用户权限。
           </Text>
           
