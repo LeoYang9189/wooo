@@ -248,7 +248,62 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
       case 'application':
         breadcrumbs.push({ title: '应用中心', path: '/controltower/application' });
         break;
+      case 'user-management':
+        breadcrumbs.push(
+          { title: '客户中心', path: undefined },
+          { title: '用户管理', path: '/controltower/user-management' }
+        );
+        break;
+      case 'company-management':
+        breadcrumbs.push(
+          { title: '客户中心', path: undefined },
+          { title: '企业管理', path: '/controltower/company-management' }
+        );
+        break;
+      case 'employee-management':
+        breadcrumbs.push(
+          { title: '系统设置', path: undefined },
+          { title: '员工管理', path: '/controltower/employee-management' }
+        );
+        break;
+      case 'permission-management':
+        breadcrumbs.push(
+          { title: '系统设置', path: undefined },
+          { title: '权限管理', path: '/controltower/permission-management' }
+        );
+        break;
+      case 'add-employee':
+        breadcrumbs.push(
+          { title: '系统设置', path: undefined },
+          { title: '员工管理', path: '/controltower/employee-management' },
+          { title: '添加员工', path: undefined }
+        );
+        break;
       default:
+        // 处理编辑员工页面
+        if (simplePath.startsWith('edit-employee/')) {
+          breadcrumbs.push(
+            { title: '系统设置', path: undefined },
+            { title: '员工管理', path: '/controltower/employee-management' },
+            { title: '编辑员工', path: undefined }
+          );
+        }
+        // 处理企业管理的新增和编辑页面
+        else if (simplePath.startsWith('company-management/')) {
+          if (simplePath === 'company-management/add') {
+            breadcrumbs.push(
+              { title: '客户中心', path: undefined },
+              { title: '企业管理', path: '/controltower/company-management' },
+              { title: '添加企业', path: undefined }
+            );
+          } else if (simplePath.startsWith('company-management/edit/')) {
+            breadcrumbs.push(
+              { title: '客户中心', path: undefined },
+              { title: '企业管理', path: '/controltower/company-management' },
+              { title: '编辑企业', path: undefined }
+            );
+          }
+        }
         break;
     }
 

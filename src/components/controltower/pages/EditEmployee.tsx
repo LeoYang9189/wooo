@@ -327,7 +327,7 @@ const EditEmployee: React.FC = () => {
           <Text type="secondary">
             {employeeStatus === 'active' && '员工状态正常，可以正常使用系统'}
             {employeeStatus === 'inactive' && '员工已被禁用，无法登录系统'}
-            {employeeStatus === 'pending' && '员工待激活，需要管理员激活后才能使用'}
+                         {employeeStatus === 'pending' && '员工待激活，首次登录后，自动激活'}
           </Text>
         </div>
       </Card>

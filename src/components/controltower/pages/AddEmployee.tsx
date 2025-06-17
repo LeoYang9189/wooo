@@ -253,7 +253,7 @@ const AddEmployee: React.FC = () => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <Text style={{ fontWeight: 'bold' }}>当前状态：</Text>
           <Tag color="orange">待激活</Tag>
-          <Text type="secondary">新员工创建后默认为待激活状态，需要管理员激活后才能正常使用</Text>
+          <Text type="secondary">新员工创建后默认为待激活状态，首次登录后，自动激活</Text>
         </div>
       </Card>
 

@@ -545,7 +545,7 @@ const CompanyForm: React.FC = () => {
           Message.success('企业已添加');
         }
         setLoading(false);
-        navigate('/platformadmin/company-management');
+        navigate('/controltower/company-management');
       }, 1000);
     }).catch((error) => {
       console.error('表单验证失败:', error);
@@ -2134,7 +2134,7 @@ const CompanyForm: React.FC = () => {
         <Breadcrumb>
           <Breadcrumb.Item>平台运营后台</Breadcrumb.Item>
           <Breadcrumb.Item 
-            onClick={() => navigate('/platformadmin/company-management')}
+                              onClick={() => navigate('/controltower/company-management')}
             style={{ cursor: 'pointer', color: '#165DFF' }}
           >
             企业管理
@@ -2159,7 +2159,7 @@ const CompanyForm: React.FC = () => {
         </div>
         
         <Space>
-          <Button onClick={() => navigate('/platformadmin/company-management')}>
+                      <Button onClick={() => navigate('/controltower/company-management')}>
             取消
           </Button>
           <Button 

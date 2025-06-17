@@ -11,7 +11,6 @@ import {
   Tag, 
   Avatar, 
   Modal,
-  Form,
   Message,
   Dropdown,
   Menu,
@@ -142,9 +141,8 @@ const EmployeeManagement: React.FC = () => {
   const [selectedCard, setSelectedCard] = useState('total');
   const [currentUser, setCurrentUser] = useState<UserData | null>(null);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
-  const [bindCompanyModalVisible, setBindCompanyModalVisible] = useState(false);
+  const [toggleStatusModalVisible, setToggleStatusModalVisible] = useState(false);
   const [resetConfirmModalVisible, setResetConfirmModalVisible] = useState(false);
-  const [bindCompanyForm] = Form.useForm();
   const navigate = useNavigate();
 
   // 模拟用户数据
@@ -329,22 +327,27 @@ const EmployeeManagement: React.FC = () => {
     navigate(`/controltower/edit-employee/${user.id}`);
   };
 
-  const handleBindCompany = (user: UserData) => {
-    setCurrentUser(user);
-    bindCompanyForm.resetFields();
-    // 设置默认值
-    bindCompanyForm.setFieldsValue({
-      targetRole: 'user' // 默认选中普通员工
-    });
-    setBindCompanyModalVisible(true);
-  };
-
   const handleToggleStatus = (user: UserData) => {
     setCurrentUser(user);
-    setResetConfirmModalVisible(true);
+    setToggleStatusModalVisible(true);
   };
 
-
+  const confirmToggleStatus = () => {
+    if (currentUser) {
+      const newStatus = currentUser.status === 'active' ? 'inactive' : 'active';
+      const statusText = newStatus === 'active' ? '启用' : '禁用';
+      
+      setUserData(prev => prev.map(user => 
+        user.id === currentUser.id 
+          ? { ...user, status: newStatus as 'active' | 'inactive' | 'pending' }
+          : user
+      ));
+      
+      Message.success(`用户 ${currentUser.username} 已${statusText}`);
+      setToggleStatusModalVisible(false);
+      setCurrentUser(null);
+    }
+  };
 
   const handleDeleteUser = (userId: string) => {
     setUserData(prev => prev.filter(u => u.id !== userId));
@@ -765,13 +768,7 @@ const EmployeeManagement: React.FC = () => {
                           >
                             {record.status === 'active' ? '禁用用户' : '启用用户'}
                           </Menu.Item>
-                          <Menu.Item
-                            key="bind"
-                            onClick={() => handleBindCompany(record)}
-                            style={{ color: '#165DFF' }}
-                          >
-                            绑定企业
-                          </Menu.Item>
+
                           <Menu.Item
                             key="resetPassword"
                             onClick={() => handleResetPassword(record)}
@@ -887,83 +884,58 @@ const EmployeeManagement: React.FC = () => {
         )}
       </Modal>
 
-      {/* 绑定企业模态框 */}
+      {/* 禁用/启用用户确认弹窗 */}
       <Modal
-        title="绑定企业"
-        visible={bindCompanyModalVisible}
+        title={currentUser?.status === 'active' ? '禁用用户确认' : '启用用户确认'}
+        visible={toggleStatusModalVisible}
         onCancel={() => {
-          setBindCompanyModalVisible(false);
+          setToggleStatusModalVisible(false);
           setCurrentUser(null);
-          bindCompanyForm.resetFields();
         }}
-        onOk={() => {
-          bindCompanyForm.validate().then((values) => {
-            const roleText = values.targetRole === 'super_admin' ? '超级管理员' : '普通员工';
-            Message.success(`已成功为用户 ${currentUser?.username} 绑定企业：${values.targetCompany}，角色：${roleText}`);
-            setBindCompanyModalVisible(false);
-            setCurrentUser(null);
-            bindCompanyForm.resetFields();
-          }).catch((error) => {
-            console.error('表单验证失败:', error);
-          });
-        }}
-        okText="确定绑定"
+        onOk={confirmToggleStatus}
+        okText="确认"
         cancelText="取消"
-        style={{ width: 500 }}
+        style={{ width: 480 }}
       >
         {currentUser && (
-          <Form
-            form={bindCompanyForm}
-            layout="vertical"
-            autoComplete="off"
-          >
-                         <div style={{ padding: '16px', backgroundColor: '#F7F8FA', borderRadius: '6px', marginBottom: '16px' }}>
-               <Text type="secondary">当前用户：</Text>
-               <Text style={{ fontWeight: 'bold', marginLeft: '8px' }}>{currentUser.username}</Text>
-               <br />
-               <Text type="secondary">当前企业：</Text>
-               <Text style={{ marginLeft: '8px' }}>{currentUser.branches.join(', ')}</Text>
-               <br />
-               <Text type="secondary">当前企业内角色：</Text>
-               <span style={{ marginLeft: '8px' }}>
-                 <Space>
-                   {currentUser.roles.map((role, index) => (
-                     <span key={index}>{getRoleTag(role)}</span>
-                   ))}
-                 </Space>
-               </span>
-             </div>
-
-            <Form.Item
-              label="目标企业"
-              field="targetCompany"
-              rules={[
-                { required: true, message: '请选择要绑定的企业' }
-              ]}
-            >
-              <Select placeholder="请选择要绑定的企业">
-                <Option value="货拉拉物流科技有限公司">货拉拉物流科技有限公司</Option>
-                <Option value="顺丰速运集团">顺丰速运集团</Option>
-                <Option value="德邦物流股份有限公司">德邦物流股份有限公司</Option>
-                <Option value="中通快递股份有限公司">中通快递股份有限公司</Option>
-                <Option value="申通快递有限公司">申通快递有限公司</Option>
-                <Option value="圆通速递股份有限公司">圆通速递股份有限公司</Option>
-              </Select>
-            </Form.Item>
-
-            <Form.Item
-              label="目标角色"
-              field="targetRole"
-              rules={[
-                { required: true, message: '请选择目标角色' }
-              ]}
-            >
-              <Select placeholder="请选择目标角色">
-                <Option value="super_admin">超级管理员</Option>
-                <Option value="user">普通员工</Option>
-              </Select>
-            </Form.Item>
-          </Form>
+          <div style={{ padding: '16px 0' }}>
+            <div style={{ 
+              backgroundColor: currentUser.status === 'active' ? '#FFF2F0' : '#F6FFED', 
+              border: `1px solid ${currentUser.status === 'active' ? '#FFCCC7' : '#B7EB8F'}`, 
+              borderRadius: '6px', 
+              padding: '16px',
+              marginBottom: '16px'
+            }}>
+              <Text style={{ 
+                fontSize: '16px', 
+                color: currentUser.status === 'active' ? '#FF4D4F' : '#52C41A', 
+                fontWeight: 'bold' 
+              }}>
+                {currentUser.status === 'active' ? '⚠️ 禁用确认' : '✅ 启用确认'}
+              </Text>
+            </div>
+            
+            <Text style={{ fontSize: '16px', lineHeight: '24px' }}>
+              {currentUser.status === 'active' 
+                ? <>将会禁用用户 <Text style={{ fontWeight: 'bold', color: '#165DFF' }}>{currentUser.username}</Text>，禁用后该用户将无法登录系统，是否确认？</>
+                : <>将会启用用户 <Text style={{ fontWeight: 'bold', color: '#165DFF' }}>{currentUser.username}</Text>，启用后该用户可正常登录系统，是否确认？</>
+              }
+            </Text>
+            
+            <div style={{ 
+              backgroundColor: '#F6F6F6', 
+              borderRadius: '6px', 
+              padding: '12px',
+              marginTop: '16px'
+            }}>
+              <Text type="secondary" style={{ fontSize: '14px' }}>
+                {currentUser.status === 'active' 
+                  ? '注意：禁用后用户无法访问系统，但用户数据仍会保留'
+                  : '注意：启用后用户将恢复正常的系统访问权限'
+                }
+              </Text>
+            </div>
+          </div>
         )}
       </Modal>
 
