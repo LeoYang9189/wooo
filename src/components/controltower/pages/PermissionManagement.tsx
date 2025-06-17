@@ -12,7 +12,6 @@ import {
   Grid,
   Checkbox,
   Empty,
-  Menu,
   List
 } from '@arco-design/web-react';
 import { 
@@ -23,7 +22,9 @@ import {
   IconHome,
   IconUser,
   IconFolder,
-  IconUnlock
+  IconUnlock,
+  IconDown,
+  IconRight
 } from '@arco-design/web-react/icon';
 
 const { Title, Text } = Typography;
@@ -55,6 +56,7 @@ interface PermissionItem {
 const PermissionManagement: React.FC = () => {
   const [selectedNode, setSelectedNode] = useState<OrganizationNode | null>(null);
   const [selectedKeys, setSelectedKeys] = useState<string[]>(['HQ']);
+  const [expandedKeys, setExpandedKeys] = useState<string[]>(['HQ']);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalType, setModalType] = useState<'branch' | 'department' | 'role'>('branch');
   const [permissionModalVisible, setPermissionModalVisible] = useState(false);
@@ -95,14 +97,182 @@ const PermissionManagement: React.FC = () => {
               createTime: '2023-03-15 10:00:00',
               children: [
                 {
-                  id: 'ROLE_LOGISTICS_MANAGER',
-                  title: '物流经理',
-                  code: 'LOGISTICS_MANAGER',
-                  type: 'role',
+                  id: 'SUBDEPT_SH_LOGISTICS_OCEAN',
+                  title: '海运物流部',
+                  code: 'OCEAN_LOGISTICS',
+                  type: 'department',
                   parentId: 'DEPT_SH_LOGISTICS',
-                  description: '物流部门经理角色',
-                  createTime: '2023-03-20 14:00:00',
-                  permissions: ['order:view', 'order:create', 'logistics:manage']
+                  description: '海运物流运营部门',
+                  createTime: '2023-04-01 11:00:00',
+                  children: [
+                    {
+                      id: 'ROLE_OCEAN_MANAGER',
+                      title: '海运经理',
+                      code: 'OCEAN_MANAGER',
+                      type: 'role',
+                      parentId: 'SUBDEPT_SH_LOGISTICS_OCEAN',
+                      description: '海运物流经理角色',
+                      createTime: '2023-04-10 14:00:00',
+                      permissions: ['order:view', 'order:create', 'logistics:manage', 'order:export']
+                    },
+                    {
+                      id: 'ROLE_OCEAN_SPECIALIST',
+                      title: '海运专员',
+                      code: 'OCEAN_SPECIALIST',
+                      type: 'role',
+                      parentId: 'SUBDEPT_SH_LOGISTICS_OCEAN',
+                      description: '海运物流专员角色',
+                      createTime: '2023-04-15 09:00:00',
+                      permissions: ['order:view', 'order:create', 'logistics:track']
+                    }
+                  ]
+                },
+                {
+                  id: 'SUBDEPT_SH_LOGISTICS_AIR',
+                  title: '空运物流部',
+                  code: 'AIR_LOGISTICS',
+                  type: 'department',
+                  parentId: 'DEPT_SH_LOGISTICS',
+                  description: '空运物流运营部门',
+                  createTime: '2023-04-05 10:00:00',
+                  children: [
+                    {
+                      id: 'ROLE_AIR_MANAGER',
+                      title: '空运经理',
+                      code: 'AIR_MANAGER',
+                      type: 'role',
+                      parentId: 'SUBDEPT_SH_LOGISTICS_AIR',
+                      description: '空运物流经理角色',
+                      createTime: '2023-04-12 15:00:00',
+                      permissions: ['order:view', 'order:create', 'logistics:manage']
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              id: 'DEPT_SH_SALES',
+              title: '销售部门',
+              code: 'SALES',
+              type: 'department',
+              parentId: 'BRANCH_SH',
+              description: '上海分公司销售部',
+              createTime: '2023-03-20 14:00:00',
+              children: [
+                {
+                  id: 'ROLE_SALES_MANAGER',
+                  title: '销售经理',
+                  code: 'SALES_MANAGER',
+                  type: 'role',
+                  parentId: 'DEPT_SH_SALES',
+                  description: '销售部门经理角色',
+                  createTime: '2023-03-25 10:00:00',
+                  permissions: ['order:view', 'order:create', 'order:edit', 'user:view']
+                },
+                {
+                  id: 'ROLE_SALES_REP',
+                  title: '销售代表',
+                  code: 'SALES_REP',
+                  type: 'role',
+                  parentId: 'DEPT_SH_SALES',
+                  description: '销售代表角色',
+                  createTime: '2023-03-28 11:00:00',
+                  permissions: ['order:view', 'order:create']
+                }
+              ]
+            }
+          ]
+        },
+        {
+          id: 'BRANCH_BJ',
+          title: '北京分公司',
+          code: 'BJ',
+          type: 'branch',
+          parentId: 'HQ',
+          description: '北京地区分公司',
+          createTime: '2023-02-15 10:00:00',
+          children: [
+            {
+              id: 'DEPT_BJ_OPERATIONS',
+              title: '运营部门',
+              code: 'OPERATIONS',
+              type: 'department',
+              parentId: 'BRANCH_BJ',
+              description: '北京分公司运营部',
+              createTime: '2023-02-20 09:00:00',
+              children: [
+                {
+                  id: 'ROLE_OPS_MANAGER',
+                  title: '运营经理',
+                  code: 'OPS_MANAGER',
+                  type: 'role',
+                  parentId: 'DEPT_BJ_OPERATIONS',
+                  description: '运营部门经理角色',
+                  createTime: '2023-02-25 14:00:00',
+                  permissions: ['dashboard:view', 'order:view', 'order:edit', 'system:config']
+                }
+              ]
+            },
+            {
+              id: 'DEPT_BJ_CUSTOMER_SERVICE',
+              title: '客服部门',
+              code: 'CS',
+              type: 'department',
+              parentId: 'BRANCH_BJ',
+              description: '客户服务部门',
+              createTime: '2023-03-01 11:00:00',
+              children: [
+                {
+                  id: 'ROLE_CS_SUPERVISOR',
+                  title: '客服主管',
+                  code: 'CS_SUPERVISOR',
+                  type: 'role',
+                  parentId: 'DEPT_BJ_CUSTOMER_SERVICE',
+                  description: '客服部门主管角色',
+                  createTime: '2023-03-05 10:00:00',
+                  permissions: ['user:view', 'order:view', 'company:view']
+                },
+                {
+                  id: 'ROLE_CS_AGENT',
+                  title: '客服专员',
+                  code: 'CS_AGENT',
+                  type: 'role',
+                  parentId: 'DEPT_BJ_CUSTOMER_SERVICE',
+                  description: '客服专员角色',
+                  createTime: '2023-03-08 09:00:00',
+                  permissions: ['user:view', 'order:view']
+                }
+              ]
+            }
+          ]
+        },
+        {
+          id: 'BRANCH_GZ',
+          title: '广州分公司',
+          code: 'GZ',
+          type: 'branch',
+          parentId: 'HQ',
+          description: '广州地区分公司',
+          createTime: '2023-03-10 15:00:00',
+          children: [
+            {
+              id: 'DEPT_GZ_FINANCE',
+              title: '财务部门',
+              code: 'FINANCE',
+              type: 'department',
+              parentId: 'BRANCH_GZ',
+              description: '广州分公司财务部',
+              createTime: '2023-03-15 10:00:00',
+              children: [
+                {
+                  id: 'ROLE_FINANCE_MANAGER',
+                  title: '财务经理',
+                  code: 'FINANCE_MANAGER',
+                  type: 'role',
+                  parentId: 'DEPT_GZ_FINANCE',
+                  description: '财务部门经理角色',
+                  createTime: '2023-03-20 11:00:00',
+                  permissions: ['dashboard:view', 'order:view', 'order:export', 'system:log']
                 }
               ]
             }
@@ -118,6 +288,16 @@ const PermissionManagement: React.FC = () => {
           createTime: '2023-02-01 10:00:00',
           children: [
             {
+              id: 'ROLE_HR_DIRECTOR',
+              title: '人事总监',
+              code: 'HR_DIRECTOR',
+              type: 'role',
+              parentId: 'DEPT_HQ_HR',
+              description: '人事部总监角色',
+              createTime: '2023-02-10 14:00:00',
+              permissions: ['user:view', 'user:create', 'user:edit', 'user:delete', 'employee:manage', 'employee:attendance']
+            },
+            {
               id: 'ROLE_HR_MANAGER',
               title: '人事经理',
               code: 'HR_MANAGER',
@@ -126,6 +306,47 @@ const PermissionManagement: React.FC = () => {
               description: '人事部经理角色',
               createTime: '2023-02-15 11:00:00',
               permissions: ['user:view', 'user:create', 'user:edit', 'employee:manage']
+            },
+            {
+              id: 'ROLE_HR_SPECIALIST',
+              title: '人事专员',
+              code: 'HR_SPECIALIST',
+              type: 'role',
+              parentId: 'DEPT_HQ_HR',
+              description: '人事专员角色',
+              createTime: '2023-02-20 09:00:00',
+              permissions: ['user:view', 'employee:manage']
+            }
+          ]
+        },
+        {
+          id: 'DEPT_HQ_IT',
+          title: 'IT部门',
+          code: 'IT',
+          type: 'department',
+          parentId: 'HQ',
+          description: '信息技术部门',
+          createTime: '2023-01-15 10:00:00',
+          children: [
+            {
+              id: 'ROLE_IT_DIRECTOR',
+              title: 'IT总监',
+              code: 'IT_DIRECTOR',
+              type: 'role',
+              parentId: 'DEPT_HQ_IT',
+              description: 'IT部门总监角色',
+              createTime: '2023-01-20 14:00:00',
+              permissions: ['system:role', 'system:permission', 'system:config', 'system:log', 'user:view', 'user:create', 'user:edit']
+            },
+            {
+              id: 'ROLE_SYS_ADMIN',
+              title: '系统管理员',
+              code: 'SYS_ADMIN',
+              type: 'role',
+              parentId: 'DEPT_HQ_IT',
+              description: '系统管理员角色',
+              createTime: '2023-01-25 11:00:00',
+              permissions: ['system:config', 'system:log', 'user:view', 'user:resetPassword']
             }
           ]
         }
@@ -362,48 +583,128 @@ const PermissionManagement: React.FC = () => {
     setPermissionModalVisible(false);
   };
 
-  // 递归渲染组织架构菜单
-  const renderOrgMenu = (nodes: OrganizationNode[]): React.ReactNode[] => {
-    return nodes.map(node => {
-      if (node.children && node.children.length > 0) {
-        return (
-          <Menu.SubMenu
-            key={node.id}
-            title={
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                {getNodeIcon(node.type)}
-                <span>{node.title}</span>
-                <Text type="secondary" style={{ fontSize: '12px' }}>({node.code})</Text>
-              </div>
-            }
-          >
-            <Menu.Item
-              key={`${node.id}_self`}
-              onClick={() => handleNodeSelect(node.id)}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                {getNodeIcon(node.type)}
-                <span>{node.title}</span>
-              </div>
-            </Menu.Item>
-            {renderOrgMenu(node.children)}
-          </Menu.SubMenu>
-        );
+  // 切换节点展开/收起状态
+  const toggleNodeExpanded = (nodeId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setExpandedKeys(prev => {
+      if (prev.includes(nodeId)) {
+        return prev.filter(key => key !== nodeId);
       } else {
-        return (
-          <Menu.Item
-            key={node.id}
-            onClick={() => handleNodeSelect(node.id)}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              {getNodeIcon(node.type)}
-              <span>{node.title}</span>
-              <Text type="secondary" style={{ fontSize: '12px' }}>({node.code})</Text>
-            </div>
-          </Menu.Item>
-        );
+        return [...prev, nodeId];
       }
     });
+  };
+
+  // 获取所有节点ID
+  const getAllNodeIds = (nodes: OrganizationNode[]): string[] => {
+    let ids: string[] = [];
+    nodes.forEach(node => {
+      ids.push(node.id);
+      if (node.children) {
+        ids = [...ids, ...getAllNodeIds(node.children)];
+      }
+    });
+    return ids;
+  };
+
+  // 全部展开
+  const expandAll = () => {
+    const allIds = getAllNodeIds(organizationData);
+    setExpandedKeys(allIds);
+  };
+
+  // 全部收起
+  const collapseAll = () => {
+    setExpandedKeys(['HQ']); // 只保持根节点展开
+  };
+
+  // 渲染组织架构树状结构（非菜单形式）
+  const renderOrgTree = (nodes: OrganizationNode[], level: number = 0): React.ReactNode[] => {
+    return nodes.map(node => (
+      <div key={node.id} style={{ marginLeft: level * 20 }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '8px 12px',
+            cursor: 'pointer',
+            borderRadius: '4px',
+            backgroundColor: selectedKeys.includes(node.id) ? '#E8F4FF' : 'transparent',
+            marginBottom: '2px',
+            minHeight: '36px',
+            transition: 'all 0.2s'
+          }}
+          onClick={() => handleNodeSelect(node.id)}
+          onMouseEnter={(e) => {
+            if (!selectedKeys.includes(node.id)) {
+              e.currentTarget.style.backgroundColor = '#F7F8FA';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!selectedKeys.includes(node.id)) {
+              e.currentTarget.style.backgroundColor = 'transparent';
+            }
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
+            {/* 展开/收起按钮 */}
+            {node.children && node.children.length > 0 ? (
+              <div
+                style={{ 
+                  width: '16px', 
+                  height: '16px', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  borderRadius: '2px',
+                  transition: 'all 0.2s'
+                }}
+                onClick={(e) => toggleNodeExpanded(node.id, e)}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#E8F4FF';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
+              >
+                {expandedKeys.includes(node.id) ? (
+                  <IconDown style={{ fontSize: '12px', color: '#86909C' }} />
+                ) : (
+                  <IconRight style={{ fontSize: '12px', color: '#86909C' }} />
+                )}
+              </div>
+            ) : (
+              <div style={{ width: '16px' }} />
+            )}
+            
+            {getNodeIcon(node.type)}
+            <span style={{ 
+              fontSize: level === 0 ? '15px' : '14px',
+              fontWeight: level === 0 ? 'bold' : 'normal',
+              color: selectedKeys.includes(node.id) ? '#165DFF' : '#1D2129'
+            }}>
+              {node.title}
+            </span>
+            {(node.type === 'company' || node.type === 'branch') && (
+              <Text 
+                type="secondary" 
+                style={{ 
+                  fontSize: '12px',
+                  color: selectedKeys.includes(node.id) ? '#4E5969' : '#86909C'
+                }}
+              >
+                ({node.code})
+              </Text>
+            )}
+          </div>
+        </div>
+        {/* 只有在展开状态下才显示子节点 */}
+        {node.children && node.children.length > 0 && expandedKeys.includes(node.id) && 
+          renderOrgTree(node.children, level + 1)
+        }
+      </div>
+    ));
   };
 
   // 渲染权限列表
@@ -652,21 +953,39 @@ const PermissionManagement: React.FC = () => {
               </div>
             }
             extra={
-              <Button 
-                icon={<IconRefresh />} 
-                type="text" 
-                onClick={() => Message.success('数据已刷新')}
-              />
+              <Space>
+                <Button 
+                  icon={<IconDown />} 
+                  type="text" 
+                  size="small"
+                  onClick={expandAll}
+                  style={{ fontSize: '12px' }}
+                >
+                  全部展开
+                </Button>
+                <Button 
+                  icon={<IconRight />} 
+                  type="text" 
+                  size="small"
+                  onClick={collapseAll}
+                  style={{ fontSize: '12px' }}
+                >
+                  全部收起
+                </Button>
+                <Button 
+                  icon={<IconRefresh />} 
+                  type="text" 
+                  size="small"
+                  onClick={() => Message.success('数据已刷新')}
+                />
+              </Space>
             }
             style={{ height: '100%' }}
             bodyStyle={{ height: 'calc(100% - 57px)', overflow: 'auto' }}
           >
-            <Menu
-              selectedKeys={selectedKeys}
-              style={{ border: 'none' }}
-            >
-              {renderOrgMenu(organizationData)}
-            </Menu>
+            <div style={{ padding: '8px' }}>
+              {renderOrgTree(organizationData)}
+            </div>
           </Card>
         </Col>
 
