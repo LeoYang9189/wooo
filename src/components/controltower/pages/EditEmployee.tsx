@@ -12,179 +12,255 @@ import {
   Breadcrumb,
   Avatar,
   Upload,
+  Grid,
+  Tag,
+  Divider,
   Spin
 } from '@arco-design/web-react';
 import { 
   IconUser,
   IconArrowLeft,
   IconSave,
-  IconCamera
+  IconCamera,
+  IconPlus,
+  IconDelete
 } from '@arco-design/web-react/icon';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
+const { Row, Col } = Grid;
 
-interface EmployeeData {
+// 组织架构数据接口
+interface OrganizationGroup {
   id: string;
-  username: string;
-  email: string;
-  phone: string;
-  branches: string[];
-  departments: string[];
-  roles: string[];
-  supervisors: string[];
-  status: 'active' | 'inactive' | 'pending';
-  lastLogin: string;
-  createTime: string;
-  avatar?: string;
+  branchId: string;
+  departmentIds: string[];
+  roleIds: string[];
 }
+
+// 模拟数据 - 与AddEmployee页面保持一致
+const branchData = [
+  { id: '1', name: '货拉拉物流科技有限公司' },
+  { id: '2', name: '货拉拉华南分公司' },
+  { id: '3', name: '顺丰速运集团' },
+  { id: '4', name: '顺丰华东分公司' },
+  { id: '5', name: '德邦物流股份有限公司' }
+];
+
+const departmentData = {
+  '1': [
+    { id: '1-1', name: '物流运营部' },
+    { id: '1-2', name: '技术研发部' },
+    { id: '1-3', name: '客户服务部' },
+    { id: '1-4', name: '市场推广部' }
+  ],
+  '2': [
+    { id: '2-1', name: '华南运营中心' },
+    { id: '2-2', name: '华南客服中心' },
+    { id: '2-3', name: '华南销售部' }
+  ],
+  '3': [
+    { id: '3-1', name: '快递事业部' },
+    { id: '3-2', name: '物流事业部' },
+    { id: '3-3', name: '科技事业部' }
+  ],
+  '4': [
+    { id: '4-1', name: '华东运营部' },
+    { id: '4-2', name: '华东客服部' }
+  ],
+  '5': [
+    { id: '5-1', name: '零担事业部' },
+    { id: '5-2', name: '整车事业部' }
+  ]
+};
+
+const roleData = {
+  '1-1': [
+    { id: 'role-1-1-1', name: '运营经理' },
+    { id: 'role-1-1-2', name: '运营专员' },
+    { id: 'role-1-1-3', name: '调度员' }
+  ],
+  '1-2': [
+    { id: 'role-1-2-1', name: '技术总监' },
+    { id: 'role-1-2-2', name: '前端工程师' },
+    { id: 'role-1-2-3', name: '后端工程师' },
+    { id: 'role-1-2-4', name: '产品经理' }
+  ],
+  '1-3': [
+    { id: 'role-1-3-1', name: '客服经理' },
+    { id: 'role-1-3-2', name: '客服专员' }
+  ],
+  '1-4': [
+    { id: 'role-1-4-1', name: '市场总监' },
+    { id: 'role-1-4-2', name: '市场专员' }
+  ],
+  '2-1': [
+    { id: 'role-2-1-1', name: '区域经理' },
+    { id: 'role-2-1-2', name: '运营主管' }
+  ],
+  '2-2': [
+    { id: 'role-2-2-1', name: '客服主管' },
+    { id: 'role-2-2-2', name: '在线客服' }
+  ],
+  '2-3': [
+    { id: 'role-2-3-1', name: '销售经理' },
+    { id: 'role-2-3-2', name: '销售代表' }
+  ]
+};
+
+// 状态配置
+const statusConfig = {
+  'active': { color: 'green', text: '正常' },
+  'inactive': { color: 'red', text: '禁用' },
+  'pending': { color: 'orange', text: '待激活' }
+};
 
 const EditEmployee: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [form] = Form.useForm();
   const [avatar, setAvatar] = useState<string>('');
-  const [employeeData, setEmployeeData] = useState<EmployeeData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [organizationGroups, setOrganizationGroups] = useState<OrganizationGroup[]>([]);
+  const [employeeStatus, setEmployeeStatus] = useState<'active' | 'inactive' | 'pending'>('active');
 
-  // 模拟数据选项
-  const branchOptions = [
-    '货拉拉物流科技有限公司',
-    '货拉拉华南分公司',
-    '顺丰速运集团',
-    '顺丰华东分公司',
-    '德邦物流股份有限公司',
-    '德邦华北分公司',
-    '中通快递股份有限公司',
-    '申通快递有限公司',
-    '圆通速递股份有限公司'
-  ];
+  // 获取部门选项
+  const getDepartmentOptions = (branchId: string) => {
+    return departmentData[branchId as keyof typeof departmentData] || [];
+  };
 
-  const departmentOptions = [
-    '物流部门',
-    '技术部门',
-    '客服部门',
-    '市场部门',
-    '运营部门',
-    '财务部门',
-    '人事部门',
-    '产品部门',
-    '销售部门',
-    '法务部门'
-  ];
+  // 获取角色选项
+  const getRoleOptions = (departmentIds: string[]) => {
+    let roles: { id: string; name: string }[] = [];
+    departmentIds.forEach(deptId => {
+      const deptRoles = roleData[deptId as keyof typeof roleData] || [];
+      roles = [...roles, ...deptRoles];
+    });
+    return roles;
+  };
 
-  const roleOptions = [
-    '超级管理员',
-    '部门经理',
-    '客服经理',
-    '普通用户',
-    '运营专员',
-    '财务经理',
-    '人事专员',
-    '技术主管',
-    '产品经理',
-    '市场专员'
-  ];
-
-  const supervisorOptions = [
-    '张三',
-    '李四',
-    '王五',
-    '赵六',
-    '陈七',
-    '孙八',
-    '周九',
-    '刘十'
-  ];
-
-  // 模拟员工数据
-  const mockEmployeeData: EmployeeData[] = [
-    {
-      id: 'A3K9M2X7N8Q5',
-      username: '张三',
-      email: 'zhangsan@example.com',
-      phone: '13800138001',
-      branches: ['货拉拉物流科技有限公司', '货拉拉华南分公司'],
-      departments: ['物流部门', '技术部门'],
-      roles: ['超级管理员', '部门经理'],
-      supervisors: [],
-      status: 'active',
-      lastLogin: '2024-01-15 14:30:25',
-      createTime: '2023-12-01 09:15:30'
-    },
-    {
-      id: 'B7H4P1Y6R9L2',
-      username: '李四',
-      email: 'lisi@example.com',
-      phone: '13800138002',
-      branches: ['顺丰速运集团'],
-      departments: ['客服部门', '市场部门'],
-      roles: ['客服经理'],
-      supervisors: ['张三'],
-      status: 'active',
-      lastLogin: '2024-01-14 16:22:18',
-      createTime: '2023-11-15 11:20:45'
-    },
-    {
-      id: 'C8F5T3W9E1K4',
-      username: '王五',
-      email: 'wangwu@example.com',
-      phone: '13800138003',
-      branches: ['德邦物流股份有限公司', '德邦华北分公司'],
-      departments: ['运营部门'],
-      roles: ['普通用户', '运营专员'],
-      supervisors: ['李四', '张三'],
-      status: 'inactive',
-      lastLogin: '2024-01-10 10:15:32',
-      createTime: '2023-10-20 15:30:15'
-    }
-  ];
-
+  // 加载员工数据
   useEffect(() => {
     const loadEmployeeData = async () => {
-      if (!id) {
-        Message.error('员工ID不存在');
-        navigate('/controltower/employee-management');
-        return;
-      }
-
       try {
+        setLoading(true);
         // 模拟API调用
         await new Promise(resolve => setTimeout(resolve, 500));
         
-        const employee = mockEmployeeData.find(emp => emp.id === id);
-        if (!employee) {
-          Message.error('未找到该员工信息');
-          navigate('/controltower/employee-management');
-          return;
-        }
+        // 模拟员工数据
+        const mockEmployeeData = {
+          id: id || '1',
+          username: '张三',
+          email: 'zhangsan@example.com',
+          phone: '13800138000',
+          status: 'active' as const,
+          avatar: '',
+          organizationGroups: [
+            {
+              id: '1',
+              branchId: '1',
+              departmentIds: ['1-1', '1-2'],
+              roleIds: ['role-1-1-1', 'role-1-2-2']
+            }
+          ],
+          lastLogin: '2024-01-15 10:30:00',
+          createTime: '2023-12-01 09:00:00'
+        };
 
-        setEmployeeData(employee);
-        // 预填充表单数据
+        // 设置表单数据
         form.setFieldsValue({
-          username: employee.username,
-          email: employee.email,
-          phone: employee.phone,
-          branches: employee.branches,
-          departments: employee.departments,
-          roles: employee.roles,
-          supervisors: employee.supervisors,
-          status: employee.status
+          username: mockEmployeeData.username,
+          email: mockEmployeeData.email,
+          phone: mockEmployeeData.phone
         });
+
+        setAvatar(mockEmployeeData.avatar || '');
+        setEmployeeStatus(mockEmployeeData.status);
+        setOrganizationGroups(mockEmployeeData.organizationGroups);
       } catch (error) {
         console.error('加载员工数据失败:', error);
         Message.error('加载员工数据失败');
+      } finally {
+        setLoading(false);
       }
     };
 
     loadEmployeeData();
-  }, [id, navigate, form]);
+  }, [id, form]);
+
+  // 添加组织架构组
+  const addOrganizationGroup = () => {
+    const newGroup: OrganizationGroup = {
+      id: Date.now().toString(),
+      branchId: '',
+      departmentIds: [],
+      roleIds: []
+    };
+    setOrganizationGroups([...organizationGroups, newGroup]);
+  };
+
+  // 删除组织架构组
+  const removeOrganizationGroup = (groupId: string) => {
+    if (organizationGroups.length <= 1) {
+      Message.warning('至少需要保留一个组织架构');
+      return;
+    }
+    setOrganizationGroups(organizationGroups.filter(group => group.id !== groupId));
+  };
+
+  // 更新组织架构组
+  const updateOrganizationGroup = (groupId: string, updates: Partial<OrganizationGroup>) => {
+    setOrganizationGroups(groups => 
+      groups.map(group => 
+        group.id === groupId ? { ...group, ...updates } : group
+      )
+    );
+  };
+
+  // 分公司变化处理
+  const handleBranchChange = (groupId: string, branchId: string) => {
+    updateOrganizationGroup(groupId, {
+      branchId,
+      departmentIds: [],
+      roleIds: []
+    });
+  };
+
+  // 部门变化处理
+  const handleDepartmentChange = (groupId: string, departmentIds: string[]) => {
+    updateOrganizationGroup(groupId, {
+      departmentIds,
+      roleIds: []
+    });
+  };
+
+  // 角色变化处理
+  const handleRoleChange = (groupId: string, roleIds: string[]) => {
+    updateOrganizationGroup(groupId, { roleIds });
+  };
 
   const handleSubmit = async () => {
     try {
       const values = await form.validate();
-      console.log('更新员工:', values);
       
-      // 这里调用API更新员工信息
+      // 验证组织架构
+      const hasValidOrganization = organizationGroups.some(group => 
+        group.branchId && group.departmentIds.length > 0
+      );
+      
+      if (!hasValidOrganization) {
+        Message.error('请至少选择一个完整的组织架构（分公司和部门）');
+        return;
+      }
+
+      const employeeData = {
+        ...values,
+        avatar,
+        organizationGroups,
+        status: employeeStatus
+      };
+      
+      console.log('更新员工:', employeeData);
       Message.success('员工信息更新成功');
       navigate('/controltower/employee-management');
     } catch (error) {
@@ -196,16 +272,18 @@ const EditEmployee: React.FC = () => {
     navigate('/controltower/employee-management');
   };
 
-  if (!employeeData) {
+  if (loading) {
     return (
       <div style={{ padding: '24px', textAlign: 'center' }}>
         <Spin size={40} />
         <div style={{ marginTop: '16px' }}>
-          <Text type="secondary">正在加载员工数据...</Text>
+          <Text>加载员工数据中...</Text>
         </div>
       </div>
     );
   }
+
+  const statusInfo = statusConfig[employeeStatus];
 
   return (
     <div style={{ padding: '24px' }}>
@@ -224,9 +302,7 @@ const EditEmployee: React.FC = () => {
             onClick={handleCancel}
             size="large"
           />
-          <Title heading={3} style={{ margin: 0 }}>
-            编辑员工 - {employeeData?.username}
-          </Title>
+          <Title heading={3} style={{ margin: 0 }}>编辑员工</Title>
         </div>
         <Space>
           <Button size="large" onClick={handleCancel}>
@@ -243,46 +319,29 @@ const EditEmployee: React.FC = () => {
         </Space>
       </div>
 
-      <Card>
-        {/* 员工基本信息显示 */}
-        <div style={{ 
-          marginBottom: '24px', 
-          padding: '16px', 
-          backgroundColor: '#F7F8FA', 
-          borderRadius: '6px',
-          border: '1px solid #E5E6EB'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <Avatar size={60} style={{ backgroundColor: '#165DFF' }}>
-              <IconUser />
-            </Avatar>
-            <div>
-              <Text style={{ fontSize: '16px', fontWeight: 'bold' }}>
-                {employeeData?.username}
-              </Text>
-              <br />
-              <Text type="secondary">员工ID: {employeeData?.id}</Text>
-              <br />
-              <Text type="secondary">创建时间: {employeeData?.createTime}</Text>
-              <br />
-              <Text type="secondary">最后登录: {employeeData?.lastLogin}</Text>
-            </div>
-          </div>
+      {/* 状态展示 */}
+      <Card style={{ marginBottom: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <Text style={{ fontWeight: 'bold' }}>当前状态：</Text>
+          <Tag color={statusInfo.color}>{statusInfo.text}</Tag>
+          <Text type="secondary">
+            {employeeStatus === 'active' && '员工状态正常，可以正常使用系统'}
+            {employeeStatus === 'inactive' && '员工已被禁用，无法登录系统'}
+            {employeeStatus === 'pending' && '员工待激活，需要管理员激活后才能使用'}
+          </Text>
         </div>
+      </Card>
 
+      {/* 基本信息 */}
+      <Card title="基本信息" style={{ marginBottom: '24px' }}>
         <Form
           form={form}
           layout="vertical"
           autoComplete="off"
-          style={{ maxWidth: '800px' }}
         >
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-            {/* 左侧列 */}
-            <div>
-              <Form.Item
-                label="员工头像"
-                style={{ marginBottom: '24px' }}
-              >
+          <Row gutter={24}>
+            <Col span={24}>
+              <Form.Item label="员工头像">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                   <Avatar size={80} style={{ backgroundColor: '#165DFF' }}>
                     {avatar ? <img src={avatar} alt="avatar" /> : <IconUser />}
@@ -307,7 +366,11 @@ const EditEmployee: React.FC = () => {
                   </Upload>
                 </div>
               </Form.Item>
+            </Col>
+          </Row>
 
+          <Row gutter={24}>
+            <Col span={12}>
               <Form.Item
                 label="用户名"
                 field="username"
@@ -318,27 +381,29 @@ const EditEmployee: React.FC = () => {
               >
                 <Input placeholder="请输入用户名" size="large" />
               </Form.Item>
-
+            </Col>
+            <Col span={12}>
               <Form.Item
                 label="邮箱"
                 field="email"
                 rules={[
                   { required: true, message: '请输入邮箱' },
-                  { 
-                    type: 'email', 
-                    message: '请输入有效的邮箱地址' 
-                  }
+                  { type: 'email', message: '请输入有效的邮箱地址' }
                 ]}
               >
                 <Input placeholder="请输入邮箱" size="large" />
               </Form.Item>
+            </Col>
+          </Row>
 
+          <Row gutter={24}>
+            <Col span={12}>
               <Form.Item
                 label="手机号"
                 field="phone"
                 rules={[
                   { required: true, message: '请输入手机号' },
-                  {
+                  { 
                     validator: (value, callback) => {
                       if (value && !/^1[3-9]\d{9}$/.test(value)) {
                         callback('请输入有效的手机号');
@@ -351,118 +416,115 @@ const EditEmployee: React.FC = () => {
               >
                 <Input placeholder="请输入手机号" size="large" />
               </Form.Item>
-
-              <Form.Item
-                label="归属分公司"
-                field="branches"
-                rules={[
-                  { required: true, message: '请选择归属分公司' }
-                ]}
-              >
-                <Select
-                  mode="multiple"
-                  placeholder="请选择归属分公司"
-                  size="large"
-                  maxTagCount={2}
-                >
-                  {branchOptions.map(option => (
-                    <Option key={option} value={option}>{option}</Option>
-                  ))}
-                </Select>
-              </Form.Item>
-
-              <Form.Item
-                label="归属部门"
-                field="departments"
-                rules={[
-                  { required: true, message: '请选择归属部门' }
-                ]}
-              >
-                <Select
-                  mode="multiple"
-                  placeholder="请选择归属部门"
-                  size="large"
-                  maxTagCount={2}
-                >
-                  {departmentOptions.map(option => (
-                    <Option key={option} value={option}>{option}</Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </div>
-
-            {/* 右侧列 */}
-            <div>
-              <Form.Item
-                label="授权角色"
-                field="roles"
-                rules={[
-                  { required: true, message: '请选择授权角色' }
-                ]}
-                style={{ marginTop: '104px' }} // 对齐右侧内容
-              >
-                <Select
-                  mode="multiple"
-                  placeholder="请选择授权角色"
-                  size="large"
-                  maxTagCount={2}
-                >
-                  {roleOptions.map(option => (
-                    <Option key={option} value={option}>{option}</Option>
-                  ))}
-                </Select>
-              </Form.Item>
-
-              <Form.Item
-                label="上级主管"
-                field="supervisors"
-              >
-                <Select
-                  mode="multiple"
-                  placeholder="请选择上级主管"
-                  size="large"
-                  maxTagCount={2}
-                  allowClear
-                >
-                  {supervisorOptions.map(option => (
-                    <Option key={option} value={option}>{option}</Option>
-                  ))}
-                </Select>
-              </Form.Item>
-
-              <Form.Item
-                label="员工状态"
-                field="status"
-                rules={[
-                  { required: true, message: '请选择员工状态' }
-                ]}
-              >
-                <Select placeholder="请选择员工状态" size="large">
-                  <Option value="active">正常</Option>
-                  <Option value="inactive">禁用</Option>
-                  <Option value="pending">待激活</Option>
-                </Select>
-              </Form.Item>
-            </div>
-          </div>
-
-          {/* 说明文字 */}
-          <div style={{ 
-            marginTop: '32px', 
-            padding: '16px', 
-            backgroundColor: '#F7F8FA', 
-            borderRadius: '6px',
-            border: '1px solid #E5E6EB'
-          }}>
-            <Text type="secondary">
-              <strong>编辑说明：</strong><br />
-              • 修改任何字段后请点击"保存"按钮提交更改<br />
-              • 归属分公司和归属部门为必填项，可多选<br />
-              • 授权角色决定员工在系统中的权限范围<br />
-              • 上级主管为可选项，用于维护组织架构关系
-            </Text>
-          </div>
+            </Col>
+          </Row>
         </Form>
+      </Card>
+
+      {/* 组织架构 */}
+      <Card 
+        title="组织架构" 
+        extra={
+          <Button 
+            type="primary" 
+            icon={<IconPlus />} 
+            onClick={addOrganizationGroup}
+          >
+            添加组织架构
+          </Button>
+        }
+      >
+        {organizationGroups.map((group, index) => (
+          <div key={group.id} style={{ marginBottom: '24px' }}>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'space-between', 
+              marginBottom: '16px' 
+            }}>
+              <Text style={{ fontWeight: 'bold' }}>组织架构 {index + 1}</Text>
+              {organizationGroups.length > 1 && (
+                <Button 
+                  type="text" 
+                  status="danger"
+                  icon={<IconDelete />}
+                  onClick={() => removeOrganizationGroup(group.id)}
+                >
+                  删除
+                </Button>
+              )}
+            </div>
+
+            <Row gutter={16}>
+              <Col span={8}>
+                <div style={{ marginBottom: '8px' }}>
+                  <Text>分公司 <Text style={{ color: '#f53f3f' }}>*</Text></Text>
+                </div>
+                <Select
+                  placeholder="选择分公司"
+                  value={group.branchId}
+                  onChange={(value) => handleBranchChange(group.id, value)}
+                  style={{ width: '100%' }}
+                  size="large"
+                >
+                  {branchData.map(branch => (
+                    <Option key={branch.id} value={branch.id}>
+                      {branch.name}
+                    </Option>
+                  ))}
+                </Select>
+              </Col>
+
+              <Col span={8}>
+                <div style={{ marginBottom: '8px' }}>
+                  <Text>部门 <Text style={{ color: '#f53f3f' }}>*</Text></Text>
+                </div>
+                <Select
+                  mode="multiple"
+                  placeholder="选择部门"
+                  value={group.departmentIds}
+                  onChange={(value) => handleDepartmentChange(group.id, value)}
+                  style={{ width: '100%' }}
+                  size="large"
+                  disabled={!group.branchId}
+                  maxTagCount={2}
+                >
+                  {getDepartmentOptions(group.branchId).map(dept => (
+                    <Option key={dept.id} value={dept.id}>
+                      {dept.name}
+                    </Option>
+                  ))}
+                </Select>
+              </Col>
+
+              <Col span={8}>
+                <div style={{ marginBottom: '8px' }}>
+                  <Text>角色</Text>
+                </div>
+                <Select
+                  mode="multiple"
+                  placeholder="选择角色"
+                  value={group.roleIds}
+                  onChange={(value) => handleRoleChange(group.id, value)}
+                  style={{ width: '100%' }}
+                  size="large"
+                  disabled={group.departmentIds.length === 0}
+                  maxTagCount={2}
+                >
+                  {getRoleOptions(group.departmentIds).map(role => (
+                    <Option key={role.id} value={role.id}>
+                      {role.name}
+                    </Option>
+                  ))}
+                </Select>
+              </Col>
+            </Row>
+
+            {index < organizationGroups.length - 1 && (
+              <Divider style={{ margin: '24px 0' }} />
+            )}
+          </div>
+        ))}
       </Card>
     </div>
   );
