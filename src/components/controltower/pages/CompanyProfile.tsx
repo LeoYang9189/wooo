@@ -193,7 +193,8 @@ const CompanyProfile: React.FC = () => {
 
   // 绑定第三方租户
   const handleBindTenant = () => {
-    setBindModalVisible(true);
+    // 直接跳转到SSO授权页面（默认跳转到etower）
+    navigate('/sso/auth/etower');
   };
 
   // 提交认证申请
@@ -679,7 +680,12 @@ const CompanyProfile: React.FC = () => {
                     关联已有的第三方系统租户，快速同步企业信息和权限
                   </Text>
                   <div className="mt-6">
-                    <Button type="primary" status="warning" size="small">
+                    <Button 
+                      type="primary" 
+                      status="warning" 
+                      size="small"
+                      onClick={handleBindTenant}
+                    >
                       开始绑定
                     </Button>
                   </div>
