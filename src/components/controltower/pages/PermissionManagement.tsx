@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Card, 
   Typography, 
@@ -7,346 +7,314 @@ import {
   Modal,
   Form,
   Input,
-  Message,
-  Descriptions,
   Grid,
-  Checkbox,
-  Empty,
-  List
+  Tag
 } from '@arco-design/web-react';
 import { 
   IconSearch, 
-  IconPlus, 
-  IconRefresh,
   IconEdit,
-  IconHome,
-  IconUser,
-  IconFolder,
-  IconUnlock,
   IconDown,
-  IconRight
+  IconRight,
+  IconArrowLeft,
+  IconArrowRight,
+  IconSettings,
+  IconUser,
+  IconHome,
+  IconFolder,
+  IconBranch,
+  IconInfo
 } from '@arco-design/web-react/icon';
 
 const { Title, Text } = Typography;
 const { Row, Col } = Grid;
 
-// 组织架构节点类型
-type NodeType = 'company' | 'branch' | 'department' | 'role';
-
 interface OrganizationNode {
   id: string;
-  title: string;
-  code: string;
-  type: NodeType;
-  parentId: string | null;
-  description?: string;
-  createTime: string;
+  type: 'group' | 'company' | 'department' | 'role';
+  name: string;
+  chineseName: string;
+  englishName: string;
+  code?: string;
+  parentId?: string;
   children?: OrganizationNode[];
-  permissions?: string[];
 }
 
-// 权限项接口
 interface PermissionItem {
   id: string;
   title: string;
-  parentId: string | null;
+  permissionClass: string;
+  permissionType: string;
+  permissionPoint: string;
+  parentId?: string;
   children?: PermissionItem[];
+  isGroup?: boolean;
+  depth?: number;
 }
 
 const PermissionManagement: React.FC = () => {
-  const [selectedNode, setSelectedNode] = useState<OrganizationNode | null>(null);
-  const [selectedKeys, setSelectedKeys] = useState<string[]>(['HQ']);
-  const [expandedKeys, setExpandedKeys] = useState<string[]>(['HQ']);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalType, setModalType] = useState<'branch' | 'department' | 'role'>('branch');
-  const [permissionModalVisible, setPermissionModalVisible] = useState(false);
-  const [form] = Form.useForm();
-  
-  // 权限相关状态
-  const [assignedPermissions, setAssignedPermissions] = useState<string[]>([]);
-  const [searchAssigned, setSearchAssigned] = useState('');
-  const [searchAvailable, setSearchAvailable] = useState('');
-
   // 组织架构数据
-  const [organizationData, setOrganizationData] = useState<OrganizationNode[]>([
+  const [organizationData] = useState<OrganizationNode[]>([
     {
-      id: 'HQ',
-      title: '集团总公司',
-      code: 'HQ',
-      type: 'company',
-      parentId: null,
-      description: '企业集团总部',
-      createTime: '2023-01-01 00:00:00',
+      id: 'hq',
+      type: 'group',
+      name: '集团总公司HQ',
+      chineseName: '集团总公司',
+      englishName: 'Headquarters',
+      code: 'HQ001',
       children: [
         {
-          id: 'BRANCH_SH',
-          title: '上海分公司',
-          code: 'SH',
-          type: 'branch',
-          parentId: 'HQ',
-          description: '上海地区分公司',
-          createTime: '2023-03-01 09:00:00',
+          id: 'shanghai',
+          type: 'company',
+          name: '上海分公司',
+          chineseName: '上海分公司',
+          englishName: 'Shanghai Branch',
+          code: 'SH001',
+          parentId: 'hq',
           children: [
             {
-              id: 'DEPT_SH_LOGISTICS',
-              title: '物流部门',
-              code: 'LOGISTICS',
+              id: 'sh-logistics',
               type: 'department',
-              parentId: 'BRANCH_SH',
-              description: '负责物流运输业务',
-              createTime: '2023-03-15 10:00:00',
+              name: '上海物流部',
+              chineseName: '上海物流部',
+              englishName: 'Shanghai Logistics Department',
+              parentId: 'shanghai',
               children: [
                 {
-                  id: 'SUBDEPT_SH_LOGISTICS_OCEAN',
-                  title: '海运物流部',
-                  code: 'OCEAN_LOGISTICS',
+                  id: 'sh-sea-logistics',
                   type: 'department',
-                  parentId: 'DEPT_SH_LOGISTICS',
-                  description: '海运物流运营部门',
-                  createTime: '2023-04-01 11:00:00',
+                  name: '海运物流部',
+                  chineseName: '海运物流部',
+                  englishName: 'Sea Logistics Department',
+                  parentId: 'sh-logistics',
                   children: [
                     {
-                      id: 'ROLE_OCEAN_MANAGER',
-                      title: '海运经理',
-                      code: 'OCEAN_MANAGER',
+                      id: 'sh-sea-manager',
                       type: 'role',
-                      parentId: 'SUBDEPT_SH_LOGISTICS_OCEAN',
-                      description: '海运物流经理角色',
-                      createTime: '2023-04-10 14:00:00',
-                      permissions: ['order:view', 'order:create', 'logistics:manage', 'order:export']
+                      name: '海运经理',
+                      chineseName: '海运经理',
+                      englishName: 'Sea Logistics Manager',
+                      parentId: 'sh-sea-logistics'
                     },
                     {
-                      id: 'ROLE_OCEAN_SPECIALIST',
-                      title: '海运专员',
-                      code: 'OCEAN_SPECIALIST',
+                      id: 'sh-sea-specialist',
                       type: 'role',
-                      parentId: 'SUBDEPT_SH_LOGISTICS_OCEAN',
-                      description: '海运物流专员角色',
-                      createTime: '2023-04-15 09:00:00',
-                      permissions: ['order:view', 'order:create', 'logistics:track']
+                      name: '海运专员',
+                      chineseName: '海运专员',
+                      englishName: 'Sea Logistics Specialist',
+                      parentId: 'sh-sea-logistics'
                     }
                   ]
                 },
                 {
-                  id: 'SUBDEPT_SH_LOGISTICS_AIR',
-                  title: '空运物流部',
-                  code: 'AIR_LOGISTICS',
+                  id: 'sh-air-logistics',
                   type: 'department',
-                  parentId: 'DEPT_SH_LOGISTICS',
-                  description: '空运物流运营部门',
-                  createTime: '2023-04-05 10:00:00',
+                  name: '空运物流部',
+                  chineseName: '空运物流部',
+                  englishName: 'Air Logistics Department',
+                  parentId: 'sh-logistics',
                   children: [
                     {
-                      id: 'ROLE_AIR_MANAGER',
-                      title: '空运经理',
-                      code: 'AIR_MANAGER',
+                      id: 'sh-air-manager',
                       type: 'role',
-                      parentId: 'SUBDEPT_SH_LOGISTICS_AIR',
-                      description: '空运物流经理角色',
-                      createTime: '2023-04-12 15:00:00',
-                      permissions: ['order:view', 'order:create', 'logistics:manage']
+                      name: '空运经理',
+                      chineseName: '空运经理',
+                      englishName: 'Air Logistics Manager',
+                      parentId: 'sh-air-logistics'
                     }
                   ]
                 }
               ]
             },
             {
-              id: 'DEPT_SH_SALES',
-              title: '销售部门',
-              code: 'SALES',
+              id: 'sh-sales',
               type: 'department',
-              parentId: 'BRANCH_SH',
-              description: '上海分公司销售部',
-              createTime: '2023-03-20 14:00:00',
+              name: '上海销售部',
+              chineseName: '上海销售部',
+              englishName: 'Shanghai Sales Department',
+              parentId: 'shanghai',
               children: [
                 {
-                  id: 'ROLE_SALES_MANAGER',
-                  title: '销售经理',
-                  code: 'SALES_MANAGER',
+                  id: 'sh-sales-manager',
                   type: 'role',
-                  parentId: 'DEPT_SH_SALES',
-                  description: '销售部门经理角色',
-                  createTime: '2023-03-25 10:00:00',
-                  permissions: ['order:view', 'order:create', 'order:edit', 'user:view']
+                  name: '销售经理',
+                  chineseName: '销售经理',
+                  englishName: 'Sales Manager',
+                  parentId: 'sh-sales'
                 },
                 {
-                  id: 'ROLE_SALES_REP',
-                  title: '销售代表',
-                  code: 'SALES_REP',
+                  id: 'sh-sales-rep',
                   type: 'role',
-                  parentId: 'DEPT_SH_SALES',
-                  description: '销售代表角色',
-                  createTime: '2023-03-28 11:00:00',
-                  permissions: ['order:view', 'order:create']
+                  name: '销售代表',
+                  chineseName: '销售代表',
+                  englishName: 'Sales Representative',
+                  parentId: 'sh-sales'
+                }
+              ]
+            },
+            {
+              id: 'sh-subsidiary',
+              type: 'company',
+              name: '上海子公司',
+              chineseName: '上海子公司',
+              englishName: 'Shanghai Subsidiary',
+              code: 'SHS001',
+              parentId: 'shanghai',
+              children: [
+                {
+                  id: 'shs-operations',
+                  type: 'department',
+                  name: '运营部',
+                  chineseName: '运营部',
+                  englishName: 'Operations Department',
+                  parentId: 'sh-subsidiary',
+                  children: [
+                    {
+                      id: 'shs-ops-manager',
+                      type: 'role',
+                      name: '运营经理',
+                      chineseName: '运营经理',
+                      englishName: 'Operations Manager',
+                      parentId: 'shs-operations'
+                    }
+                  ]
                 }
               ]
             }
           ]
         },
         {
-          id: 'BRANCH_BJ',
-          title: '北京分公司',
-          code: 'BJ',
-          type: 'branch',
-          parentId: 'HQ',
-          description: '北京地区分公司',
-          createTime: '2023-02-15 10:00:00',
+          id: 'beijing',
+          type: 'company',
+          name: '北京分公司',
+          chineseName: '北京分公司',
+          englishName: 'Beijing Branch',
+          code: 'BJ001',
+          parentId: 'hq',
           children: [
             {
-              id: 'DEPT_BJ_OPERATIONS',
-              title: '运营部门',
-              code: 'OPERATIONS',
+              id: 'bj-operations',
               type: 'department',
-              parentId: 'BRANCH_BJ',
-              description: '北京分公司运营部',
-              createTime: '2023-02-20 09:00:00',
+              name: '北京运营部',
+              chineseName: '北京运营部',
+              englishName: 'Beijing Operations Department',
+              parentId: 'beijing',
               children: [
                 {
-                  id: 'ROLE_OPS_MANAGER',
-                  title: '运营经理',
-                  code: 'OPS_MANAGER',
+                  id: 'bj-ops-director',
                   type: 'role',
-                  parentId: 'DEPT_BJ_OPERATIONS',
-                  description: '运营部门经理角色',
-                  createTime: '2023-02-25 14:00:00',
-                  permissions: ['dashboard:view', 'order:view', 'order:edit', 'system:config']
-                }
-              ]
-            },
-            {
-              id: 'DEPT_BJ_CUSTOMER_SERVICE',
-              title: '客服部门',
-              code: 'CS',
-              type: 'department',
-              parentId: 'BRANCH_BJ',
-              description: '客户服务部门',
-              createTime: '2023-03-01 11:00:00',
-              children: [
-                {
-                  id: 'ROLE_CS_SUPERVISOR',
-                  title: '客服主管',
-                  code: 'CS_SUPERVISOR',
-                  type: 'role',
-                  parentId: 'DEPT_BJ_CUSTOMER_SERVICE',
-                  description: '客服部门主管角色',
-                  createTime: '2023-03-05 10:00:00',
-                  permissions: ['user:view', 'order:view', 'company:view']
+                  name: '运营总监',
+                  chineseName: '运营总监',
+                  englishName: 'Operations Director',
+                  parentId: 'bj-operations'
                 },
                 {
-                  id: 'ROLE_CS_AGENT',
-                  title: '客服专员',
-                  code: 'CS_AGENT',
+                  id: 'bj-ops-manager',
                   type: 'role',
-                  parentId: 'DEPT_BJ_CUSTOMER_SERVICE',
-                  description: '客服专员角色',
-                  createTime: '2023-03-08 09:00:00',
-                  permissions: ['user:view', 'order:view']
+                  name: '运营经理',
+                  chineseName: '运营经理',
+                  englishName: 'Operations Manager',
+                  parentId: 'bj-operations'
                 }
               ]
-            }
-          ]
-        },
-        {
-          id: 'BRANCH_GZ',
-          title: '广州分公司',
-          code: 'GZ',
-          type: 'branch',
-          parentId: 'HQ',
-          description: '广州地区分公司',
-          createTime: '2023-03-10 15:00:00',
-          children: [
+            },
             {
-              id: 'DEPT_GZ_FINANCE',
-              title: '财务部门',
-              code: 'FINANCE',
+              id: 'bj-customer-service',
               type: 'department',
-              parentId: 'BRANCH_GZ',
-              description: '广州分公司财务部',
-              createTime: '2023-03-15 10:00:00',
+              name: '客户服务部',
+              chineseName: '客户服务部',
+              englishName: 'Customer Service Department',
+              parentId: 'beijing',
               children: [
                 {
-                  id: 'ROLE_FINANCE_MANAGER',
-                  title: '财务经理',
-                  code: 'FINANCE_MANAGER',
+                  id: 'bj-cs-supervisor',
                   type: 'role',
-                  parentId: 'DEPT_GZ_FINANCE',
-                  description: '财务部门经理角色',
-                  createTime: '2023-03-20 11:00:00',
-                  permissions: ['dashboard:view', 'order:view', 'order:export', 'system:log']
+                  name: '客服主管',
+                  chineseName: '客服主管',
+                  englishName: 'Customer Service Supervisor',
+                  parentId: 'bj-customer-service'
                 }
               ]
             }
           ]
         },
         {
-          id: 'DEPT_HQ_HR',
-          title: '人事部门',
-          code: 'HR',
-          type: 'department',
-          parentId: 'HQ',
-          description: '集团人力资源部',
-          createTime: '2023-02-01 10:00:00',
+          id: 'guangzhou',
+          type: 'company',
+          name: '广州分公司',
+          chineseName: '广州分公司',
+          englishName: 'Guangzhou Branch',
+          code: 'GZ001',
+          parentId: 'hq',
           children: [
             {
-              id: 'ROLE_HR_DIRECTOR',
-              title: '人事总监',
-              code: 'HR_DIRECTOR',
-              type: 'role',
-              parentId: 'DEPT_HQ_HR',
-              description: '人事部总监角色',
-              createTime: '2023-02-10 14:00:00',
-              permissions: ['user:view', 'user:create', 'user:edit', 'user:delete', 'employee:manage', 'employee:attendance']
-            },
-            {
-              id: 'ROLE_HR_MANAGER',
-              title: '人事经理',
-              code: 'HR_MANAGER',
-              type: 'role',
-              parentId: 'DEPT_HQ_HR',
-              description: '人事部经理角色',
-              createTime: '2023-02-15 11:00:00',
-              permissions: ['user:view', 'user:create', 'user:edit', 'employee:manage']
-            },
-            {
-              id: 'ROLE_HR_SPECIALIST',
-              title: '人事专员',
-              code: 'HR_SPECIALIST',
-              type: 'role',
-              parentId: 'DEPT_HQ_HR',
-              description: '人事专员角色',
-              createTime: '2023-02-20 09:00:00',
-              permissions: ['user:view', 'employee:manage']
+              id: 'gz-finance',
+              type: 'department',
+              name: '财务部',
+              chineseName: '财务部',
+              englishName: 'Finance Department',
+              parentId: 'guangzhou',
+              children: [
+                {
+                  id: 'gz-finance-manager',
+                  type: 'role',
+                  name: '财务经理',
+                  chineseName: '财务经理',
+                  englishName: 'Finance Manager',
+                  parentId: 'gz-finance'
+                },
+                {
+                  id: 'gz-accountant',
+                  type: 'role',
+                  name: '会计',
+                  chineseName: '会计',
+                  englishName: 'Accountant',
+                  parentId: 'gz-finance'
+                }
+              ]
             }
           ]
         },
         {
-          id: 'DEPT_HQ_IT',
-          title: 'IT部门',
-          code: 'IT',
+          id: 'hq-hr',
           type: 'department',
-          parentId: 'HQ',
-          description: '信息技术部门',
-          createTime: '2023-01-15 10:00:00',
+          name: '集团人力资源部',
+          chineseName: '集团人力资源部',
+          englishName: 'Group HR Department',
+          parentId: 'hq',
           children: [
             {
-              id: 'ROLE_IT_DIRECTOR',
-              title: 'IT总监',
-              code: 'IT_DIRECTOR',
+              id: 'hq-hr-director',
               type: 'role',
-              parentId: 'DEPT_HQ_IT',
-              description: 'IT部门总监角色',
-              createTime: '2023-01-20 14:00:00',
-              permissions: ['system:role', 'system:permission', 'system:config', 'system:log', 'user:view', 'user:create', 'user:edit']
+              name: '人力资源总监',
+              chineseName: '人力资源总监',
+              englishName: 'HR Director',
+              parentId: 'hq-hr'
             },
             {
-              id: 'ROLE_SYS_ADMIN',
-              title: '系统管理员',
-              code: 'SYS_ADMIN',
+              id: 'hq-hr-manager',
               type: 'role',
-              parentId: 'DEPT_HQ_IT',
-              description: '系统管理员角色',
-              createTime: '2023-01-25 11:00:00',
-              permissions: ['system:config', 'system:log', 'user:view', 'user:resetPassword']
+              name: '人力资源经理',
+              chineseName: '人力资源经理',
+              englishName: 'HR Manager',
+              parentId: 'hq-hr'
+            }
+          ]
+        },
+        {
+          id: 'hq-it',
+          type: 'department',
+          name: '集团IT部',
+          chineseName: '集团IT部',
+          englishName: 'Group IT Department',
+          parentId: 'hq',
+          children: [
+            {
+              id: 'hq-it-manager',
+              type: 'role',
+              name: 'IT经理',
+              chineseName: 'IT经理',
+              englishName: 'IT Manager',
+              parentId: 'hq-it'
             }
           ]
         }
@@ -354,743 +322,1029 @@ const PermissionManagement: React.FC = () => {
     }
   ]);
 
-  // 权限数据
+  // 权限数据 - 细化到查看、编辑、删除级别，增加分组
   const [permissionData] = useState<PermissionItem[]>([
+    // 客户管理模块
     {
-      id: 'dashboard',
-      title: '仪表盘',
-      parentId: null,
+      id: 'customer-group',
+      title: '客户管理',
+      permissionClass: 'module',
+      permissionType: 'CustomerManagement',
+      permissionPoint: 'group',
+      isGroup: true,
       children: [
-        { id: 'dashboard:view', title: '查看仪表盘', parentId: 'dashboard' },
-        { id: 'dashboard:export', title: '导出数据', parentId: 'dashboard' }
+        { id: 'customer:view', title: '查看客户列表', permissionClass: 'module', permissionType: 'CustomerManagement', permissionPoint: 'view', parentId: 'customer-group' },
+        { id: 'customer:create', title: '新增客户', permissionClass: 'button', permissionType: 'CustomerManagement', permissionPoint: 'create', parentId: 'customer-group' },
+        { id: 'customer:edit', title: '编辑客户', permissionClass: 'button', permissionType: 'CustomerManagement', permissionPoint: 'edit', parentId: 'customer-group' },
+        { id: 'customer:delete', title: '删除客户', permissionClass: 'button', permissionType: 'CustomerManagement', permissionPoint: 'delete', parentId: 'customer-group' },
+        { id: 'customer:export', title: '导出客户数据', permissionClass: 'button', permissionType: 'CustomerManagement', permissionPoint: 'export', parentId: 'customer-group' },
       ]
     },
+    
+    // 订单管理模块
     {
-      id: 'order',
+      id: 'order-group',
       title: '订单管理',
-      parentId: null,
+      permissionClass: 'module',
+      permissionType: 'OrderManagement',
+      permissionPoint: 'group',
+      isGroup: true,
       children: [
-        { id: 'order:view', title: '查看订单', parentId: 'order' },
-        { id: 'order:create', title: '创建订单', parentId: 'order' },
-        { id: 'order:edit', title: '编辑订单', parentId: 'order' },
-        { id: 'order:delete', title: '删除订单', parentId: 'order' },
-        { id: 'order:export', title: '导出订单', parentId: 'order' }
+        { id: 'order:view', title: '查看订单', permissionClass: 'module', permissionType: 'OrderManagement', permissionPoint: 'view', parentId: 'order-group' },
+        { id: 'order:create', title: '创建订单', permissionClass: 'button', permissionType: 'OrderManagement', permissionPoint: 'create', parentId: 'order-group' },
+        { id: 'order:edit', title: '编辑订单', permissionClass: 'button', permissionType: 'OrderManagement', permissionPoint: 'edit', parentId: 'order-group' },
+        { id: 'order:delete', title: '删除订单', permissionClass: 'button', permissionType: 'OrderManagement', permissionPoint: 'delete', parentId: 'order-group' },
+        { id: 'order:export', title: '导出订单', permissionClass: 'button', permissionType: 'OrderManagement', permissionPoint: 'export', parentId: 'order-group' },
+        { id: 'order:audit', title: '审核订单', permissionClass: 'button', permissionType: 'OrderManagement', permissionPoint: 'audit', parentId: 'order-group' },
       ]
     },
+    
+    // 运价管理模块
     {
-      id: 'user',
+      id: 'freight-group',
+      title: '运价管理',
+      permissionClass: 'module',
+      permissionType: 'FreightManagement',
+      permissionPoint: 'group',
+      isGroup: true,
+      children: [
+        { id: 'freight:view', title: '查看运价', permissionClass: 'module', permissionType: 'FreightManagement', permissionPoint: 'view', parentId: 'freight-group' },
+        { id: 'freight:create', title: '创建运价', permissionClass: 'button', permissionType: 'FreightManagement', permissionPoint: 'create', parentId: 'freight-group' },
+        { id: 'freight:edit', title: '编辑运价', permissionClass: 'button', permissionType: 'FreightManagement', permissionPoint: 'edit', parentId: 'freight-group' },
+        { id: 'freight:delete', title: '删除运价', permissionClass: 'button', permissionType: 'FreightManagement', permissionPoint: 'delete', parentId: 'freight-group' },
+        { id: 'freight:query', title: '运价查询', permissionClass: 'tab', permissionType: 'FreightQuery', permissionPoint: 'query', parentId: 'freight-group' },
+      ]
+    },
+    
+    // 用户管理模块
+    {
+      id: 'user-group',
       title: '用户管理',
-      parentId: null,
+      permissionClass: 'module',
+      permissionType: 'UserManagement',
+      permissionPoint: 'group',
+      isGroup: true,
       children: [
-        { id: 'user:view', title: '查看用户', parentId: 'user' },
-        { id: 'user:create', title: '创建用户', parentId: 'user' },
-        { id: 'user:edit', title: '编辑用户', parentId: 'user' },
-        { id: 'user:delete', title: '删除用户', parentId: 'user' },
-        { id: 'user:resetPassword', title: '重置密码', parentId: 'user' }
+        { id: 'user:view', title: '查看用户', permissionClass: 'module', permissionType: 'UserManagement', permissionPoint: 'view', parentId: 'user-group' },
+        { id: 'user:create', title: '创建用户', permissionClass: 'button', permissionType: 'UserManagement', permissionPoint: 'create', parentId: 'user-group' },
+        { id: 'user:edit', title: '编辑用户', permissionClass: 'button', permissionType: 'UserManagement', permissionPoint: 'edit', parentId: 'user-group' },
+        { id: 'user:delete', title: '删除用户', permissionClass: 'button', permissionType: 'UserManagement', permissionPoint: 'delete', parentId: 'user-group' },
       ]
     },
+    
+    // 企业管理模块
     {
-      id: 'company',
+      id: 'company-group',
       title: '企业管理',
-      parentId: null,
+      permissionClass: 'module',
+      permissionType: 'CompanyManagement',
+      permissionPoint: 'group',
+      isGroup: true,
       children: [
-        { id: 'company:view', title: '查看企业', parentId: 'company' },
-        { id: 'company:create', title: '创建企业', parentId: 'company' },
-        { id: 'company:edit', title: '编辑企业', parentId: 'company' },
-        { id: 'company:audit', title: '企业审核', parentId: 'company' }
+        { id: 'company:view', title: '查看企业', permissionClass: 'module', permissionType: 'CompanyManagement', permissionPoint: 'view', parentId: 'company-group' },
+        { id: 'company:create', title: '创建企业', permissionClass: 'button', permissionType: 'CompanyManagement', permissionPoint: 'create', parentId: 'company-group' },
+        { id: 'company:edit', title: '编辑企业', permissionClass: 'button', permissionType: 'CompanyManagement', permissionPoint: 'edit', parentId: 'company-group' },
+        { id: 'company:delete', title: '删除企业', permissionClass: 'button', permissionType: 'CompanyManagement', permissionPoint: 'delete', parentId: 'company-group' },
       ]
     },
+    
+    // 基础资料管理模块
     {
-      id: 'system',
-      title: '系统管理',
-      parentId: null,
+      id: 'basicdata-group',
+      title: '基础资料管理',
+      permissionClass: 'module',
+      permissionType: 'BasicDataManagement',
+      permissionPoint: 'group',
+      isGroup: true,
       children: [
-        { id: 'system:role', title: '角色管理', parentId: 'system' },
-        { id: 'system:permission', title: '权限管理', parentId: 'system' },
-        { id: 'system:config', title: '系统配置', parentId: 'system' },
-        { id: 'system:log', title: '操作日志', parentId: 'system' }
-      ]
-    },
-    {
-      id: 'logistics',
-      title: '物流管理',
-      parentId: null,
-      children: [
-        { id: 'logistics:manage', title: '物流调度', parentId: 'logistics' },
-        { id: 'logistics:track', title: '物流跟踪', parentId: 'logistics' }
-      ]
-    },
-    {
-      id: 'employee',
-      title: '员工管理',
-      parentId: null,
-      children: [
-        { id: 'employee:manage', title: '员工管理', parentId: 'employee' },
-        { id: 'employee:attendance', title: '考勤管理', parentId: 'employee' }
+        {
+          id: 'port-subgroup',
+          title: '港口管理',
+          permissionClass: 'submodule',
+          permissionType: 'PortManagement',
+          permissionPoint: 'subgroup',
+          isGroup: true,
+          parentId: 'basicdata-group',
+          children: [
+            { id: 'port:view', title: '查看港口', permissionClass: 'module', permissionType: 'PortManagement', permissionPoint: 'view', parentId: 'port-subgroup' },
+            { id: 'port:create', title: '创建港口', permissionClass: 'button', permissionType: 'PortManagement', permissionPoint: 'create', parentId: 'port-subgroup' },
+            { id: 'port:edit', title: '编辑港口', permissionClass: 'button', permissionType: 'PortManagement', permissionPoint: 'edit', parentId: 'port-subgroup' },
+            { id: 'port:delete', title: '删除港口', permissionClass: 'button', permissionType: 'PortManagement', permissionPoint: 'delete', parentId: 'port-subgroup' },
+          ]
+        },
+        {
+          id: 'carrier-subgroup',
+          title: '承运人管理',
+          permissionClass: 'submodule',
+          permissionType: 'CarrierManagement',
+          permissionPoint: 'subgroup',
+          isGroup: true,
+          parentId: 'basicdata-group',
+          children: [
+            { id: 'carrier:view', title: '查看承运人', permissionClass: 'module', permissionType: 'CarrierManagement', permissionPoint: 'view', parentId: 'carrier-subgroup' },
+            { id: 'carrier:create', title: '创建承运人', permissionClass: 'button', permissionType: 'CarrierManagement', permissionPoint: 'create', parentId: 'carrier-subgroup' },
+            { id: 'carrier:edit', title: '编辑承运人', permissionClass: 'button', permissionType: 'CarrierManagement', permissionPoint: 'edit', parentId: 'carrier-subgroup' },
+            { id: 'carrier:delete', title: '删除承运人', permissionClass: 'button', permissionType: 'CarrierManagement', permissionPoint: 'delete', parentId: 'carrier-subgroup' },
+          ]
+        }
       ]
     }
   ]);
 
-  // 初始化时选中集团总公司
-  useEffect(() => {
-    const hqNode = organizationData[0];
-    if (hqNode) {
-      setSelectedNode(hqNode);
+  // 状态管理
+  const [selectedNode, setSelectedNode] = useState<OrganizationNode | null>(null);
+  const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(['hq']));
+  const [allExpanded, setAllExpanded] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const [isPermissionConfigMode, setIsPermissionConfigMode] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [createModalVisible, setCreateModalVisible] = useState(false);
+  const [createType, setCreateType] = useState<'company' | 'department' | 'role'>('company');
+  const [form] = Form.useForm();
+
+  // 角色权限数据 - 初始化一些角色已拥有的权限
+  const [rolePermissions] = useState<Record<string, string[]>>({
+    '总经理': [
+      'customer-group', 'customer:view', 'customer:create', 'customer:edit', 'customer:delete', 'customer:export',
+      'order-group', 'order:view', 'order:create', 'order:edit', 'order:delete', 'order:export', 'order:audit',
+      'freight-group', 'freight:view', 'freight:create', 'freight:edit', 'freight:delete', 'freight:query',
+      'user-group', 'user:view', 'user:create', 'user:edit', 'user:delete',
+      'company-group', 'company:view', 'company:create', 'company:edit', 'company:delete',
+      'basicdata-group', 'port-subgroup', 'port:view', 'port:create', 'port:edit', 'port:delete',
+      'carrier-subgroup', 'carrier:view', 'carrier:create', 'carrier:edit', 'carrier:delete'
+    ],
+    '客户经理': [
+      'customer-group', 'customer:view', 'customer:create', 'customer:edit', 'customer:export',
+      'order-group', 'order:view', 'order:create', 'order:edit',
+      'freight-group', 'freight:view', 'freight:query'
+    ],
+    '业务员': [
+      'customer-group', 'customer:view', 
+      'order-group', 'order:view', 'order:create',
+      'freight-group', 'freight:view', 'freight:query'
+    ],
+    '财务': [
+      'order-group', 'order:view', 'order:audit',
+      'freight-group', 'freight:view'
+    ]
+  });
+
+  // 权限展开收起状态
+  const [expandedPermissions, setExpandedPermissions] = useState<Record<string, boolean>>({
+    'customer-group': true,
+    'order-group': true,
+    'freight-group': false,
+    'user-group': false,
+    'company-group': false,
+    'basicdata-group': false,
+    'port-subgroup': false,
+    'carrier-subgroup': false
+  });
+
+  // 权限搜索状态
+  const [leftSearchValue, setLeftSearchValue] = useState<string>('');
+  const [rightSearchValue, setRightSearchValue] = useState<string>('');
+
+  // 权限配置状态
+  const [authorizedPermissions, setAuthorizedPermissions] = useState<PermissionItem[]>([]);
+  const [unauthorizedPermissions, setUnauthorizedPermissions] = useState<PermissionItem[]>([]);
+  const [selectedAuthorizedPermissions, setSelectedAuthorizedPermissions] = useState<(string | number)[]>([]);
+  const [selectedUnauthorizedPermissions, setSelectedUnauthorizedPermissions] = useState<(string | number)[]>([]);
+
+  // 切换权限组展开状态
+  const togglePermissionExpand = (permissionId: string) => {
+    setExpandedPermissions(prev => ({
+      ...prev,
+      [permissionId]: !prev[permissionId]
+    }));
+  };
+
+  // 节点切换
+  const toggleExpanded = (nodeId: string) => {
+    const newExpanded = new Set(expandedNodes);
+    if (newExpanded.has(nodeId)) {
+      newExpanded.delete(nodeId);
+    } else {
+      newExpanded.add(nodeId);
     }
-  }, [organizationData]);
+    setExpandedNodes(newExpanded);
+  };
+
+  // 全部展开/收起
+  const toggleAllExpanded = () => {
+    if (allExpanded) {
+      setExpandedNodes(new Set(['hq']));
+    } else {
+      const allNodeIds = new Set<string>();
+      const addNodeIds = (nodes: OrganizationNode[]) => {
+        nodes.forEach(node => {
+          allNodeIds.add(node.id);
+          if (node.children) {
+            addNodeIds(node.children);
+          }
+        });
+      };
+      addNodeIds(organizationData);
+      setExpandedNodes(allNodeIds);
+    }
+    setAllExpanded(!allExpanded);
+  };
+
+  // 选择节点
+  const handleNodeSelect = (node: OrganizationNode) => {
+    setSelectedNode(node);
+    
+    // 如果是角色，初始化权限列表
+    if (node.type === 'role') {
+      const currentPermissions = rolePermissions[node.name] || [];
+      const allFlatPermissions = flattenPermissions(permissionData);
+      
+      const authorized = allFlatPermissions.filter(p => currentPermissions.includes(p.id));
+      const unauthorized = allFlatPermissions.filter(p => !currentPermissions.includes(p.id));
+      setAuthorizedPermissions(authorized);
+      setUnauthorizedPermissions(unauthorized);
+    }
+  };
+
+  // 节点是否有子节点
+  const hasChildren = (node: OrganizationNode) => {
+    return node.children && node.children.length > 0;
+  };
 
   // 获取节点图标
-  const getNodeIcon = (type: NodeType) => {
+  const getNodeIcon = (type: string) => {
     switch (type) {
+      case 'group':
+        return <IconHome style={{ color: '#1890ff', marginRight: '6px' }} />;
       case 'company':
-        return <IconHome style={{ color: '#165DFF' }} />;
-      case 'branch':
-        return <IconHome style={{ color: '#00B42A' }} />;
+        return <IconBranch style={{ color: '#52c41a', marginRight: '6px' }} />;
       case 'department':
-        return <IconFolder style={{ color: '#FF7D00' }} />;
+        return <IconFolder style={{ color: '#fa8c16', marginRight: '6px' }} />;
       case 'role':
-        return <IconUser style={{ color: '#722ED1' }} />;
+        return <IconUser style={{ color: '#722ed1', marginRight: '6px' }} />;
       default:
-        return <IconFolder />;
+        return null;
     }
   };
 
-  // 递归查找节点
-  const findNodeById = (nodes: OrganizationNode[], id: string): OrganizationNode | null => {
-    for (const node of nodes) {
-      if (node.id === id) {
-        return node;
-      }
-      if (node.children) {
-        const found = findNodeById(node.children, id);
-        if (found) return found;
-      }
-    }
-    return null;
-  };
+  // 渲染树节点
+  const renderTreeNode = (node: OrganizationNode, level: number = 0): React.ReactNode => {
+    const isExpanded = expandedNodes.has(node.id);
+    const isSelected = selectedNode?.id === node.id;
+    const paddingLeft = level * 20 + 12;
 
-  // 递归更新节点
-  const updateNodeInTree = (nodes: OrganizationNode[], targetId: string, updateFn: (node: OrganizationNode) => OrganizationNode): OrganizationNode[] => {
-    return nodes.map(node => {
-      if (node.id === targetId) {
-        return updateFn(node);
-      }
-      if (node.children) {
-        return {
-          ...node,
-          children: updateNodeInTree(node.children, targetId, updateFn)
-        };
-      }
-      return node;
-    });
-  };
-
-  // 递归添加子节点
-  const addChildToNode = (nodes: OrganizationNode[], parentId: string, newChild: OrganizationNode): OrganizationNode[] => {
-    return nodes.map(node => {
-      if (node.id === parentId) {
-        return {
-          ...node,
-          children: [...(node.children || []), newChild]
-        };
-      }
-      if (node.children) {
-        return {
-          ...node,
-          children: addChildToNode(node.children, parentId, newChild)
-        };
-      }
-      return node;
-    });
-  };
-
-  // 处理节点选择
-  const handleNodeSelect = (nodeId: string) => {
-    const node = findNodeById(organizationData, nodeId);
-    if (node) {
-      setSelectedNode(node);
-      setSelectedKeys([nodeId]);
-      if (node.type === 'role' && node.permissions) {
-        setAssignedPermissions(node.permissions);
-      }
-    }
-  };
-
-  // 创建新节点
-  const handleCreate = (type: 'branch' | 'department' | 'role') => {
-    setModalType(type);
-    form.resetFields();
-    setModalVisible(true);
-  };
-
-  // 提交创建
-  const handleSubmit = () => {
-    form.validate().then(values => {
-      if (!selectedNode) return;
-
-      const newNode: OrganizationNode = {
-        id: `${modalType.toUpperCase()}_${Date.now()}`,
-        title: values.title,
-        code: values.code,
-        type: modalType,
-        parentId: selectedNode.id,
-        description: values.description,
-        createTime: new Date().toLocaleString(),
-        children: modalType === 'role' ? undefined : [],
-        permissions: modalType === 'role' ? [] : undefined
-      };
-
-      setOrganizationData(prev => addChildToNode(prev, selectedNode.id, newNode));
-      Message.success(`${getTypeText(modalType)}创建成功`);
-      setModalVisible(false);
-    });
-  };
-
-  // 获取类型文本
-  const getTypeText = (type: NodeType) => {
-    switch (type) {
-      case 'company': return '集团';
-      case 'branch': return '分公司';
-      case 'department': return '部门';
-      case 'role': return '角色';
-      default: return '';
-    }
-  };
-
-  // 配置权限
-  const handleConfigPermission = () => {
-    if (selectedNode && selectedNode.type === 'role') {
-      setAssignedPermissions(selectedNode.permissions || []);
-      setPermissionModalVisible(true);
-    }
-  };
-
-  // 保存权限配置
-  const handleSavePermissions = () => {
-    if (!selectedNode || selectedNode.type !== 'role') return;
-
-    setOrganizationData(prev => 
-      updateNodeInTree(prev, selectedNode.id, node => ({
-        ...node,
-        permissions: assignedPermissions
-      }))
-    );
-
-    // 更新当前选中节点
-    setSelectedNode(prev => prev ? { ...prev, permissions: assignedPermissions } : null);
-    
-    Message.success('权限配置保存成功');
-    setPermissionModalVisible(false);
-  };
-
-  // 切换节点展开/收起状态
-  const toggleNodeExpanded = (nodeId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setExpandedKeys(prev => {
-      if (prev.includes(nodeId)) {
-        return prev.filter(key => key !== nodeId);
-      } else {
-        return [...prev, nodeId];
-      }
-    });
-  };
-
-  // 获取所有节点ID
-  const getAllNodeIds = (nodes: OrganizationNode[]): string[] => {
-    let ids: string[] = [];
-    nodes.forEach(node => {
-      ids.push(node.id);
-      if (node.children) {
-        ids = [...ids, ...getAllNodeIds(node.children)];
-      }
-    });
-    return ids;
-  };
-
-  // 全部展开
-  const expandAll = () => {
-    const allIds = getAllNodeIds(organizationData);
-    setExpandedKeys(allIds);
-  };
-
-  // 全部收起
-  const collapseAll = () => {
-    setExpandedKeys(['HQ']); // 只保持根节点展开
-  };
-
-  // 渲染组织架构树状结构（非菜单形式）
-  const renderOrgTree = (nodes: OrganizationNode[], level: number = 0): React.ReactNode[] => {
-    return nodes.map(node => (
-      <div key={node.id} style={{ marginLeft: level * 20 }}>
+    return (
+      <div key={node.id}>
         <div
           style={{
+            padding: '8px 12px',
+            paddingLeft: paddingLeft,
+            cursor: 'pointer',
+            backgroundColor: isSelected ? '#e6f7ff' : 'transparent',
+            minHeight: '36px',
             display: 'flex',
             alignItems: 'center',
-            padding: '8px 12px',
-            cursor: 'pointer',
-            borderRadius: '4px',
-            backgroundColor: selectedKeys.includes(node.id) ? '#E8F4FF' : 'transparent',
-            marginBottom: '2px',
-            minHeight: '36px',
-            transition: 'all 0.2s'
+            borderRadius: '6px',
+            margin: '2px 8px',
+            border: isSelected ? '2px solid #1890ff' : '2px solid transparent',
+            transition: 'all 0.2s ease'
           }}
-          onClick={() => handleNodeSelect(node.id)}
           onMouseEnter={(e) => {
-            if (!selectedKeys.includes(node.id)) {
-              e.currentTarget.style.backgroundColor = '#F7F8FA';
+            if (!isSelected) {
+              e.currentTarget.style.backgroundColor = '#f0f0f0';
             }
           }}
           onMouseLeave={(e) => {
-            if (!selectedKeys.includes(node.id)) {
+            if (!isSelected) {
               e.currentTarget.style.backgroundColor = 'transparent';
             }
           }}
+          onClick={() => handleNodeSelect(node)}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
-            {/* 展开/收起按钮 */}
-            {node.children && node.children.length > 0 ? (
-              <div
-                style={{ 
-                  width: '16px', 
-                  height: '16px', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  borderRadius: '2px',
-                  transition: 'all 0.2s'
-                }}
-                onClick={(e) => toggleNodeExpanded(node.id, e)}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#E8F4FF';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                }}
-              >
-                {expandedKeys.includes(node.id) ? (
-                  <IconDown style={{ fontSize: '12px', color: '#86909C' }} />
-                ) : (
-                  <IconRight style={{ fontSize: '12px', color: '#86909C' }} />
-                )}
-              </div>
-            ) : (
-              <div style={{ width: '16px' }} />
-            )}
-            
-            {getNodeIcon(node.type)}
-            <span style={{ 
-              fontSize: level === 0 ? '15px' : '14px',
-              fontWeight: level === 0 ? 'bold' : 'normal',
-              color: selectedKeys.includes(node.id) ? '#165DFF' : '#1D2129'
-            }}>
-              {node.title}
+          {hasChildren(node) && (
+            <span
+              style={{ marginRight: '8px', cursor: 'pointer', color: '#666' }}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleExpanded(node.id);
+              }}
+            >
+              {isExpanded ? <IconDown /> : <IconRight />}
             </span>
-            {(node.type === 'company' || node.type === 'branch') && (
-              <Text 
-                type="secondary" 
-                style={{ 
-                  fontSize: '12px',
-                  color: selectedKeys.includes(node.id) ? '#4E5969' : '#86909C'
-                }}
-              >
+          )}
+          {!hasChildren(node) && <span style={{ width: '24px' }} />}
+          
+          {getNodeIcon(node.type)}
+          
+          <span style={{
+            fontWeight: node.type === 'group' ? 'bold' : 'normal',
+            fontSize: node.type === 'group' ? '14px' : '13px',
+            color: isSelected ? '#1890ff' : '#333'
+          }}>
+            {node.name}
+            {(node.type === 'group' || node.type === 'company') && node.code && (
+              <Text type="secondary" style={{ marginLeft: '8px', fontSize: '12px' }}>
                 ({node.code})
               </Text>
             )}
-          </div>
+          </span>
         </div>
-        {/* 只有在展开状态下才显示子节点 */}
-        {node.children && node.children.length > 0 && expandedKeys.includes(node.id) && 
-          renderOrgTree(node.children, level + 1)
-        }
-      </div>
-    ));
-  };
-
-  // 渲染权限列表
-  const renderPermissionList = (permissions: PermissionItem[], checkedKeys: string[], onCheck: (keys: string[]) => void, searchValue: string) => {
-    const filteredPermissions = permissions.filter(perm => 
-      !searchValue || 
-      perm.title.toLowerCase().includes(searchValue.toLowerCase()) ||
-      (perm.children && perm.children.some(child => 
-        child.title.toLowerCase().includes(searchValue.toLowerCase())
-      ))
-    );
-
-    return (
-      <List
-        dataSource={filteredPermissions}
-        render={(item) => (
-          <List.Item key={item.id}>
-            <div style={{ width: '100%' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                <Checkbox
-                  checked={item.children ? item.children.every(child => checkedKeys.includes(child.id)) : checkedKeys.includes(item.id)}
-                  indeterminate={item.children ? item.children.some(child => checkedKeys.includes(child.id)) && !item.children.every(child => checkedKeys.includes(child.id)) : false}
-                  onChange={(checked) => {
-                    let newKeys = [...checkedKeys];
-                    if (item.children) {
-                      if (checked) {
-                        item.children.forEach(child => {
-                          if (!newKeys.includes(child.id)) {
-                            newKeys.push(child.id);
-                          }
-                        });
-                      } else {
-                        item.children.forEach(child => {
-                          newKeys = newKeys.filter(key => key !== child.id);
-                        });
-                      }
-                    } else {
-                      if (checked) {
-                        newKeys.push(item.id);
-                      } else {
-                        newKeys = newKeys.filter(key => key !== item.id);
-                      }
-                    }
-                    onCheck(newKeys);
-                  }}
-                />
-                <IconUnlock style={{ fontSize: '14px', color: '#165DFF' }} />
-                <Text style={{ fontWeight: 'bold' }}>{item.title}</Text>
-              </div>
-              {item.children && (
-                <div style={{ marginLeft: '32px' }}>
-                  {item.children.map(child => (
-                    <div key={child.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                      <Checkbox
-                        checked={checkedKeys.includes(child.id)}
-                        onChange={(checked) => {
-                          let newKeys = [...checkedKeys];
-                          if (checked) {
-                            newKeys.push(child.id);
-                          } else {
-                            newKeys = newKeys.filter(key => key !== child.id);
-                          }
-                          onCheck(newKeys);
-                        }}
-                      />
-                      <Text style={{ fontSize: '13px' }}>{child.title}</Text>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </List.Item>
+        
+        {hasChildren(node) && isExpanded && (
+          <div>
+            {node.children!.map(child => renderTreeNode(child, level + 1))}
+          </div>
         )}
-      />
+      </div>
     );
   };
 
-  // 渲染右侧内容
-  const renderRightContent = () => {
-    if (!selectedNode) {
-      return <Empty description="请选择组织架构节点" />;
+  // 配置权限弹窗
+  const handleConfigPermission = () => {
+    if (selectedNode && selectedNode.type === 'role') {
+      setIsPermissionConfigMode(true);
+      // 初始化权限列表
+      const currentPermissions = rolePermissions[selectedNode.name] || [];
+      const allFlatPermissions = flattenPermissions(permissionData);
+      
+      const authorized = allFlatPermissions.filter(p => currentPermissions.includes(p.id));
+      const unauthorized = allFlatPermissions.filter(p => !currentPermissions.includes(p.id));
+      setAuthorizedPermissions(authorized);
+      setUnauthorizedPermissions(unauthorized);
     }
+  };
 
-    const { type, title, code, description, createTime } = selectedNode;
+  // 返回组织架构页面
+  const backToOrgStructure = () => {
+    setIsPermissionConfigMode(false);
+    setSelectedAuthorizedPermissions([]);
+    setSelectedUnauthorizedPermissions([]);
+  };
 
-    // 根据节点类型显示不同内容
-    switch (type) {
-      case 'company':
-      case 'branch':
-      case 'department':
-        return (
-          <div>
-            <div style={{ marginBottom: '24px' }}>
-              <Title heading={4} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                {getNodeIcon(type)}
-                {getTypeText(type)}基本信息
-              </Title>
-            </div>
-
-            <Descriptions
-              column={1}
-              data={[
-                { label: '名称', value: title },
-                { label: '编码', value: code },
-                { label: '描述', value: description || '-' },
-                { label: '创建时间', value: createTime }
-              ]}
-              style={{ marginBottom: '32px' }}
-            />
-
-            <div>
-              <Title heading={5} style={{ marginBottom: '16px' }}>操作</Title>
-              <Space>
-                {(type === 'company' || type === 'branch') && (
-                  <Button 
-                    type="primary" 
-                    icon={<IconPlus />}
-                    onClick={() => handleCreate('branch')}
-                  >
-                    创建分公司
-                  </Button>
-                )}
-                <Button 
-                  type="primary" 
-                  icon={<IconPlus />}
-                  onClick={() => handleCreate('department')}
-                >
-                  创建部门
-                </Button>
-                {type === 'department' && (
-                  <Button 
-                    type="primary" 
-                    icon={<IconPlus />}
-                    onClick={() => handleCreate('role')}
-                  >
-                    创建角色
-                  </Button>
-                )}
-              </Space>
-            </div>
-          </div>
-        );
-
-      case 'role':
-        return (
-          <div>
-            <div style={{ marginBottom: '24px' }}>
-              <Title heading={4} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                {getNodeIcon(type)}
-                角色权限配置
-              </Title>
-            </div>
-
-            <Descriptions
-              column={1}
-              data={[
-                { label: '角色名称', value: title },
-                { label: '角色编码', value: code },
-                { label: '描述', value: description || '-' },
-                { label: '创建时间', value: createTime }
-              ]}
-              style={{ marginBottom: '24px' }}
-            />
-
-            <div style={{ marginBottom: '16px' }}>
-              <Button 
-                type="primary" 
-                icon={<IconEdit />}
-                onClick={handleConfigPermission}
-              >
-                配置权限
-              </Button>
-            </div>
-
-            <div>
-              <Title heading={5} style={{ marginBottom: '16px' }}>
-                当前权限 ({selectedNode.permissions?.length || 0})
-              </Title>
-              <div style={{ 
-                border: '1px solid #E5E6EB', 
-                borderRadius: '6px', 
-                padding: '16px',
-                minHeight: '200px',
-                backgroundColor: '#F7F8FA'
-              }}>
-                {selectedNode.permissions && selectedNode.permissions.length > 0 ? (
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                    {selectedNode.permissions.map(permission => {
-                      // 查找权限显示名称
-                      const findPermissionTitle = (items: PermissionItem[], id: string): string => {
-                        for (const item of items) {
-                          if (item.id === id) return item.title;
-                          if (item.children) {
-                            const found = findPermissionTitle(item.children, id);
-                            if (found) return found;
-                          }
-                        }
-                        return id;
-                      };
-                      
-                      return (
-                        <div
-                          key={permission}
-                          style={{
-                            padding: '4px 12px',
-                            backgroundColor: '#165DFF',
-                            color: 'white',
-                            borderRadius: '4px',
-                            fontSize: '12px'
-                          }}
-                        >
-                          {findPermissionTitle(permissionData, permission)}
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <Text type="secondary">暂无权限配置</Text>
-                )}
-              </div>
-            </div>
-          </div>
-        );
-
-      default:
-        return <Empty description="未知节点类型" />;
+  // 编辑信息
+  const handleEdit = () => {
+    if (selectedNode) {
+      form.setFieldsValue({
+        chineseName: selectedNode.chineseName,
+        englishName: selectedNode.englishName,
+        code: selectedNode.code || ''
+      });
+      setEditModalVisible(true);
     }
+  };
+
+  // 创建子项
+  const handleCreate = (type: 'company' | 'department' | 'role') => {
+    setCreateType(type);
+    form.resetFields();
+    setCreateModalVisible(true);
+  };
+
+  // 保存编辑
+  const handleSaveEdit = () => {
+    try {
+      const values = form.getFieldsValue();
+      console.log('编辑保存:', values);
+      // 这里可以添加实际的保存逻辑
+      setEditModalVisible(false);
+    } catch (error) {
+      console.log('保存失败:', error);
+    }
+  };
+
+  // 保存创建
+  const handleSaveCreate = () => {
+    try {
+      const values = form.getFieldsValue();
+      console.log('创建保存:', { type: createType, ...values });
+      // 这里可以添加实际的创建逻辑
+      setCreateModalVisible(false);
+    } catch (error) {
+      console.log('创建失败:', error);
+    }
+  };
+
+  // 权限移动函数
+  const moveToAuthorized = () => {
+    const allFlatPermissions = flattenPermissions(permissionData);
+    const movedPermissions = allFlatPermissions.filter(p => 
+      selectedUnauthorizedPermissions.includes(p.id) && !p.isGroup
+    );
+    
+    // 更新权限列表
+    const newAuthorized = [...authorizedPermissions, ...movedPermissions];
+    const newUnauthorized = unauthorizedPermissions.filter(p => 
+      !selectedUnauthorizedPermissions.includes(p.id)
+    );
+    
+    setAuthorizedPermissions(newAuthorized);
+    setUnauthorizedPermissions(newUnauthorized);
+    setSelectedUnauthorizedPermissions([]);
+  };
+
+  const moveToUnauthorized = () => {
+    const allFlatPermissions = flattenPermissions(permissionData);
+    const movedPermissions = allFlatPermissions.filter(p => 
+      selectedAuthorizedPermissions.includes(p.id) && !p.isGroup
+    );
+    
+    // 更新权限列表
+    const newUnauthorized = [...unauthorizedPermissions, ...movedPermissions];
+    const newAuthorized = authorizedPermissions.filter(p => 
+      !selectedAuthorizedPermissions.includes(p.id)
+    );
+    
+    setUnauthorizedPermissions(newUnauthorized);
+    setAuthorizedPermissions(newAuthorized);
+    setSelectedAuthorizedPermissions([]);
+  };
+
+
+
+  // 渲染权限表格行
+  const renderPermissionRow = (permission: PermissionItem, _index: number, isAuthorized: boolean) => {
+    const depth = permission.depth || 0;
+    const paddingLeft = depth * 20 + 8;
+    const isExpanded = expandedPermissions[permission.id];
+    const isSelected = isAuthorized ? 
+      selectedAuthorizedPermissions.includes(permission.id) : 
+      selectedUnauthorizedPermissions.includes(permission.id);
+    
+    const handleRowClick = () => {
+      if (permission.isGroup) {
+        togglePermissionExpand(permission.id);
+      } else {
+        // 切换选中状态
+        if (isAuthorized) {
+          if (selectedAuthorizedPermissions.includes(permission.id)) {
+            setSelectedAuthorizedPermissions(prev => prev.filter(id => id !== permission.id));
+          } else {
+            setSelectedAuthorizedPermissions(prev => [...prev, permission.id]);
+          }
+        } else {
+          if (selectedUnauthorizedPermissions.includes(permission.id)) {
+            setSelectedUnauthorizedPermissions(prev => prev.filter(id => id !== permission.id));
+          } else {
+            setSelectedUnauthorizedPermissions(prev => [...prev, permission.id]);
+          }
+        }
+      }
+    };
+    
+    return (
+      <tr 
+        key={permission.id}
+        style={{ 
+          backgroundColor: permission.isGroup ? '#f8f8f8' : (isSelected ? '#e6f7ff' : 'transparent'),
+          borderLeft: permission.isGroup ? '3px solid #1890ff' : 'none',
+          cursor: 'pointer'
+        }}
+        onClick={handleRowClick}
+        title={permission.isGroup ? '点击展开/收起' : '点击选择权限'}
+      >
+        <td style={{ 
+          padding: '8px', 
+          paddingLeft: paddingLeft,
+          borderBottom: '1px solid #f0f0f0',
+          position: 'relative'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            {!permission.isGroup && (
+              <input 
+                type="checkbox" 
+                checked={isSelected}
+                onChange={() => {}} // 由外层点击事件处理
+                style={{ marginRight: '8px' }}
+              />
+            )}
+            
+            {permission.isGroup && (
+              <Button
+                type="text"
+                size="small"
+                icon={isExpanded ? <IconDown /> : <IconRight />}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  togglePermissionExpand(permission.id);
+                }}
+                style={{ marginRight: '8px', minWidth: '24px' }}
+              />
+            )}
+            {!permission.isGroup && depth > 0 && (
+              <div style={{ width: '32px', marginRight: '8px' }} />
+            )}
+            
+            {permission.isGroup ? (
+              <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
+                {permission.title}
+              </Text>
+            ) : (
+              permission.title
+            )}
+          </div>
+        </td>
+        <td style={{ padding: '8px', borderBottom: '1px solid #f0f0f0' }}>
+          <Tag color={permission.permissionClass === 'module' ? 'blue' : 
+                     permission.permissionClass === 'button' ? 'green' : 
+                     permission.permissionClass === 'tab' ? 'orange' : 'purple'}>
+            {permission.permissionClass}
+          </Tag>
+        </td>
+        <td style={{ padding: '8px', borderBottom: '1px solid #f0f0f0' }}>
+          {permission.permissionType}
+        </td>
+        <td style={{ padding: '8px', borderBottom: '1px solid #f0f0f0' }}>
+          <Tag color={permission.permissionPoint === 'view' ? 'blue' :
+                     permission.permissionPoint === 'create' ? 'green' :
+                     permission.permissionPoint === 'edit' ? 'orange' :
+                     permission.permissionPoint === 'delete' ? 'red' : 'default'}>
+            {permission.permissionPoint}
+          </Tag>
+        </td>
+      </tr>
+    );
+  };
+
+  // 渲染权限表格
+  const renderPermissionTable = (permissions: PermissionItem[], isAuthorized: boolean, searchValue: string) => {
+    const filteredPermissions = filterPermissions(permissions, searchValue);
+    const displayPermissions = flattenPermissions(filteredPermissions);
+    
+    return (
+             <div style={{ 
+         border: `1px solid ${isAuthorized ? '#d9d9d9' : '#d9d9d9'}`,
+         borderRadius: '6px',
+         backgroundColor: '#fff',
+         height: 'calc(100vh - 320px)',
+         display: 'flex',
+         flexDirection: 'column',
+         overflow: 'hidden'
+       }}>
+        {/* 表格头部 */}
+        <div style={{ 
+          padding: '12px',
+          borderBottom: '1px solid #f0f0f0',
+          backgroundColor: '#fafafa'
+        }}>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'space-between',
+            marginBottom: '12px'
+          }}>
+                         <Text style={{ 
+               color: '#262626',
+               fontSize: '16px',
+               fontWeight: 'bold'
+             }}>
+               {isAuthorized ? '已授权权限' : '未授权权限'} ({displayPermissions.length})
+             </Text>
+          </div>
+          
+          {/* 搜索框 */}
+          <Input
+            placeholder={`搜索${isAuthorized ? '已授权' : '未授权'}权限...`}
+            prefix={<IconSearch />}
+            value={isAuthorized ? leftSearchValue : rightSearchValue}
+            onChange={(value) => {
+              if (isAuthorized) {
+                setLeftSearchValue(value);
+              } else {
+                setRightSearchValue(value);
+              }
+            }}
+            allowClear
+          />
+          
+                     {/* 操作提示 */}
+           <div style={{ 
+             marginTop: '8px', 
+             fontSize: '12px', 
+             color: '#666',
+             display: 'flex',
+             alignItems: 'center'
+           }}>
+             <IconInfo style={{ marginRight: '4px' }} />
+             点击📁展开分组，勾选权限项后使用底部按钮移动
+           </div>
+        </div>
+        
+        {/* 表格内容 */}
+        <div style={{ flex: 1, overflow: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ backgroundColor: '#fafafa' }}>
+                <th style={{ 
+                  padding: '12px 8px',
+                  textAlign: 'left',
+                  borderBottom: '2px solid #e0e0e0',
+                  fontWeight: 'bold'
+                }}>
+                  权限名
+                </th>
+                <th style={{ 
+                  padding: '12px 8px',
+                  textAlign: 'left',
+                  borderBottom: '2px solid #e0e0e0',
+                  fontWeight: 'bold',
+                  width: '120px'
+                }}>
+                  权限类
+                </th>
+                <th style={{ 
+                  padding: '12px 8px',
+                  textAlign: 'left',
+                  borderBottom: '2px solid #e0e0e0',
+                  fontWeight: 'bold',
+                  width: '150px'
+                }}>
+                  权限型
+                </th>
+                <th style={{ 
+                  padding: '12px 8px',
+                  textAlign: 'left',
+                  borderBottom: '2px solid #e0e0e0',
+                  fontWeight: 'bold',
+                  width: '120px'
+                }}>
+                  权限点
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {displayPermissions.map((permission, index) => 
+                renderPermissionRow(permission, index, isAuthorized)
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  };
+
+  // 扁平化权限数据（包含子权限）
+  const flattenPermissions = (permissions: PermissionItem[], depth = 0): PermissionItem[] => {
+    const result: PermissionItem[] = [];
+    
+    permissions.forEach(permission => {
+      // 添加当前权限项（附加深度信息）
+      result.push({ ...permission, depth });
+      
+      // 如果有子权限且当前组已展开，递归添加子权限
+      if (permission.children && expandedPermissions[permission.id]) {
+        result.push(...flattenPermissions(permission.children, depth + 1));
+      }
+    });
+    
+    return result;
+  };
+
+  // 搜索权限
+  const filterPermissions = (permissions: PermissionItem[], searchValue: string): PermissionItem[] => {
+    if (!searchValue.trim()) return permissions;
+    
+    return permissions.filter(permission => {
+      const matchesSearch = permission.title.toLowerCase().includes(searchValue.toLowerCase()) ||
+                           permission.permissionType.toLowerCase().includes(searchValue.toLowerCase()) ||
+                           permission.permissionPoint.toLowerCase().includes(searchValue.toLowerCase());
+      
+      // 如果是分组，检查子权限是否匹配
+      if (permission.isGroup && permission.children) {
+        const hasMatchingChildren = permission.children.some(child =>
+          child.title.toLowerCase().includes(searchValue.toLowerCase()) ||
+          child.permissionType.toLowerCase().includes(searchValue.toLowerCase()) ||
+          child.permissionPoint.toLowerCase().includes(searchValue.toLowerCase())
+        );
+        return matchesSearch || hasMatchingChildren;
+      }
+      
+      return matchesSearch;
+    });
   };
 
   return (
-    <div style={{ padding: '0', height: 'calc(100vh - 120px)' }}>
+    <div style={{ padding: '24px', background: '#f5f5f5', minHeight: '100vh' }}>
       {/* 页面标题 */}
       <div style={{ marginBottom: '24px' }}>
-        <Title heading={3} style={{ marginBottom: '8px' }}>权限管理</Title>
-        <Text type="secondary">管理组织架构和角色权限配置</Text>
+        <Title heading={2} style={{ margin: 0, color: '#000' }}>
+          {isPermissionConfigMode ? `权限配置 - ${selectedNode?.name}` : '权限管理'}
+        </Title>
+        <Text type="secondary" style={{ fontSize: '14px', marginTop: '8px', display: 'block' }}>
+          {isPermissionConfigMode ? '配置角色的权限设置' : '管理组织架构和角色权限配置'}
+        </Text>
       </div>
 
-      <Row gutter={24} style={{ height: 'calc(100% - 80px)' }}>
-        {/* 左侧组织架构树 */}
-        <Col span={8}>
-          <Card 
-            title={
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <IconFolder />
-                <span>组织架构</span>
+      {!isPermissionConfigMode ? (
+        // 组织架构管理页面
+        <Row gutter={16} style={{ height: 'calc(100vh - 140px)' }}>
+          {/* 左侧组织架构树 */}
+          <Col span={8}>
+            <Card 
+              title={
+                <span style={{ color: '#1890ff' }}>
+                  <IconBranch style={{ marginRight: '8px' }} />
+                  组织架构
+                </span>
+              }
+              style={{ 
+                height: '100%',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                borderRadius: '8px'
+              }}
+              extra={
+                <Space>
+                  <Button size="small" onClick={toggleAllExpanded} type="outline">
+                    {allExpanded ? '全部收起' : '全部展开'}
+                  </Button>
+                  <Input
+                    placeholder="搜索组织"
+                    prefix={<IconSearch />}
+                    value={searchText}
+                    onChange={setSearchText}
+                    style={{ width: 150 }}
+                    size="small"
+                  />
+                </Space>
+              }
+            >
+              <div style={{ height: 'calc(100vh - 280px)', overflowY: 'auto' }}>
+                {organizationData.map(node => renderTreeNode(node))}
               </div>
-            }
+            </Card>
+          </Col>
+
+          {/* 右侧内容区域 */}
+          <Col span={16}>
+            <Card 
+              style={{ 
+                height: '100%',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                borderRadius: '8px'
+              }}
+            >
+              {selectedNode ? (
+                <div style={{ height: '100%' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                    <div>
+                      <Title heading={4} style={{ margin: 0 }}>
+                        {selectedNode.name}
+                      </Title>
+                      <Text type="secondary">
+                        {selectedNode.type === 'group' && '集团'}
+                        {selectedNode.type === 'company' && '分公司'}
+                        {selectedNode.type === 'department' && '部门'}
+                        {selectedNode.type === 'role' && '角色'}
+                      </Text>
+                    </div>
+                    <Space>
+                      <Button 
+                        icon={<IconEdit />}
+                        type="outline"
+                        style={{ borderColor: '#1890ff', color: '#1890ff' }}
+                        onClick={handleEdit}
+                      >
+                        编辑信息
+                      </Button>
+                      {selectedNode.type === 'role' && (
+                        <Button 
+                          type="primary" 
+                          icon={<IconSettings />}
+                          onClick={handleConfigPermission}
+                          style={{ background: '#1890ff', borderColor: '#1890ff' }}
+                        >
+                          配置权限
+                        </Button>
+                      )}
+                    </Space>
+                  </div>
+
+                  <div style={{ marginTop: '16px' }}>
+                    <div style={{ marginBottom: '12px' }}>
+                      <Text bold>中文名称: </Text>
+                      <Text>{selectedNode.chineseName}</Text>
+                    </div>
+                    <div style={{ marginBottom: '12px' }}>
+                      <Text bold>英文名称: </Text>
+                      <Text>{selectedNode.englishName}</Text>
+                    </div>
+                    {(selectedNode.type === 'group' || selectedNode.type === 'company') && (
+                      <div style={{ marginBottom: '12px' }}>
+                        <Text bold>代码: </Text>
+                        <Text>{selectedNode.code}</Text>
+                      </div>
+                    )}
+                  </div>
+
+                  {(selectedNode.type === 'group' || selectedNode.type === 'company') && (
+                    <div style={{ marginTop: '24px' }}>
+                      <Space size="medium">
+                        <Button
+                          type="primary"
+                          icon={<IconBranch />}
+                          style={{ background: '#52c41a', borderColor: '#52c41a' }}
+                          onClick={() => handleCreate('company')}
+                        >
+                          创建分公司
+                        </Button>
+                        <Button
+                          type="outline"
+                          icon={<IconFolder />}
+                          style={{ borderColor: '#fa8c16', color: '#fa8c16' }}
+                          onClick={() => handleCreate('department')}
+                        >
+                          创建部门
+                        </Button>
+                      </Space>
+                    </div>
+                  )}
+
+                  {selectedNode.type === 'department' && (
+                    <div style={{ marginTop: '24px' }}>
+                      <Space size="medium">
+                        <Button
+                          type="primary"
+                          icon={<IconFolder />}
+                          style={{ background: '#fa8c16', borderColor: '#fa8c16' }}
+                          onClick={() => handleCreate('department')}
+                        >
+                          创建部门
+                        </Button>
+                        <Button
+                          type="outline"
+                          icon={<IconUser />}
+                          style={{ borderColor: '#722ed1', color: '#722ed1' }}
+                          onClick={() => handleCreate('role')}
+                        >
+                          创建角色
+                        </Button>
+                      </Space>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div style={{ 
+                  height: '100%', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  flexDirection: 'column'
+                }}>
+                  <Text type="secondary" style={{ fontSize: '16px' }}>
+                    请选择左侧组织架构节点
+                  </Text>
+                  <Text type="secondary" style={{ marginTop: '8px' }}>
+                    选择不同类型的节点可以进行相应的管理操作
+                  </Text>
+                </div>
+              )}
+            </Card>
+          </Col>
+        </Row>
+      ) : (
+        // 权限配置页面
+        <div style={{ height: 'calc(100vh - 140px)' }}>
+          <Card 
+            style={{ 
+              height: '100%',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+              borderRadius: '8px'
+            }}
             extra={
               <Space>
-                <Button 
-                  icon={<IconDown />} 
-                  type="text" 
-                  size="small"
-                  onClick={expandAll}
-                  style={{ fontSize: '12px' }}
-                >
-                  全部展开
+                <Button onClick={backToOrgStructure}>
+                  返回
                 </Button>
-                <Button 
-                  icon={<IconRight />} 
-                  type="text" 
-                  size="small"
-                  onClick={collapseAll}
-                  style={{ fontSize: '12px' }}
-                >
-                  全部收起
+                <Button type="primary" onClick={() => {
+                  // 这里可以添加实际的保存逻辑
+                  setIsPermissionConfigMode(false);
+                  setSelectedAuthorizedPermissions([]);
+                  setSelectedUnauthorizedPermissions([]);
+                }}>
+                  保存配置
                 </Button>
-                <Button 
-                  icon={<IconRefresh />} 
-                  type="text" 
-                  size="small"
-                  onClick={() => Message.success('数据已刷新')}
-                />
               </Space>
             }
-            style={{ height: '100%' }}
-            bodyStyle={{ height: 'calc(100% - 57px)', overflow: 'auto' }}
           >
-            <div style={{ padding: '8px' }}>
-              {renderOrgTree(organizationData)}
+            <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+              {/* 权限表格区域 */}
+              <div style={{ flex: 1, marginBottom: '24px' }}>
+                <Row gutter={16} style={{ height: '100%' }}>
+                  {/* 已授权权限 */}
+                  <Col span={12}>
+                    {renderPermissionTable(authorizedPermissions, true, leftSearchValue)}
+                  </Col>
+
+                  {/* 未授权权限 */}
+                  <Col span={12}>
+                    {renderPermissionTable(unauthorizedPermissions, false, rightSearchValue)}
+                  </Col>
+                </Row>
+              </div>
+
+              {/* 底部操作按钮 */}
+              <div style={{ 
+                padding: '20px 16px',
+                borderTop: '1px solid #f0f0f0',
+                backgroundColor: '#fafafa',
+                display: 'flex',
+                justifyContent: 'center',
+                gap: '16px',
+                marginTop: 'auto'
+              }}>
+                <Button
+                  type="primary"
+                  icon={<IconArrowLeft />}
+                  onClick={moveToAuthorized}
+                  disabled={selectedUnauthorizedPermissions.length === 0}
+                  style={{ minWidth: '140px' }}
+                >
+                  添加权限 {selectedUnauthorizedPermissions.length > 0 && `(${selectedUnauthorizedPermissions.length})`}
+                </Button>
+                <Button
+                  type="outline"
+                  icon={<IconArrowRight />}
+                  onClick={moveToUnauthorized}
+                  disabled={selectedAuthorizedPermissions.length === 0}
+                  style={{ minWidth: '140px' }}
+                >
+                  移除权限 {selectedAuthorizedPermissions.length > 0 && `(${selectedAuthorizedPermissions.length})`}
+                </Button>
+              </div>
             </div>
           </Card>
-        </Col>
+        </div>
+      )}
 
-        {/* 右侧详情内容 */}
-        <Col span={16}>
-          <Card 
-            title={
-              selectedNode ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  {getNodeIcon(selectedNode.type)}
-                  <span>{selectedNode.title}</span>
-                </div>
-              ) : '请选择节点'
-            }
-            style={{ height: '100%' }}
-            bodyStyle={{ height: 'calc(100% - 57px)', overflow: 'auto' }}
-          >
-            {renderRightContent()}
-          </Card>
-        </Col>
-      </Row>
-
-      {/* 创建节点模态框 */}
+      {/* 编辑信息弹窗 */}
       <Modal
-        title={`创建${getTypeText(modalType)}`}
-        visible={modalVisible}
-        onOk={handleSubmit}
-        onCancel={() => setModalVisible(false)}
-        okText="确定"
+        title="编辑信息"
+        visible={editModalVisible}
+        onOk={handleSaveEdit}
+        onCancel={() => setEditModalVisible(false)}
+        okText="保存"
         cancelText="取消"
       >
         <Form form={form} layout="vertical">
-          <Form.Item
-            label="名称"
-            field="title"
-            rules={[{ required: true, message: '请输入名称' }]}
+          <Form.Item 
+            label="中文名称" 
+            field="chineseName"
+            rules={[{ required: true, message: '请输入中文名称' }]}
           >
-            <Input placeholder={`请输入${getTypeText(modalType)}名称`} />
+            <Input placeholder="请输入中文名称" />
           </Form.Item>
-          <Form.Item
-            label="编码"
-            field="code"
-            rules={[{ required: true, message: '请输入编码' }]}
+          <Form.Item 
+            label="英文名称" 
+            field="englishName"
+            rules={[{ required: true, message: '请输入英文名称' }]}
           >
-            <Input placeholder={`请输入${getTypeText(modalType)}编码`} />
+            <Input placeholder="请输入英文名称" />
           </Form.Item>
-          <Form.Item
-            label="描述"
-            field="description"
-          >
-            <Input.TextArea 
-              placeholder={`请输入${getTypeText(modalType)}描述`} 
-              rows={3} 
-            />
-          </Form.Item>
+          {(selectedNode?.type === 'group' || selectedNode?.type === 'company') && (
+            <Form.Item 
+              label="代码" 
+              field="code"
+              rules={[{ required: true, message: '请输入代码' }]}
+            >
+              <Input placeholder="请输入代码" />
+            </Form.Item>
+          )}
         </Form>
       </Modal>
 
-      {/* 权限配置模态框 */}
+      {/* 创建弹窗 */}
       <Modal
-        title="权限配置"
-        visible={permissionModalVisible}
-        onOk={handleSavePermissions}
-        onCancel={() => setPermissionModalVisible(false)}
-        okText="保存"
+        title={`创建${createType === 'company' ? '分公司' : createType === 'department' ? '部门' : '角色'}`}
+        visible={createModalVisible}
+        onOk={handleSaveCreate}
+        onCancel={() => setCreateModalVisible(false)}
+        okText="创建"
         cancelText="取消"
-        style={{ width: '80vw', maxWidth: '1000px' }}
       >
-        <Row gutter={24}>
-          {/* 已分配权限 */}
-          <Col span={12}>
-            <div style={{ marginBottom: '16px' }}>
-              <Title heading={6}>已分配权限</Title>
-              <Input
-                placeholder="搜索权限..."
-                value={searchAssigned}
-                onChange={setSearchAssigned}
-                prefix={<IconSearch />}
-                allowClear
-                style={{ marginTop: '8px' }}
-              />
-            </div>
-            <div style={{ border: '1px solid #E5E6EB', borderRadius: '6px', padding: '8px', height: '400px', overflow: 'auto' }}>
-              {renderPermissionList(permissionData, assignedPermissions, setAssignedPermissions, searchAssigned)}
-            </div>
-          </Col>
-
-          {/* 可用权限（显示用） */}
-          <Col span={12}>
-            <div style={{ marginBottom: '16px' }}>
-              <Title heading={6}>可用权限</Title>
-              <Input
-                placeholder="搜索权限..."
-                value={searchAvailable}
-                onChange={setSearchAvailable}
-                prefix={<IconSearch />}
-                allowClear
-                style={{ marginTop: '8px' }}
-              />
-            </div>
-            <div style={{ border: '1px solid #E5E6EB', borderRadius: '6px', padding: '8px', height: '400px', overflow: 'auto' }}>
-              {renderPermissionList(permissionData, [], () => {}, searchAvailable)}
-            </div>
-          </Col>
-        </Row>
+        <Form form={form} layout="vertical">
+          <Form.Item 
+            label="中文名称" 
+            field="chineseName"
+            rules={[{ required: true, message: '请输入中文名称' }]}
+          >
+            <Input placeholder="请输入中文名称" />
+          </Form.Item>
+          <Form.Item 
+            label="英文名称" 
+            field="englishName"
+            rules={[{ required: true, message: '请输入英文名称' }]}
+          >
+            <Input placeholder="请输入英文名称" />
+          </Form.Item>
+          {createType === 'company' && (
+            <Form.Item 
+              label="代码" 
+              field="code"
+              rules={[{ required: true, message: '请输入代码' }]}
+            >
+              <Input placeholder="请输入代码" />
+            </Form.Item>
+          )}
+        </Form>
       </Modal>
     </div>
   );
