@@ -17,7 +17,7 @@ import {
   IconFile
 } from '@arco-design/web-react/icon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileInvoiceDollar, faRobot } from '@fortawesome/free-solid-svg-icons';
+import { faRobot } from '@fortawesome/free-solid-svg-icons';
 // faShip 导入已暂时注释，因为运价中心菜单被注释了
 // import { faShip } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -190,18 +190,7 @@ const ControlTowerClientLayout: React.FC<LayoutProps> = ({ children }) => {
         );
         break;
       */
-      case 'billing-management':
-        breadcrumbs.push(
-          { title: '财务中心', path: '/controltower/finance' },
-          { title: '账单管理', path: '/controltower/billing-management' }
-        );
-        break;
-      case 'invoice-management':
-        breadcrumbs.push(
-          { title: '财务中心', path: '/controltower/finance' },
-          { title: '发票管理', path: '/controltower/invoice-management' }
-        );
-        break;
+
       case 'user-profile':
         breadcrumbs.push(
           { title: '用户中心', path: '/controltower/user' },
@@ -226,9 +215,7 @@ const ControlTowerClientLayout: React.FC<LayoutProps> = ({ children }) => {
           { title: '状态追踪', path: '/controltower/order-tracking' }
         );
         break;
-      case 'application':
-        breadcrumbs.push({ title: '应用中心', path: '/controltower/application' });
-        break;
+
       default:
         break;
     }
@@ -335,18 +322,7 @@ const ControlTowerClientLayout: React.FC<LayoutProps> = ({ children }) => {
             <MenuItem key="order-management">订单管理</MenuItem>
             <MenuItem key="order-tracking">状态追踪</MenuItem>
           </SubMenu>
-          <SubMenu
-            key="finance"
-            title={
-              <span>
-                <FontAwesomeIcon icon={faFileInvoiceDollar} className="mr-2" />
-                <span>财务中心</span>
-              </span>
-            }
-          >
-            <MenuItem key="billing-management">账单管理</MenuItem>
-            <MenuItem key="invoice-management">发票管理</MenuItem>
-          </SubMenu>
+
           <SubMenu
             key="user"
             title={
@@ -359,10 +335,7 @@ const ControlTowerClientLayout: React.FC<LayoutProps> = ({ children }) => {
             <MenuItem key="user-profile">个人信息</MenuItem>
             <MenuItem key="company-profile">企业信息</MenuItem>
           </SubMenu>
-          <MenuItem key="application">
-            <IconApps />
-            <span>应用中心</span>
-          </MenuItem>
+
         </Menu>
         <div className="absolute bottom-20 w-full px-4 flex justify-center">
           <Button 

@@ -412,10 +412,8 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
               </span>
             }
           >
-            <MenuItem key="role-management">角色管理</MenuItem>
-            <MenuItem key="staff-management">员工管理</MenuItem>
-            <MenuItem key="department-management">部门管理</MenuItem>
-            <MenuItem key="post-management">岗位管理</MenuItem>
+            <MenuItem key="employee-management">员工管理</MenuItem>
+            <MenuItem key="permission-management">权限管理</MenuItem>
           </SubMenu>
 
           {/* 基础资料维护 */}

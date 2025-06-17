@@ -349,7 +349,7 @@ const UserProfile: React.FC = () => {
               <div className="relative group cursor-pointer">
                 <Avatar size={80} className="bg-blue-500 transition-all duration-200 group-hover:opacity-80">
                   <IconUser style={{ fontSize: 40 }} />
-                </Avatar>
+          </Avatar>
                 <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                   <div className="text-white text-center">
                     <IconUpload style={{ fontSize: 16, marginBottom: 4 }} />
@@ -476,13 +476,13 @@ const UserProfile: React.FC = () => {
 
         {/* 编辑表单 */}
         {editMode && (
-          <Form
-            form={form}
-            layout="vertical"
+        <Form
+          form={form}
+          layout="vertical"
             className="mt-6"
-          >
-            <Row gutter={24}>
-              <Col span={12}>
+        >
+          <Row gutter={24}>
+            <Col span={12}>
                 <FormItem 
                   label="用户名" 
                   field="username" 
@@ -492,9 +492,9 @@ const UserProfile: React.FC = () => {
                   ]}
                 >
                   <Input placeholder="请输入用户名" />
-                </FormItem>
-              </Col>
-              <Col span={12}>
+              </FormItem>
+            </Col>
+            <Col span={12}>
                 <FormItem 
                   label={
                     <div className="flex items-center">
@@ -508,13 +508,13 @@ const UserProfile: React.FC = () => {
                     { type: 'email', message: '请输入有效的邮箱地址' }
                   ]}
                 >
-                  <Input placeholder="请输入邮箱" />
-                </FormItem>
-              </Col>
-            </Row>
+                <Input placeholder="请输入邮箱" />
+              </FormItem>
+            </Col>
+          </Row>
 
-            <Row gutter={24}>
-              <Col span={12}>
+          <Row gutter={24}>
+            <Col span={12}>
                 <FormItem 
                   label={
                     <div className="flex items-center">
@@ -536,10 +536,10 @@ const UserProfile: React.FC = () => {
                     }
                   ]}
                 >
-                  <Input placeholder="请输入手机号" />
-                </FormItem>
-              </Col>
-              <Col span={12}>
+                <Input placeholder="请输入手机号" />
+              </FormItem>
+            </Col>
+            <Col span={12}>
                 <FormItem 
                   label="所属公司" 
                   field="company" 
@@ -548,9 +548,9 @@ const UserProfile: React.FC = () => {
                   ]}
                 >
                   <Input placeholder="请输入所属公司" />
-                </FormItem>
-              </Col>
-            </Row>
+              </FormItem>
+            </Col>
+          </Row>
 
             <FormItem>
               <Space>
@@ -565,7 +565,7 @@ const UserProfile: React.FC = () => {
                   取消
                 </Button>
               </Space>
-            </FormItem>
+              </FormItem>
           </Form>
         )}
       </Card>
@@ -636,7 +636,7 @@ const UserProfile: React.FC = () => {
                       )}
                     </div>
                   </div>
-                </Col>
+            </Col>
               );
             })}
           </Row>
@@ -778,7 +778,7 @@ const UserProfile: React.FC = () => {
                   <Button type="primary" onClick={handlePasswordReset} style={{ width: '100%' }}>
                     重置密码
                   </Button>
-                </FormItem>
+          </FormItem>
               </>
             )}
           </Form>
@@ -831,12 +831,12 @@ const UserProfile: React.FC = () => {
                       }
                     </Text>
                   </div>
-                </div>
+              </div>
                 <FormItem>
                   <Button type="primary" onClick={sendVerificationCode} style={{ width: '100%' }}>
                     发送验证码
                   </Button>
-                </FormItem>
+          </FormItem>
               </>
             )}
 
@@ -860,15 +860,15 @@ const UserProfile: React.FC = () => {
                     {verifyCountdown > 0 ? `${verifyCountdown}s后重发` : '重新发送'}
                   </Button>
                 </div>
-                <FormItem>
+          <FormItem>
                   <Button type="primary" onClick={handleVerifyAndUpdate} style={{ width: '100%' }}>
                     验证并保存
                   </Button>
-                </FormItem>
+          </FormItem>
               </>
             )}
-          </Form>
-        </div>
+        </Form>
+    </div>
       </Modal>
     </>
   );

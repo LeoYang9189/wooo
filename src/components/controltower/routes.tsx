@@ -54,8 +54,10 @@ import ShipAgentManagement from './pages/ShipAgentManagement';
 import ShipDataManagement from './pages/ShipDataManagement';
 import TerminalManagement from './pages/TerminalManagement';
 import UserManagement from './pages/UserManagement';
-import RoleManagement from './pages/RoleManagement';
-import StaffManagement from './pages/StaffManagement';
+import EmployeeManagement from './pages/EmployeeManagement';
+import PermissionManagement from './pages/PermissionManagement';
+import AddEmployee from './pages/AddEmployee';
+import EditEmployee from './pages/EditEmployee';
 // import CompanyForm from './pages/CompanyForm';
 import CreatePrecarriageRate from '../saas/CreatePrecarriageRate';
 import CreateLastMileRate from '../saas/CreateLastMileRate';
@@ -216,8 +218,10 @@ const ControlTowerRoutes: React.FC = () => {
       <Route path="/ship-data" element={<ShipDataManagement />} />
       <Route path="/terminal-management" element={<TerminalManagement />} />
       <Route path="/user-management" element={<UserManagement />} />
-      <Route path="/role-management" element={<RoleManagement />} />
-      <Route path="/staff-management" element={<StaffManagement />} />
+      <Route path="/employee-management" element={<EmployeeManagement />} />
+      <Route path="/permission-management" element={<PermissionManagement />} />
+      <Route path="/add-employee" element={<AddEmployee />} />
+      <Route path="/edit-employee/:id" element={<EditEmployee />} />
       {/* --- 结束 --- */}
     </Routes>
   );

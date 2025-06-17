@@ -23,12 +23,10 @@ import {
   IconUserAdd,
   IconHome,
   IconLink,
+  IconUser, 
   IconPlus,
-  IconUser,
-  IconLock,
-  IconCopy,
   IconDelete,
-
+  IconCopy
 } from '@arco-design/web-react/icon';
 
 const { Title, Text } = Typography;
