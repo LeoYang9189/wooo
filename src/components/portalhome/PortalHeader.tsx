@@ -1,19 +1,61 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '@arco-design/web-react';
-import { IconMenu, IconClose } from '@arco-design/web-react/icon';
+import { Button, Dropdown, Menu, Avatar } from '@arco-design/web-react';
+import { IconMenu, IconClose, IconUser, IconSettings, IconPoweroff } from '@arco-design/web-react/icon';
+import { useUser } from './UserContext';
 
 const PortalHeader: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { user, isLoggedIn, logout } = useUser();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/portal');
+  };
+
+  const handleMenuClick = (key: string) => {
+    switch (key) {
+      case 'profile':
+        // 跳转到客户版控制塔的个人信息页面
+        navigate('/controltower-client#profile');
+        break;
+      case 'company':
+        // 跳转到客户版控制塔的企业信息页面
+        navigate('/controltower-client#company');
+        break;
+      case 'logout':
+        handleLogout();
+        break;
+    }
+  };
+
+  // 用户下拉菜单
+  const userDropdownMenu = (
+    <Menu onClickMenuItem={handleMenuClick}>
+      <Menu.Item key="profile">
+        <IconUser className="mr-2" />
+        个人中心
+      </Menu.Item>
+      <Menu.Item key="company">
+        <IconSettings className="mr-2" />
+        企业信息
+      </Menu.Item>
+      <Menu.Item key="divider" disabled style={{ height: '1px', padding: 0, margin: '4px 0', backgroundColor: '#f0f0f0' }} />
+      <Menu.Item key="logout">
+        <IconPoweroff className="mr-2" />
+        退出登录
+      </Menu.Item>
+    </Menu>
+  );
+
   const navItems = [
     { label: '首页', href: '/portal' },
-    { label: '控制塔', href: '/controltower' },
+    { label: '控制塔', href: '/controltower-client' },
     { label: '业务介绍', href: '#services' },
     { label: '资讯中心', href: '#news' },
     { label: '关于我们', href: '#about' },
@@ -50,15 +92,26 @@ const PortalHeader: React.FC = () => {
           ))}
         </nav>
 
-        {/* Login Button (Desktop) */}
+        {/* User Section (Desktop) */}
         <div className="hidden md:block">
-          <Button 
-            type="primary" 
-            className="bg-gradient-to-r from-blue-600 to-blue-400 border-0"
-            onClick={() => navigate('/portal/auth')}
-          >
-            注册/登录
-          </Button>
+          {isLoggedIn && user ? (
+            <Dropdown droplist={userDropdownMenu} trigger="click" position="bottom">
+              <div className="flex items-center space-x-2 cursor-pointer px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                <Avatar size={32} style={{ backgroundColor: '#3B82F6' }}>
+                  {user.username.charAt(0).toUpperCase()}
+                </Avatar>
+                <span className="text-gray-700 font-medium">{user.username}</span>
+              </div>
+            </Dropdown>
+          ) : (
+            <Button 
+              type="primary" 
+              className="bg-gradient-to-r from-blue-600 to-blue-400 border-0"
+              onClick={() => navigate('/portal/auth')}
+            >
+              注册/登录
+            </Button>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -83,13 +136,59 @@ const PortalHeader: React.FC = () => {
                 {item.label}
               </Link>
             ))}
-            <Button 
-              type="primary" 
-              className="bg-gradient-to-r from-blue-600 to-blue-400 border-0 mt-2"
-              onClick={() => navigate('/portal/auth')}
-            >
-              注册/登录
-            </Button>
+            
+            {/* Mobile User Section */}
+            {isLoggedIn && user ? (
+              <div className="pt-4 border-t border-gray-100 space-y-3">
+                <div className="flex items-center space-x-3 py-2">
+                  <Avatar size={32} style={{ backgroundColor: '#3B82F6' }}>
+                    {user.username.charAt(0).toUpperCase()}
+                  </Avatar>
+                  <span className="text-gray-700 font-medium">{user.username}</span>
+                </div>
+                <button 
+                  className="w-full text-left text-gray-700 hover:text-blue-600 py-2 font-medium flex items-center"
+                  onClick={() => {
+                    toggleMenu();
+                    navigate('/controltower-client#profile');
+                  }}
+                >
+                  <IconUser className="mr-2" />
+                  个人中心
+                </button>
+                <button 
+                  className="w-full text-left text-gray-700 hover:text-blue-600 py-2 font-medium flex items-center"
+                  onClick={() => {
+                    toggleMenu();
+                    navigate('/controltower-client#company');
+                  }}
+                >
+                  <IconSettings className="mr-2" />
+                  企业信息
+                </button>
+                <button 
+                  className="w-full text-left text-red-600 hover:text-red-700 py-2 font-medium flex items-center"
+                  onClick={() => {
+                    toggleMenu();
+                    handleLogout();
+                  }}
+                >
+                  <IconPoweroff className="mr-2" />
+                  退出登录
+                </button>
+              </div>
+            ) : (
+              <Button 
+                type="primary" 
+                className="bg-gradient-to-r from-blue-600 to-blue-400 border-0 mt-2"
+                onClick={() => {
+                  toggleMenu();
+                  navigate('/portal/auth');
+                }}
+              >
+                注册/登录
+              </Button>
+            )}
           </div>
         </div>
       )}

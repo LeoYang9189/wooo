@@ -43,6 +43,16 @@ const ControlTowerClientLayout: React.FC<LayoutProps> = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // 处理锚点导航
+  React.useEffect(() => {
+    const hash = location.hash;
+    if (hash === '#profile') {
+      navigate('/controltower-client/user-profile');
+    } else if (hash === '#company') {
+      navigate('/controltower-client/company-profile');
+    }
+  }, [location.hash, navigate]);
+
   const toggleCollapse = () => setCollapsed(!collapsed);
 
   // 菜单点击

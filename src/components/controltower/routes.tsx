@@ -7,6 +7,8 @@ import ControlTowerPanel from './pages/ControlTowerPanel';
 // import InquiryManagement from './pages/InquiryManagement';
 import UserProfile from './pages/UserProfile';
 import CompanyProfile from './pages/CompanyProfile';
+import CompanyCertification from './pages/CompanyCertification';
+import CompanyDataManagement from './pages/CompanyDataManagement';
 import OrderManagement from './pages/OrderManagement';
 import OrderDetail from './pages/OrderDetail';
 import BLAddition from './pages/BLAddition';
@@ -52,10 +54,9 @@ import ShipAgentManagement from './pages/ShipAgentManagement';
 import ShipDataManagement from './pages/ShipDataManagement';
 import TerminalManagement from './pages/TerminalManagement';
 import UserManagement from './pages/UserManagement';
-import CompanyManagement from './pages/CompanyManagement';
 import RoleManagement from './pages/RoleManagement';
 import StaffManagement from './pages/StaffManagement';
-import CompanyForm from './pages/CompanyForm';
+// import CompanyForm from './pages/CompanyForm';
 import CreatePrecarriageRate from '../saas/CreatePrecarriageRate';
 import CreateLastMileRate from '../saas/CreateLastMileRate';
 // --- 结束 ---
@@ -75,6 +76,8 @@ const ControlTowerRoutes: React.FC = () => {
       <Route path="/bl-addition/:orderId" element={<BLAddition />} />
       <Route path="/user-profile" element={<UserProfile />} />
       <Route path="/company-profile" element={<CompanyProfile />} />
+      <Route path="/company-certification" element={<CompanyCertification />} />
+      <Route path="/company-data-management" element={<CompanyDataManagement />} />
       
       {/* 超级运价系统路由 - 使用包装器隐藏重复布局 */}
       {/* 控制台和数据分析路由已删除
@@ -213,9 +216,6 @@ const ControlTowerRoutes: React.FC = () => {
       <Route path="/ship-data" element={<ShipDataManagement />} />
       <Route path="/terminal-management" element={<TerminalManagement />} />
       <Route path="/user-management" element={<UserManagement />} />
-      <Route path="/company-management" element={<CompanyManagement />} />
-      <Route path="/company-management/add" element={<CompanyForm />} />
-      <Route path="/company-management/edit/:id" element={<CompanyForm />} />
       <Route path="/role-management" element={<RoleManagement />} />
       <Route path="/staff-management" element={<StaffManagement />} />
       {/* --- 结束 --- */}

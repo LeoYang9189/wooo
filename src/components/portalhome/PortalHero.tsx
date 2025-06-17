@@ -75,11 +75,8 @@ const PortalHero: React.FC = () => {
       <div className="container mx-auto px-4 pt-40 pb-36 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <div className="portal-animate-fade-in">
-            <div className="mb-6">
-              <span className="inline-block py-1.5 px-4 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-600 font-medium rounded-full text-sm shadow-sm">企业门户</span>
-            </div>
             <h1 className="portal-heading portal-heading-xl text-gray-900 leading-tight mb-8">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700">Your LOGO</span><br />
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700">这里是客户自定义的Slogan</span><br />
               <span className="portal-gradient-text text-4xl md:text-5xl font-bold">AI赋能的数字化货代平台</span>
             </h1>
             <p className="text-xl text-gray-600 mb-10 max-w-lg leading-relaxed">
@@ -90,15 +87,9 @@ const PortalHero: React.FC = () => {
                 type="primary" 
                 size="large" 
                 className="h-14 px-10 bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 border-0 text-base shadow-xl hover:shadow-2xl transition-all hover:scale-105 rounded-full font-medium"
-                onClick={() => navigate('/controltower')}
+                onClick={() => navigate('/controltower-client')}
               >
                 进入系统
-              </Button>
-              <Button 
-                size="large" 
-                className="h-14 px-10 text-base border-2 border-blue-200 text-blue-600 hover:bg-blue-50 transition-all hover:border-blue-300 rounded-full font-medium"
-              >
-                了解更多
               </Button>
             </div>
             

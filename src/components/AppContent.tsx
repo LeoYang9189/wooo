@@ -21,7 +21,11 @@ const SuperFreight = lazy(() => import('./pages/SuperFreight'));
 const SaasSystem = lazy(() => import('./saas/SaasSystem'));
 const FclRates = lazy(() => import('./saas/FclRates'));
 const Portal = lazy(() => import('./portalhome/Portal'));
-const AuthPage = lazy(() => import('./portalhome/AuthPage'));
+const AuthPageWrapper = lazy(() => import('./portalhome/AuthPageWrapper'));
+const StaffAuthPageWrapper = lazy(() => import('./portalhome/StaffAuthPageWrapper'));
+const SSOAuthPageWrapper = lazy(() => import('./portalhome/SSOAuthPageWrapper'));
+const ProfilePageWrapper = lazy(() => import('./portalhome/ProfilePageWrapper'));
+const CompanyPageWrapper = lazy(() => import('./portalhome/CompanyPageWrapper'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const InquiryManagement = lazy(() => import('./saas/InquiryManagement'));
 const CreateFclInquiry = lazy(() => import('./saas/CreateFclInquiry'));
@@ -77,7 +81,11 @@ const AppContent = ({}: AppContentProps) => {
         <Route path="/saas-system" element={<SaasSystem />} />
         <Route path="/fcl-rates" element={<FclRates />} />
         <Route path="/portal" element={<Portal />} />
-        <Route path="/portal/auth" element={<AuthPage />} />
+        <Route path="/portal/auth" element={<AuthPageWrapper />} />
+        <Route path="/staff/auth" element={<StaffAuthPageWrapper />} />
+        <Route path="/sso/auth/:provider" element={<SSOAuthPageWrapper />} />
+        <Route path="/profile" element={<ProfilePageWrapper />} />
+        <Route path="/company" element={<CompanyPageWrapper />} />
         <Route path="/inquiry-management" element={<InquiryManagement />} />
         <Route path="/saas/create-inquiry/fcl" element={<CreateFclInquiry />} />
         <Route path="/saas/create-inquiry/lcl" element={<CreateLclInquiry />} />

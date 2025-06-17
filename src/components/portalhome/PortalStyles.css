@@ -1073,4 +1073,103 @@
 
 .arco-form-item-error .arco-input:focus {
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+/* =================================
+   SSO登录按钮样式
+   ================================= */
+
+.sso-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  margin: 0 8px;
+  border: 2px solid transparent;
+  border-radius: 1rem;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  min-width: 120px;
+  text-decoration: none;
+  position: relative;
+}
+
+.sso-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.sso-button.sso-etower {
+  border-color: #3b82f6;
+}
+
+.sso-button.sso-etower:hover {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+.sso-button.sso-cargoware {
+  border-color: #14b8a6;
+}
+
+.sso-button.sso-cargoware:hover {
+  border-color: #0d9488;
+  background: #f0fdfa;
+}
+
+.sso-icon {
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 1rem;
+  background: rgba(59, 130, 246, 0.1);
+  transition: all 0.3s ease;
+}
+
+.sso-button.sso-cargoware .sso-icon {
+  background: rgba(20, 184, 166, 0.1);
+}
+
+.sso-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.sso-button:hover .sso-text {
+  color: #111827;
+}
+
+.sso-button:hover .sso-icon {
+  transform: scale(1.1);
+}
+
+.sso-button:active {
+  transform: translateY(0px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* 响应式设计 */
+@media (max-width: 640px) {
+  .sso-button {
+    min-width: 100px;
+    padding: 1rem;
+    margin: 0 6px;
+  }
+  
+  .sso-icon {
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .sso-text {
+    font-size: 0.8rem;
+  }
 } 
