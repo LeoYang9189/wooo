@@ -60,12 +60,14 @@ const InquiryManagement: React.FC = () => {
       title: '询价编号',
       dataIndex: 'inquiryNo',
       width: 150,
+      sorter: true,
       render: (value: string) => <a href="#" className="text-blue-600">{value}</a>,
     },
     {
       title: '状态',
       dataIndex: 'status',
       width: 120,
+      sorter: true,
       render: (value: string) => {
         const colorMap: Record<string, string> = {
           '待报价': 'orange',
@@ -80,26 +82,31 @@ const InquiryManagement: React.FC = () => {
       title: '运输类型',
       dataIndex: 'type',
       width: 120,
+      sorter: true,
     },
     {
       title: '起运地',
       dataIndex: 'origin',
       width: 150,
+      sorter: true,
     },
     {
       title: '目的地',
       dataIndex: 'destination',
       width: 150,
+      sorter: true,
     },
     {
       title: '创建时间',
       dataIndex: 'createTime',
       width: 180,
+      sorter: true,
     },
     {
       title: '有效期至',
       dataIndex: 'validUntil',
       width: 180,
+      sorter: true,
     },
     {
       title: '操作',

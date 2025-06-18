@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import ControlTowerPanel from './pages/ControlTowerPanel';
+import ApplicationCenter from './pages/ApplicationCenter';
 // 运价中心相关组件暂时注释
 // import FreightRateQuery from './pages/FreightRateQuery';
 // import InquiryManagement from './pages/InquiryManagement';
@@ -69,6 +70,8 @@ import AddEmployee from './pages/AddEmployee';
 import EditEmployee from './pages/EditEmployee';
 import CompanyManagement from './pages/CompanyManagement';
 import CompanyForm from './pages/CompanyForm';
+import RouteMaintenance from './pages/RouteMaintenance';
+import RouteForm from './pages/RouteForm';
 // --- 结束 ---
 
 const ControlTowerRoutes: React.FC = () => {
@@ -77,6 +80,7 @@ const ControlTowerRoutes: React.FC = () => {
       <Route path="/" element={<Dashboard />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/control-tower-panel" element={<ControlTowerPanel />} />
+      <Route path="/application-center" element={<ApplicationCenter />} />
       {/* 运价中心相关路由已暂时注释
       <Route path="/freight-rate-query" element={<FreightRateQuery />} />
       <Route path="/inquiry-management" element={<InquiryManagement />} />
@@ -288,6 +292,11 @@ const ControlTowerRoutes: React.FC = () => {
       <Route path="/permission-management" element={<PermissionManagement />} />
       <Route path="/add-employee" element={<AddEmployee />} />
       <Route path="/edit-employee/:id" element={<EditEmployee />} />
+      
+      {/* 船期中心 */}
+      <Route path="/route-maintenance" element={<RouteMaintenance />} />
+      <Route path="/route-maintenance/add" element={<RouteForm />} />
+      <Route path="/route-maintenance/edit/:id" element={<RouteForm />} />
       {/* --- 结束 --- */}
     </Routes>
   );

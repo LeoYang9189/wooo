@@ -1345,20 +1345,15 @@ const CompanyCertification: React.FC = () => {
         </div>
       </div>
 
-      {/* 页面标题和操作 */}
+      {/* 操作按钮 */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <Button 
-            type="text" 
-            icon={<IconArrowLeft />}
-            onClick={() => navigate('/controltower/company-profile')}
-          >
-            返回
-          </Button>
-          <Title heading={4} style={{ margin: 0 }}>
-            企业认证申请
-          </Title>
-        </div>
+        <Button 
+          type="text" 
+          icon={<IconArrowLeft />}
+          onClick={() => navigate('/controltower/company-profile')}
+        >
+          返回
+        </Button>
         
         <Space>
           <Button 

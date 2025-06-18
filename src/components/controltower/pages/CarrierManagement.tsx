@@ -263,41 +263,49 @@ const CarrierManagement: React.FC = () => {
       title: '船公司名称（中文）',
       dataIndex: 'companyNameCn',
       width: 150,
+      sorter: true,
     },
     {
       title: '船公司名称（英文）',
       dataIndex: 'companyNameEn',
       width: 200,
+      sorter: true,
     },
     {
       title: '船公司代码',
       dataIndex: 'companyCode',
       width: 120,
+      sorter: true,
     },
     {
       title: 'SCAC CODE',
       dataIndex: 'scacCode',
       width: 120,
+      sorter: true,
     },
     {
       title: 'EORI Number',
       dataIndex: 'eoriNumber',
       width: 150,
+      sorter: true,
     },
     {
       title: '9000 CODE',
       dataIndex: 'nineKCode',
       width: 120,
+      sorter: true,
     },
     {
       title: 'NACCS CODE',
       dataIndex: 'naccsCode',
       width: 120,
+      sorter: true,
     },
     {
       title: 'EDI代码',
       dataIndex: 'ediCodes',
       width: 150,
+      sorter: true,
       render: (ediCodes: EDICode[]) => (
         <Tooltip
           content={
@@ -320,6 +328,7 @@ const CarrierManagement: React.FC = () => {
       title: '状态',
       dataIndex: 'status',
       width: 100,
+      sorter: true,
       render: (status: string) => (
         <Tag color={status === 'enabled' ? 'green' : 'red'}>
           {status === 'enabled' ? '启用' : '禁用'}
@@ -401,26 +410,31 @@ const CarrierManagement: React.FC = () => {
       title: '航空公司名称（中文）',
       dataIndex: 'companyNameCn',
       width: 150,
+      sorter: true,
     },
     {
       title: '航空公司名称（英文）',
       dataIndex: 'companyNameEn',
       width: 200,
+      sorter: true,
     },
           {
         title: 'IATA CODE',
         dataIndex: 'iataCode',
         width: 120,
+        sorter: true,
       },
       {
         title: '主单号前缀',
         dataIndex: 'hawbPrefix',
         width: 120,
+        sorter: true,
       },
     {
       title: 'EDI代码',
       dataIndex: 'ediCodes',
       width: 150,
+      sorter: true,
       render: (ediCodes: EDICode[]) => (
         <Tooltip
           content={
@@ -443,6 +457,7 @@ const CarrierManagement: React.FC = () => {
       title: '状态',
       dataIndex: 'status',
       width: 100,
+      sorter: true,
       render: (status: string) => (
         <Tag color={status === 'enabled' ? 'green' : 'red'}>
           {status === 'enabled' ? '启用' : '禁用'}

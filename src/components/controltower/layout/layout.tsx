@@ -1,25 +1,23 @@
 import React, { useState } from 'react';
-import { Layout, Menu, Button, Avatar, Badge, Breadcrumb, Dropdown, Divider } from '@arco-design/web-react';
+import { Layout, Menu, Button, Avatar, Breadcrumb, Dropdown, Divider } from '@arco-design/web-react';
 import { 
   IconDashboard, 
   IconList, 
   IconApps, 
   IconUser, 
-  IconNotification, 
   IconMenuFold, 
   IconMenuUnfold, 
-  IconMessage, 
   IconDown, 
   IconPoweroff, 
   IconSettings as IconSettingsOutline, 
-  IconLanguage, 
-  IconQuestionCircle,
+  IconLanguage,
   IconFile,
   IconStorage,
-  IconSettings
+  IconSettings,
+  IconCalendar
 } from '@arco-design/web-react/icon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRobot, faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faRobot, faUsers, faShip } from '@fortawesome/free-solid-svg-icons';
 // faShip 导入已暂时注释，因为运价中心菜单被注释了
 // import { faShip } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -73,6 +71,31 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
         { title: '订单中心', path: '/controltower/order' },
         { title: '订单管理', path: '/controltower/order-management' },
         { title: orderId, path: undefined } // 当前订单，无链接
+      );
+      return breadcrumbs;
+    }
+
+    // 船期中心页面
+    if (path === 'route-maintenance') {
+      breadcrumbs.push(
+        { title: '船期中心', path: undefined },
+        { title: '航线维护', path: undefined }
+      );
+      return breadcrumbs;
+    }
+    if (path.startsWith('route-maintenance/')) {
+      const isEdit = path.includes('edit');
+      breadcrumbs.push(
+        { title: '船期中心', path: undefined },
+        { title: '航线维护', path: '/controltower/route-maintenance' },
+        { title: isEdit ? '编辑航线' : '新增航线', path: undefined }
+      );
+      return breadcrumbs;
+    }
+    if (path === 'schedule-maintenance') {
+      breadcrumbs.push(
+        { title: '船期中心', path: undefined },
+        { title: '船期查询', path: undefined }
       );
       return breadcrumbs;
     }
@@ -218,7 +241,7 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
     switch (simplePath) {
       case '':
       case 'dashboard':
-        breadcrumbs.push({ title: '仪表盘', path: undefined });
+        // 仪表盘不需要额外的面包屑，只显示"控制塔"
         break;
       case 'control-tower-panel':
         breadcrumbs.push({ title: '控制塔面板', path: undefined });
@@ -268,14 +291,9 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
           { title: '订单管理', path: '/controltower/order-management' }
         );
         break;
-      case 'order-tracking':
-        breadcrumbs.push(
-          { title: '订单中心', path: '/controltower/order' },
-          { title: '状态追踪', path: '/controltower/order-tracking' }
-        );
-        break;
-      case 'application':
-        breadcrumbs.push({ title: '应用中心', path: '/controltower/application' });
+
+      case 'application-center':
+        breadcrumbs.push({ title: '应用中心', path: '/controltower/application-center' });
         break;
       case 'user-management':
         breadcrumbs.push(
@@ -305,7 +323,7 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
         breadcrumbs.push(
           { title: '系统设置', path: undefined },
           { title: '员工管理', path: '/controltower/employee-management' },
-          { title: '添加员工', path: undefined }
+          { title: '新增员工', path: undefined }
         );
         break;
       // 基础资料维护页面
@@ -561,7 +579,20 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
             }
           >
             <MenuItem key="order-management">订单管理</MenuItem>
-            <MenuItem key="order-tracking">状态追踪</MenuItem>
+          </SubMenu>
+
+          {/* 船期中心 */}
+          <SubMenu
+            key="schedule"
+            title={
+              <span>
+                <FontAwesomeIcon icon={faShip} className="mr-2" />
+                <span>船期中心</span>
+              </span>
+            }
+          >
+            <MenuItem key="route-maintenance">航线维护</MenuItem>
+            <MenuItem key="schedule-maintenance">船期查询</MenuItem>
           </SubMenu>
 
           {/* 客户中心 */}
@@ -590,7 +621,7 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
             <MenuItem key="user-profile">个人信息</MenuItem>
             <MenuItem key="company-profile">企业信息</MenuItem>
           </SubMenu>
-          <MenuItem key="application">
+          <MenuItem key="application-center">
             <IconApps />
             <span>应用中心</span>
           </MenuItem>
@@ -723,17 +754,14 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
             </Breadcrumb>
           </div>
           <div className="flex items-center">
-            <Badge count={5} dot>
-              <Button type="text" style={{ margin: '0 8px' }} icon={<IconNotification />} />
-            </Badge>
-            <Badge count={3}>
-              <Button type="text" style={{ margin: '0 8px' }} icon={<IconMessage />} />
-            </Badge>
             <Dropdown
               droplist={
                 <Menu>
                   <Menu.Item key="zh-CN">简体中文</Menu.Item>
                   <Menu.Item key="en-US">English</Menu.Item>
+                  <Menu.Item key="ja-JP">日本語</Menu.Item>
+                  <Menu.Item key="vi-VN">Tiếng Việt</Menu.Item>
+                  <Menu.Item key="th-TH">ไทย</Menu.Item>
                 </Menu>
               }
               position="br"
@@ -742,10 +770,19 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
             </Dropdown>
             <Dropdown
               droplist={
-                <Menu>
-                  <Menu.Item key="info"><IconUser className="mr-2" />个人信息</Menu.Item>
-                  <Menu.Item key="setting"><IconSettingsOutline className="mr-2" />账户设置</Menu.Item>
-                  <Menu.Item key="help"><IconQuestionCircle className="mr-2" />帮助中心</Menu.Item>
+                <Menu
+                  onClickMenuItem={(key) => {
+                    if (key === 'profile') {
+                      navigate('/controltower/user-profile');
+                    } else if (key === 'company') {
+                      navigate('/controltower/company-profile');
+                    } else if (key === 'logout') {
+                      navigate('/portalhome');
+                    }
+                  }}
+                >
+                  <Menu.Item key="profile"><IconUser className="mr-2" />个人信息</Menu.Item>
+                  <Menu.Item key="company"><IconSettingsOutline className="mr-2" />企业信息</Menu.Item>
                   <Divider style={{ margin: '4px 0' }} />
                   <Menu.Item key="logout"><IconPoweroff className="mr-2" />退出登录</Menu.Item>
                 </Menu>

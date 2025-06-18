@@ -805,11 +805,13 @@ const ContractManagement: React.FC = () => {
       title: '船公司约号',
       dataIndex: 'shipCompanyNumber',
       width: 120,
+      sorter: true,
     },
     {
       title: '适用航线',
       dataIndex: 'applicableRoute',
       width: 150,
+      sorter: true,
       render: (routes: string[]) => {
         if (!routes || routes.length === 0) {
           return <span style={{ color: '#999' }}>-</span>;
@@ -847,6 +849,7 @@ const ContractManagement: React.FC = () => {
       title: '船公司',
       dataIndex: 'shipCompany',
       width: 150,
+      sorter: true,
       render: (shipCompany: string) => {
         const option = shipCompanyOptions.find(opt => opt.value === shipCompany);
         return option ? option.label : shipCompany;
@@ -856,37 +859,44 @@ const ContractManagement: React.FC = () => {
       title: '约价性质',
       dataIndex: 'contractNature',
       width: 120,
+      sorter: true,
     },
     {
       title: '适用品名',
       dataIndex: 'destinationName',
       width: 120,
+      sorter: true,
     },
     {
       title: 'NAC',
       dataIndex: 'nacs',
       width: 150,
+      sorter: true,
       render: renderNacs
     },
     {
       title: 'MQC',
       dataIndex: 'mqc',
       width: 100,
+      sorter: true,
     },
     {
       title: '舱保',
       dataIndex: 'configuration',
       width: 150,
+      sorter: true,
     },
     {
       title: '有效期',
       dataIndex: 'effectiveDate',
       width: 200,
+      sorter: true,
     },
     {
       title: '状态',
       dataIndex: 'status',
       width: 100,
+      sorter: true,
       render: (status: 'enabled' | 'disabled') => (
         <Tag color={status === 'enabled' ? 'green' : 'red'}>
           {status === 'enabled' ? '启用' : '禁用'}
@@ -991,9 +1001,7 @@ const ContractManagement: React.FC = () => {
 
   return (
     <Card>
-      <div style={{ marginBottom: '20px' }}>
-        <Title heading={4} style={{ margin: 0 }}>合约管理</Title>
-      </div>
+
 
       {/* 新版筛选区域 */}
       {renderNewFilterArea()}

@@ -478,11 +478,7 @@ const EmployeeManagement: React.FC = () => {
 
   return (
     <div style={{ padding: '0' }}>
-      {/* 页面标题 */}
-      <div style={{ marginBottom: '24px' }}>
-        <Title heading={3} style={{ marginBottom: '8px' }}>员工管理</Title>
-        <Text type="secondary">管理系统用户账户，包括用户信息、权限和状态</Text>
-      </div>
+
 
       {/* 搜索和筛选区域 */}
       <Card style={{ marginBottom: '20px' }}>
@@ -602,6 +598,7 @@ const EmployeeManagement: React.FC = () => {
               dataIndex: 'id',
               key: 'id',
               width: 150,
+              sorter: true,
               render: (id) => (
                 <Text 
                   copyable={{ text: id, icon: null, tooltips: ['复制ID', '已复制'] }}
@@ -616,6 +613,7 @@ const EmployeeManagement: React.FC = () => {
               dataIndex: 'username',
               key: 'username',
               width: 220,
+              sorter: true,
               render: (_, record) => (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', whiteSpace: 'nowrap' }}>
                   <Avatar size={40} style={{ backgroundColor: '#165DFF', flexShrink: 0 }}>
@@ -637,6 +635,7 @@ const EmployeeManagement: React.FC = () => {
               dataIndex: 'phone',
               key: 'phone',
               width: 140,
+              sorter: true,
               render: (phone) => (
                 <Text 
                   copyable={{ text: phone, icon: null, tooltips: ['复制手机号', '已复制'] }}
@@ -651,6 +650,7 @@ const EmployeeManagement: React.FC = () => {
               dataIndex: 'branches',
               key: 'branches',
               width: 200,
+              sorter: true,
               render: (branches: string[]) => (
                 <div style={{ whiteSpace: 'nowrap' }}>
                   {renderMultiSelectField(branches, 1)}
@@ -662,6 +662,7 @@ const EmployeeManagement: React.FC = () => {
               dataIndex: 'departments', 
               key: 'departments',
               width: 160,
+              sorter: true,
               render: (departments: string[]) => (
                 <div style={{ whiteSpace: 'nowrap' }}>
                   {renderMultiSelectField(departments, 1)}
@@ -673,6 +674,7 @@ const EmployeeManagement: React.FC = () => {
               dataIndex: 'roles',
               key: 'roles',
               width: 160,
+              sorter: true,
               render: (roles: string[]) => {
                 if (!roles || roles.length === 0) {
                   return <Text type="secondary">-</Text>;
@@ -697,6 +699,7 @@ const EmployeeManagement: React.FC = () => {
               dataIndex: 'supervisors',
               key: 'supervisors', 
               width: 130,
+              sorter: true,
               render: (supervisors: string[]) => (
                 <div style={{ whiteSpace: 'nowrap' }}>
                   {renderMultiSelectField(supervisors, 1)}
@@ -708,6 +711,7 @@ const EmployeeManagement: React.FC = () => {
               dataIndex: 'status',
               key: 'status',
               width: 90,
+              sorter: true,
               render: (status) => (
                 <div style={{ whiteSpace: 'nowrap' }}>
                   {getStatusTag(status)}
@@ -719,6 +723,7 @@ const EmployeeManagement: React.FC = () => {
               dataIndex: 'lastLogin',
               key: 'lastLogin',
               width: 160,
+              sorter: true,
               render: (lastLogin) => (
                 <Text style={{ fontSize: '12px', whiteSpace: 'nowrap' }}>
                   {lastLogin}
@@ -730,6 +735,7 @@ const EmployeeManagement: React.FC = () => {
               dataIndex: 'createTime',
               key: 'createTime',
               width: 160,
+              sorter: true,
               render: (createTime) => (
                 <Text style={{ fontSize: '12px', whiteSpace: 'nowrap' }}>
                   {createTime}

@@ -441,11 +441,7 @@ const UserManagement: React.FC = () => {
 
   return (
     <div style={{ padding: '0' }}>
-      {/* 页面标题 */}
-      <div style={{ marginBottom: '24px' }}>
-        <Title heading={3} style={{ marginBottom: '8px' }}>用户管理</Title>
-        <Text type="secondary">管理系统用户账户，包括用户信息、权限和状态</Text>
-      </div>
+
 
       {/* 搜索和筛选区域 */}
       <Card style={{ marginBottom: '20px' }}>
@@ -568,6 +564,7 @@ const UserManagement: React.FC = () => {
               dataIndex: 'id',
               key: 'id',
               width: 140,
+              sorter: true,
               render: (id) => (
                 <Text 
                   copyable={{ text: id, icon: null, tooltips: ['复制ID', '已复制'] }}
@@ -582,6 +579,7 @@ const UserManagement: React.FC = () => {
               dataIndex: 'username',
               key: 'username',
               width: 200,
+              sorter: true,
               render: (_, record) => (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <Avatar size={40} style={{ backgroundColor: '#165DFF' }}>
@@ -603,6 +601,7 @@ const UserManagement: React.FC = () => {
               dataIndex: 'phone',
               key: 'phone',
               width: 130,
+              sorter: true,
               render: (phone) => (
                 <Text 
                   copyable={{ text: phone, icon: null, tooltips: ['复制手机号', '已复制'] }}
@@ -617,6 +616,7 @@ const UserManagement: React.FC = () => {
               dataIndex: 'company',
               key: 'company',
               width: 180,
+              sorter: true,
               render: (company) => (
                 <Text style={{ fontSize: '14px', whiteSpace: 'nowrap' }}>
                   {company}
@@ -628,6 +628,7 @@ const UserManagement: React.FC = () => {
               dataIndex: 'role',
               key: 'role',
               width: 100,
+              sorter: true,
               render: (role) => getRoleTag(role)
             },
             {
@@ -635,6 +636,7 @@ const UserManagement: React.FC = () => {
               dataIndex: 'status',
               key: 'status',
               width: 80,
+              sorter: true,
               render: (status) => getStatusTag(status)
             },
             {
@@ -642,6 +644,7 @@ const UserManagement: React.FC = () => {
               dataIndex: 'lastLogin',
               key: 'lastLogin',
               width: 140,
+              sorter: true,
               render: (lastLogin) => (
                 <Text style={{ fontSize: '12px', whiteSpace: 'nowrap' }}>
                   {lastLogin}
@@ -653,6 +656,7 @@ const UserManagement: React.FC = () => {
               dataIndex: 'createTime',
               key: 'createTime',
               width: 140,
+              sorter: true,
               render: (createTime) => (
                 <Text style={{ fontSize: '12px', whiteSpace: 'nowrap' }}>
                   {createTime}

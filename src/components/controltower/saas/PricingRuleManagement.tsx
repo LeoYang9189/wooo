@@ -14,19 +14,34 @@ import {
   Tabs,
   Tooltip,
   DatePicker,
-  Drawer
+  Drawer,
+  Input,
+  Grid,
+  Breadcrumb,
+  Switch
 } from '@arco-design/web-react';
 import {
   IconPlus,
+  IconMore,
+  IconFilter,
+  IconSettings,
+  IconDragArrow,
+  IconClose,
   IconSearch,
   IconRefresh,
-  IconMore
+  IconDown,
+  IconUp,
+  IconDragDotVertical,
+  IconList
 } from '@arco-design/web-react/icon';
 import { useNavigate } from 'react-router-dom';
+import ControlTowerSaasLayout from './ControlTowerSaasLayout';
 
 const { Option } = Select;
 const { Title } = Typography;
 const { TabPane } = Tabs;
+const { Row, Col } = Grid;
+const RangePicker = DatePicker.RangePicker;
 
 // 筛选模式枚举
 export enum FilterMode {
@@ -38,6 +53,17 @@ export enum FilterMode {
   IS_NOT_EMPTY = 'isNotEmpty',
   BATCH = 'batch'
 }
+
+// 筛选模式选项
+export const FilterModeOptions = [
+  { label: '等于', value: FilterMode.EQUAL },
+  { label: '不等于', value: FilterMode.NOT_EQUAL },
+  { label: '包含', value: FilterMode.CONTAINS },
+  { label: '不包含', value: FilterMode.NOT_CONTAINS },
+  { label: '为空', value: FilterMode.IS_EMPTY },
+  { label: '不为空', value: FilterMode.IS_NOT_EMPTY },
+  { label: '批量', value: FilterMode.BATCH }
+];
 
 // 筛选字段配置接口
 export interface FilterFieldConfig {
@@ -226,24 +252,6 @@ interface LastmilePricingRule {
 // 统一的加价规则类型
 type PricingRule = FclPricingRule | LclPricingRule | AirPricingRule | SurchargePricingRule | PrecarriagePricingRule | LastmilePricingRule;
 
-// 航线选项
-const routeOptions = [
-  { value: '亚欧航线', label: '亚欧航线' },
-  { value: '跨太平洋航线', label: '跨太平洋航线' },
-  { value: '亚美航线', label: '亚美航线' },
-  { value: '地中海航线', label: '地中海航线' },
-  { value: '亚洲区域航线', label: '亚洲区域航线' },
-  { value: '中东航线', label: '中东航线' },
-  { value: '非洲航线', label: '非洲航线' },
-  { value: '欧美航线', label: '欧美航线' },
-  { value: '波罗的海航线', label: '波罗的海航线' },
-  { value: '南美航线', label: '南美航线' }
-];
-
-
-
-
-
 // 搜索筛选参数
 interface SearchParams {
   routeName: string;
@@ -254,6 +262,96 @@ interface SearchParams {
   validPeriodStart: string; // 有效期开始日期
   validPeriodEnd: string; // 有效期结束日期
 }
+
+// 根据Tab获取筛选字段配置
+const getFilterFieldsByTab = (tab: FeeType): FilterFieldConfig[] => {
+  switch (tab) {
+    case 'fcl':
+    case 'precarriage':
+    case 'lastmile':
+      return [
+        { key: 'ruleId', label: '规则ID', type: 'text', placeholder: '请输入规则ID' },
+        { key: 'routeName', label: '航线名称', type: 'select', options: [
+          { label: '亚欧航线', value: '亚欧航线' },
+          { label: '跨太平洋航线', value: '跨太平洋航线' },
+          { label: '亚美航线', value: '亚美航线' }
+        ], placeholder: '请选择航线名称' },
+        { key: 'shippingCompany', label: tab === 'fcl' ? '船公司' : (tab === 'precarriage' ? '供应商' : '目的港代理'), type: 'select', options: [
+          { label: 'COSCO', value: 'COSCO' },
+          { label: 'MSC', value: 'MSC' },
+          { label: 'MAERSK', value: 'MAERSK' }
+        ], placeholder: '请选择' },
+        { key: 'originPort', label: tab === 'fcl' ? '起运港' : (tab === 'precarriage' ? '起运地' : '目的港'), type: 'select', options: [
+          { label: '上海港', value: '上海港' },
+          { label: '深圳港', value: '深圳港' },
+          { label: '宁波港', value: '宁波港' }
+        ], placeholder: '请选择' },
+        { key: 'destinationPort', label: tab === 'precarriage' ? '目的港' : '配送地址', type: 'text', placeholder: '请输入目的地' },
+        { key: 'chargeName', label: '费用名称', type: 'select', options: [
+          { label: '基础海运费', value: '基础海运费' },
+          { label: '燃油附加费', value: '燃油附加费' }
+        ], placeholder: '请选择费用名称' },
+        { key: 'currency', label: '币种', type: 'select', options: [
+          { label: 'USD', value: 'USD' },
+          { label: 'CNY', value: 'CNY' }
+        ], placeholder: '请选择币种' },
+        { key: 'containerType', label: '箱型', type: 'select', options: [
+          { label: '20GP', value: '20GP' },
+          { label: '40GP', value: '40GP' },
+          { label: '40HQ', value: '40HQ' }
+        ], placeholder: '请选择箱型' },
+        { key: 'status', label: '状态', type: 'select', options: [
+          { label: '启用', value: 'enabled' },
+          { label: '禁用', value: 'disabled' },
+          { label: '过期', value: 'expired' }
+        ], placeholder: '请选择状态' },
+        { key: 'updateTime', label: '更新时间', type: 'dateRange', placeholder: '请选择更新时间' }
+      ];
+    case 'lcl':
+    case 'air':
+      return [
+        { key: 'routeName', label: '航线名称', type: 'select', options: [
+          { label: '亚欧航线', value: '亚欧航线' },
+          { label: '跨太平洋航线', value: '跨太平洋航线' }
+        ], placeholder: '请选择航线名称' },
+        { key: 'currency', label: '币种', type: 'select', options: [
+          { label: 'USD', value: 'USD' },
+          { label: 'CNY', value: 'CNY' }
+        ], placeholder: '请选择币种' },
+        { key: 'weightPrice', label: '重量加价', type: 'number', placeholder: '请输入重量加价' },
+        { key: 'volumePrice', label: '体积加价', type: 'number', placeholder: '请输入体积加价' },
+        { key: 'minPrice', label: '最低加价', type: 'number', placeholder: '请输入最低加价' },
+        { key: 't0Price', label: 'T0加价', type: 'number', placeholder: '请输入T0加价' },
+        { key: 'status', label: '状态', type: 'select', options: [
+          { label: '启用', value: 'enabled' },
+          { label: '禁用', value: 'disabled' },
+          { label: '过期', value: 'expired' }
+        ], placeholder: '请选择状态' },
+        { key: 'updateTime', label: '更新时间', type: 'dateRange', placeholder: '请选择更新时间' }
+      ];
+    case 'surcharge':
+      return [
+        { key: 'chargeName', label: '费用名称', type: 'text', placeholder: '请输入费用名称' },
+        { key: 'chargeCode', label: '费用代码', type: 'text', placeholder: '请输入费用代码' },
+        { key: 'chargeType', label: '费用类型', type: 'select', options: [
+          { label: '固定金额', value: 'fixed' },
+          { label: '百分比', value: 'percentage' }
+        ], placeholder: '请选择费用类型' },
+        { key: 'currency', label: '币种', type: 'select', options: [
+          { label: 'USD', value: 'USD' },
+          { label: 'CNY', value: 'CNY' }
+        ], placeholder: '请选择币种' },
+        { key: 't0Price', label: 'T0加价', type: 'number', placeholder: '请输入T0加价' },
+        { key: 'status', label: '状态', type: 'select', options: [
+          { label: '启用', value: 'enabled' },
+          { label: '禁用', value: 'disabled' }
+        ], placeholder: '请选择状态' },
+        { key: 'updateTime', label: '更新时间', type: 'dateRange', placeholder: '请选择更新时间' }
+      ];
+    default:
+      return [];
+  }
+};
 
 const PricingRuleManagement: React.FC = () => {
   const navigate = useNavigate();
@@ -269,30 +367,149 @@ const PricingRuleManagement: React.FC = () => {
   const [batchToggleModalVisible, setBatchToggleModalVisible] = useState(false);
   const [pendingToggleRule, setPendingToggleRule] = useState<{ id: string; currentStatus: 'enabled' | 'disabled' | 'expired' } | null>(null);
   const [pendingBatchToggleStatus, setPendingBatchToggleStatus] = useState<'enabled' | 'disabled' | null>(null);
-  const [searchParams, setSearchParams] = useState<SearchParams>({
-    routeName: '',
-    shippingCompany: '',
-    originPort: '',
-    chargeName: '',
-    status: '',
-    validPeriodStart: '',
-    validPeriodEnd: ''
-  });
+
+  // 筛选功能状态 - 按照 FclRates 的规范
+  const [filterConditions, setFilterConditions] = useState<FilterCondition[]>([]);
+  const [filterSchemes, setFilterSchemes] = useState<FilterScheme[]>([]);
+  const [currentSchemeId, setCurrentSchemeId] = useState<string>('default');
+  const [filterExpanded, setFilterExpanded] = useState(false);
+  const [filterFieldModalVisible, setFilterFieldModalVisible] = useState(false);
+  const [schemeModalVisible, setSchemeModalVisible] = useState(false);
+  const [schemeName, setSchemeName] = useState('');
+  const [filterFieldOrder, setFilterFieldOrder] = useState<string[]>([]);
+
+  // 自定义表格状态
+  const [customTableModalVisible, setCustomTableModalVisible] = useState<boolean>(false);
+  const [columnVisibility, setColumnVisibility] = useState<{[key: string]: boolean}>({});
+  const [columnOrder, setColumnOrder] = useState<string[]>([]);
+
+  // 拖拽状态
+  const [draggedItem, setDraggedItem] = useState<string | null>(null);
+  const [dragOverItem, setDragOverItem] = useState<string | null>(null);
+  const [draggedFilterField, setDraggedFilterField] = useState<string | null>(null);
+  const [dragOverFilterField, setDragOverFilterField] = useState<string | null>(null);
 
   // 处理费用类型切换
   const handleFeeTypeChange = (feeType: string) => {
     setActiveFeeType(feeType as FeeType);
     setSelectedRowKeys([]);
-    // 重置搜索条件
-    setSearchParams({
-      routeName: '',
-      shippingCompany: '',
-      originPort: '',
-      chargeName: '',
-      status: '',
-      validPeriodStart: '',
-      validPeriodEnd: ''
-    });
+  };
+
+  // 初始化默认筛选条件
+  const initializeDefaultConditions = (activeTab: FeeType): FilterCondition[] => {
+    const fields = getFilterFieldsByTab(activeTab);
+    return fields.map(field => ({
+      key: field.key,
+      mode: FilterMode.EQUAL,
+      value: undefined,
+      visible: true
+    }));
+  };
+
+  // 初始化默认方案
+  const initializeDefaultScheme = (activeTab: FeeType): FilterScheme => {
+    return {
+      id: 'default',
+      name: '默认方案',
+      conditions: initializeDefaultConditions(activeTab),
+      isDefault: true
+    };
+  };
+
+  // 获取可见的筛选条件（用于渲染）
+  const getVisibleConditions = (): FilterCondition[] => {
+    return filterConditions.filter(condition => condition.visible);
+  };
+
+  // 获取第一行筛选条件（用于收起状态）
+  const getFirstRowConditions = (): FilterCondition[] => {
+    const visibleConditions = getVisibleConditions();
+    return visibleConditions.slice(0, 4); // 假设第一行显示4个条件
+  };
+
+  // 切换筛选区展开状态
+  const toggleFilterExpanded = () => {
+    setFilterExpanded(!filterExpanded);
+  };
+
+  // 更新筛选条件值
+  const updateFilterCondition = (key: string, mode: FilterMode, value: any) => {
+    setFilterConditions(prev => prev.map(condition => 
+      condition.key === key 
+        ? { ...condition, mode, value }
+        : condition
+    ));
+  };
+
+  // 重置筛选条件
+  const resetFilterConditions = () => {
+    const defaultScheme = filterSchemes.find(scheme => scheme.isDefault);
+    if (defaultScheme) {
+      setFilterConditions(defaultScheme.conditions.map(condition => ({
+        ...condition,
+        value: undefined
+      })));
+      setCurrentSchemeId('default');
+    }
+  };
+
+  // 应用筛选方案
+  const applyFilterScheme = (schemeId: string) => {
+    const scheme = filterSchemes.find(s => s.id === schemeId);
+    if (scheme) {
+      setFilterConditions([...scheme.conditions]);
+      setCurrentSchemeId(schemeId);
+    }
+  };
+
+  // 打开增减条件弹窗
+  const openFilterFieldModal = () => {
+    setFilterFieldModalVisible(true);
+  };
+
+  // 关闭增减条件弹窗
+  const closeFilterFieldModal = () => {
+    setFilterFieldModalVisible(false);
+  };
+
+  // 打开另存为方案弹窗
+  const openSchemeModal = () => {
+    setSchemeName('');
+    setSchemeModalVisible(true);
+  };
+
+  // 关闭另存为方案弹窗
+  const closeSchemeModal = () => {
+    setSchemeModalVisible(false);
+    setSchemeName('');
+  };
+
+  // 保存筛选方案
+  const saveFilterScheme = () => {
+    if (!schemeName.trim()) {
+      return;
+    }
+    
+    const newScheme: FilterScheme = {
+      id: Date.now().toString(),
+      name: schemeName.trim(),
+      conditions: [...filterConditions],
+      isDefault: false
+    };
+    
+    setFilterSchemes(prev => [...prev, newScheme]);
+    setCurrentSchemeId(newScheme.id);
+    closeSchemeModal();
+    Message.success('筛选方案保存成功');
+  };
+
+  // 更新筛选条件可见性
+  const updateFilterConditionVisibility = (key: string, visible: boolean) => {
+    setFilterConditions(prev => prev.map(condition => 
+      condition.key === key 
+        ? { ...condition, visible }
+        : condition
+    ));
   };
 
   // 获取当前费用类型的示例数据
@@ -631,60 +848,6 @@ const PricingRuleManagement: React.FC = () => {
   }, [activeFeeType]);
 
   // 搜索处理
-  const handleSearch = () => {
-    let filtered = pricingRuleData;
-
-    if (searchParams.routeName && (activeFeeType === 'fcl' || activeFeeType === 'lcl' || activeFeeType === 'air')) {
-      filtered = filtered.filter(item => 'routeName' in item && item.routeName.includes(searchParams.routeName));
-    }
-
-    if (searchParams.shippingCompany && activeFeeType === 'fcl') {
-      filtered = filtered.filter(item => 'shippingCompany' in item && item.shippingCompany.includes(searchParams.shippingCompany));
-    }
-
-    if (searchParams.originPort && activeFeeType === 'fcl') {
-      filtered = filtered.filter(item => 'originPort' in item && item.originPort.includes(searchParams.originPort));
-    }
-
-    if (searchParams.chargeName && activeFeeType === 'fcl') {
-      filtered = filtered.filter(item => 'chargeName' in item && item.chargeName.includes(searchParams.chargeName));
-    }
-
-    if (searchParams.validPeriodStart && searchParams.validPeriodEnd && activeFeeType === 'fcl') {
-      filtered = filtered.filter(item => {
-        if ('validPeriod' in item) {
-          const startDate = item.validPeriod.startDate;
-          const endDate = item.validPeriod.endDate;
-          return startDate >= searchParams.validPeriodStart && endDate <= searchParams.validPeriodEnd;
-        }
-        return true;
-      });
-    }
-
-    if (searchParams.status) {
-      filtered = filtered.filter(item => item.status === searchParams.status);
-    }
-
-    setFilteredData(filtered);
-    setSelectedRowKeys([]);
-  };
-
-  // 重置搜索
-  const handleReset = () => {
-    setSearchParams({
-      routeName: '',
-      shippingCompany: '',
-      originPort: '',
-      chargeName: '',
-      status: '',
-      validPeriodStart: '',
-      validPeriodEnd: ''
-    });
-    setFilteredData(pricingRuleData);
-    setSelectedRowKeys([]);
-  };
-
-  // 切换状态
   const handleToggleStatus = (id: string, currentStatus: 'enabled' | 'disabled' | 'expired') => {
     setPendingToggleRule({ id, currentStatus });
     setToggleStatusModalVisible(true);
@@ -774,30 +937,35 @@ const PricingRuleManagement: React.FC = () => {
       title: 'T0加价',
       dataIndex: 't0Price',
       width: 100,
+      sorter: true,
       render: (price: number, record: PricingRule) => `${price} ${record.currency}`
     },
     {
       title: 'T1加价',
       dataIndex: 't1Price',
       width: 100,
+      sorter: true,
       render: (price: number, record: PricingRule) => `${price} ${record.currency}`
     },
     {
       title: 'T2加价',
       dataIndex: 't2Price',
       width: 100,
+      sorter: true,
       render: (price: number, record: PricingRule) => `${price} ${record.currency}`
     },
     {
       title: 'T3加价',
       dataIndex: 't3Price',
       width: 100,
+      sorter: true,
       render: (price: number, record: PricingRule) => `${price} ${record.currency}`
     },
     {
       title: '内部销售',
       dataIndex: 'internalSalesPrice',
       width: 100,
+      sorter: true,
       render: (price: number, record: PricingRule) => `${price} ${record.currency}`
   }
     ] : []),
@@ -805,6 +973,7 @@ const PricingRuleManagement: React.FC = () => {
       title: '状态',
       dataIndex: 'status',
       width: 100,
+      sorter: true,
       render: (status: 'enabled' | 'disabled') => (
         <Tag color={status === 'enabled' ? 'green' : 'red'}>
           {status === 'enabled' ? '启用' : '禁用'}
@@ -815,6 +984,7 @@ const PricingRuleManagement: React.FC = () => {
       title: '更新时间',
       dataIndex: 'updateTime',
       width: 160,
+      sorter: true,
     },
     {
       title: '操作',
@@ -880,6 +1050,7 @@ const PricingRuleManagement: React.FC = () => {
             title: '规则ID',
             dataIndex: 'ruleId',
             width: 140,
+            sorter: true,
             render: (ruleId: string) => (
               <span style={{ fontFamily: 'monospace', fontSize: '12px' }}>{ruleId}</span>
             )
@@ -888,26 +1059,31 @@ const PricingRuleManagement: React.FC = () => {
             title: '航线名称',
             dataIndex: 'routeName',
             width: 120,
+            sorter: true,
           },
           {
             title: '船公司',
             dataIndex: 'shippingCompany',
             width: 100,
+            sorter: true,
           },
           {
             title: '起运港',
             dataIndex: 'originPort',
             width: 100,
+            sorter: true,
           },
           {
             title: '费用名称',
             dataIndex: 'chargeName',
             width: 120,
+            sorter: true,
           },
           {
             title: '箱型',
             dataIndex: 'containerTypes',
             width: 200,
+            sorter: true,
             render: (containerTypes: any[], record: any) => (
               <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
                 {containerTypes.map((container, index) => (
@@ -946,6 +1122,7 @@ const PricingRuleManagement: React.FC = () => {
             title: '有效期',
             dataIndex: 'validPeriod',
             width: 200,
+            sorter: true,
             render: (validPeriod: any) => (
               <span style={{ fontSize: '12px' }}>
                 {validPeriod.startDate} 至 {validPeriod.endDate}
@@ -961,23 +1138,27 @@ const PricingRuleManagement: React.FC = () => {
             title: '航线名称',
             dataIndex: 'routeName',
             width: 150,
+            sorter: true,
           },
           {
             title: '重量加价',
             dataIndex: 'weightPrice',
             width: 120,
+            sorter: true,
             render: (price: number, record: PricingRule) => `${price} ${record.currency}/KG`
           },
           {
             title: '体积加价',
             dataIndex: 'volumePrice',
             width: 120,
+            sorter: true,
             render: (price: number, record: PricingRule) => `${price} ${record.currency}/CBM`
           },
           {
             title: '最低加价',
             dataIndex: 'minPrice',
             width: 100,
+            sorter: true,
             render: (price: number, record: PricingRule) => `${price} ${record.currency}`
           }
         ];
@@ -988,16 +1169,19 @@ const PricingRuleManagement: React.FC = () => {
             title: '费用名称',
             dataIndex: 'chargeName',
             width: 150,
+            sorter: true,
           },
           {
             title: '费用代码',
             dataIndex: 'chargeCode',
             width: 100,
+            sorter: true,
           },
           {
             title: '费用类型',
             dataIndex: 'chargeType',
             width: 100,
+            sorter: true,
             render: (type: string) => (
               <Tag color={type === 'fixed' ? 'blue' : 'purple'}>
                 {type === 'fixed' ? '固定金额' : '百分比'}
@@ -1008,6 +1192,7 @@ const PricingRuleManagement: React.FC = () => {
             title: '基础费用',
             dataIndex: 'fixedAmount',
             width: 120,
+            sorter: true,
             render: (amount: number, record: any) => {
               if (record.chargeType === 'fixed') {
                 return `${amount || 0} ${record.currency}`;
@@ -1025,6 +1210,7 @@ const PricingRuleManagement: React.FC = () => {
             title: '规则ID',
             dataIndex: 'ruleId',
             width: 150,
+            sorter: true,
             render: (ruleId: string) => (
               <span style={{ fontFamily: 'monospace', fontSize: '12px', color: '#666' }}>
                 {ruleId}
@@ -1035,26 +1221,31 @@ const PricingRuleManagement: React.FC = () => {
             title: activeFeeType === 'precarriage' ? '起运地' : '目的港',
             dataIndex: 'origin',
             width: 120,
+            sorter: true,
           },
           {
             title: activeFeeType === 'precarriage' ? '目的港' : '配送地址',
             dataIndex: 'destination',
             width: 150,
+            sorter: true,
           },
           {
             title: activeFeeType === 'precarriage' ? '供应商' : '目的港代理',
             dataIndex: 'shippingCompany',
             width: 120,
+            sorter: true,
           },
           {
             title: '费用名称',
             dataIndex: 'chargeName',
             width: 120,
+            sorter: true,
           },
           {
             title: '箱型',
             dataIndex: 'containerTypes',
             width: 200,
+            sorter: true,
             render: (_: unknown, record: PrecarriagePricingRule | LastmilePricingRule) => (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                 {record.containerTypes.map((container, index) => (
@@ -1094,6 +1285,7 @@ const PricingRuleManagement: React.FC = () => {
             title: '有效期',
             dataIndex: 'validPeriod',
             width: 180,
+            sorter: true,
             render: (_: unknown, record: PrecarriagePricingRule | LastmilePricingRule) => (
               <span style={{ fontSize: '12px', color: '#666' }}>
                 {record.validPeriod.startDate} 至 {record.validPeriod.endDate}
@@ -1123,246 +1315,521 @@ const PricingRuleManagement: React.FC = () => {
     navigate(`/controltower/saas/pricing-rule-management/add?type=${activeFeeType}`);
   };
 
+  // 初始化和组件生命周期
+  useEffect(() => {
+    const defaultScheme = initializeDefaultScheme(activeFeeType);
+    setFilterSchemes([defaultScheme]);
+    setFilterConditions(defaultScheme.conditions);
+    setCurrentSchemeId('default');
+    
+    // 初始化筛选字段顺序
+    const fields = getFilterFieldsByTab(activeFeeType);
+    setFilterFieldOrder(fields.map(field => field.key));
+  }, [activeFeeType]);
 
+  // 拖拽处理函数
+  const handleDragStart = (e: React.DragEvent, itemId: string) => {
+    setDraggedItem(itemId);
+    e.dataTransfer.effectAllowed = 'move';
+  };
 
-  return (
-    <Card>
-      <div style={{ marginBottom: '20px' }}>
-        <Title heading={4} style={{ margin: 0 }}>加价规则维护</Title>
-      </div>
+  const handleDragOver = (e: React.DragEvent, itemId: string) => {
+    e.preventDefault();
+    setDragOverItem(itemId);
+    e.dataTransfer.dropEffect = 'move';
+  };
 
-      {/* 费用类型切换Tab */}
-      <Card style={{ marginBottom: '16px' }}>
-        <Tabs activeTab={activeFeeType} onChange={handleFeeTypeChange}>
-          {feeTypeOptions.map(option => (
-            <TabPane key={option.key} title={option.title} />
-          ))}
-        </Tabs>
-      </Card>
+  const handleDragEnd = () => {
+    setDraggedItem(null);
+    setDragOverItem(null);
+  };
 
-      {/* 搜索筛选区域 */}
-      <Card style={{ marginBottom: '16px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', alignItems: 'end' }}>
-          <div>
-            <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>航线名称</div>
+  const handleDrop = (e: React.DragEvent, targetId: string) => {
+    e.preventDefault();
+    
+    if (!draggedItem || draggedItem === targetId) {
+      return;
+    }
+
+    const newOrder = [...columnOrder];
+    const draggedIndex = newOrder.indexOf(draggedItem);
+    const targetIndex = newOrder.indexOf(targetId);
+    
+    // 移动元素
+    newOrder.splice(draggedIndex, 1);
+    newOrder.splice(targetIndex, 0, draggedItem);
+    
+    setColumnOrder(newOrder);
+    setDraggedItem(null);
+    setDragOverItem(null);
+  };
+
+  // 筛选字段拖拽处理
+  const handleFilterFieldDragStart = (e: React.DragEvent, fieldKey: string) => {
+    setDraggedFilterField(fieldKey);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleFilterFieldDragOver = (e: React.DragEvent, fieldKey: string) => {
+    e.preventDefault();
+    setDragOverFilterField(fieldKey);
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleFilterFieldDragEnd = () => {
+    setDraggedFilterField(null);
+    setDragOverFilterField(null);
+  };
+
+  const handleFilterFieldDrop = (e: React.DragEvent, targetKey: string) => {
+    e.preventDefault();
+    
+    if (!draggedFilterField || draggedFilterField === targetKey) {
+      return;
+    }
+
+    const newOrder = [...filterFieldOrder];
+    const draggedIndex = newOrder.indexOf(draggedFilterField);
+    const targetIndex = newOrder.indexOf(targetKey);
+    
+    // 移动元素
+    newOrder.splice(draggedIndex, 1);
+    newOrder.splice(targetIndex, 0, draggedFilterField);
+    
+    setFilterFieldOrder(newOrder);
+    setDraggedFilterField(null);
+    setDragOverFilterField(null);
+  };
+
+  // 表格列可见性控制
+  const toggleColumnVisibility = (columnKey: string) => {
+    setColumnVisibility(prev => ({
+      ...prev,
+      [columnKey]: !prev[columnKey]
+    }));
+  };
+
+  // 全选/清空列
+  const selectAllColumns = () => {
+    const newVisibility: {[key: string]: boolean} = {};
+    // 只处理可自定义的列
+    columnOrder.filter(key => key !== 'checkbox' && key !== 'action' && key !== '').forEach(key => {
+      newVisibility[key] = true;
+    });
+    setColumnVisibility(newVisibility);
+  };
+
+  const clearAllColumns = () => {
+    const newVisibility: {[key: string]: boolean} = {};
+    // 只处理可自定义的列
+    columnOrder.filter(key => key !== 'checkbox' && key !== 'action' && key !== '').forEach(key => {
+      newVisibility[key] = false;
+    });
+    setColumnVisibility(newVisibility);
+  };
+
+  // 重置默认列设置
+  const resetDefaultColumns = () => {
+    const allColumns = getColumns().map(col => col.dataIndex || col.key || '');
+    // 排除checkbox列和操作列，这些列不参与自定义表格功能
+    const defaultColumns = allColumns.filter(key => key !== 'checkbox' && key !== 'action' && key !== '');
+    setColumnOrder(defaultColumns);
+    
+    const defaultVisibility: {[key: string]: boolean} = {};
+    defaultColumns.forEach(key => {
+      defaultVisibility[key] = true;
+    });
+    setColumnVisibility(defaultVisibility);
+  };
+
+  // 渲染单个筛选条件
+  const renderFilterCondition = (condition: FilterCondition) => {
+    const fieldConfig = getFilterFieldsByTab(activeFeeType).find(field => field.key === condition.key);
+    if (!fieldConfig) return null;
+
+    const handleModeChange = (mode: FilterMode) => {
+      updateFilterCondition(condition.key, mode, condition.value);
+    };
+
+    const handleValueChange = (value: any) => {
+      updateFilterCondition(condition.key, condition.mode, value);
+    };
+
+    // 根据筛选模式决定是否禁用输入框
+    const isInputDisabled = condition.mode === FilterMode.IS_EMPTY || condition.mode === FilterMode.IS_NOT_EMPTY;
+
+    return (
+      <Col span={6} key={condition.key} className="mb-4">
+        <div className="filter-condition-wrapper">
+          {/* 字段标签和筛选模式 */}
+          <div className="filter-label-row mb-2 flex items-center justify-between">
+            <span className="text-gray-700 text-sm font-medium">{fieldConfig.label}</span>
             <Select
-              placeholder="选择航线"
-              value={searchParams.routeName}
-              onChange={(value) => setSearchParams(prev => ({ ...prev, routeName: value }))}
-              allowClear
+              value={condition.mode}
+              onChange={handleModeChange}
+              style={{ width: '90px' }}
+              size="mini"
+              className="filter-mode-select"
             >
-              {routeOptions.map(option => (
-                <Option key={option.value} value={option.value}>{option.label}</Option>
+              {FilterModeOptions.map(option => (
+                <Option key={option.value} value={option.value}>
+                  {option.label}
+                </Option>
               ))}
             </Select>
           </div>
-          <div>
-            <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>船公司</div>
-            <Select
-              placeholder="选择船公司"
-              value={searchParams.shippingCompany}
-              onChange={(value) => setSearchParams(prev => ({ ...prev, shippingCompany: value }))}
-              allowClear
-            >
-              <Option value="COSCO">COSCO</Option>
-              <Option value="MSC">MSC</Option>
-              <Option value="MAERSK">MAERSK</Option>
-              <Option value="CMA CGM">CMA CGM</Option>
-              <Option value="EVERGREEN">EVERGREEN</Option>
-            </Select>
-          </div>
-          <div>
-            <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>起运港</div>
-            <Select
-              placeholder="选择起运港"
-              value={searchParams.originPort}
-              onChange={(value) => setSearchParams(prev => ({ ...prev, originPort: value }))}
-              allowClear
-            >
-              <Option value="上海港">上海港</Option>
-              <Option value="深圳港">深圳港</Option>
-              <Option value="宁波港">宁波港</Option>
-              <Option value="青岛港">青岛港</Option>
-              <Option value="天津港">天津港</Option>
-            </Select>
-          </div>
-          <div>
-            <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>费用名称</div>
-            <Select
-              placeholder="选择费用名称"
-              value={searchParams.chargeName}
-              onChange={(value) => setSearchParams(prev => ({ ...prev, chargeName: value }))}
-              allowClear
-            >
-              <Option value="基础海运费">基础海运费</Option>
-              <Option value="燃油附加费">燃油附加费</Option>
-              <Option value="港口费">港口费</Option>
-              <Option value="文件费">文件费</Option>
-            </Select>
-          </div>
-          <div>
-            <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>有效期开始</div>
-            <DatePicker
-              placeholder="选择开始日期"
-              value={searchParams.validPeriodStart}
-              onChange={(value) => setSearchParams(prev => ({ ...prev, validPeriodStart: value || '' }))}
-              allowClear
-            />
-          </div>
-          <div>
-            <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>有效期结束</div>
-            <DatePicker
-              placeholder="选择结束日期"
-              value={searchParams.validPeriodEnd}
-              onChange={(value) => setSearchParams(prev => ({ ...prev, validPeriodEnd: value || '' }))}
-              allowClear
-            />
-          </div>
-          <div>
-            <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>状态</div>
-            <Select
-              placeholder="选择状态"
-              value={searchParams.status}
-              onChange={(value) => setSearchParams(prev => ({ ...prev, status: value }))}
-              allowClear
-            >
-              <Option value="enabled">启用</Option>
-              <Option value="disabled">禁用</Option>
-              <Option value="expired">过期</Option>
-            </Select>
-          </div>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <Button type="primary" icon={<IconSearch />} onClick={handleSearch}>
-              搜索
-            </Button>
-            <Button icon={<IconRefresh />} onClick={handleReset}>
-              重置
-            </Button>
+          
+          {/* 输入控件 - 占满整个宽度 */}
+          <div className="filter-input-wrapper">
+            {fieldConfig.type === 'text' && (
+              <Input
+                placeholder={isInputDisabled ? '（自动判断）' : fieldConfig.placeholder}
+                value={condition.value || ''}
+                onChange={handleValueChange}
+                disabled={isInputDisabled}
+                allowClear
+                style={{ width: '100%' }}
+              />
+            )}
+            {fieldConfig.type === 'select' && (
+              <Select
+                placeholder={isInputDisabled ? '（自动判断）' : fieldConfig.placeholder}
+                value={condition.value}
+                onChange={handleValueChange}
+                disabled={isInputDisabled}
+                allowClear
+                style={{ width: '100%' }}
+              >
+                {fieldConfig.options?.map(option => (
+                  <Option key={option.value} value={option.value}>
+                    {option.label}
+                  </Option>
+                ))}
+              </Select>
+            )}
+            {fieldConfig.type === 'dateRange' && (
+              <RangePicker
+                value={condition.value}
+                onChange={handleValueChange}
+                disabled={isInputDisabled}
+                style={{ width: '100%' }}
+                placeholder={isInputDisabled ? ['（自动判断）', ''] : ['开始日期', '结束日期']}
+              />
+            )}
+            {fieldConfig.type === 'number' && (
+              <Input
+                placeholder={isInputDisabled ? '（自动判断）' : fieldConfig.placeholder}
+                value={condition.value || ''}
+                onChange={handleValueChange}
+                disabled={isInputDisabled}
+                allowClear
+                style={{ width: '100%' }}
+              />
+            )}
           </div>
         </div>
-      </Card>
+      </Col>
+    );
+  };
 
-      {/* 操作按钮区域 */}
-      <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <Button type="primary" icon={<IconPlus />} onClick={handleAdd}>
-              新增规则
-            </Button>
-          </div>
-          {selectedRowKeys.length > 0 && (
-            <div style={{ 
-              display: 'flex', 
-              gap: '8px', 
-              paddingLeft: '12px', 
-              borderLeft: '1px solid #e5e6e7',
-              marginLeft: '4px'
-            }}>
-              <Button 
-                type="outline" 
-                status="success"
-                onClick={() => handleBatchToggleStatus('enabled')}
+  // 渲染新版筛选区域
+  const renderNewFilterArea = () => {
+    const conditionsToShow = filterExpanded ? getVisibleConditions() : getFirstRowConditions();
+    
+    return (
+      <div className="mb-4 filter-area-card">
+        {/* 筛选区头部 - 标题和所有操作按钮在同一行 */}
+        <div className="filter-header flex justify-between items-center mb-6">
+          <Title heading={6} className="!mb-0 !text-gray-800">
+            筛选条件
+          </Title>
+          <div className="flex items-center gap-3">
+            {/* 选择方案下拉 */}
+            <div className="flex items-center gap-2">
+              <span className="text-gray-500 text-sm">方案:</span>
+              <Select
+                value={currentSchemeId}
+                onChange={applyFilterScheme}
+                style={{ width: '140px' }}
+                placeholder="选择方案"
+                size="small"
               >
-                批量启用 ({selectedRowKeys.length})
-                </Button>
-              <Button 
-                type="outline" 
-                status="warning"
-                onClick={() => handleBatchToggleStatus('disabled')}
-              >
-                批量禁用 ({selectedRowKeys.length})
-              </Button>
+                {filterSchemes.map(scheme => (
+                  <Option key={scheme.id} value={scheme.id}>
+                    {scheme.name}
+                  </Option>
+                ))}
+              </Select>
             </div>
-          )}
-        </div>
-      </div>
-
-      <Table
-        columns={getColumns()}
-        data={filteredData}
-        rowKey="id"
-        scroll={{ x: 1600 }}
-        pagination={{
-          pageSize: 10,
-          showTotal: true,
-          showJumper: true,
-          sizeCanChange: true,
-        }}
-      />
-
-      {/* 详情抽屉 */}
-      <Drawer
-        title="加价规则详情"
-        visible={detailModalVisible}
-        onCancel={() => setDetailModalVisible(false)}
-        footer={
-          <div style={{ textAlign: 'right' }}>
-          <Button onClick={() => setDetailModalVisible(false)}>
-            关闭
-          </Button>
+            
+            {/* 所有操作按钮 */}
+            <Space size="medium">
+              <Button 
+                type="primary" 
+                icon={<IconSearch />}
+                className="search-btn"
+                size="small"
+              >
+                查询
+              </Button>
+              <Button 
+                icon={<IconRefresh />} 
+                onClick={resetFilterConditions}
+                className="reset-btn"
+                size="small"
+              >
+                重置
+              </Button>
+              <Button 
+                type="outline"
+                icon={<IconSettings />} 
+                onClick={openFilterFieldModal}
+                className="settings-btn"
+                size="small"
+              >
+                增减条件
+              </Button>
+              <Button 
+                type="outline"
+                onClick={openSchemeModal}
+                className="save-scheme-btn"
+                size="small"
+              >
+                另存为方案
+              </Button>
+              <Button 
+                type="text" 
+                icon={filterExpanded ? <IconUp /> : <IconDown />}
+                onClick={toggleFilterExpanded}
+                className="expand-btn text-blue-500 hover:text-blue-700"
+                size="small"
+              >
+                {filterExpanded ? '收起' : '展开'}
+              </Button>
+            </Space>
           </div>
-        }
-        width={600}
-        placement="right"
-      >
-        {currentRule && (
-          <div style={{ padding: '24px', height: '100%', overflow: 'auto' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              {/* 根据费用类型显示不同的字段 */}
-              {activeFeeType === 'fcl' && (
-                <>
-                  {/* 基本信息卡片 */}
-                  <div style={{ 
-                    border: '1px solid #e5e6e7', 
-                    borderRadius: '8px', 
-                    padding: '16px',
-                    backgroundColor: '#fafbfc'
-                  }}>
-                    <div style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '16px', color: '#1d2129' }}>
-                      基本信息
-                    </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              <div>
-                        <div style={{ marginBottom: '8px', fontWeight: 'bold', color: '#4e5969' }}>规则ID</div>
-                        <div style={{ fontFamily: 'monospace', fontSize: '12px', color: '#165DFF', backgroundColor: '#f2f3ff', padding: '4px 8px', borderRadius: '4px' }}>
-                          {'ruleId' in currentRule ? currentRule.ruleId : '-'}
-                        </div>
-              </div>
-              <div>
-                        <div style={{ marginBottom: '8px', fontWeight: 'bold', color: '#4e5969' }}>航线名称</div>
-                        <div style={{ color: '#1d2129' }}>{'routeName' in currentRule ? currentRule.routeName : '-'}</div>
-                      </div>
-                <div>
-                        <div style={{ marginBottom: '8px', fontWeight: 'bold', color: '#4e5969' }}>船公司</div>
-                        <div style={{ color: '#1d2129' }}>{'shippingCompany' in currentRule ? currentRule.shippingCompany : '-'}</div>
-                </div>
-                      <div>
-                        <div style={{ marginBottom: '8px', fontWeight: 'bold', color: '#4e5969' }}>起运港</div>
-                        <div style={{ color: '#1d2129' }}>{'originPort' in currentRule ? currentRule.originPort : '-'}</div>
-              </div>
-              <div>
-                        <div style={{ marginBottom: '8px', fontWeight: 'bold', color: '#4e5969' }}>费用名称</div>
-                        <div style={{ color: '#1d2129' }}>{'chargeName' in currentRule ? currentRule.chargeName : '-'}</div>
-                      </div>
-                <div>
-                        <div style={{ marginBottom: '8px', fontWeight: 'bold', color: '#4e5969' }}>有效期</div>
-                        <div style={{ color: '#1d2129' }}>
-                          {'validPeriod' in currentRule ? 
-                            `${currentRule.validPeriod.startDate} 至 ${currentRule.validPeriod.endDate}` : '-'}
-                </div>
-                      </div>
-                    </div>
-                  </div>
+        </div>
+        
+        {/* 筛选条件网格 - 直接放置，无额外包装 */}
+        <Row gutter={[20, 20]}>
+          {conditionsToShow.map(condition => renderFilterCondition(condition))}
+        </Row>
 
-                  {/* 箱型及加价详情卡片 */}
-                  <div style={{ 
-                    border: '1px solid #e5e6e7', 
-                    borderRadius: '8px', 
-                    padding: '16px',
-                    backgroundColor: '#fafbfc'
-                  }}>
-                    <div style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '16px', color: '#1d2129' }}>
-                      箱型及加价详情
+        {/* 添加自定义样式 */}
+        <style dangerouslySetInnerHTML={{
+          __html: `
+            .filter-area-card {
+              background: #f8fafc;
+              border: 1px solid #e2e8f0;
+              border-radius: 6px;
+              padding: 16px;
+            }
+            
+            .filter-label-row {
+              min-height: 24px;
+            }
+            
+            .filter-mode-select .arco-select-view {
+              background: #f1f5f9;
+              border: 1px solid #cbd5e1;
+            }
+            
+            .filter-input-wrapper .arco-input,
+            .filter-input-wrapper .arco-select-view,
+            .filter-input-wrapper .arco-picker {
+              border: 1px solid #d1d5db;
+              transition: border-color 0.2s ease;
+            }
+            
+            .filter-input-wrapper .arco-input:focus,
+            .filter-input-wrapper .arco-select-view:focus,
+            .filter-input-wrapper .arco-picker:focus {
+              border-color: #3b82f6;
+              box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            }
+            
+            .search-btn {
+              background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+              border: none;
+              font-weight: 500;
+            }
+            
+            .reset-btn {
+              border: 1px solid #e2e8f0;
+              background: white;
+              transition: all 0.2s ease;
+            }
+            
+            .reset-btn:hover {
+              border-color: #3b82f6;
+              color: #3b82f6;
+            }
+            
+            .expand-btn {
+              font-weight: 500;
+            }
+          `
+        }} />
+      </div>
+    );
+  };
+
+
+
+  // 初始化
+  useEffect(() => {
+    // 重新初始化筛选条件
+    setFilterConditions(initializeDefaultConditions(activeFeeType));
+    setCurrentSchemeId(initializeDefaultScheme(activeFeeType).id);
+    // 初始化列设置 - 排除checkbox列和操作列
+    const columns = getColumns();
+    const allColumnKeys = columns.map(col => col.dataIndex || col.key || '');
+    const defaultOrder = allColumnKeys.filter(key => key !== 'checkbox' && key !== 'action' && key !== '');
+    setColumnOrder(defaultOrder);
+    
+    const defaultVisibility: {[key: string]: boolean} = {};
+    defaultOrder.forEach(key => {
+      defaultVisibility[key] = true;
+    });
+    setColumnVisibility(defaultVisibility);
+  }, [activeFeeType]);
+
+  return (
+    <ControlTowerSaasLayout>
+      <div style={{ padding: '16px' }}>
+        <Card>
+          {/* 费用类型切换Tab */}
+          <div style={{ marginBottom: '16px' }}>
+            <Tabs activeTab={activeFeeType} onChange={handleFeeTypeChange}>
+              {feeTypeOptions.map(option => (
+                <TabPane key={option.key} title={option.title} />
+              ))}
+            </Tabs>
+          </div>
+
+          {/* 新版筛选区域 */}
+          {renderNewFilterArea()}
+
+          {/* 操作按钮区域 */}
+          <div className="flex justify-between mb-4">
+            <Space>
+              <Button type="primary" icon={<IconPlus />} onClick={handleAdd}>
+                新增规则
+              </Button>
+              {selectedRowKeys.length > 0 && (
+                <>
+                  <Button 
+                    type="outline" 
+                    status="success"
+                    onClick={() => handleBatchToggleStatus('enabled')}
+                  >
+                    批量启用 ({selectedRowKeys.length})
+                  </Button>
+                  <Button 
+                    type="outline" 
+                    status="warning"
+                    onClick={() => handleBatchToggleStatus('disabled')}
+                  >
+                    批量禁用 ({selectedRowKeys.length})
+                  </Button>
+                </>
+              )}
+            </Space>
+            <div 
+              className="flex items-center text-blue-500 cursor-pointer hover:text-blue-700"
+              onClick={() => setCustomTableModalVisible(true)}
+            >
+              <IconList className="mr-1" />
+              <span>自定义表格</span>
+            </div>
+          </div>
+
+          <Table
+            columns={getColumns()}
+            data={filteredData}
+            rowKey="id"
+            scroll={{ x: 1600 }}
+            pagination={{
+              pageSize: 10,
+              showTotal: true,
+              showJumper: true,
+              sizeCanChange: true,
+            }}
+          />
+
+          {/* 详情抽屉 */}
+          <Drawer
+            title="加价规则详情"
+            visible={detailModalVisible}
+            onCancel={() => setDetailModalVisible(false)}
+            footer={
+              <div style={{ textAlign: 'right', padding: '16px' }}>
+                <Button onClick={() => setDetailModalVisible(false)}>
+                  关闭
+                </Button>
+              </div>
+            }
+            width={600}
+            placement="right"
+          >
+            {currentRule && (
+              <div style={{ padding: '16px', height: '100%', overflow: 'auto' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                  {/* 根据费用类型显示不同的字段 */}
+                  {activeFeeType === 'fcl' && (
+                    <>
+                      {/* 基本信息卡片 */}
+                      <div style={{ 
+                        border: '1px solid #e5e6e7', 
+                        borderRadius: '8px', 
+                        padding: '16px',
+                        backgroundColor: '#fafbfc'
+                      }}>
+                        <div style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '16px', color: '#1d2129' }}>
+                          基本信息
+                        </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div>
+                          <div style={{ marginBottom: '8px', fontWeight: 'bold', color: '#4e5969' }}>规则ID</div>
+                          <div style={{ fontFamily: 'monospace', fontSize: '12px', color: '#165DFF', backgroundColor: '#f2f3ff', padding: '4px 8px', borderRadius: '4px' }}>
+                            {'ruleId' in currentRule ? currentRule.ruleId : '-'}
+                          </div>
+                </div>
+                <div>
+                          <div style={{ marginBottom: '8px', fontWeight: 'bold', color: '#4e5969' }}>航线名称</div>
+                          <div style={{ color: '#1d2129' }}>{'routeName' in currentRule ? currentRule.routeName : '-'}</div>
+                        </div>
+                  <div>
+                          <div style={{ marginBottom: '8px', fontWeight: 'bold', color: '#4e5969' }}>船公司</div>
+                          <div style={{ color: '#1d2129' }}>{'shippingCompany' in currentRule ? currentRule.shippingCompany : '-'}</div>
+                  </div>
+                        <div>
+                          <div style={{ marginBottom: '8px', fontWeight: 'bold', color: '#4e5969' }}>起运港</div>
+                          <div style={{ color: '#1d2129' }}>{'originPort' in currentRule ? currentRule.originPort : '-'}</div>
+                </div>
+                <div>
+                          <div style={{ marginBottom: '8px', fontWeight: 'bold', color: '#4e5969' }}>费用名称</div>
+                          <div style={{ color: '#1d2129' }}>{'chargeName' in currentRule ? currentRule.chargeName : '-'}</div>
+                        </div>
+                  <div>
+                          <div style={{ marginBottom: '8px', fontWeight: 'bold', color: '#4e5969' }}>有效期</div>
+                          <div style={{ color: '#1d2129' }}>
+                            {'validPeriod' in currentRule ? 
+                              `${currentRule.validPeriod.startDate} 至 ${currentRule.validPeriod.endDate}` : '-'}
+                  </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 箱型及加价详情卡片 */}
+                    <div style={{ 
+                      border: '1px solid #e5e6e7', 
+                      borderRadius: '8px', 
+                      padding: '16px',
+                      backgroundColor: '#fafbfc'
+                    }}>
+                      <div style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '16px', color: '#1d2129' }}>
+                        箱型及加价详情
               </div>
               <div>
                       {'containerTypes' in currentRule && currentRule.containerTypes ? (
@@ -1872,7 +2339,213 @@ const PricingRuleManagement: React.FC = () => {
           </div>
         )}
       </Modal>
+
+      {/* 自定义表格抽屉 */}
+      <Drawer
+        width={480}
+        title={
+          <div className="flex items-center">
+            <IconSettings className="mr-2" />
+            <span>自定义表格设置</span>
+          </div>
+        }
+        visible={customTableModalVisible}
+        onCancel={() => setCustomTableModalVisible(false)}
+        footer={
+          <div className="flex justify-between">
+            <Button onClick={resetDefaultColumns}>重置默认</Button>
+            <Space>
+              <Button onClick={() => setCustomTableModalVisible(false)}>取消</Button>
+              <Button type="primary" onClick={() => setCustomTableModalVisible(false)}>确认</Button>
+            </Space>
+          </div>
+        }
+      >
+        <div className="h-full flex flex-col">
+          {/* 快捷操作 */}
+          <div className="flex justify-between items-center mb-4 p-4 bg-gray-50">
+            <div className="text-sm text-gray-600">
+              已选择 {Object.values(columnVisibility).filter(Boolean).length}/{columnOrder.filter(key => key !== 'checkbox' && key !== 'action' && key !== '').length} 个字段
+            </div>
+            <Space>
+              <Button size="small" onClick={selectAllColumns}>全选</Button>
+              <Button size="small" onClick={clearAllColumns}>清空</Button>
+            </Space>
+          </div>
+          
+          {/* 可拖拽的字段列表 */}
+          <div className="flex-1 overflow-y-auto px-4">
+            {columnOrder.filter(key => key !== 'checkbox' && key !== 'action' && key !== '').map((columnKey, index) => (
+              <div
+                key={columnKey}
+                className={`
+                  flex items-center justify-between p-3 mb-2 bg-white border cursor-move
+                  hover:shadow-sm transition-all duration-200
+                  ${draggedItem === columnKey ? 'opacity-50' : ''}
+                  ${dragOverItem === columnKey ? 'border-blue-400 bg-blue-50' : 'border-gray-200'}
+                `}
+                draggable
+                onDragStart={(e) => handleDragStart(e, columnKey)}
+                onDragOver={(e) => handleDragOver(e, columnKey)}
+                onDrop={(e) => handleDrop(e, columnKey)}
+                onDragEnd={handleDragEnd}
+              >
+                <div className="flex items-center flex-1">
+                  <IconDragDotVertical className="text-gray-400 mr-3 cursor-grab" />
+                  <div className="flex items-center">
+                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 mr-3 min-w-[30px] text-center">
+                      {index + 1}
+                    </span>
+                    <span className="text-sm font-medium">
+                      {getColumns().find(col => col.dataIndex === columnKey || col.key === columnKey)?.title || columnKey}
+                    </span>
+                  </div>
+                </div>
+                <Switch 
+                  size="small"
+                  checked={columnVisibility[columnKey] || false} 
+                  onChange={() => toggleColumnVisibility(columnKey)}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </Drawer>
+
+      {/* 增减条件抽屉 - 与自定义表格一致的样式 */}
+      <Drawer
+        width={480}
+        title={
+          <div className="flex items-center">
+            <IconSettings className="mr-2" />
+            <span>筛选字段设置</span>
+          </div>
+        }
+        visible={filterFieldModalVisible}
+        onCancel={() => setFilterFieldModalVisible(false)}
+        footer={
+          <div className="flex justify-between">
+            <Button onClick={() => {
+              const fields = getFilterFieldsByTab(activeFeeType);
+              setFilterFieldOrder(fields.map(field => field.key));
+              fields.forEach(field => {
+                updateFilterConditionVisibility(field.key, true);
+              });
+            }}>重置默认</Button>
+            <Space>
+              <Button onClick={() => setFilterFieldModalVisible(false)}>取消</Button>
+              <Button type="primary" onClick={() => setFilterFieldModalVisible(false)}>确认</Button>
+            </Space>
+          </div>
+        }
+      >
+        <div className="h-full flex flex-col">
+          {/* 快捷操作 */}
+          <div className="flex justify-between items-center mb-4 p-4 bg-gray-50">
+            <div className="text-sm text-gray-600">
+              已选择 {filterConditions.filter(c => c.visible).length}/{getFilterFieldsByTab(activeFeeType).length} 个字段
+            </div>
+            <Space>
+              <Button size="small" onClick={() => {
+                getFilterFieldsByTab(activeFeeType).forEach(field => {
+                  updateFilterConditionVisibility(field.key, true);
+                });
+              }}>全选</Button>
+              <Button size="small" onClick={() => {
+                getFilterFieldsByTab(activeFeeType).forEach(field => {
+                  updateFilterConditionVisibility(field.key, false);
+                });
+              }}>清空</Button>
+            </Space>
+          </div>
+          
+          {/* 可拖拽的字段列表 */}
+          <div className="flex-1 overflow-y-auto px-4">
+            {filterFieldOrder.map((fieldKey, index) => {
+              const fieldConfig = getFilterFieldsByTab(activeFeeType).find(f => f.key === fieldKey);
+              const condition = filterConditions.find(c => c.key === fieldKey);
+              const isSelected = condition?.visible || false;
+              
+              if (!fieldConfig) return null;
+              
+              return (
+                <div
+                  key={fieldKey}
+                  className={`
+                    flex items-center justify-between p-3 mb-2 bg-white border cursor-move
+                    hover:shadow-sm transition-all duration-200
+                    ${draggedFilterField === fieldKey ? 'opacity-50' : ''}
+                    ${dragOverFilterField === fieldKey ? 'border-blue-400 bg-blue-50' : 'border-gray-200'}
+                  `}
+                  draggable
+                  onDragStart={(e) => handleFilterFieldDragStart(e, fieldKey)}
+                  onDragOver={(e) => handleFilterFieldDragOver(e, fieldKey)}
+                  onDrop={(e) => handleFilterFieldDrop(e, fieldKey)}
+                  onDragEnd={handleFilterFieldDragEnd}
+                >
+                  <div className="flex items-center flex-1">
+                    <IconDragDotVertical className="text-gray-400 mr-3 cursor-grab" />
+                    <div className="flex items-center">
+                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 mr-3 min-w-[30px] text-center">
+                        {index + 1}
+                      </span>
+                      <span className="text-sm font-medium">{fieldConfig.label}</span>
+                    </div>
+                  </div>
+                  <Switch 
+                    size="small"
+                    checked={isSelected} 
+                    onChange={(checked) => updateFilterConditionVisibility(fieldKey, checked)}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </Drawer>
+
+      {/* 保存筛选方案弹窗 */}
+      <Modal
+        title="保存筛选方案"
+        visible={schemeModalVisible}
+        onCancel={() => {
+          setSchemeModalVisible(false);
+          setSchemeName('');
+        }}
+        onOk={saveFilterScheme}
+        okText="保存"
+        cancelText="取消"
+      >
+        <div style={{ marginBottom: '16px' }}>
+          <div style={{ marginBottom: '8px', fontSize: '14px', fontWeight: 'bold' }}>方案名称</div>
+          <Input
+            value={schemeName}
+            onChange={setSchemeName}
+            placeholder="请输入方案名称"
+            maxLength={20}
+          />
+        </div>
+        <div style={{ marginBottom: '16px' }}>
+          <div style={{ marginBottom: '8px', fontSize: '14px', fontWeight: 'bold' }}>当前筛选条件</div>
+          <div style={{ padding: '8px', backgroundColor: '#fafbfc', borderRadius: '4px', border: '1px solid #e5e6e7' }}>
+            {filterConditions.filter(c => c.visible && c.value).length > 0 ? (
+              filterConditions.filter(c => c.visible && c.value).map((condition, index) => {
+                const fieldConfig = getFilterFieldsByTab(activeFeeType).find(f => f.key === condition.key);
+                return (
+                  <div key={index} style={{ fontSize: '12px', color: '#4e5969', marginBottom: '4px' }}>
+                    {fieldConfig?.label}: {condition.mode} {condition.value}
+                  </div>
+                );
+              })
+            ) : (
+              <div style={{ fontSize: '12px', color: '#86909c' }}>暂无有效筛选条件</div>
+            )}
+          </div>
+        </div>
+      </Modal>
     </Card>
+  </div>
+</ControlTowerSaasLayout>
   );
 };
 

@@ -575,26 +575,20 @@ const CompanyProfile: React.FC = () => {
 
   return (
     <div>
-      <div className="page-header mb-6">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Title heading={4}>企业信息</Title>
-          
-          {/* 状态演示切换 */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <Text style={{ fontSize: '14px', color: '#86909C' }}>演示状态：</Text>
-            <RadioGroup 
-              value={demoStatus} 
-              onChange={setDemoStatus}
-              type="button"
-              size="small"
-                          >
-                <Radio value="uncertified">未认证</Radio>
-                <Radio value="pending">审核中</Radio>
-                <Radio value="rejected">审核拒绝</Radio>
-                <Radio value="approved">审核通过</Radio>
-              </RadioGroup>
-          </div>
-        </div>
+      {/* 状态演示切换 */}
+      <div className="mb-6" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '12px' }}>
+        <Text style={{ fontSize: '14px', color: '#86909C' }}>演示状态：</Text>
+        <RadioGroup 
+          value={demoStatus} 
+          onChange={setDemoStatus}
+          type="button"
+          size="small"
+        >
+          <Radio value="uncertified">未认证</Radio>
+          <Radio value="pending">审核中</Radio>
+          <Radio value="rejected">审核拒绝</Radio>
+          <Radio value="approved">审核通过</Radio>
+        </RadioGroup>
       </div>
 
       {/* 根据演示状态显示不同内容 */}

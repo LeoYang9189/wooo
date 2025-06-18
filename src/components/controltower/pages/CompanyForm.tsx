@@ -2143,23 +2143,18 @@ const CompanyForm: React.FC = () => {
         </Breadcrumb>
       </div>
 
-      {/* 页面标题和操作 */}
+      {/* 操作按钮 */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <Button 
-            type="text" 
-            icon={<IconArrowLeft />}
-            onClick={() => navigate('/controltower/company-management')}
-          >
-            返回
-          </Button>
-          <Title heading={4} style={{ margin: 0 }}>
-            {pageTitle}
-          </Title>
-        </div>
+        <Button 
+          type="text" 
+          icon={<IconArrowLeft />}
+          onClick={() => navigate('/controltower/company-management')}
+        >
+          返回
+        </Button>
         
         <Space>
-                      <Button onClick={() => navigate('/controltower/company-management')}>
+          <Button onClick={() => navigate('/controltower/company-management')}>
             取消
           </Button>
           <Button 

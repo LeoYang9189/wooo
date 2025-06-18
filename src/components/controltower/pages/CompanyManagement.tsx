@@ -10,7 +10,6 @@ import {
   Space, 
   Tag, 
   Avatar, 
-
   Modal,
   Form,
   Message,
@@ -21,17 +20,100 @@ import {
 import { 
   IconSearch, 
   IconPlus, 
-   
   IconRefresh,
-  IconHome,
   IconPhone,
   IconLocation,
-  IconUser,
-
+  IconUser
 } from '@arco-design/web-react/icon';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
+
+// 统计卡片样式 - 与用户管理完全一致
+const cardStyles = `
+  .stats-card {
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid transparent !important;
+    overflow: hidden;
+  }
+
+  .stats-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(22, 93, 255, 0.1), rgba(22, 93, 255, 0.05));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+  }
+
+  .stats-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(22, 93, 255, 0.15);
+    border-color: rgba(22, 93, 255, 0.3) !important;
+  }
+
+  .stats-card:hover::before {
+    opacity: 1;
+  }
+
+  .stats-card:active {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 4px 15px rgba(22, 93, 255, 0.2);
+  }
+
+  .stats-card.selected {
+    border-color: #165DFF !important;
+    background: linear-gradient(135deg, rgba(22, 93, 255, 0.08), rgba(22, 93, 255, 0.03));
+    box-shadow: 0 6px 20px rgba(22, 93, 255, 0.12);
+    transform: translateY(-2px);
+  }
+
+  .stats-card.selected::before {
+    opacity: 0.7;
+  }
+
+  .stats-card .card-content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .stats-card .stats-number {
+    position: relative;
+    z-index: 2;
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
+
+  .stats-card:hover .stats-number {
+    transform: scale(1.05);
+  }
+
+  .stats-card .stats-label {
+    position: relative;
+    z-index: 2;
+    transition: all 0.3s ease;
+  }
+
+  .stats-card:hover .stats-label {
+    transform: translateY(-1px);
+  }
+`;
+
+// 添加样式到文档
+if (typeof document !== 'undefined') {
+  const styleElement = document.createElement('style');
+  styleElement.textContent = cardStyles;
+  if (!document.head.querySelector('style[data-company-stats-cards]')) {
+    styleElement.setAttribute('data-company-stats-cards', 'true');
+    document.head.appendChild(styleElement);
+  }
+}
 
 interface CompanyData {
   id: string;
@@ -59,6 +141,7 @@ const CompanyManagement: React.FC = () => {
   const [detailModalVisible, setDetailModalVisible] = useState(false);
   const [auditModalVisible, setAuditModalVisible] = useState(false);
   const [currentCompany, setCurrentCompany] = useState<CompanyData | null>(null);
+  const [selectedCard, setSelectedCard] = useState<string>('');
   const [auditForm] = Form.useForm();
 
   // 模拟企业数据
@@ -195,6 +278,36 @@ const CompanyManagement: React.FC = () => {
     Message.success('企业已删除');
   };
 
+  const handleCardClick = (cardType: string) => {
+    setSelectedCard(selectedCard === cardType ? '' : cardType);
+    
+    switch (cardType) {
+      case 'total':
+        setStatusFilter('all');
+        Message.info('已显示所有企业');
+        break;
+      case 'active':
+        setStatusFilter('active');
+        Message.info('已筛选正常企业');
+        break;
+      case 'inactive':
+        setStatusFilter('inactive');
+        Message.info('已筛选已停用企业');
+        break;
+      case 'pending':
+        setStatusFilter('pending');
+        Message.info('已筛选待审核企业');
+        break;
+      case 'rejected':
+        setStatusFilter('rejected');
+        Message.info('已筛选审核拒绝企业');
+        break;
+      default:
+        setStatusFilter('all');
+        break;
+    }
+  };
+
   const handleAuditCompany = (company: CompanyData) => {
     setCurrentCompany(company);
     auditForm.setFieldsValue({
@@ -234,11 +347,7 @@ const CompanyManagement: React.FC = () => {
 
   return (
     <div style={{ padding: '0' }}>
-      {/* 页面标题 */}
-      <div style={{ marginBottom: '24px' }}>
-        <Title heading={3} style={{ marginBottom: '8px' }}>企业管理</Title>
-        <Text type="secondary">管理平台注册企业，包括企业信息、状态审核和用户统计</Text>
-      </div>
+
 
       {/* 搜索和筛选区域 */}
       <Card style={{ marginBottom: '20px' }}>
@@ -301,104 +410,64 @@ const CompanyManagement: React.FC = () => {
       {/* 企业统计卡片 */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '20px' }}>
         <Card 
-          className={`stat-card-clickable ${statusFilter === 'all' ? 'selected' : ''}`}
+          className={`stats-card ${selectedCard === 'total' ? 'selected' : ''}`}
           style={{ textAlign: 'center' }}
-          onClick={() => {
-            setStatusFilter('all');
-            Message.info('已显示所有企业');
-          }}
+          onClick={() => handleCardClick('total')}
         >
-          <div style={{ 
-            fontSize: '24px', 
-            fontWeight: 'bold', 
-            color: statusFilter === 'all' ? '#165DFF' : '#165DFF', 
-            marginBottom: '8px',
-            position: 'relative',
-            zIndex: 1
-          }}>
-            {companyData.length}
+          <div className="card-content">
+            <div className="stats-number" style={{ fontSize: '24px', color: '#165DFF', marginBottom: '8px' }}>
+              {companyData.length}
+            </div>
+            <Text type="secondary" className="stats-label">总企业数</Text>
           </div>
-          <Text type="secondary" style={{ position: 'relative', zIndex: 1 }}>总企业数</Text>
         </Card>
         <Card 
-          className={`stat-card-clickable ${statusFilter === 'active' ? 'selected' : ''}`}
+          className={`stats-card ${selectedCard === 'active' ? 'selected' : ''}`}
           style={{ textAlign: 'center' }}
-          onClick={() => {
-            setStatusFilter('active');
-            Message.info('已筛选正常企业');
-          }}
+          onClick={() => handleCardClick('active')}
         >
-          <div style={{ 
-            fontSize: '24px', 
-            fontWeight: 'bold', 
-            color: statusFilter === 'active' ? '#00B42A' : '#00B42A', 
-            marginBottom: '8px',
-            position: 'relative',
-            zIndex: 1
-          }}>
-            {companyData.filter(c => c.status === 'active').length}
+          <div className="card-content">
+            <div className="stats-number" style={{ fontSize: '24px', color: '#00B42A', marginBottom: '8px' }}>
+              {companyData.filter(c => c.status === 'active').length}
+            </div>
+            <Text type="secondary" className="stats-label">正常</Text>
           </div>
-          <Text type="secondary" style={{ position: 'relative', zIndex: 1 }}>正常</Text>
         </Card>
         <Card 
-          className={`stat-card-clickable ${statusFilter === 'inactive' ? 'selected' : ''}`}
+          className={`stats-card ${selectedCard === 'inactive' ? 'selected' : ''}`}
           style={{ textAlign: 'center' }}
-          onClick={() => {
-            setStatusFilter('inactive');
-            Message.info('已筛选已停用企业');
-          }}
+          onClick={() => handleCardClick('inactive')}
         >
-          <div style={{ 
-            fontSize: '24px', 
-            fontWeight: 'bold', 
-            color: statusFilter === 'inactive' ? '#F53F3F' : '#F53F3F', 
-            marginBottom: '8px',
-            position: 'relative',
-            zIndex: 1
-          }}>
-            {companyData.filter(c => c.status === 'inactive').length}
+          <div className="card-content">
+            <div className="stats-number" style={{ fontSize: '24px', color: '#F53F3F', marginBottom: '8px' }}>
+              {companyData.filter(c => c.status === 'inactive').length}
+            </div>
+            <Text type="secondary" className="stats-label">已停用</Text>
           </div>
-          <Text type="secondary" style={{ position: 'relative', zIndex: 1 }}>已停用</Text>
         </Card>
         <Card 
-          className={`stat-card-clickable ${statusFilter === 'pending' ? 'selected' : ''}`}
+          className={`stats-card ${selectedCard === 'pending' ? 'selected' : ''}`}
           style={{ textAlign: 'center' }}
-          onClick={() => {
-            setStatusFilter('pending');
-            Message.info('已筛选待审核企业');
-          }}
+          onClick={() => handleCardClick('pending')}
         >
-          <div style={{ 
-            fontSize: '24px', 
-            fontWeight: 'bold', 
-            color: statusFilter === 'pending' ? '#FF7D00' : '#FF7D00', 
-            marginBottom: '8px',
-            position: 'relative',
-            zIndex: 1
-          }}>
-            {companyData.filter(c => c.status === 'pending').length}
+          <div className="card-content">
+            <div className="stats-number" style={{ fontSize: '24px', color: '#FF7D00', marginBottom: '8px' }}>
+              {companyData.filter(c => c.status === 'pending').length}
+            </div>
+            <Text type="secondary" className="stats-label">待审核</Text>
           </div>
-          <Text type="secondary" style={{ position: 'relative', zIndex: 1 }}>待审核</Text>
         </Card>
         <Card 
-          className={`stat-card-clickable ${statusFilter === 'rejected' ? 'selected' : ''}`}
+          className={`stats-card ${selectedCard === 'rejected' ? 'selected' : ''}`}
           style={{ textAlign: 'center' }}
-          onClick={() => {
-            setStatusFilter('rejected');
-            Message.info('已筛选审核拒绝企业');
-          }}
+          onClick={() => handleCardClick('rejected')}
         >
-          <div style={{ 
-            fontSize: '24px', 
-            fontWeight: 'bold', 
-            color: statusFilter === 'rejected' ? '#722ED1' : '#722ED1', 
-            marginBottom: '8px',
-            position: 'relative',
-            zIndex: 1
-          }}>
-            {companyData.filter(c => c.status === 'rejected').length}
+          <div className="card-content">
+            <div className="stats-number" style={{ fontSize: '24px', color: '#722ED1', marginBottom: '8px' }}>
+              {companyData.filter(c => c.status === 'rejected').length}
+            </div>
+            <Text type="secondary" className="stats-label">审核拒绝</Text>
           </div>
-          <Text type="secondary" style={{ position: 'relative', zIndex: 1 }}>审核拒绝</Text>
         </Card>
       </div>
 
@@ -413,19 +482,15 @@ const CompanyManagement: React.FC = () => {
               dataIndex: 'name',
               key: 'name',
               width: 240,
+              sorter: true,
               render: (_, record) => (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <Avatar size={40} style={{ backgroundColor: '#165DFF' }}>
-                    <IconHome />
-                  </Avatar>
-                  <div>
-                    <div style={{ fontWeight: 'bold', fontSize: '14px', marginBottom: '2px' }}>
-                      {record.name}
-                    </div>
-                    <Text type="secondary" style={{ fontSize: '12px', fontStyle: 'italic' }}>
-                      {record.englishName}
-                    </Text>
+                <div>
+                  <div style={{ fontWeight: 'bold', fontSize: '14px', marginBottom: '2px' }}>
+                    {record.name}
                   </div>
+                  <Text type="secondary" style={{ fontSize: '12px', fontStyle: 'italic' }}>
+                    {record.englishName}
+                  </Text>
                 </div>
               )
             },
@@ -434,6 +499,7 @@ const CompanyManagement: React.FC = () => {
               dataIndex: 'businessLicense',
               key: 'businessLicense',
               width: 140,
+              sorter: true,
               render: (businessLicense) => (
                 <Text copyable={{ text: businessLicense }} style={{ fontSize: '13px', fontFamily: 'monospace' }}>
                   {businessLicense}
@@ -445,6 +511,7 @@ const CompanyManagement: React.FC = () => {
               dataIndex: 'contactPerson',
               key: 'contactPerson',
               width: 150,
+              sorter: true,
               render: (_, record) => (
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
@@ -465,6 +532,7 @@ const CompanyManagement: React.FC = () => {
               dataIndex: 'address',
               key: 'address',
               width: 180,
+              sorter: true,
               render: (address) => (
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: '4px' }}>
                   <IconLocation style={{ fontSize: '12px', color: '#86909C', marginTop: '2px' }} />
@@ -479,6 +547,7 @@ const CompanyManagement: React.FC = () => {
               dataIndex: 'userCount',
               key: 'userCount',
               width: 80,
+              sorter: true,
               render: (userCount, record) => (
                 <div style={{ textAlign: 'left' }}>
                   <div 
@@ -507,6 +576,7 @@ const CompanyManagement: React.FC = () => {
               dataIndex: 'status',
               key: 'status',
               width: 90,
+              sorter: true,
               render: (status) => getStatusTag(status)
             },
             {
@@ -514,6 +584,7 @@ const CompanyManagement: React.FC = () => {
               dataIndex: 'lastActive',
               key: 'lastActive',
               width: 140,
+              sorter: true,
               render: (lastActive) => (
                 <Text style={{ fontSize: '12px' }}>
                   {lastActive}

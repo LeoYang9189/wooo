@@ -1024,15 +1024,7 @@ const PermissionManagement: React.FC = () => {
 
   return (
     <div style={{ padding: '24px', background: '#f5f5f5', minHeight: '100vh' }}>
-      {/* 页面标题 */}
-      <div style={{ marginBottom: '24px' }}>
-        <Title heading={2} style={{ margin: 0, color: '#000' }}>
-          {isPermissionConfigMode ? `权限配置 - ${selectedNode?.name}` : '权限管理'}
-        </Title>
-        <Text type="secondary" style={{ fontSize: '14px', marginTop: '8px', display: 'block' }}>
-          {isPermissionConfigMode ? '配置角色的权限设置' : '管理组织架构和角色权限配置'}
-        </Text>
-      </div>
+
 
       {!isPermissionConfigMode ? (
         // 组织架构管理页面

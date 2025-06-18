@@ -635,24 +635,28 @@ const SurchargeManagement: React.FC = () => {
         dataIndex: 'code',
         key: 'code',
         width: 120,
+        sorter: true,
       },
       {
         title: activeSurchargeType === 'air' ? '适用机场' : '适用起运港',
         dataIndex: 'usageLocation',
         key: 'usageLocation',
         width: 120,
+        sorter: true,
       },
       {
         title: activeSurchargeType === 'air' ? '航空公司' : '船公司',
         dataIndex: 'company',
         key: 'company',
         width: 120,
+        sorter: true,
       },
       {
         title: activeSurchargeType === 'air' ? '适用航线' : '适用航线',
         dataIndex: 'usageLine',
         key: 'usageLine',
         width: 150,
+        sorter: true,
         render: (text: string) => {
           const lines = text.split(',').filter(line => line.trim());
           const firstLine = lines[0] || '';
@@ -691,6 +695,7 @@ const SurchargeManagement: React.FC = () => {
         dataIndex: 'usageStatus',
         key: 'usageStatus',
         width: 100,
+        sorter: true,
         render: (status: string) => (
           <Tag color={status === 'active' ? 'green' : status === 'inactive' ? 'red' : 'orange'}>
             {status === 'active' ? '正常' : status === 'inactive' ? '停用' : '过期'}
@@ -702,6 +707,7 @@ const SurchargeManagement: React.FC = () => {
         dataIndex: 'updateTime',
         key: 'updateTime',
         width: 150,
+        sorter: true,
       },
       {
         title: '操作',

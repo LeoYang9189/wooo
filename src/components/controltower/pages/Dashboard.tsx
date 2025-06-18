@@ -120,10 +120,6 @@ const Dashboard: React.FC = () => {
 
   return (
     <>
-      <div className="page-header mb-3">
-        <Title heading={4}>仪表盘</Title>
-      </div>
-      
       <div className="grid grid-cols-5 gap-4 w-full">
         <Card className="stat-card" bordered={false}>
           <div className="flex items-start justify-between">
@@ -757,47 +753,56 @@ const Dashboard: React.FC = () => {
                   title: '业务编号',
                   dataIndex: 'businessId',
                   key: 'businessId',
+                  sorter: true,
                   render: (text) => <a href="#" className="text-blue-600 hover:underline">{text}</a>,
                 },
                 {
                   title: '起运港',
                   dataIndex: 'departurePort',
                   key: 'departurePort',
+                  sorter: true,
                 },
                 {
                   title: 'ETD',
                   dataIndex: 'etd',
                   key: 'etd',
+                  sorter: true,
                 },
                 {
                   title: 'ETA',
                   dataIndex: 'eta',
                   key: 'eta',
+                  sorter: true,
                 },
                 {
                   title: '目的港',
                   dataIndex: 'destinationPort',
                   key: 'destinationPort',
+                  sorter: true,
                 },
                 {
                   title: '船名',
                   dataIndex: 'vesselName',
                   key: 'vesselName',
+                  sorter: true,
                 },
                 {
                   title: '航次/航班',
                   dataIndex: 'voyage',
                   key: 'voyage',
+                  sorter: true,
                 },
                 {
                   title: '箱号',
                   dataIndex: 'containerNo',
                   key: 'containerNo',
+                  sorter: true,
                 },
                 {
                   title: '创建日期',
                   dataIndex: 'createdDate',
                   key: 'createdDate',
+                  sorter: true,
                 },
                 {
                   title: '操作',

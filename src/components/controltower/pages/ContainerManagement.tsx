@@ -186,22 +186,25 @@ const ContainerManagement: React.FC = () => {
       title: '箱型',
       dataIndex: 'containerType',
       width: 120,
-      sorter: (a: Container, b: Container) => a.containerType.localeCompare(b.containerType),
+      sorter: true,
     },
     {
       title: 'ISO代码',
       dataIndex: 'isoCode',
       width: 120,
+      sorter: true,
     },
     {
       title: '描述',
       dataIndex: 'description',
       width: 200,
+      sorter: true,
     },
     {
       title: 'EDI代码',
       dataIndex: 'ediCodes',
       width: 150,
+      sorter: true,
       render: (ediCodes: EDICode[]) => (
         <Tooltip
           content={
@@ -224,6 +227,7 @@ const ContainerManagement: React.FC = () => {
       title: '状态',
       dataIndex: 'status',
       width: 100,
+      sorter: true,
       render: (status: string) => (
         <Tag color={status === 'enabled' ? 'green' : 'red'}>
           {status === 'enabled' ? '启用' : '禁用'}

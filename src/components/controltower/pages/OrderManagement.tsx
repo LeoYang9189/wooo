@@ -97,12 +97,14 @@ const OrderManagement: React.FC = () => {
       title: '订单编号',
       dataIndex: 'orderNo',
       width: 150,
+      sorter: true,
       render: (value: string) => <a href="#" className="text-blue-600">{value}</a>,
     },
     {
       title: '状态',
       dataIndex: 'status',
       width: 120,
+      sorter: true,
       render: (value: string) => {
         const colorMap: Record<string, string> = {
           '待确认': 'orange',
@@ -118,37 +120,44 @@ const OrderManagement: React.FC = () => {
       title: '运输类型',
       dataIndex: 'type',
       width: 120,
+      sorter: true,
     },
     {
       title: '客户名称',
       dataIndex: 'customerName',
       width: 150,
+      sorter: true,
     },
     {
       title: '起运地',
       dataIndex: 'origin',
       width: 150,
+      sorter: true,
     },
     {
       title: '目的地',
       dataIndex: 'destination',
       width: 150,
+      sorter: true,
     },
     {
       title: '订单金额',
       dataIndex: 'amount',
       width: 150,
+      sorter: true,
       render: (value: number, record: OrderItem) => `${record.currency} ${value.toFixed(2)}`,
     },
     {
       title: '创建时间',
       dataIndex: 'createTime',
       width: 180,
+      sorter: true,
     },
     {
       title: '预计送达',
       dataIndex: 'estimatedDeliveryTime',
       width: 180,
+      sorter: true,
     },
     {
       title: '操作',

@@ -327,9 +327,7 @@ const UserProfile: React.FC = () => {
 
   return (
     <>
-      <div className="page-header mb-1">
-        <Title heading={4}>个人中心</Title>
-      </div>
+
       
       {/* 用户基本信息卡片 */}
       <Card className="mb-6">
