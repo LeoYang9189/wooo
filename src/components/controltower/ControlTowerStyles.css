@@ -192,6 +192,29 @@
   gap: 16px;
 }
 
+/* 超级运价页面优化样式 */
+.saas-page-wrapper {
+  /* 移除内部容器的背景和边距，确保一致的视觉效果 */
+}
+
+.saas-page-wrapper .arco-card {
+  /* 统一Card组件的阴影和边框 */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+}
+
+.saas-page-wrapper .arco-table-container {
+  /* 优化表格容器的滚动 */
+  overflow: auto;
+}
+
+/* 修复运价查询页面的响应式布局 */
+@media (max-width: 768px) {
+  .saas-page-wrapper .arco-grid-col {
+    margin-bottom: 16px;
+  }
+}
+
 @media (max-width: 1200px) {
   .grid-cols-5 {
     grid-template-columns: repeat(3, 1fr);

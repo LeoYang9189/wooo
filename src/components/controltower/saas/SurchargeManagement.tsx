@@ -60,6 +60,22 @@ interface SurchargeData {
   type: SurchargeType; // 附加费类型
 }
 
+// 筛选条件接口
+export interface FilterCondition {
+  key: string;
+  mode: string;
+  value: any;
+  visible: boolean;
+}
+
+// 筛选方案接口
+export interface FilterScheme {
+  id: string;
+  name: string;
+  conditions: FilterCondition[];
+  isDefault?: boolean;
+}
+
 // 模拟数据
 const mockData: SurchargeData[] = [
   // 整箱附加费

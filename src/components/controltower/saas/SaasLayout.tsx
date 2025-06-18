@@ -1,27 +1,25 @@
 import React, { useState, ReactNode } from 'react';
-import { Layout, Menu, Button, Avatar, Dropdown, Breadcrumb, Badge, Divider } from '@arco-design/web-react';
-import { useNavigate } from 'react-router-dom';
-import {
-  IconDashboard,
-  IconSettings,
-  IconUser,
-  IconMessage,
-  IconNotification,
-  IconDown,
-  IconMenuFold,
-  IconMenuUnfold,
+import { Layout, Menu, Button, Avatar, Badge, Breadcrumb, Dropdown, Divider } from '@arco-design/web-react';
+import { 
+  IconDashboard, 
+  IconUser, 
+  IconNotification, 
+  IconMenuFold, 
+  IconMenuUnfold, 
+  IconMessage, 
+  IconDown, 
+  IconPoweroff, 
+  IconSettings, 
+  IconLanguage, 
+  IconQuestionCircle,
   IconFile,
-  IconStorage,
-  IconPoweroff,
-  IconSettings as IconSettingsOutline,
-  IconLanguage,
-  IconQuestionCircle
+  IconStorage
 } from '@arco-design/web-react/icon';
+import { useNavigate } from 'react-router-dom';
 
 const { Header, Sider, Content } = Layout;
 const MenuItem = Menu.Item;
 const SubMenu = Menu.SubMenu;
-
 
 interface SaasLayoutProps {
   children: ReactNode;
@@ -227,7 +225,7 @@ const SaasLayout: React.FC<SaasLayoutProps> = ({ children, breadcrumb, menuSelec
               droplist={
                 <Menu>
                   <Menu.Item key="info"><IconUser className="mr-2" />个人信息</Menu.Item>
-                  <Menu.Item key="setting"><IconSettingsOutline className="mr-2" />账户设置</Menu.Item>
+                  <Menu.Item key="setting"><IconSettings />账户设置</Menu.Item>
                   <Menu.Item key="help"><IconQuestionCircle className="mr-2" />帮助中心</Menu.Item>
                   <Divider style={{ margin: '4px 0' }} />
                   <Menu.Item key="logout"><IconPoweroff className="mr-2" />退出登录</Menu.Item>

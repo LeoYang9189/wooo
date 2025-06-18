@@ -28,7 +28,7 @@ import {
   IconEye
 } from '@arco-design/web-react/icon';
 import { useNavigate } from 'react-router-dom';
-import SaasLayout from './SaasLayout';
+import ControlTowerSaasLayout from "./ControlTowerSaasLayout";
 import './InquiryManagement.css';
 
 const Title = Typography.Title;
@@ -291,11 +291,11 @@ const RouteManagement: React.FC = () => {
 
   // 新增航线
   const handleCreateRoute = () => {
-    navigate('/saas/create-route');
+    navigate('/controltower/saas/create-route');
   };
 
   return (
-    <SaasLayout 
+    <ControlTowerSaasLayout 
       menuSelectedKey="18" 
       breadcrumb={
         <Breadcrumb>
@@ -405,7 +405,7 @@ const RouteManagement: React.FC = () => {
           </Row>
         </div>
       </Modal>
-    </SaasLayout>
+    </ControlTowerSaasLayout>
   );
 };
 

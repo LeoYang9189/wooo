@@ -20,7 +20,7 @@ import {
 } from '@arco-design/web-react';
 import { IconSave, IconDelete, IconUpload, /* IconEye, */ IconPlus, IconMinus, IconRobot } from '@arco-design/web-react/icon';
 import { useNavigate } from 'react-router-dom';
-import SaasLayout from './SaasLayout';
+import ControlTowerSaasLayout from "./ControlTowerSaasLayout";
 import './CreateFclInquiry.css';
 
 
@@ -386,7 +386,7 @@ const CreateFclInquiry: React.FC = () => {
     
     console.log('保存草稿数据:', formData);
     Message.success('草稿保存成功');
-    navigate('/inquiry-management');
+    navigate('/controltower/saas/inquiry-management');
   };
 
   // 显示负责人选择弹窗
@@ -418,12 +418,12 @@ const CreateFclInquiry: React.FC = () => {
     console.log('提交表单数据:', formData);
     Message.success('询价单提交成功');
     setManagerSelectVisible(false);
-    navigate('/inquiry-management');
+    navigate('/controltower/saas/inquiry-management');
   };
 
   // 返回询价管理页面
   const handleCancel = () => {
-    navigate('/inquiry-management');
+    navigate('/controltower/saas/inquiry-management');
   };
 
   // 航线负责人表格数据
@@ -1125,7 +1125,7 @@ const CreateFclInquiry: React.FC = () => {
   };
 
   return (
-    <SaasLayout 
+    <ControlTowerSaasLayout 
       menuSelectedKey="9" 
       breadcrumb={
         <Breadcrumb>
@@ -2293,7 +2293,7 @@ const CreateFclInquiry: React.FC = () => {
           </div>
         </div>
       </Modal>
-    </SaasLayout>
+    </ControlTowerSaasLayout>
   );
 };
 

@@ -14,8 +14,8 @@ import OrderDetail from './pages/OrderDetail';
 import BLAddition from './pages/BLAddition';
 
 // 引入超级运价系统的组件
-import RateQuery from '../saas/RateQuery';
-import InquiryManagementSaas from '../saas/InquiryManagement';
+import RateQuery from '../controltower/saas/RateQuery';
+import InquiryManagementSaas from '../controltower/saas/InquiryManagement';
 
 // 引入包装器
 import SaasPageWrapper from './pages/SaasPageWrapper';

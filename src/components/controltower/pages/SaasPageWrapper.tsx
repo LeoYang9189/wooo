@@ -22,14 +22,30 @@ const SaasPageWrapper: React.FC<SaasPageWrapperProps> = ({ children }) => {
       }
       .saas-page-wrapper .arco-layout-content {
         margin-left: 0 !important;
-        padding: 24px !important;
+        padding: 0 !important;
         margin-top: 0 !important;
+        background: transparent !important;
+        min-height: auto !important;
       }
-      /* 确保包装器填充整个空间 */
+      /* 移除多余的嵌套容器样式 */
+      .saas-page-wrapper .arco-layout {
+        background: transparent !important;
+        height: auto !important;
+      }
+      /* 确保包装器不产生额外滚动 */
       .saas-page-wrapper {
         width: 100%;
-        height: 100%;
-        overflow-y: auto;
+        height: auto;
+        overflow: visible;
+        background: transparent;
+      }
+      /* 修复超级运价页面中Card组件的间距 */
+      .saas-page-wrapper .arco-card + .arco-card {
+        margin-top: 16px;
+      }
+      /* 确保第一层Card没有多余的margin */
+      .saas-page-wrapper > div > .arco-card:first-child {
+        margin-top: 0;
       }
     `;
     document.head.appendChild(style);

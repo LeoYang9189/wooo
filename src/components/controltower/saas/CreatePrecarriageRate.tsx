@@ -18,7 +18,7 @@ import {
 } from '@arco-design/web-react';
 import { IconSave, IconDelete, IconRobot, IconPlus, IconMinus, IconSettings, IconUpload } from '@arco-design/web-react/icon';
 import { useNavigate } from 'react-router-dom';
-import SaasLayout from './SaasLayout';
+import ControlTowerSaasLayout from './ControlTowerSaasLayout';
 import './CreateFclInquiry.css'; // 复用已有的CSS
 
 const { Title } = Typography;
@@ -587,7 +587,7 @@ const CreatePrecarriageRate: React.FC = () => {
       
       console.log('表单数据:', formData);
       // 提交表单数据
-      navigate('/precarriage-rates');
+      navigate('/controltower/saas/precarriage-rates');
     }).catch(error => {
       console.error('表单错误:', error);
     });
@@ -595,7 +595,7 @@ const CreatePrecarriageRate: React.FC = () => {
 
   // 返回港前运价列表页面
   const handleCancel = () => {
-    navigate('/precarriage-rates');
+    navigate('/controltower/saas/precarriage-rates');
   };
 
   // 支线类型是否显示
@@ -719,7 +719,7 @@ const CreatePrecarriageRate: React.FC = () => {
   };
 
   return (
-    <SaasLayout 
+    <ControlTowerSaasLayout 
       menuSelectedKey="22" 
       breadcrumb={
         <Breadcrumb>
@@ -1352,7 +1352,7 @@ const CreatePrecarriageRate: React.FC = () => {
           </Space>
         </div>
       </Modal>
-    </SaasLayout>
+    </ControlTowerSaasLayout>
   );
 };
 

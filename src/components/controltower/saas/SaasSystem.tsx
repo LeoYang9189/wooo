@@ -6,14 +6,14 @@ import {
   IconUser,
   IconNav
 } from '@arco-design/web-react/icon';
+import ControlTowerSaasLayout from './ControlTowerSaasLayout';
 import '@arco-design/web-react/dist/css/arco.css';
-import SaasLayout from './SaasLayout';
 
 const { Title } = Typography;
 
 const SaasSystem: React.FC = () => {
   return (
-    <SaasLayout menuSelectedKey="1" breadcrumb={
+    <ControlTowerSaasLayout menuSelectedKey="1" breadcrumb={
       <Breadcrumb>
         <Breadcrumb.Item>首页</Breadcrumb.Item>
         <Breadcrumb.Item>控制台</Breadcrumb.Item>
@@ -87,7 +87,7 @@ const SaasSystem: React.FC = () => {
           </div>
         </div>
       </div>
-    </SaasLayout>
+    </ControlTowerSaasLayout>
   );
 };
 

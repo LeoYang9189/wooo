@@ -25,7 +25,7 @@ import {
   IconRefresh, 
   IconFilter
 } from '@arco-design/web-react/icon';
-import SaasLayout from './SaasLayout';
+import ControlTowerSaasLayout from './ControlTowerSaasLayout';
 
 const Title = Typography.Title;
 const Option = Select.Option;
@@ -336,7 +336,7 @@ const ZipcodeManagement: React.FC = () => {
   };
 
   return (
-    <SaasLayout 
+    <ControlTowerSaasLayout 
       menuSelectedKey="zipcode" 
       breadcrumb={
         <Breadcrumb>
@@ -462,7 +462,7 @@ const ZipcodeManagement: React.FC = () => {
           </FormItem>
         </Form>
       </Modal>
-    </SaasLayout>
+    </ControlTowerSaasLayout>
   );
 };
 

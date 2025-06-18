@@ -13,25 +13,34 @@ import OrderManagement from './pages/OrderManagement';
 import OrderDetail from './pages/OrderDetail';
 import BLAddition from './pages/BLAddition';
 
-// 引入超级运价系统的组件
-// SaasSystem组件暂时注释，因为控制台页面已删除
-// import SaasSystem from '../saas/SaasSystem';
-import FclRates from '../saas/FclRates';
-import RateQuery from '../saas/RateQuery';
-import PrecarriageRates from '../saas/PrecarriageRates';
-import LastMileRates from '../saas/LastMileRates';
-import InquiryManagementSaas from '../saas/InquiryManagement';
-import RouteManagement from '../saas/RouteManagement';
-import RegionManagement from '../saas/RegionManagement';
-import ZipcodeManagement from '../saas/ZipcodeManagement';
-import FbaWarehouseManagement from '../saas/FbaWarehouseManagement';
-import QuoteManagement from '../saas/QuoteManagement';
-import ContractManagement from '../saas/ContractManagement';
-import ContractForm from '../saas/ContractForm';
-import PricingRuleManagement from '../saas/PricingRuleManagement';
-import PricingRuleForm from '../saas/PricingRuleForm';
-import SurchargeManagement from '../saas/SurchargeManagement';
-import SurchargeForm from '../saas/SurchargeForm';
+// 引入控制塔下的超级运价系统组件
+import FclRates from './saas/FclRates';
+import RateQuery from './saas/RateQuery';
+import PrecarriageRates from './saas/PrecarriageRates';
+import LastMileRates from './saas/LastMileRates';
+import InquiryManagementSaas from './saas/InquiryManagement';
+import RouteManagement from './saas/RouteManagement';
+import RegionManagement from './saas/RegionManagement';
+import ZipcodeManagement from './saas/ZipcodeManagement';
+import FbaWarehouseManagement from './saas/FbaWarehouseManagement';
+import QuoteManagement from './saas/QuoteManagement';
+import ContractManagement from './saas/ContractManagement';
+import ContractForm from './saas/ContractForm';
+import PricingRuleManagement from './saas/PricingRuleManagement';
+import PricingRuleForm from './saas/PricingRuleForm';
+import SurchargeManagement from './saas/SurchargeManagement';
+import SurchargeForm from './saas/SurchargeForm';
+import CreatePrecarriageRate from './saas/CreatePrecarriageRate';
+import CreateLastMileRate from './saas/CreateLastMileRate';
+import CreateRoute from './saas/CreateRoute';
+import CreateRegion from './saas/CreateRegion';
+import CreateFclInquiry from './saas/CreateFclInquiry';
+import CreateLclInquiry from './saas/CreateLclInquiry';
+import CreateAirInquiry from './saas/CreateAirInquiry';
+import InquiryDetail from './saas/InquiryDetail';
+import ViewPrecarriageRate from './saas/ViewPrecarriageRate';
+import ViewLastMileRate from './saas/ViewLastMileRate';
+import CombinationRateQuery from './saas/CombinationRateQuery';
 
 // 引入包装器
 import SaasPageWrapper from './pages/SaasPageWrapper';
@@ -60,8 +69,6 @@ import AddEmployee from './pages/AddEmployee';
 import EditEmployee from './pages/EditEmployee';
 import CompanyManagement from './pages/CompanyManagement';
 import CompanyForm from './pages/CompanyForm';
-import CreatePrecarriageRate from '../saas/CreatePrecarriageRate';
-import CreateLastMileRate from '../saas/CreateLastMileRate';
 // --- 结束 ---
 
 const ControlTowerRoutes: React.FC = () => {
@@ -198,6 +205,61 @@ const ControlTowerRoutes: React.FC = () => {
       <Route path="/saas/create-lastmile-rate" element={
         <SaasPageWrapper>
           <CreateLastMileRate />
+        </SaasPageWrapper>
+      } />
+      
+      {/* 新增路由 - 创建页面 */}
+      <Route path="/saas/create-route" element={
+        <SaasPageWrapper>
+          <CreateRoute />
+        </SaasPageWrapper>
+      } />
+      <Route path="/saas/create-region" element={
+        <SaasPageWrapper>
+          <CreateRegion />
+        </SaasPageWrapper>
+      } />
+      
+      {/* 新增询价路由 */}
+      <Route path="/saas/create-inquiry/fcl" element={
+        <SaasPageWrapper>
+          <CreateFclInquiry />
+        </SaasPageWrapper>
+      } />
+      <Route path="/saas/create-inquiry/lcl" element={
+        <SaasPageWrapper>
+          <CreateLclInquiry />
+        </SaasPageWrapper>
+      } />
+      <Route path="/saas/create-inquiry/air" element={
+        <SaasPageWrapper>
+          <CreateAirInquiry />
+        </SaasPageWrapper>
+      } />
+      
+      {/* 询价详情 */}
+      <Route path="/saas/inquiry-detail/:type/:id" element={
+        <SaasPageWrapper>
+          <InquiryDetail />
+        </SaasPageWrapper>
+      } />
+      
+      {/* 查看运价页面 */}
+      <Route path="/saas/view-precarriage-rate/:id" element={
+        <SaasPageWrapper>
+          <ViewPrecarriageRate />
+        </SaasPageWrapper>
+      } />
+      <Route path="/saas/view-lastmile-rate/:id" element={
+        <SaasPageWrapper>
+          <ViewLastMileRate />
+        </SaasPageWrapper>
+      } />
+      
+      {/* 组合运价查询 */}
+      <Route path="/saas/combination-rate-query" element={
+        <SaasPageWrapper>
+          <CombinationRateQuery />
         </SaasPageWrapper>
       } />
 

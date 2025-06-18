@@ -24,7 +24,7 @@ import {
   IconRefresh, 
   IconFilter
 } from '@arco-design/web-react/icon';
-import SaasLayout from './SaasLayout';
+import ControlTowerSaasLayout from './ControlTowerSaasLayout';
 
 const Title = Typography.Title;
 const Option = Select.Option;
@@ -223,7 +223,7 @@ const FbaWarehouseManagement: React.FC = () => {
   ];
 
   return (
-    <SaasLayout 
+    <ControlTowerSaasLayout 
       menuSelectedKey="fba-warehouse" 
       breadcrumb={
         <Breadcrumb>
@@ -337,7 +337,7 @@ const FbaWarehouseManagement: React.FC = () => {
           </FormItem>
         </Form>
       </Modal>
-    </SaasLayout>
+    </ControlTowerSaasLayout>
   );
 };
 

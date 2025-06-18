@@ -10,7 +10,7 @@ import {
   Space
 } from '@arco-design/web-react';
 import { useNavigate } from 'react-router-dom';
-import SaasLayout from './SaasLayout';
+import ControlTowerSaasLayout from "./ControlTowerSaasLayout";
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -76,7 +76,7 @@ const CreateRegion: React.FC = () => {
       console.log('提交的数据:', values);
       // 这里添加实际的提交逻辑
       Message.success('保存成功');
-      navigate('/saas/region-management');
+      navigate('/controltower/saas/region-management');
     } catch (error) {
       Message.error('保存失败');
     } finally {
@@ -86,11 +86,11 @@ const CreateRegion: React.FC = () => {
 
   // 返回列表页
   const handleBack = () => {
-    navigate('/saas/region-management');
+    navigate('/controltower/saas/region-management');
   };
 
   return (
-    <SaasLayout
+    <ControlTowerSaasLayout
       menuSelectedKey="region"
       breadcrumb={
         <Breadcrumb>
@@ -171,7 +171,7 @@ const CreateRegion: React.FC = () => {
           </FormItem>
         </Form>
       </Card>
-    </SaasLayout>
+    </ControlTowerSaasLayout>
   );
 };
 

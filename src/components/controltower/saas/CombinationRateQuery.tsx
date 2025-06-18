@@ -17,7 +17,7 @@ import {
 } from '@arco-design/web-react';
 import { IconDownload, IconArrowLeft, IconCopy } from '@arco-design/web-react/icon';
 import { useNavigate, useLocation } from 'react-router-dom';
-import SaasLayout from './SaasLayout';
+import ControlTowerSaasLayout from "./ControlTowerSaasLayout";
 import './CreateFclInquiry.css';
 
 const { Row, Col } = Grid;
@@ -577,7 +577,7 @@ const CombinationRateQuery: React.FC = () => {
   // 需要空运价格表格列可以在后续添加
 
   return (
-    <SaasLayout 
+    <ControlTowerSaasLayout 
       menuSelectedKey="3" 
       breadcrumb={
         <Breadcrumb>
@@ -1152,7 +1152,7 @@ const CombinationRateQuery: React.FC = () => {
           )}
         </Card>
       </Form>
-    </SaasLayout>
+    </ControlTowerSaasLayout>
   );
 };
 

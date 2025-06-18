@@ -16,7 +16,7 @@ import {
 } from '@arco-design/web-react';
 import { IconSave, IconDelete, IconPlus, IconMinus /*, IconUpload */ } from '@arco-design/web-react/icon';
 import { useNavigate } from 'react-router-dom';
-import SaasLayout from './SaasLayout';
+import ControlTowerSaasLayout from "./ControlTowerSaasLayout";
 import './CreateFclInquiry.css'; // 复用已有的CSS
 
 const { Title } = Typography;
@@ -183,7 +183,7 @@ const CreateRoute: React.FC = () => {
       console.log('表单数据:', formData);
       // 提交表单数据
       Message.success('航线创建成功');
-      navigate('/route-management');
+      navigate('/controltower/saas/route-management');
     }).catch(error => {
       console.error('表单错误:', error);
     });
@@ -191,7 +191,7 @@ const CreateRoute: React.FC = () => {
 
   // 取消并返回列表页面
   const handleCancel = () => {
-    navigate('/route-management');
+    navigate('/controltower/saas/route-management');
   };
 
   // 生成负责人表格列
@@ -298,7 +298,7 @@ const CreateRoute: React.FC = () => {
   );
 
   return (
-    <SaasLayout 
+    <ControlTowerSaasLayout 
       menuSelectedKey="18" 
       breadcrumb={
         <Breadcrumb>
@@ -394,7 +394,7 @@ const CreateRoute: React.FC = () => {
           </Row>
         </Card>
       </Form>
-    </SaasLayout>
+    </ControlTowerSaasLayout>
   );
 };
 

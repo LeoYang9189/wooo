@@ -26,7 +26,7 @@ import {
   IconFilter,
   IconEye
 } from '@arco-design/web-react/icon';
-import SaasLayout from './SaasLayout';
+import ControlTowerSaasLayout from "./ControlTowerSaasLayout";
 
 const Title = Typography.Title;
 const Option = Select.Option;
@@ -410,7 +410,7 @@ const RegionManagement: React.FC = () => {
   ];
 
   return (
-    <SaasLayout 
+    <ControlTowerSaasLayout 
       menuSelectedKey="region" 
       breadcrumb={
         <Breadcrumb>
@@ -640,7 +640,7 @@ const RegionManagement: React.FC = () => {
           </FormItem>
         </Form>
       </Modal>
-    </SaasLayout>
+    </ControlTowerSaasLayout>
   );
 };
 

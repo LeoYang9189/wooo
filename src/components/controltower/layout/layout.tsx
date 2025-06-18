@@ -63,8 +63,7 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
   const getBreadcrumbs = (): BreadcrumbItem[] => {
     const path = location.pathname.replace('/controltower/', '');
     const breadcrumbs: BreadcrumbItem[] = [
-      { title: '首页', path: '/controltower' },
-      { title: '控制塔系统', path: '/controltower' }
+      { title: '控制塔', path: '/controltower' }
     ];
 
     // 检查是否是订单详情页面（格式：/order-detail/:orderId）
@@ -91,36 +90,32 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
         case 'fcl-rates':
           breadcrumbs.push(
             { title: '超级运价', path: undefined },
-            { title: '运价管理', path: undefined },
-            { title: '海运整箱', path: '/controltower/saas/fcl-rates' }
+            { title: '运价维护', path: undefined }
           );
           break;
         case 'rate-query':
           breadcrumbs.push(
             { title: '超级运价', path: undefined },
-            { title: '运价管理', path: undefined },
-            { title: '运价查询', path: '/controltower/saas/rate-query' }
+            { title: '运价查询', path: undefined }
           );
           break;
         case 'precarriage-rates':
           breadcrumbs.push(
             { title: '超级运价', path: undefined },
-            { title: '门点服务管理', path: undefined },
-            { title: '港前运价', path: '/controltower/saas/precarriage-rates' }
+            { title: '港前运价', path: undefined }
           );
           break;
         case 'lastmile-rates':
           breadcrumbs.push(
             { title: '超级运价', path: undefined },
-            { title: '门点服务管理', path: undefined },
-            { title: '尾程运价', path: '/controltower/saas/lastmile-rates' }
+            { title: '尾程运价', path: undefined }
           );
           break;
         case 'inquiry-management':
           breadcrumbs.push(
             { title: '超级运价', path: undefined },
             { title: '询价报价', path: undefined },
-            { title: '询价管理', path: '/controltower/saas/inquiry-management' }
+            { title: '询价管理', path: undefined }
           );
           break;
         case 'route-management':
@@ -154,20 +149,40 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
         case 'pricing-rule-management':
           breadcrumbs.push(
             { title: '超级运价', path: undefined },
-            { title: '加价规则维护', path: '/controltower/saas/pricing-rule-management' }
+            { title: '加价规则维护', path: undefined }
           );
           break;
         case 'surcharge':
           breadcrumbs.push(
             { title: '超级运价', path: undefined },
-            { title: '运价管理', path: undefined },
-            { title: '附加费维护', path: '/controltower/saas/surcharge' }
+            { title: '附加费维护', path: undefined }
           );
           break;
         case 'contract-management':
           breadcrumbs.push(
             { title: '超级运价', path: undefined },
-            { title: '合约管理', path: '/controltower/saas/contract-management' }
+            { title: '合约管理', path: undefined }
+          );
+          break;
+        case 'create-precarriage-rate':
+          breadcrumbs.push(
+            { title: '超级运价', path: undefined },
+            { title: '港前运价', path: '/controltower/saas/precarriage-rates' },
+            { title: '新增港前运价', path: undefined }
+          );
+          break;
+        case 'create-lastmile-rate':
+          breadcrumbs.push(
+            { title: '超级运价', path: undefined },
+            { title: '尾程运价', path: '/controltower/saas/lastmile-rates' },
+            { title: '新增尾程运价', path: undefined }
+          );
+          break;
+        case 'quote-management':
+          breadcrumbs.push(
+            { title: '超级运价', path: undefined },
+            { title: '询价报价', path: undefined },
+            { title: '报价管理', path: undefined }
           );
           break;
         default:
@@ -177,6 +192,20 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
               { title: '超级运价', path: undefined },
               { title: '合约管理', path: '/controltower/saas/contract-management' },
               { title: isEdit ? '编辑合约' : '新增合约', path: undefined }
+            );
+          } else if (saasPath.startsWith('pricing-rule-management/')) {
+            const isEdit = saasPath.includes('edit');
+            breadcrumbs.push(
+              { title: '超级运价', path: undefined },
+              { title: '加价规则维护', path: '/controltower/saas/pricing-rule-management' },
+              { title: isEdit ? '编辑规则' : '新增规则', path: undefined }
+            );
+          } else if (saasPath.startsWith('surcharge/')) {
+            const action = saasPath.includes('edit') ? '编辑附加费' : saasPath.includes('view') ? '查看附加费' : '新增附加费';
+            breadcrumbs.push(
+              { title: '超级运价', path: undefined },
+              { title: '附加费维护', path: '/controltower/saas/surcharge' },
+              { title: action, path: undefined }
             );
           }
           break;
@@ -189,10 +218,10 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
     switch (simplePath) {
       case '':
       case 'dashboard':
-        breadcrumbs.push({ title: '仪表盘', path: '/controltower/dashboard' });
+        breadcrumbs.push({ title: '仪表盘', path: undefined });
         break;
       case 'control-tower-panel':
-        breadcrumbs.push({ title: '控制塔面板', path: '/controltower/control-tower-panel' });
+        breadcrumbs.push({ title: '控制塔面板', path: undefined });
         break;
       // 运价中心相关页面面包屑已暂时注释
       /*
@@ -277,6 +306,115 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
           { title: '系统设置', path: undefined },
           { title: '员工管理', path: '/controltower/employee-management' },
           { title: '添加员工', path: undefined }
+        );
+        break;
+      // 基础资料维护页面
+      case 'port-management':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '港口管理', path: undefined }
+        );
+        break;
+      case 'carrier-management':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '承运人管理', path: undefined }
+        );
+        break;
+      case 'country-region-management':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '国家（地区）', path: undefined }
+        );
+        break;
+      case 'china-administrative':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '中国行政区划', path: undefined }
+        );
+        break;
+      case 'overseas-warehouse':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '海外仓库', path: undefined }
+        );
+        break;
+      case 'zipcode-management':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '邮编管理', path: undefined }
+        );
+        break;
+      case 'route-management':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '航线管理', path: undefined }
+        );
+        break;
+      case 'container-management':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '集装箱管理', path: undefined }
+        );
+        break;
+      case 'package-unit':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '包装单位', path: undefined }
+        );
+        break;
+      case 'transport-terms':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '运输条款', path: undefined }
+        );
+        break;
+      case 'trade-terms':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '贸易条款', path: undefined }
+        );
+        break;
+      case 'calculation-unit':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '计费单位', path: undefined }
+        );
+        break;
+      case 'charge-management':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '费用管理', path: undefined }
+        );
+        break;
+      case 'ship-agent':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '船舶代理', path: undefined }
+        );
+        break;
+      case 'ship-data':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '船舶资料', path: undefined }
+        );
+        break;
+      case 'terminal-management':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '码头管理', path: undefined }
+        );
+        break;
+      case 'company-certification':
+        breadcrumbs.push(
+          { title: '用户中心', path: undefined },
+          { title: '企业认证', path: undefined }
+        );
+        break;
+      case 'company-data-management':
+        breadcrumbs.push(
+          { title: '用户中心', path: undefined },
+          { title: '企业资料管理', path: undefined }
         );
         break;
       default:
@@ -622,7 +760,7 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
             </Dropdown>
           </div>
         </Header>
-        <Content className="p-6 bg-gray-50 min-h-[calc(100vh-64px)] overflow-auto">
+        <Content className="p-4 bg-gray-50 min-h-[calc(100vh-64px)] overflow-auto">
           {children}
         </Content>
       </Layout>

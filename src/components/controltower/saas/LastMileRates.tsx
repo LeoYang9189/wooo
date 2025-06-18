@@ -32,7 +32,7 @@ import {
   IconToTop
 } from '@arco-design/web-react/icon';
 import { useNavigate } from 'react-router-dom';
-import SaasLayout from './SaasLayout';
+import ControlTowerSaasLayout from "./ControlTowerSaasLayout";
 import './InquiryManagement.css';
 
 const Title = Typography.Title;
@@ -554,11 +554,11 @@ const LastMileRates: React.FC = () => {
 
   // 新增尾程运价
   const handleCreateLastMileRate = () => {
-    navigate('/saas/create-lastmile-rate');
+    navigate('/controltower/saas/create-lastmile-rate');
   };
 
   return (
-    <SaasLayout 
+    <ControlTowerSaasLayout 
       menuSelectedKey="23" 
       breadcrumb={
         <Breadcrumb>
@@ -668,7 +668,7 @@ const LastMileRates: React.FC = () => {
           </Row>
         </div>
       </Modal>
-    </SaasLayout>
+    </ControlTowerSaasLayout>
   );
 };
 

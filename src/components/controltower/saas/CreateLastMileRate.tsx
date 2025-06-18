@@ -18,7 +18,7 @@ import {
 } from '@arco-design/web-react';
 import { IconSave, IconDelete, IconRobot, IconPlus, IconMinus, IconSettings, IconUpload } from '@arco-design/web-react/icon';
 import { useNavigate } from 'react-router-dom';
-import SaasLayout from './SaasLayout';
+import ControlTowerSaasLayout from "./ControlTowerSaasLayout";
 import './CreateFclInquiry.css'; // 复用已有的CSS
 
 const { Title } = Typography;
@@ -173,7 +173,7 @@ const CreateLastMileRate: React.FC = () => {
       
       console.log('表单数据:', formData);
       // 提交表单数据
-      navigate('/lastmile-rates');
+      navigate('/controltower/saas/lastmile-rates');
     }).catch(error => {
       console.error('表单错误:', error);
     });
@@ -181,7 +181,7 @@ const CreateLastMileRate: React.FC = () => {
 
   // 返回尾程运价列表页面
   const handleCancel = () => {
-    navigate('/lastmile-rates');
+    navigate('/controltower/saas/lastmile-rates');
   };
 
   // 打开AI识别弹窗
@@ -390,7 +390,7 @@ const CreateLastMileRate: React.FC = () => {
   };
 
   return (
-    <SaasLayout 
+    <ControlTowerSaasLayout 
       menuSelectedKey="23" 
       breadcrumb={
         <Breadcrumb>
@@ -943,7 +943,7 @@ const CreateLastMileRate: React.FC = () => {
           </Space>
         </div>
       </Modal>
-    </SaasLayout>
+    </ControlTowerSaasLayout>
   );
 };
 
