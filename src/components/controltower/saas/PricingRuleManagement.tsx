@@ -28,6 +28,43 @@ const { Option } = Select;
 const { Title } = Typography;
 const { TabPane } = Tabs;
 
+// 筛选模式枚举
+export enum FilterMode {
+  EQUAL = 'equal',
+  NOT_EQUAL = 'notEqual', 
+  CONTAINS = 'contains',
+  NOT_CONTAINS = 'notContains',
+  IS_EMPTY = 'isEmpty',
+  IS_NOT_EMPTY = 'isNotEmpty',
+  BATCH = 'batch'
+}
+
+// 筛选字段配置接口
+export interface FilterFieldConfig {
+  key: string;
+  label: string;
+  type: 'text' | 'select' | 'dateRange' | 'number';
+  options?: { label: string; value: string }[];
+  placeholder?: string;
+  width?: number;
+}
+
+// 筛选条件接口
+export interface FilterCondition {
+  key: string;
+  mode: FilterMode;
+  value: any;
+  visible: boolean;
+}
+
+// 筛选方案接口
+export interface FilterScheme {
+  id: string;
+  name: string;
+  conditions: FilterCondition[];
+  isDefault?: boolean;
+}
+
 // 生成16位数字字母随机组合的规则ID
 const generateRuleId = (): string => {
   const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
