@@ -1056,7 +1056,7 @@ const CompanyProfile: React.FC = () => {
             >
               <Input placeholder="请输入第三方系统的租户ID" />
               </FormItem>
-            
+
             <FormItem
               label="租户名称"
               field="tenantName"

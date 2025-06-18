@@ -11,16 +11,16 @@ import './PortalStyles.css';
 const Portal: React.FC = () => {
   return (
     <UserProvider>
-      <div className="min-h-screen bg-white">
-        <PortalHeader />
-        <main>
-          <PortalHero />
-          <PortalFeatures />
-          <PortalSolutions />
-          <PortalCTA />
-        </main>
+    <div className="min-h-screen bg-white">
+      <PortalHeader />
+      <main>
+        <PortalHero />
+        <PortalFeatures />
+        <PortalSolutions />
+        <PortalCTA />
+      </main>
         <PortalFooter />
-      </div>
+    </div>
     </UserProvider>
   );
 };

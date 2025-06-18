@@ -290,12 +290,12 @@ const AuthPage: React.FC = () => {
                       rules={[{ required: true, message: '请输入账户信息' }]}
                       validateTrigger="onBlur"
                     >
-                      <Input
-                        placeholder={loginType === 'password' ? '请输入邮箱或手机号' : '请输入手机号或邮箱'}
-                        size="large"
-                        className="auth-input-field"
+                        <Input
+                          placeholder={loginType === 'password' ? '请输入邮箱或手机号' : '请输入手机号或邮箱'}
+                          size="large"
+                          className="auth-input-field"
                         prefix={<IconUser className="auth-input-icon" />}
-                      />
+                        />
                     </Form.Item>
 
                     {loginType === 'password' ? (
@@ -305,22 +305,22 @@ const AuthPage: React.FC = () => {
                         rules={[{ required: true, message: '请输入密码' }]}
                         validateTrigger="onBlur"
                       >
-                        <Input
-                          type={passwordVisible ? 'text' : 'password'}
-                          placeholder="请输入密码"
-                          size="large"
-                          className="auth-input-field"
+                          <Input
+                            type={passwordVisible ? 'text' : 'password'}
+                            placeholder="请输入密码"
+                            size="large"
+                            className="auth-input-field"
                           prefix={<IconLock className="auth-input-icon" />}
-                          suffix={
-                            <button
-                              type="button"
-                              onClick={() => setPasswordVisible(!passwordVisible)}
-                              className="text-gray-400 hover:text-gray-600 transition-colors"
-                            >
-                              {passwordVisible ? <IconEyeInvisible /> : <IconEye />}
-                            </button>
-                          }
-                        />
+                            suffix={
+                              <button
+                                type="button"
+                                onClick={() => setPasswordVisible(!passwordVisible)}
+                                className="text-gray-400 hover:text-gray-600 transition-colors"
+                              >
+                                {passwordVisible ? <IconEyeInvisible /> : <IconEye />}
+                              </button>
+                            }
+                          />
                       </Form.Item>
                     ) : (
                       <Form.Item
@@ -330,11 +330,11 @@ const AuthPage: React.FC = () => {
                         validateTrigger="onBlur"
                       >
                         <div className="flex space-x-3">
-                          <Input
-                            placeholder="请输入验证码"
-                            size="large"
+                            <Input
+                              placeholder="请输入验证码"
+                              size="large"
                             className="auth-input-field flex-1"
-                          />
+                            />
                           <button
                             type="button"
                             disabled={countdown > 0}
@@ -407,12 +407,12 @@ const AuthPage: React.FC = () => {
                         label={<span className="text-gray-700 font-semibold">用户名</span>}
                         rules={[{ required: true, message: '请输入用户名' }]}
                       >
-                        <Input
-                          placeholder="请输入用户名"
-                          size="large"
-                          className="auth-input-field"
+                          <Input
+                            placeholder="请输入用户名"
+                            size="large"
+                            className="auth-input-field"
                           prefix={<IconUser className="auth-input-icon" />}
-                        />
+                          />
                       </Form.Item>
 
                       <Form.Item
@@ -431,12 +431,12 @@ const AuthPage: React.FC = () => {
                           }
                         ]}
                       >
-                        <Input
-                          placeholder="请输入手机号"
-                          size="large"
-                          className="auth-input-field"
+                          <Input
+                            placeholder="请输入手机号"
+                            size="large"
+                            className="auth-input-field"
                           prefix={<IconPhone className="auth-input-icon" />}
-                        />
+                          />
                       </Form.Item>
                     </div>
 

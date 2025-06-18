@@ -23,7 +23,7 @@ import {
   IconUserAdd,
   IconHome,
   IconLink,
-  IconUser, 
+  IconUser,
   IconPlus,
   IconDelete,
   IconCopy

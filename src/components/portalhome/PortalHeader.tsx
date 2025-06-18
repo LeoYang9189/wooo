@@ -104,13 +104,13 @@ const PortalHeader: React.FC = () => {
               </div>
             </Dropdown>
           ) : (
-            <Button 
-              type="primary" 
-              className="bg-gradient-to-r from-blue-600 to-blue-400 border-0"
-              onClick={() => navigate('/portal/auth')}
-            >
-              注册/登录
-            </Button>
+          <Button 
+            type="primary" 
+            className="bg-gradient-to-r from-blue-600 to-blue-400 border-0"
+            onClick={() => navigate('/portal/auth')}
+          >
+            注册/登录
+          </Button>
           )}
         </div>
 
@@ -178,16 +178,16 @@ const PortalHeader: React.FC = () => {
                 </button>
               </div>
             ) : (
-              <Button 
-                type="primary" 
-                className="bg-gradient-to-r from-blue-600 to-blue-400 border-0 mt-2"
+            <Button 
+              type="primary" 
+              className="bg-gradient-to-r from-blue-600 to-blue-400 border-0 mt-2"
                 onClick={() => {
                   toggleMenu();
                   navigate('/portal/auth');
                 }}
-              >
-                注册/登录
-              </Button>
+            >
+              注册/登录
+            </Button>
             )}
           </div>
         </div>
