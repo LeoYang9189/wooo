@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Card, Typography, Space, Table, Tag, Input, Tabs, Button } from '@arco-design/web-react';
+import { Card, Space, Table, Tag, Input, Tabs, Button } from '@arco-design/web-react';
 import { IconArrowUp } from '@arco-design/web-react/icon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShip, faTruck, faFileInvoice, faMoneyBillWave, faAnchor, faWarehouse, faFileAlt, faWeightHanging, faFileContract, faReceipt, faFileInvoiceDollar, faShippingFast, faClipboardList, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 
-const { Title } = Typography;
+// const { Title } = Typography;
 
 const Dashboard: React.FC = () => {
   const [currentTask, setCurrentTask] = useState('报价待确认');

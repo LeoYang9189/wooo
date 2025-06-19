@@ -12,6 +12,7 @@ import CompanyProfile from './pages/CompanyProfile';
 import OrderManagement from './pages/OrderManagement';
 import OrderDetail from './pages/OrderDetail';
 import BLAddition from './pages/BLAddition';
+import ScheduleQuery from './pages/ScheduleQuery';
 
 // 引入超级运价系统的组件
 import RateQuery from '../controltower/saas/RateQuery';
@@ -26,6 +27,7 @@ const ControlTowerClientRoutes: React.FC = () => {
       <Route path="/" element={<Dashboard />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/control-tower-panel" element={<ControlTowerPanel />} />
+      <Route path="/schedule-query" element={<ScheduleQuery />} />
       {/* 运价中心相关路由已暂时注释
       <Route path="/freight-rate-query" element={<FreightRateQuery />} />
       <Route path="/inquiry-management" element={<InquiryManagement />} />

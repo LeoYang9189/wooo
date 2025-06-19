@@ -25,13 +25,12 @@ import {
   IconDown,
   IconSettings,
   IconDragDotVertical,
-  IconEdit,
-  IconEye
+
 } from '@arco-design/web-react/icon';
 import { useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
-const { Title } = Typography;
+// const { Title } = Typography;
 const Row = Grid.Row;
 const Col = Grid.Col;
 
@@ -208,11 +207,11 @@ const RouteMaintenance: React.FC = () => {
   const navigate = useNavigate();
   const [routeData, setRouteData] = useState<RouteData[]>([]);
   const [filteredData, setFilteredData] = useState<RouteData[]>([]);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
+  // const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
   const [currentRoute, setCurrentRoute] = useState<RouteData | null>(null);
-  const [confirmModalVisible, setConfirmModalVisible] = useState(false);
-  const [batchAction, setBatchAction] = useState<'enable' | 'disable'>('enable');
+  // const [confirmModalVisible, setConfirmModalVisible] = useState(false);
+  // const [batchAction, setBatchAction] = useState<'enable' | 'disable'>('enable');
   const [singleConfirmModalVisible, setSingleConfirmModalVisible] = useState(false);
   const [currentToggleRecord, setCurrentToggleRecord] = useState<RouteData | null>(null);
 

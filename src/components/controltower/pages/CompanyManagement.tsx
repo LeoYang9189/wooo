@@ -9,7 +9,7 @@ import {
   Select, 
   Space, 
   Tag, 
-  Avatar, 
+ 
   Modal,
   Form,
   Message,
@@ -26,7 +26,7 @@ import {
   IconUser
 } from '@arco-design/web-react/icon';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 const { Option } = Select;
 
 // 统计卡片样式 - 与用户管理完全一致

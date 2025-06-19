@@ -11,7 +11,8 @@ import {
   Grid,
   Tabs,
   DatePicker,
-  Modal
+
+  Drawer
 } from '@arco-design/web-react';
 import {
   IconPlus,
@@ -621,7 +622,193 @@ const RouteForm: React.FC = () => {
     return formData.spaceSharing.filter(sharing => !usedSpaceSharing.includes(sharing));
   };
 
+  // 共舱方航次接口
+  interface SpaceSharingVoyage {
+    id: string;
+    spaceSharing: string; // 共舱方
+    internalVoyage: string; // 内部航次
+    customsVoyage: string; // 报关航次
+  }
 
+  interface ShipSchedule {
+    id: string;
+    shipName: string; // 船名
+    operator: string; // 操船方
+    operatorInternalVoyage: string; // 操船方内部航次
+    operatorCustomsVoyage: string; // 操船方报关航次
+    portDates: { [portCode: string]: { eta: string; etd: string } }; // 各港口的ETA和ETD
+  }
+
+  // 长期船期状态
+  const [shipSchedules, setShipSchedules] = useState<ShipSchedule[]>([]);
+  
+  // 补充字段弹窗状态
+  const [supplementModalVisible, setSupplementModalVisible] = useState(false);
+  const [currentSupplementData, setCurrentSupplementData] = useState<{
+    scheduleId: string;
+    portCode: string;
+    portName: string;
+  } | null>(null);
+  
+  // 补充字段数据状态
+  const [supplementFields, setSupplementFields] = useState<{
+    [key: string]: { // scheduleId-portCode
+      cutoffDate: string;
+      terrorismCutoff: string; 
+      siCutoff: string;
+      vgmCutoff: string;
+      oogCutoff: string;
+      dangerousCutoff: string;
+      spaceSharingVoyages: SpaceSharingVoyage[];
+    }
+  }>({});
+
+  // 添加船期
+  const addShipSchedule = () => {
+    // 获取上一行的日期数据，用于自动计算新日期（+7天）
+    const lastSchedule = shipSchedules.length > 0 ? shipSchedules[shipSchedules.length - 1] : null;
+    const newPortDates: { [portCode: string]: { eta: string; etd: string } } = {};
+    
+    // 如果有上一行数据，则自动计算新日期（+7天）
+    if (lastSchedule) {
+      formData.ports.forEach(port => {
+        const lastDates = lastSchedule.portDates[port.port];
+        if (lastDates && lastDates.eta && lastDates.etd) {
+          const etaDate = new Date(lastDates.eta);
+          const etdDate = new Date(lastDates.etd);
+          
+          etaDate.setDate(etaDate.getDate() + 7);
+          etdDate.setDate(etdDate.getDate() + 7);
+          
+          newPortDates[port.port] = {
+            eta: etaDate.toISOString().slice(0, 16),
+            etd: etdDate.toISOString().slice(0, 16)
+          };
+        } else {
+          newPortDates[port.port] = { eta: '', etd: '' };
+        }
+      });
+    } else {
+      // 第一行数据，初始化所有港口的空日期
+      formData.ports.forEach(port => {
+        newPortDates[port.port] = { eta: '', etd: '' };
+      });
+    }
+    
+    const newSchedule: ShipSchedule = {
+      id: Date.now().toString(),
+      shipName: '',
+      operator: '',
+      operatorInternalVoyage: '',
+      operatorCustomsVoyage: '',
+      portDates: newPortDates
+    };
+    setShipSchedules(prev => [...prev, newSchedule]);
+  };
+
+  // 删除船期
+  const removeShipSchedule = (scheduleId: string) => {
+    setShipSchedules(prev => prev.filter(schedule => schedule.id !== scheduleId));
+  };
+
+  // 更新船期信息
+  const updateShipSchedule = (scheduleId: string, field: keyof ShipSchedule, value: any) => {
+    setShipSchedules(prev => prev.map(schedule => 
+      schedule.id === scheduleId ? { ...schedule, [field]: value } : schedule
+    ));
+  };
+
+  // 更新港口日期
+  const updatePortDate = (scheduleId: string, portCode: string, dateType: 'eta' | 'etd', value: string | undefined) => {
+    setShipSchedules(prev => prev.map(schedule => 
+      schedule.id === scheduleId 
+        ? { 
+            ...schedule, 
+            portDates: { 
+              ...schedule.portDates, 
+              [portCode]: {
+                ...(schedule.portDates[portCode] || { eta: '', etd: '' }),
+                [dateType]: value || ''
+              }
+            }
+          }
+        : schedule
+    ));
+  };
+
+  // 打开补充字段弹窗
+  const openSupplementModal = (scheduleId: string, portCode: string, portName: string) => {
+    setCurrentSupplementData({ scheduleId, portCode, portName });
+    setSupplementModalVisible(true);
+  };
+
+  // 关闭补充字段弹窗
+  const closeSupplementModal = () => {
+    setSupplementModalVisible(false);
+    setCurrentSupplementData(null);
+  };
+
+  // 计算默认时间（基于ETD和基本信息中的港口设置）
+  const calculateDefaultTimes = (portCode: string, etd: string): {
+    cutoffDate: string;
+    terrorismCutoff: string;
+    siCutoff: string;
+    vgmCutoff: string;
+    oogCutoff: string;
+    dangerousCutoff: string;
+    spaceSharingVoyages: SpaceSharingVoyage[];
+  } => {
+    // 找到基本信息中对应的港口
+    const portInfo = formData.ports.find(p => p.port === portCode);
+    if (!portInfo || !etd) {
+      return {
+        cutoffDate: '',
+        terrorismCutoff: '',
+        siCutoff: '',
+        vgmCutoff: '',
+        oogCutoff: '',
+        dangerousCutoff: '',
+        spaceSharingVoyages: []
+      };
+    }
+
+    const etdDate = new Date(etd);
+    
+    // 根据基本信息中的设置计算各个时间
+    const calculateTime = (timeInfo: TimeInfo): string => {
+      const dayOffset = parseInt(timeInfo.weekday) - 1; // 周几转换为偏移天数
+      const targetDate = new Date(etdDate);
+      targetDate.setDate(etdDate.getDate() + dayOffset);
+      
+      const [hours, minutes] = timeInfo.time.split(':');
+      targetDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+      
+      return targetDate.toISOString().slice(0, 16); // YYYY-MM-DDTHH:mm格式
+    };
+
+    return {
+      cutoffDate: calculateTime(portInfo.cutoffDate),
+      terrorismCutoff: calculateTime(portInfo.terrorismCutoff),
+      siCutoff: calculateTime(portInfo.siCutoff),
+      vgmCutoff: calculateTime(portInfo.vgmCutoff),
+      oogCutoff: calculateTime(portInfo.oogCutoff),
+      dangerousCutoff: calculateTime(portInfo.dangerousCutoff),
+      spaceSharingVoyages: []
+    };
+  };
+
+  // 保存补充字段
+  const saveSupplementFields = (fields: any) => {
+    if (!currentSupplementData) return;
+    
+    const key = `${currentSupplementData.scheduleId}-${currentSupplementData.portCode}`;
+    setSupplementFields(prev => ({
+      ...prev,
+      [key]: fields
+    }));
+    
+    closeSupplementModal();
+  };
 
   // 基本信息Tab内容
   const renderBasicInfoTab = () => (
@@ -1036,140 +1223,6 @@ const RouteForm: React.FC = () => {
     { value: 'MUNICH_MAERSK', label: 'MUNICH MAERSK' }
   ];
 
-  // 船期信息接口
-  interface ShipSchedule {
-    id: string;
-    shipName: string; // 船名
-    operator: string; // 操船方
-    portETDs: { [portCode: string]: string }; // 各港口的ETD
-  }
-
-  // 长期船期状态
-  const [shipSchedules, setShipSchedules] = useState<ShipSchedule[]>([]);
-  
-  // 补充字段弹窗状态
-  const [supplementModalVisible, setSupplementModalVisible] = useState(false);
-  const [currentSupplementData, setCurrentSupplementData] = useState<{
-    scheduleId: string;
-    portCode: string;
-    portName: string;
-  } | null>(null);
-  
-  // 补充字段数据状态
-  const [supplementFields, setSupplementFields] = useState<{
-    [key: string]: { // scheduleId-portCode
-      cutoffDate: string;
-      terrorismCutoff: string; 
-      siCutoff: string;
-      vgmCutoff: string;
-      oogCutoff: string;
-      dangerousCutoff: string;
-    }
-  }>({});
-
-  // 添加船期
-  const addShipSchedule = () => {
-    const newSchedule: ShipSchedule = {
-      id: Date.now().toString(),
-      shipName: '',
-      operator: '',
-      portETDs: {}
-    };
-    setShipSchedules(prev => [...prev, newSchedule]);
-  };
-
-  // 删除船期
-  const removeShipSchedule = (scheduleId: string) => {
-    setShipSchedules(prev => prev.filter(schedule => schedule.id !== scheduleId));
-  };
-
-  // 更新船期信息
-  const updateShipSchedule = (scheduleId: string, field: keyof ShipSchedule, value: any) => {
-    setShipSchedules(prev => prev.map(schedule => 
-      schedule.id === scheduleId ? { ...schedule, [field]: value } : schedule
-    ));
-  };
-
-  // 更新港口ETD
-  const updatePortETD = (scheduleId: string, portCode: string, etd: string | undefined) => {
-    setShipSchedules(prev => prev.map(schedule => 
-      schedule.id === scheduleId 
-        ? { ...schedule, portETDs: { ...schedule.portETDs, [portCode]: etd || '' } }
-        : schedule
-    ));
-  };
-
-  // 打开补充字段弹窗
-  const openSupplementModal = (scheduleId: string, portCode: string, portName: string) => {
-    setCurrentSupplementData({ scheduleId, portCode, portName });
-    setSupplementModalVisible(true);
-  };
-
-  // 关闭补充字段弹窗
-  const closeSupplementModal = () => {
-    setSupplementModalVisible(false);
-    setCurrentSupplementData(null);
-  };
-
-  // 计算默认时间（基于ETD和基本信息中的港口设置）
-  const calculateDefaultTimes = (portCode: string, etd: string): {
-    cutoffDate: string;
-    terrorismCutoff: string;
-    siCutoff: string;
-    vgmCutoff: string;
-    oogCutoff: string;
-    dangerousCutoff: string;
-  } => {
-    // 找到基本信息中对应的港口
-    const portInfo = formData.ports.find(p => p.port === portCode);
-    if (!portInfo || !etd) {
-      return {
-        cutoffDate: '',
-        terrorismCutoff: '',
-        siCutoff: '',
-        vgmCutoff: '',
-        oogCutoff: '',
-        dangerousCutoff: ''
-      };
-    }
-
-    const etdDate = new Date(etd);
-    
-    // 根据基本信息中的设置计算各个时间
-    const calculateTime = (timeInfo: TimeInfo): string => {
-      const dayOffset = parseInt(timeInfo.weekday) - 1; // 周几转换为偏移天数
-      const targetDate = new Date(etdDate);
-      targetDate.setDate(etdDate.getDate() + dayOffset);
-      
-      const [hours, minutes] = timeInfo.time.split(':');
-      targetDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-      
-      return targetDate.toISOString().slice(0, 16); // YYYY-MM-DDTHH:mm格式
-    };
-
-    return {
-      cutoffDate: calculateTime(portInfo.cutoffDate),
-      terrorismCutoff: calculateTime(portInfo.terrorismCutoff),
-      siCutoff: calculateTime(portInfo.siCutoff),
-      vgmCutoff: calculateTime(portInfo.vgmCutoff),
-      oogCutoff: calculateTime(portInfo.oogCutoff),
-      dangerousCutoff: calculateTime(portInfo.dangerousCutoff)
-    };
-  };
-
-  // 保存补充字段
-  const saveSupplementFields = (fields: any) => {
-    if (!currentSupplementData) return;
-    
-    const key = `${currentSupplementData.scheduleId}-${currentSupplementData.portCode}`;
-    setSupplementFields(prev => ({
-      ...prev,
-      [key]: fields
-    }));
-    
-    closeSupplementModal();
-  };
-
   // 长期船期Tab内容
   const renderLongTermScheduleTab = () => (
     <div>
@@ -1207,9 +1260,9 @@ const RouteForm: React.FC = () => {
           backgroundColor: '#fff'
         }}>
           <div style={{ display: 'flex' }}>
-            {/* 冻结列容器（船名和操船方） */}
+            {/* 冻结列容器（船名和操船方信息） */}
             <div style={{
-              width: '320px',
+              width: '580px',
               backgroundColor: '#fff',
               borderRight: '2px solid #d0d0d0',
               boxShadow: '2px 0 4px rgba(0,0,0,0.1)',
@@ -1232,11 +1285,27 @@ const RouteForm: React.FC = () => {
                   船名
                 </div>
                 <div style={{ 
-                  width: '160px',
+                  width: '140px',
                   padding: '12px 8px',
+                  borderRight: '1px solid #e0e0e0',
                   textAlign: 'center'
                 }}>
                   操船方
+                </div>
+                <div style={{ 
+                  width: '140px',
+                  padding: '12px 8px',
+                  borderRight: '1px solid #e0e0e0',
+                  textAlign: 'center'
+                }}>
+                  内部航次
+                </div>
+                <div style={{ 
+                  width: '140px',
+                  padding: '12px 8px',
+                  textAlign: 'center'
+                }}>
+                  报关航次
                 </div>
               </div>
 
@@ -1275,9 +1344,10 @@ const RouteForm: React.FC = () => {
 
                   {/* 操船方列 */}
                   <div style={{ 
-                    width: '160px',
+                    width: '140px',
                     backgroundColor: schedule.operator ? '#ffffcc' : '#fff', 
                     padding: '8px',
+                    borderRight: '1px solid #e0e0e0',
                     display: 'flex',
                     alignItems: 'center'
                   }}>
@@ -1312,6 +1382,41 @@ const RouteForm: React.FC = () => {
                       )}
                     </div>
                   </div>
+
+                  {/* 内部航次列 */}
+                  <div style={{ 
+                    width: '140px',
+                    backgroundColor: schedule.operatorInternalVoyage ? '#ffffcc' : '#fff', 
+                    padding: '8px',
+                    borderRight: '1px solid #e0e0e0',
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}>
+                    <Input
+                      placeholder="请输入内部航次"
+                      value={schedule.operatorInternalVoyage}
+                      onChange={(value) => updateShipSchedule(schedule.id, 'operatorInternalVoyage', value)}
+                      style={{ width: '100%' }}
+                      size="small"
+                    />
+                  </div>
+
+                  {/* 报关航次列 */}
+                  <div style={{ 
+                    width: '140px',
+                    backgroundColor: schedule.operatorCustomsVoyage ? '#ffffcc' : '#fff', 
+                    padding: '8px',
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}>
+                    <Input
+                      placeholder="请输入报关航次"
+                      value={schedule.operatorCustomsVoyage}
+                      onChange={(value) => updateShipSchedule(schedule.id, 'operatorCustomsVoyage', value)}
+                      style={{ width: '100%' }}
+                      size="small"
+                    />
+                  </div>
                 </div>
               ))}
             </div>
@@ -1320,7 +1425,7 @@ const RouteForm: React.FC = () => {
             <div style={{
               flex: 1,
               overflowX: 'auto',
-              maxWidth: 'calc(100vw - 520px)' // 预留左侧菜单和边距空间
+              maxWidth: 'calc(100vw - 780px)' // 预留左侧菜单和边距空间
             }}>
               <div style={{ minWidth: `${formData.ports.length * 140}px` }}>
                 {/* 港口列表头 */}
@@ -1357,7 +1462,7 @@ const RouteForm: React.FC = () => {
                     borderBottom: index < shipSchedules.length - 1 ? '1px solid #e0e0e0' : 'none',
                     minHeight: '48px'
                   }}>
-                    {/* 各港口ETD列 */}
+                    {/* 各港口ETA/ETD列 */}
                     {formData.ports.map((port, portIndex) => {
                       const portOption = portOptions.find(opt => opt.value === port.port);
                       const portName = portOption ? 
@@ -1365,11 +1470,12 @@ const RouteForm: React.FC = () => {
                         port.port;
                       const supplementKey = `${schedule.id}-${port.port}`;
                       const hasSupplementData = supplementFields[supplementKey];
+                      const portDates = schedule.portDates[port.port] || { eta: '', etd: '' };
                       
                       return (
                         <div key={port.id} style={{ 
                           width: '140px',
-                          backgroundColor: schedule.portETDs[port.port] ? '#ffffcc' : '#fff', 
+                          backgroundColor: (portDates.eta || portDates.etd) ? '#ffffcc' : '#fff', 
                           padding: '8px',
                           borderRight: portIndex < formData.ports.length - 1 ? '1px solid #e0e0e0' : 'none',
                           display: 'flex',
@@ -1378,12 +1484,24 @@ const RouteForm: React.FC = () => {
                           flexShrink: 0
                         }}>
                           <DatePicker
-                            placeholder="选择ETD"
-                            value={schedule.portETDs[port.port] || ''}
-                            onChange={(value) => updatePortETD(schedule.id, port.port, value)}
+                            placeholder="选择ETA"
+                            value={portDates.eta}
+                            onChange={(value) => updatePortDate(schedule.id, port.port, 'eta', value)}
                             style={{ width: '100%' }}
                             allowClear
                             size="small"
+                            showTime={{ format: 'HH:mm' }}
+                            format="YYYY-MM-DD HH:mm"
+                          />
+                          <DatePicker
+                            placeholder="选择ETD"
+                            value={portDates.etd}
+                            onChange={(value) => updatePortDate(schedule.id, port.port, 'etd', value)}
+                            style={{ width: '100%' }}
+                            allowClear
+                            size="small"
+                            showTime={{ format: 'HH:mm' }}
+                            format="YYYY-MM-DD HH:mm"
                           />
                           <Button
                             type="outline"
@@ -1422,29 +1540,58 @@ const RouteForm: React.FC = () => {
         <p style={{ margin: 0 }}>
           <strong>说明：</strong>
           船名来自基础资料，操船方来自当前航线的共舱方，港口来自基本信息中的挂靠港信息。
-          ETD填写后该格子会高亮显示。
+          ETA/ETD填写后该格子会高亮显示。添加第二行及后续船期时，ETA/ETD将自动在上一行对应港口日期基础上加7天。
         </p>
       </div>
     </div>
   );
 
-  // 补充字段Modal组件
-  const SupplementModal = () => {
+  // 补充字段Drawer组件
+  const SupplementDrawer = () => {
     const [form] = Form.useForm();
+    const [spaceSharingVoyages, setSpaceSharingVoyages] = useState<SpaceSharingVoyage[]>([]);
     
     const handleSave = () => {
       form.validate().then((values) => {
-        saveSupplementFields(values);
+        const finalValues = {
+          ...values,
+          spaceSharingVoyages
+        };
+        saveSupplementFields(finalValues);
         Message.success('补充字段保存成功');
       }).catch((error) => {
         console.error('表单验证失败:', error);
       });
     };
 
-    const handleModalOpen = () => {
+    // 添加共舱方航次
+    const addSpaceSharingVoyage = () => {
+      const newVoyage: SpaceSharingVoyage = {
+        id: Date.now().toString(),
+        spaceSharing: '',
+        internalVoyage: '',
+        customsVoyage: ''
+      };
+      setSpaceSharingVoyages(prev => [...prev, newVoyage]);
+    };
+
+    // 删除共舱方航次
+    const removeSpaceSharingVoyage = (id: string) => {
+      setSpaceSharingVoyages(prev => prev.filter(voyage => voyage.id !== id));
+    };
+
+    // 更新共舱方航次
+    const updateSpaceSharingVoyage = (id: string, field: keyof SpaceSharingVoyage, value: string) => {
+      setSpaceSharingVoyages(prev => prev.map(voyage => 
+        voyage.id === id ? { ...voyage, [field]: value } : voyage
+      ));
+    };
+
+    const handleDrawerOpen = () => {
       if (currentSupplementData) {
         const { scheduleId, portCode } = currentSupplementData;
-        const etd = shipSchedules.find(s => s.id === scheduleId)?.portETDs[portCode];
+        const schedule = shipSchedules.find(s => s.id === scheduleId);
+        const etd = schedule?.portDates[portCode]?.etd;
         
         // 获取现有数据或计算默认值
         const supplementKey = `${scheduleId}-${portCode}`;
@@ -1452,23 +1599,28 @@ const RouteForm: React.FC = () => {
         
         if (existingData) {
           form.setFieldsValue(existingData);
-        } else if (etd) {
-          const defaultTimes = calculateDefaultTimes(portCode, etd);
-          form.setFieldsValue(defaultTimes);
+          setSpaceSharingVoyages(existingData.spaceSharingVoyages || []);
+        } else {
+          if (etd) {
+            const defaultTimes = calculateDefaultTimes(portCode, etd);
+            form.setFieldsValue(defaultTimes);
+          }
+          setSpaceSharingVoyages([]);
         }
       }
     };
 
     return (
-      <Modal
+      <Drawer
         title={`补充字段设置 - ${currentSupplementData?.portName || ''}`}
         visible={supplementModalVisible}
         onOk={handleSave}
         onCancel={closeSupplementModal}
-        style={{ width: 600 }}
-        afterOpen={handleModalOpen}
+        width={800}
+        afterOpen={handleDrawerOpen}
         okText="保存"
         cancelText="取消"
+        confirmLoading={false}
       >
         <Form form={form} layout="vertical">
           <Grid.Row gutter={16}>
@@ -1540,6 +1692,117 @@ const RouteForm: React.FC = () => {
             </Grid.Col>
           </Grid.Row>
           
+          {/* 共舱方航次字段 */}
+          <div style={{ marginTop: 24 }}>
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              marginBottom: 16 
+            }}>
+              <Title heading={6} style={{ margin: 0 }}>共舱方航次</Title>
+              <Button
+                type="primary"
+                icon={<IconPlus />}
+                onClick={addSpaceSharingVoyage}
+                size="small"
+              >
+                添加共舱方
+              </Button>
+            </div>
+
+            {spaceSharingVoyages.length === 0 ? (
+              <div style={{ 
+                textAlign: 'center', 
+                padding: '20px', 
+                color: '#999',
+                backgroundColor: '#f9f9f9',
+                borderRadius: '4px',
+                border: '1px dashed #d9d9d9'
+              }}>
+                暂无共舱方航次信息，请点击"添加共舱方"按钮添加
+              </div>
+            ) : (
+              <div>
+                {spaceSharingVoyages.map((voyage, index) => (
+                  <div key={voyage.id} style={{ 
+                    border: '1px solid #e0e0e0',
+                    borderRadius: '4px',
+                    padding: '16px',
+                    marginBottom: '12px',
+                    backgroundColor: '#fafafa'
+                  }}>
+                    <div style={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between', 
+                      alignItems: 'center',
+                      marginBottom: '12px'
+                    }}>
+                      <span style={{ fontWeight: 'bold', color: '#333' }}>
+                        共舱方 #{index + 1}
+                      </span>
+                      <Button
+                        type="text"
+                        status="danger"
+                        icon={<IconDelete />}
+                        onClick={() => removeSpaceSharingVoyage(voyage.id)}
+                        size="mini"
+                      />
+                    </div>
+                    
+                    <Grid.Row gutter={16}>
+                      <Grid.Col span={8}>
+                        <div style={{ marginBottom: '8px' }}>
+                          <label style={{ fontSize: '14px', fontWeight: 500 }}>共舱方</label>
+                        </div>
+                        <Select
+                          placeholder="请选择共舱方"
+                          value={voyage.spaceSharing}
+                          onChange={(value) => updateSpaceSharingVoyage(voyage.id, 'spaceSharing', value)}
+                          style={{ width: '100%' }}
+                          size="small"
+                        >
+                          {formData.spaceSharing.map(sharing => {
+                            const option = spaceSharingOptions.find(opt => opt.value === sharing);
+                            return option ? (
+                              <Option key={option.value} value={option.value}>
+                                {option.label}
+                              </Option>
+                            ) : null;
+                          })}
+                        </Select>
+                      </Grid.Col>
+                      <Grid.Col span={8}>
+                        <div style={{ marginBottom: '8px' }}>
+                          <label style={{ fontSize: '14px', fontWeight: 500 }}>内部航次</label>
+                        </div>
+                        <Input
+                          placeholder="请输入内部航次"
+                          value={voyage.internalVoyage}
+                          onChange={(value) => updateSpaceSharingVoyage(voyage.id, 'internalVoyage', value)}
+                          style={{ width: '100%' }}
+                          size="small"
+                        />
+                      </Grid.Col>
+                      <Grid.Col span={8}>
+                        <div style={{ marginBottom: '8px' }}>
+                          <label style={{ fontSize: '14px', fontWeight: 500 }}>报关航次</label>
+                        </div>
+                        <Input
+                          placeholder="请输入报关航次"
+                          value={voyage.customsVoyage}
+                          onChange={(value) => updateSpaceSharingVoyage(voyage.id, 'customsVoyage', value)}
+                          style={{ width: '100%' }}
+                          size="small"
+                        />
+                      </Grid.Col>
+                    </Grid.Row>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           <div style={{ 
             marginTop: 16, 
             padding: '12px', 
@@ -1550,11 +1813,11 @@ const RouteForm: React.FC = () => {
           }}>
             <p style={{ margin: 0 }}>
               <strong>说明：</strong>
-              默认时间根据ETD和基本信息中对应港口的设置自动计算，您可以根据实际情况调整。
+              默认时间根据ETD和基本信息中对应港口的设置自动计算，您可以根据实际情况调整。共舱方来自基本信息中的共舱方设置。
             </p>
           </div>
         </Form>
-      </Modal>
+      </Drawer>
     );
   };
 
@@ -1643,8 +1906,8 @@ const RouteForm: React.FC = () => {
 
       </Card>
       
-      {/* 补充字段弹窗 */}
-      <SupplementModal />
+      {/* 补充字段抽屉 */}
+      <SupplementDrawer />
     </div>
   );
 };

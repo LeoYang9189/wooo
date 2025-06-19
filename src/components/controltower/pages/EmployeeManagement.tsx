@@ -25,7 +25,7 @@ import {
 
 } from '@arco-design/web-react/icon';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 const { Option } = Select;
 
 // 统计卡片样式

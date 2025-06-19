@@ -13,8 +13,7 @@ import {
   IconLanguage,
   IconFile,
   IconStorage,
-  IconSettings,
-  IconCalendar
+  IconSettings
 } from '@arco-design/web-react/icon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRobot, faUsers, faShip } from '@fortawesome/free-solid-svg-icons';
@@ -92,7 +91,7 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
       );
       return breadcrumbs;
     }
-    if (path === 'schedule-maintenance') {
+    if (path === 'schedule-query') {
       breadcrumbs.push(
         { title: '船期中心', path: undefined },
         { title: '船期查询', path: undefined }
@@ -592,7 +591,7 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
             }
           >
             <MenuItem key="route-maintenance">航线维护</MenuItem>
-            <MenuItem key="schedule-maintenance">船期查询</MenuItem>
+            <MenuItem key="schedule-query">船期查询</MenuItem>
           </SubMenu>
 
           {/* 客户中心 */}

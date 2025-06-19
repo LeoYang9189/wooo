@@ -72,6 +72,7 @@ import CompanyManagement from './pages/CompanyManagement';
 import CompanyForm from './pages/CompanyForm';
 import RouteMaintenance from './pages/RouteMaintenance';
 import RouteForm from './pages/RouteForm';
+import ScheduleQuery from './pages/ScheduleQuery';
 // --- 结束 ---
 
 const ControlTowerRoutes: React.FC = () => {
@@ -297,6 +298,7 @@ const ControlTowerRoutes: React.FC = () => {
       <Route path="/route-maintenance" element={<RouteMaintenance />} />
       <Route path="/route-maintenance/add" element={<RouteForm />} />
       <Route path="/route-maintenance/edit/:id" element={<RouteForm />} />
+      <Route path="/schedule-query" element={<ScheduleQuery />} />
       {/* --- 结束 --- */}
     </Routes>
   );

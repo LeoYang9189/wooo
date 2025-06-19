@@ -175,6 +175,9 @@ const ControlTowerClientLayout: React.FC<LayoutProps> = ({ children }) => {
       case 'control-tower-panel':
         breadcrumbs.push({ title: '控制塔面板', path: '/controltower/control-tower-panel' });
         break;
+      case 'schedule-query':
+        breadcrumbs.push({ title: '船期查询', path: '/controltower-client/schedule-query' });
+        break;
       // 运价中心相关页面面包屑已暂时注释
       /*
       case 'freight-rate-query':
@@ -277,6 +280,10 @@ const ControlTowerClientLayout: React.FC<LayoutProps> = ({ children }) => {
           <MenuItem key="control-tower-panel">
             <IconApps />
             <span>控制塔面板</span>
+          </MenuItem>
+          <MenuItem key="schedule-query">
+            <IconList />
+            <span>船期查询</span>
           </MenuItem>
           
           {/* 超级运价系统菜单 */}

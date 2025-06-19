@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Grid, Typography, Button, Space, Tag } from '@arco-design/web-react';
+import { Card, Grid, Typography, Button, Tag } from '@arco-design/web-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faRobot, 
@@ -9,21 +9,14 @@ import {
   faBoxes, 
   faShip, 
   faTruck, 
-  faWarehouse, 
-  faMapMarkerAlt, 
-  faChartBar, 
   faGlobe, 
-  faCreditCard, 
   faHandshake, 
   faFileContract, 
-  faSearch, 
   faClipboardList, 
   faExchangeAlt, 
   faBalanceScale, 
   faGlobeAmericas, 
   faCode, 
-  faCalculator, 
-  faAnchor,
   faDesktop,
   faMobile,
   faUsers,
@@ -32,8 +25,7 @@ import {
   faShieldAlt,
   faFileSignature,
   faLaptopCode,
-  faRoute,
-  faCloudUploadAlt
+  faRoute
 } from '@fortawesome/free-solid-svg-icons';
 
 const { Row, Col } = Grid;

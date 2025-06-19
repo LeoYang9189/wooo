@@ -17,16 +17,13 @@ import {
   Drawer,
   Input,
   Grid,
-  Breadcrumb,
+
   Switch
 } from '@arco-design/web-react';
 import {
   IconPlus,
   IconMore,
-  IconFilter,
   IconSettings,
-  IconDragArrow,
-  IconClose,
   IconSearch,
   IconRefresh,
   IconDown,
@@ -253,15 +250,15 @@ interface LastmilePricingRule {
 type PricingRule = FclPricingRule | LclPricingRule | AirPricingRule | SurchargePricingRule | PrecarriagePricingRule | LastmilePricingRule;
 
 // 搜索筛选参数
-interface SearchParams {
-  routeName: string;
-  shippingCompany: string; // 船公司
-  originPort: string; // 起运港
-  chargeName: string; // 费用名称
-  status: string;
-  validPeriodStart: string; // 有效期开始日期
-  validPeriodEnd: string; // 有效期结束日期
-}
+// interface SearchParams {
+//   routeName: string;
+//   shippingCompany: string; // 船公司
+//   originPort: string; // 起运港
+//   chargeName: string; // 费用名称
+//   status: string;
+//   validPeriodStart: string; // 有效期开始日期
+//   validPeriodEnd: string; // 有效期结束日期
+// }
 
 // 根据Tab获取筛选字段配置
 const getFilterFieldsByTab = (tab: FeeType): FilterFieldConfig[] => {
@@ -468,9 +465,9 @@ const PricingRuleManagement: React.FC = () => {
   };
 
   // 关闭增减条件弹窗
-  const closeFilterFieldModal = () => {
-    setFilterFieldModalVisible(false);
-  };
+  // const closeFilterFieldModal = () => {
+  //   setFilterFieldModalVisible(false);
+  // };
 
   // 打开另存为方案弹窗
   const openSchemeModal = () => {
