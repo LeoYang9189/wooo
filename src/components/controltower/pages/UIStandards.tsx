@@ -32,9 +32,7 @@ const UIStandards: React.FC = () => {
           <IconBook style={{ color: '#165DFF' }} />
           通用规范约定
         </Title>
-        <Text style={{ color: '#86909c', fontSize: '14px', marginTop: '8px', display: 'block' }}>
-          基于项目代码扫描总结的UI设计规范、组件样式标准和通用功能约定
-        </Text>
+
       </div>
 
       {/* 主要内容区域 */}
@@ -52,10 +50,6 @@ const UIStandards: React.FC = () => {
           </span>
         }>
           <div style={{ padding: '16px 0' }}>
-            <Title heading={4} style={{ marginBottom: '16px' }}>标准颜色规范</Title>
-            <Text style={{ color: '#666', marginBottom: '24px', display: 'block' }}>
-              基于项目代码扫描，以下是系统中使用的标准颜色值：
-            </Text>
             
             <Row gutter={24}>
               <Col span={12}>
