@@ -73,12 +73,14 @@ import CompanyForm from './pages/CompanyForm';
 import RouteMaintenance from './pages/RouteMaintenance';
 import RouteForm from './pages/RouteForm';
 import ScheduleQuery from './pages/ScheduleQuery';
+import UIStandards from './pages/UIStandards';
 // --- 结束 ---
 
 const ControlTowerRoutes: React.FC = () => {
   return (
     <Routes>
       <Route path="/" element={<Dashboard />} />
+      <Route path="/ui-standards" element={<UIStandards />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/control-tower-panel" element={<ControlTowerPanel />} />
       <Route path="/application-center" element={<ApplicationCenter />} />

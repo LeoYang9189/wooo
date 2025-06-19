@@ -13,7 +13,8 @@ import {
   IconLanguage,
   IconFile,
   IconStorage,
-  IconSettings
+  IconSettings,
+  IconBook
 } from '@arco-design/web-react/icon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRobot, faUsers, faShip } from '@fortawesome/free-solid-svg-icons';
@@ -62,6 +63,14 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
     const breadcrumbs: BreadcrumbItem[] = [
       { title: '控制塔', path: '/controltower' }
     ];
+
+    // 通用规范约定页面
+    if (path === 'ui-standards') {
+      breadcrumbs.push(
+        { title: '通用规范约定', path: undefined }
+      );
+      return breadcrumbs;
+    }
 
     // 检查是否是订单详情页面（格式：/order-detail/:orderId）
     if (path.startsWith('order-detail/')) {
@@ -512,6 +521,10 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
           onClickMenuItem={handleMenuItemClick}
           style={{ width: '100%' }}
         >
+          <MenuItem key="ui-standards">
+            <IconBook />
+            <span>通用规范约定</span>
+          </MenuItem>
           <MenuItem key="dashboard">
             <IconDashboard />
             <span>仪表盘</span>
