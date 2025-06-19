@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Card,
   Button,
@@ -663,6 +663,23 @@ const RouteForm: React.FC = () => {
     }
   }>({});
 
+  // 表格同步滚动相关refs
+  const frozenTableRef = useRef<HTMLDivElement>(null);
+  const scrollableTableRef = useRef<HTMLDivElement>(null);
+
+  // 同步滚动事件处理
+  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    const source = e.target as HTMLDivElement;
+    const scrollTop = source.scrollTop;
+    
+    // 同步另一个表格的滚动位置
+    if (source === frozenTableRef.current && scrollableTableRef.current) {
+      scrollableTableRef.current.scrollTop = scrollTop;
+    } else if (source === scrollableTableRef.current && frozenTableRef.current) {
+      frozenTableRef.current.scrollTop = scrollTop;
+    }
+  }, []);
+
   // 添加船期
   const addShipSchedule = () => {
     // 获取上一行的日期数据，用于自动计算新日期（+7天）
@@ -1251,70 +1268,85 @@ const RouteForm: React.FC = () => {
           <p>暂无船期信息，请点击"添加船期"按钮添加</p>
         </Card>
       ) : (
-        /* 表格容器 - 支持水平滚动，左侧列冻结 */
+        /* 表格容器 - 支持水平滚动，左侧列冻结，垂直同步滚动 */
         <div style={{ 
           border: '1px solid #e0e0e0', 
           borderRadius: '4px',
           position: 'relative',
           overflow: 'hidden',
-          backgroundColor: '#fff'
+          backgroundColor: '#fff',
+          display: 'flex',
+          height: 'auto',
+          maxHeight: '600px'
         }}>
-          <div style={{ display: 'flex' }}>
-            {/* 冻结列容器（船名和操船方信息） */}
-            <div style={{
-              width: '580px',
-              backgroundColor: '#fff',
-              borderRight: '2px solid #d0d0d0',
-              boxShadow: '2px 0 4px rgba(0,0,0,0.1)',
-              zIndex: 10,
-              position: 'relative'
+          {/* 冻结列容器（船名和操船方信息） */}
+          <div style={{
+            width: '580px',
+            backgroundColor: '#fff',
+            borderRight: '2px solid #d0d0d0',
+            boxShadow: '2px 0 4px rgba(0,0,0,0.1)',
+            zIndex: 10,
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            {/* 冻结列表头 */}
+            <div style={{ 
+              display: 'flex',
+              backgroundColor: '#f5f5f5',
+              fontWeight: 'bold',
+              borderBottom: '1px solid #e0e0e0',
+              flexShrink: 0
             }}>
-              {/* 冻结列表头 */}
               <div style={{ 
-                display: 'flex',
-                backgroundColor: '#f5f5f5',
-                fontWeight: 'bold',
-                borderBottom: '1px solid #e0e0e0'
+                width: '160px',
+                padding: '12px 8px', 
+                borderRight: '1px solid #e0e0e0',
+                textAlign: 'center'
               }}>
-                <div style={{ 
-                  width: '160px',
-                  padding: '12px 8px', 
-                  borderRight: '1px solid #e0e0e0',
-                  textAlign: 'center'
-                }}>
-                  船名
-                </div>
-                <div style={{ 
-                  width: '140px',
-                  padding: '12px 8px',
-                  borderRight: '1px solid #e0e0e0',
-                  textAlign: 'center'
-                }}>
-                  操船方
-                </div>
-                <div style={{ 
-                  width: '140px',
-                  padding: '12px 8px',
-                  borderRight: '1px solid #e0e0e0',
-                  textAlign: 'center'
-                }}>
-                  内部航次
-                </div>
-                <div style={{ 
-                  width: '140px',
-                  padding: '12px 8px',
-                  textAlign: 'center'
-                }}>
-                  报关航次
-                </div>
+                船名
               </div>
+              <div style={{ 
+                width: '140px',
+                padding: '12px 8px',
+                borderRight: '1px solid #e0e0e0',
+                textAlign: 'center'
+              }}>
+                操船方
+              </div>
+              <div style={{ 
+                width: '140px',
+                padding: '12px 8px',
+                borderRight: '1px solid #e0e0e0',
+                textAlign: 'center'
+              }}>
+                内部航次
+              </div>
+              <div style={{ 
+                width: '140px',
+                padding: '12px 8px',
+                textAlign: 'center'
+              }}>
+                报关航次
+              </div>
+            </div>
 
-              {/* 冻结列数据行 */}
+            {/* 冻结列数据容器 - 可滚动 */}
+            <div 
+              ref={frozenTableRef}
+              onScroll={handleScroll}
+              style={{ 
+                flex: 1,
+                overflowY: 'auto',
+                overflowX: 'hidden'
+              }}
+            >
               {shipSchedules.map((schedule, index) => (
                 <div key={schedule.id} style={{ 
                   display: 'flex',
                   borderBottom: index < shipSchedules.length - 1 ? '1px solid #e0e0e0' : 'none',
-                  minHeight: '48px'
+                  minHeight: '102px', // 固定行高以匹配港口列的3个元素高度
+                  alignItems: 'center'
                 }}>
                   {/* 船名列 */}
                   <div style={{ 
@@ -1323,7 +1355,8 @@ const RouteForm: React.FC = () => {
                     padding: '8px',
                     borderRight: '1px solid #e0e0e0',
                     display: 'flex',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    height: '100%'
                   }}>
                     <Select
                       placeholder="请选择船名"
@@ -1349,7 +1382,8 @@ const RouteForm: React.FC = () => {
                     padding: '8px',
                     borderRight: '1px solid #e0e0e0',
                     display: 'flex',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    height: '100%'
                   }}>
                     <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
                       <Select
@@ -1390,7 +1424,8 @@ const RouteForm: React.FC = () => {
                     padding: '8px',
                     borderRight: '1px solid #e0e0e0',
                     display: 'flex',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    height: '100%'
                   }}>
                     <Input
                       placeholder="请输入内部航次"
@@ -1407,7 +1442,8 @@ const RouteForm: React.FC = () => {
                     backgroundColor: schedule.operatorCustomsVoyage ? '#ffffcc' : '#fff', 
                     padding: '8px',
                     display: 'flex',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    height: '100%'
                   }}>
                     <Input
                       placeholder="请输入报关航次"
@@ -1420,47 +1456,62 @@ const RouteForm: React.FC = () => {
                 </div>
               ))}
             </div>
+          </div>
 
-            {/* 可滚动区域（港口列） */}
-            <div style={{
-              flex: 1,
+          {/* 可滚动区域（港口列） */}
+          <div style={{
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            maxWidth: 'calc(100vw - 780px)' // 预留左侧菜单和边距空间
+          }}>
+            {/* 港口列表头 */}
+            <div style={{ 
+              display: 'flex',
+              backgroundColor: '#f5f5f5',
+              fontWeight: 'bold',
+              borderBottom: '1px solid #e0e0e0',
+              flexShrink: 0,
               overflowX: 'auto',
-              maxWidth: 'calc(100vw - 780px)' // 预留左侧菜单和边距空间
+              minWidth: `${formData.ports.length * 140}px`
             }}>
-              <div style={{ minWidth: `${formData.ports.length * 140}px` }}>
-                {/* 港口列表头 */}
-                <div style={{ 
-                  display: 'flex',
-                  backgroundColor: '#f5f5f5',
-                  fontWeight: 'bold',
-                  borderBottom: '1px solid #e0e0e0'
-                }}>
-                  {formData.ports.map((port, portIndex) => {
-                    const portOption = portOptions.find(opt => opt.value === port.port);
-                    // 提取英文全称（去掉中文部分）
-                    const portName = portOption ? 
-                      portOption.label.split(' ').slice(1).join(' ').replace(/\s*\([^)]*\)/, '') : 
-                      port.port;
-                    return (
-                      <div key={port.id} style={{ 
-                        width: '140px',
-                        padding: '12px 8px', 
-                        borderRight: portIndex < formData.ports.length - 1 ? '1px solid #e0e0e0' : 'none',
-                        textAlign: 'center',
-                        flexShrink: 0
-                      }}>
-                        {portName}
-                      </div>
-                    );
-                  })}
-                </div>
+              {formData.ports.map((port, portIndex) => {
+                const portOption = portOptions.find(opt => opt.value === port.port);
+                // 提取英文全称（去掉中文部分）
+                const portName = portOption ? 
+                  portOption.label.split(' ').slice(1).join(' ').replace(/\s*\([^)]*\)/, '') : 
+                  port.port;
+                return (
+                  <div key={port.id} style={{ 
+                    width: '140px',
+                    padding: '12px 8px', 
+                    borderRight: portIndex < formData.ports.length - 1 ? '1px solid #e0e0e0' : 'none',
+                    textAlign: 'center',
+                    flexShrink: 0
+                  }}>
+                    {portName}
+                  </div>
+                );
+              })}
+            </div>
 
-                {/* 港口列数据行 */}
+            {/* 港口列数据容器 - 可滚动 */}
+            <div 
+              ref={scrollableTableRef}
+              onScroll={handleScroll}
+              style={{ 
+                flex: 1,
+                overflowY: 'auto',
+                overflowX: 'auto'
+              }}
+            >
+              <div style={{ minWidth: `${formData.ports.length * 140}px` }}>
                 {shipSchedules.map((schedule, index) => (
                   <div key={schedule.id} style={{ 
                     display: 'flex',
                     borderBottom: index < shipSchedules.length - 1 ? '1px solid #e0e0e0' : 'none',
-                    minHeight: '48px'
+                    minHeight: '102px', // 与冻结列行高一致
+                    alignItems: 'stretch'
                   }}>
                     {/* 各港口ETA/ETD列 */}
                     {formData.ports.map((port, portIndex) => {
@@ -1481,7 +1532,8 @@ const RouteForm: React.FC = () => {
                           display: 'flex',
                           flexDirection: 'column',
                           gap: '4px',
-                          flexShrink: 0
+                          flexShrink: 0,
+                          justifyContent: 'center'
                         }}>
                           <DatePicker
                             placeholder="选择ETA"
