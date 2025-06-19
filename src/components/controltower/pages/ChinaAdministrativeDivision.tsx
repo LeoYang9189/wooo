@@ -27,7 +27,7 @@ const { Title } = Typography;
 const { TabPane } = Tabs;
 
 // 行政区划级别
-type DivisionLevel = 'province' | 'city' | 'district' | 'street';
+type DivisionLevel = 'province' | 'city' | 'district' | 'street' | 'village';
 
 // 行政区划数据接口
 interface AdministrativeDivision {
@@ -37,6 +37,14 @@ interface AdministrativeDivision {
   level: DivisionLevel;
   parentId?: string;
   parentName?: string;
+  provinceId?: string; // 省ID
+  provinceName?: string; // 省名称
+  cityId?: string; // 市ID
+  cityName?: string; // 市名称
+  districtId?: string; // 区县ID
+  districtName?: string; // 区县名称
+  streetId?: string; // 街道ID
+  streetName?: string; // 街道名称
   status: 'enabled' | 'disabled';
 }
 
@@ -52,7 +60,8 @@ const tabConfig = [
   { key: 'province', title: '省', level: 'province' as DivisionLevel },
   { key: 'city', title: '市', level: 'city' as DivisionLevel },
   { key: 'district', title: '区/县', level: 'district' as DivisionLevel },
-  { key: 'street', title: '街道/乡镇', level: 'street' as DivisionLevel }
+  { key: 'street', title: '街道/乡镇', level: 'street' as DivisionLevel },
+  { key: 'village', title: '村/居委会', level: 'village' as DivisionLevel }
 ];
 
 const ChinaAdministrativeDivision: React.FC = () => {
@@ -70,32 +79,276 @@ const ChinaAdministrativeDivision: React.FC = () => {
   });
   const [editForm] = Form.useForm();
 
+  // 多级联动选择状态
+  const [selectedProvince, setSelectedProvince] = useState<string>('');
+  const [selectedCity, setSelectedCity] = useState<string>('');
+  const [selectedDistrict, setSelectedDistrict] = useState<string>('');
+  const [selectedStreet, setSelectedStreet] = useState<string>('');
+
   // 初始化示例数据
   useEffect(() => {
     const mockData: AdministrativeDivision[] = [
       // 省份
-      { id: '1', name: '广东省', code: '440000', level: 'province', status: 'enabled' },
-      { id: '2', name: '北京市', code: '110000', level: 'province', status: 'enabled' },
-      { id: '3', name: '上海市', code: '310000', level: 'province', status: 'enabled' },
-      { id: '4', name: '浙江省', code: '330000', level: 'province', status: 'enabled' },
+      { 
+        id: '1', 
+        name: '广东省', 
+        code: '440000', 
+        level: 'province', 
+        status: 'enabled' 
+      },
+      { 
+        id: '2', 
+        name: '北京市', 
+        code: '110000', 
+        level: 'province', 
+        status: 'enabled' 
+      },
+      { 
+        id: '3', 
+        name: '上海市', 
+        code: '310000', 
+        level: 'province', 
+        status: 'enabled' 
+      },
+      { 
+        id: '4', 
+        name: '浙江省', 
+        code: '330000', 
+        level: 'province', 
+        status: 'enabled' 
+      },
       
       // 城市
-      { id: '5', name: '深圳市', code: '440300', level: 'city', parentId: '1', parentName: '广东省', status: 'enabled' },
-      { id: '6', name: '广州市', code: '440100', level: 'city', parentId: '1', parentName: '广东省', status: 'enabled' },
-      { id: '7', name: '杭州市', code: '330100', level: 'city', parentId: '4', parentName: '浙江省', status: 'enabled' },
-      { id: '8', name: '宁波市', code: '330200', level: 'city', parentId: '4', parentName: '浙江省', status: 'enabled' },
+      { 
+        id: '5', 
+        name: '深圳市', 
+        code: '440300', 
+        level: 'city', 
+        parentId: '1', 
+        parentName: '广东省',
+        provinceId: '1',
+        provinceName: '广东省',
+        status: 'enabled' 
+      },
+      { 
+        id: '6', 
+        name: '广州市', 
+        code: '440100', 
+        level: 'city', 
+        parentId: '1', 
+        parentName: '广东省',
+        provinceId: '1',
+        provinceName: '广东省',
+        status: 'enabled' 
+      },
+      { 
+        id: '7', 
+        name: '杭州市', 
+        code: '330100', 
+        level: 'city', 
+        parentId: '4', 
+        parentName: '浙江省',
+        provinceId: '4',
+        provinceName: '浙江省',
+        status: 'enabled' 
+      },
+      { 
+        id: '8', 
+        name: '宁波市', 
+        code: '330200', 
+        level: 'city', 
+        parentId: '4', 
+        parentName: '浙江省',
+        provinceId: '4',
+        provinceName: '浙江省',
+        status: 'enabled' 
+      },
       
       // 区县
-      { id: '9', name: '南山区', code: '440305', level: 'district', parentId: '5', parentName: '深圳市', status: 'enabled' },
-      { id: '10', name: '福田区', code: '440304', level: 'district', parentId: '5', parentName: '深圳市', status: 'enabled' },
-      { id: '11', name: '天河区', code: '440106', level: 'district', parentId: '6', parentName: '广州市', status: 'enabled' },
-      { id: '12', name: '西湖区', code: '330106', level: 'district', parentId: '7', parentName: '杭州市', status: 'enabled' },
+      { 
+        id: '9', 
+        name: '南山区', 
+        code: '440305', 
+        level: 'district', 
+        parentId: '5', 
+        parentName: '深圳市',
+        provinceId: '1',
+        provinceName: '广东省',
+        cityId: '5',
+        cityName: '深圳市',
+        status: 'enabled' 
+      },
+      { 
+        id: '10', 
+        name: '福田区', 
+        code: '440304', 
+        level: 'district', 
+        parentId: '5', 
+        parentName: '深圳市',
+        provinceId: '1',
+        provinceName: '广东省',
+        cityId: '5',
+        cityName: '深圳市',
+        status: 'enabled' 
+      },
+      { 
+        id: '11', 
+        name: '天河区', 
+        code: '440106', 
+        level: 'district', 
+        parentId: '6', 
+        parentName: '广州市',
+        provinceId: '1',
+        provinceName: '广东省',
+        cityId: '6',
+        cityName: '广州市',
+        status: 'enabled' 
+      },
+      { 
+        id: '12', 
+        name: '西湖区', 
+        code: '330106', 
+        level: 'district', 
+        parentId: '7', 
+        parentName: '杭州市',
+        provinceId: '4',
+        provinceName: '浙江省',
+        cityId: '7',
+        cityName: '杭州市',
+        status: 'enabled' 
+      },
       
       // 街道
-      { id: '13', name: '粤海街道', code: '440305001', level: 'street', parentId: '9', parentName: '南山区', status: 'enabled' },
-      { id: '14', name: '南头街道', code: '440305002', level: 'street', parentId: '9', parentName: '南山区', status: 'enabled' },
-      { id: '15', name: '园岭街道', code: '440304001', level: 'street', parentId: '10', parentName: '福田区', status: 'enabled' },
-      { id: '16', name: '沙头街道', code: '440304002', level: 'street', parentId: '10', parentName: '福田区', status: 'enabled' }
+      { 
+        id: '13', 
+        name: '粤海街道', 
+        code: '440305001', 
+        level: 'street', 
+        parentId: '9', 
+        parentName: '南山区',
+        provinceId: '1',
+        provinceName: '广东省',
+        cityId: '5',
+        cityName: '深圳市',
+        districtId: '9',
+        districtName: '南山区',
+        status: 'enabled' 
+      },
+      { 
+        id: '14', 
+        name: '南头街道', 
+        code: '440305002', 
+        level: 'street', 
+        parentId: '9', 
+        parentName: '南山区',
+        provinceId: '1',
+        provinceName: '广东省',
+        cityId: '5',
+        cityName: '深圳市',
+        districtId: '9',
+        districtName: '南山区',
+        status: 'enabled' 
+      },
+      { 
+        id: '15', 
+        name: '园岭街道', 
+        code: '440304001', 
+        level: 'street', 
+        parentId: '10', 
+        parentName: '福田区',
+        provinceId: '1',
+        provinceName: '广东省',
+        cityId: '5',
+        cityName: '深圳市',
+        districtId: '10',
+        districtName: '福田区',
+        status: 'enabled' 
+      },
+      { 
+        id: '16', 
+        name: '沙头街道', 
+        code: '440304002', 
+        level: 'street', 
+        parentId: '10', 
+        parentName: '福田区',
+        provinceId: '1',
+        provinceName: '广东省',
+        cityId: '5',
+        cityName: '深圳市',
+        districtId: '10',
+        districtName: '福田区',
+        status: 'enabled' 
+      },
+      
+      // 村/居委会
+      { 
+        id: '17', 
+        name: '深圳湾社区', 
+        code: '440305001001', 
+        level: 'village', 
+        parentId: '13', 
+        parentName: '粤海街道',
+        provinceId: '1',
+        provinceName: '广东省',
+        cityId: '5',
+        cityName: '深圳市',
+        districtId: '9',
+        districtName: '南山区',
+        streetId: '13',
+        streetName: '粤海街道',
+        status: 'enabled' 
+      },
+      { 
+        id: '18', 
+        name: '科技园社区', 
+        code: '440305001002', 
+        level: 'village', 
+        parentId: '13', 
+        parentName: '粤海街道',
+        provinceId: '1',
+        provinceName: '广东省',
+        cityId: '5',
+        cityName: '深圳市',
+        districtId: '9',
+        districtName: '南山区',
+        streetId: '13',
+        streetName: '粤海街道',
+        status: 'enabled' 
+      },
+      { 
+        id: '19', 
+        name: '南光社区', 
+        code: '440305002001', 
+        level: 'village', 
+        parentId: '14', 
+        parentName: '南头街道',
+        provinceId: '1',
+        provinceName: '广东省',
+        cityId: '5',
+        cityName: '深圳市',
+        districtId: '9',
+        districtName: '南山区',
+        streetId: '14',
+        streetName: '南头街道',
+        status: 'enabled' 
+      },
+      { 
+        id: '20', 
+        name: '园东社区', 
+        code: '440304001001', 
+        level: 'village', 
+        parentId: '15', 
+        parentName: '园岭街道',
+        provinceId: '1',
+        provinceName: '广东省',
+        cityId: '5',
+        cityName: '深圳市',
+        districtId: '10',
+        districtName: '福田区',
+        streetId: '15',
+        streetName: '园岭街道',
+        status: 'enabled' 
+      }
     ];
 
     setDivisionData(mockData);
@@ -164,6 +417,46 @@ const ChinaAdministrativeDivision: React.FC = () => {
     
     return divisionData
       .filter(item => item.level === parentLevel && item.status === 'enabled')
+      .map(item => ({ value: item.id, label: item.name }));
+  };
+
+  // 获取省份选项
+  const getProvinceOptions = () => {
+    return divisionData
+      .filter(item => item.level === 'province' && item.status === 'enabled')
+      .map(item => ({ value: item.id, label: item.name }));
+  };
+
+  // 获取城市选项
+  const getCityOptions = (provinceId: string) => {
+    return divisionData
+      .filter(item => 
+        item.level === 'city' && 
+        item.status === 'enabled' && 
+        item.provinceId === provinceId
+      )
+      .map(item => ({ value: item.id, label: item.name }));
+  };
+
+  // 获取区县选项
+  const getDistrictOptions = (cityId: string) => {
+    return divisionData
+      .filter(item => 
+        item.level === 'district' && 
+        item.status === 'enabled' && 
+        item.cityId === cityId
+      )
+      .map(item => ({ value: item.id, label: item.name }));
+  };
+
+  // 获取街道选项
+  const getStreetOptions = (districtId: string) => {
+    return divisionData
+      .filter(item => 
+        item.level === 'street' && 
+        item.status === 'enabled' && 
+        item.districtId === districtId
+      )
       .map(item => ({ value: item.id, label: item.name }));
   };
 
@@ -259,10 +552,42 @@ const ChinaAdministrativeDivision: React.FC = () => {
   const handleEdit = (record: AdministrativeDivision) => {
     setCurrentDivision(record);
     setIsEditing(true);
+    
+    // 初始化联动选择状态
+    if (record.level === 'city') {
+      setSelectedProvince(record.provinceId || '');
+      setSelectedCity('');
+      setSelectedDistrict('');
+      setSelectedStreet('');
+    } else if (record.level === 'district') {
+      setSelectedProvince(record.provinceId || '');
+      setSelectedCity(record.cityId || '');
+      setSelectedDistrict('');
+      setSelectedStreet('');
+    } else if (record.level === 'street') {
+      setSelectedProvince(record.provinceId || '');
+      setSelectedCity(record.cityId || '');
+      setSelectedDistrict(record.districtId || '');
+      setSelectedStreet('');
+    } else if (record.level === 'village') {
+      setSelectedProvince(record.provinceId || '');
+      setSelectedCity(record.cityId || '');
+      setSelectedDistrict(record.districtId || '');
+      setSelectedStreet(record.streetId || '');
+    } else {
+      setSelectedProvince('');
+      setSelectedCity('');
+      setSelectedDistrict('');
+      setSelectedStreet('');
+    }
+    
     editForm.setFieldsValue({
       name: record.name,
       code: record.code,
-      parentId: record.parentId
+      provinceId: record.provinceId,
+      cityId: record.cityId,
+      districtId: record.districtId,
+      streetId: record.streetId
     });
     setEditModalVisible(true);
   };
@@ -271,6 +596,10 @@ const ChinaAdministrativeDivision: React.FC = () => {
   const handleAdd = () => {
     setCurrentDivision(null);
     setIsEditing(false);
+    setSelectedProvince('');
+    setSelectedCity('');
+    setSelectedDistrict('');
+    setSelectedStreet('');
     editForm.resetFields();
     setEditModalVisible(true);
   };
@@ -323,20 +652,70 @@ const ChinaAdministrativeDivision: React.FC = () => {
       const values = await editForm.validate();
       const currentLevel = activeTab as DivisionLevel;
       
-      // 获取上级名称
-      let parentName = '';
-      if (values.parentId && currentLevel !== 'province') {
-        const parent = divisionData.find(item => item.id === values.parentId);
-        parentName = parent?.name || '';
-      }
-      
-      const divisionItem = {
+      // 构建完整的行政区划信息
+      let divisionItem: Partial<AdministrativeDivision> = {
         ...values,
         id: isEditing ? currentDivision?.id : Date.now().toString(),
         level: currentLevel,
-        parentName,
         status: isEditing ? currentDivision?.status : 'enabled' as const
       };
+
+      // 根据级别设置父级信息和完整层级信息
+      if (currentLevel === 'city') {
+        const province = divisionData.find(item => item.id === values.provinceId);
+        divisionItem = {
+          ...divisionItem,
+          parentId: values.provinceId,
+          parentName: province?.name,
+          provinceId: values.provinceId,
+          provinceName: province?.name
+        };
+      } else if (currentLevel === 'district') {
+        const province = divisionData.find(item => item.id === values.provinceId);
+        const city = divisionData.find(item => item.id === values.cityId);
+        divisionItem = {
+          ...divisionItem,
+          parentId: values.cityId,
+          parentName: city?.name,
+          provinceId: values.provinceId,
+          provinceName: province?.name,
+          cityId: values.cityId,
+          cityName: city?.name
+        };
+      } else if (currentLevel === 'street') {
+        const province = divisionData.find(item => item.id === values.provinceId);
+        const city = divisionData.find(item => item.id === values.cityId);
+        const district = divisionData.find(item => item.id === values.districtId);
+        divisionItem = {
+          ...divisionItem,
+          parentId: values.districtId,
+          parentName: district?.name,
+          provinceId: values.provinceId,
+          provinceName: province?.name,
+          cityId: values.cityId,
+          cityName: city?.name,
+          districtId: values.districtId,
+          districtName: district?.name
+        };
+      } else if (currentLevel === 'village') {
+        const province = divisionData.find(item => item.id === values.provinceId);
+        const city = divisionData.find(item => item.id === values.cityId);
+        const district = divisionData.find(item => item.id === values.districtId);
+        const street = divisionData.find(item => item.id === values.streetId);
+        divisionItem = {
+          ...divisionItem,
+          parentId: values.streetId,
+          parentName: street?.name,
+          provinceId: values.provinceId,
+          provinceName: province?.name,
+          cityId: values.cityId,
+          cityName: city?.name,
+          districtId: values.districtId,
+          districtName: district?.name,
+          streetId: values.streetId,
+          streetName: street?.name
+        };
+      }
 
       if (isEditing) {
         // 更新现有行政区划
@@ -346,13 +725,17 @@ const ChinaAdministrativeDivision: React.FC = () => {
         Message.success('行政区划信息已更新');
       } else {
         // 新增行政区划
-        const newDivision = { ...divisionItem, id: Date.now().toString() };
+        const newDivision = { ...divisionItem, id: Date.now().toString() } as AdministrativeDivision;
         setDivisionData(prev => [...prev, newDivision]);
         Message.success('行政区划已添加');
       }
 
       setEditModalVisible(false);
       editForm.resetFields();
+      setSelectedProvince('');
+      setSelectedCity('');
+      setSelectedDistrict('');
+      setSelectedStreet('');
       filterDataByLevel(activeTab);
     } catch (error) {
       console.error('保存失败:', error);
@@ -474,7 +857,7 @@ const ChinaAdministrativeDivision: React.FC = () => {
         visible={editModalVisible}
         onOk={handleSaveDivision}
         onCancel={() => setEditModalVisible(false)}
-        style={{ width: 500 }}
+        style={{ width: 600 }}
       >
         <Form form={editForm} layout="vertical">
           <Form.Item
@@ -493,18 +876,238 @@ const ChinaAdministrativeDivision: React.FC = () => {
             <Input placeholder="请输入行政区划编码" />
           </Form.Item>
           
-          {activeTab !== 'province' && (
+          {/* 城市需要选择省 */}
+          {activeTab === 'city' && (
             <Form.Item
-              field="parentId"
-              label="上级行政区划"
-              rules={[{ required: true, message: '请选择上级行政区划' }]}
+              field="provinceId"
+              label="所属省份"
+              rules={[{ required: true, message: '请选择所属省份' }]}
             >
-              <Select placeholder="请选择上级行政区划">
-                {getParentOptions(currentTab?.level || 'province').map(option => (
+              <Select 
+                placeholder="请选择所属省份"
+                value={selectedProvince}
+                onChange={(value) => {
+                  setSelectedProvince(value);
+                  editForm.setFieldValue('provinceId', value);
+                }}
+              >
+                {getProvinceOptions().map(option => (
                   <Option key={option.value} value={option.value}>{option.label}</Option>
                 ))}
               </Select>
             </Form.Item>
+          )}
+
+          {/* 区县需要选择省市 */}
+          {activeTab === 'district' && (
+            <>
+              <Form.Item
+                field="provinceId"
+                label="所属省份"
+                rules={[{ required: true, message: '请选择所属省份' }]}
+              >
+                <Select 
+                  placeholder="请选择所属省份"
+                  value={selectedProvince}
+                  onChange={(value) => {
+                    setSelectedProvince(value);
+                    setSelectedCity('');
+                    editForm.setFieldValue('provinceId', value);
+                    editForm.setFieldValue('cityId', '');
+                  }}
+                >
+                  {getProvinceOptions().map(option => (
+                    <Option key={option.value} value={option.value}>{option.label}</Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              
+              <Form.Item
+                field="cityId"
+                label="所属城市"
+                rules={[{ required: true, message: '请选择所属城市' }]}
+              >
+                <Select 
+                  placeholder="请选择所属城市"
+                  value={selectedCity}
+                  onChange={(value) => {
+                    setSelectedCity(value);
+                    editForm.setFieldValue('cityId', value);
+                  }}
+                  disabled={!selectedProvince}
+                >
+                  {getCityOptions(selectedProvince).map(option => (
+                    <Option key={option.value} value={option.value}>{option.label}</Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </>
+          )}
+
+          {/* 街道需要选择省市区 */}
+          {activeTab === 'street' && (
+            <>
+              <Form.Item
+                field="provinceId"
+                label="所属省份"
+                rules={[{ required: true, message: '请选择所属省份' }]}
+              >
+                <Select 
+                  placeholder="请选择所属省份"
+                  value={selectedProvince}
+                  onChange={(value) => {
+                    setSelectedProvince(value);
+                    setSelectedCity('');
+                    setSelectedDistrict('');
+                    editForm.setFieldValue('provinceId', value);
+                    editForm.setFieldValue('cityId', '');
+                    editForm.setFieldValue('districtId', '');
+                  }}
+                >
+                  {getProvinceOptions().map(option => (
+                    <Option key={option.value} value={option.value}>{option.label}</Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              
+              <Form.Item
+                field="cityId"
+                label="所属城市"
+                rules={[{ required: true, message: '请选择所属城市' }]}
+              >
+                <Select 
+                  placeholder="请选择所属城市"
+                  value={selectedCity}
+                  onChange={(value) => {
+                    setSelectedCity(value);
+                    setSelectedDistrict('');
+                    editForm.setFieldValue('cityId', value);
+                    editForm.setFieldValue('districtId', '');
+                  }}
+                  disabled={!selectedProvince}
+                >
+                  {getCityOptions(selectedProvince).map(option => (
+                    <Option key={option.value} value={option.value}>{option.label}</Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              
+              <Form.Item
+                field="districtId"
+                label="所属区县"
+                rules={[{ required: true, message: '请选择所属区县' }]}
+              >
+                <Select 
+                  placeholder="请选择所属区县"
+                  value={selectedDistrict}
+                  onChange={(value) => {
+                    setSelectedDistrict(value);
+                    editForm.setFieldValue('districtId', value);
+                  }}
+                  disabled={!selectedCity}
+                >
+                  {getDistrictOptions(selectedCity).map(option => (
+                    <Option key={option.value} value={option.value}>{option.label}</Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </>
+          )}
+
+          {/* 村/居委会需要选择省市区街道 */}
+          {activeTab === 'village' && (
+            <>
+              <Form.Item
+                field="provinceId"
+                label="所属省份"
+                rules={[{ required: true, message: '请选择所属省份' }]}
+              >
+                <Select 
+                  placeholder="请选择所属省份"
+                  value={selectedProvince}
+                  onChange={(value) => {
+                    setSelectedProvince(value);
+                    setSelectedCity('');
+                    setSelectedDistrict('');
+                    setSelectedStreet('');
+                    editForm.setFieldValue('provinceId', value);
+                    editForm.setFieldValue('cityId', '');
+                    editForm.setFieldValue('districtId', '');
+                    editForm.setFieldValue('streetId', '');
+                  }}
+                >
+                  {getProvinceOptions().map(option => (
+                    <Option key={option.value} value={option.value}>{option.label}</Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              
+              <Form.Item
+                field="cityId"
+                label="所属城市"
+                rules={[{ required: true, message: '请选择所属城市' }]}
+              >
+                <Select 
+                  placeholder="请选择所属城市"
+                  value={selectedCity}
+                  onChange={(value) => {
+                    setSelectedCity(value);
+                    setSelectedDistrict('');
+                    setSelectedStreet('');
+                    editForm.setFieldValue('cityId', value);
+                    editForm.setFieldValue('districtId', '');
+                    editForm.setFieldValue('streetId', '');
+                  }}
+                  disabled={!selectedProvince}
+                >
+                  {getCityOptions(selectedProvince).map(option => (
+                    <Option key={option.value} value={option.value}>{option.label}</Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              
+              <Form.Item
+                field="districtId"
+                label="所属区县"
+                rules={[{ required: true, message: '请选择所属区县' }]}
+              >
+                <Select 
+                  placeholder="请选择所属区县"
+                  value={selectedDistrict}
+                  onChange={(value) => {
+                    setSelectedDistrict(value);
+                    setSelectedStreet('');
+                    editForm.setFieldValue('districtId', value);
+                    editForm.setFieldValue('streetId', '');
+                  }}
+                  disabled={!selectedCity}
+                >
+                  {getDistrictOptions(selectedCity).map(option => (
+                    <Option key={option.value} value={option.value}>{option.label}</Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              
+              <Form.Item
+                field="streetId"
+                label="所属街道"
+                rules={[{ required: true, message: '请选择所属街道' }]}
+              >
+                <Select 
+                  placeholder="请选择所属街道"
+                  value={selectedStreet}
+                  onChange={(value) => {
+                    setSelectedStreet(value);
+                    editForm.setFieldValue('streetId', value);
+                  }}
+                  disabled={!selectedDistrict}
+                >
+                  {getStreetOptions(selectedDistrict).map(option => (
+                    <Option key={option.value} value={option.value}>{option.label}</Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </>
           )}
         </Form>
       </Modal>
