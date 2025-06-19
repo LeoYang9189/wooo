@@ -6,7 +6,6 @@ import {
   Space,
   Tag,
   Checkbox,
-  Tooltip,
   Modal,
   Form,
   Input,
@@ -18,8 +17,6 @@ import {
 import {
   IconPlus,
   IconEdit,
-  IconSettings,
-  IconMinus,
   IconSearch,
   IconRefresh
 } from '@arco-design/web-react/icon';
@@ -35,24 +32,8 @@ interface CountryRegion {
   code: string;
   continent: string;
   areaCode: string;
-  ediCodes: EDICode[];
   status: 'enabled' | 'disabled';
 }
-
-// EDI代码接口
-interface EDICode {
-  id: string;
-  platform: string;
-  ediCode: string;
-}
-
-// 平台选项
-const platformOptions = [
-  { value: '亿通', label: '亿通' },
-  { value: 'INTTRA', label: 'INTTRA' },
-  { value: '乐域', label: '乐域' },
-  { value: 'CargoSmart', label: 'CargoSmart' }
-];
 
 // 大洲选项
 const continentOptions = [
@@ -76,7 +57,6 @@ const CountryRegionManagement: React.FC = () => {
   const [countryData, setCountryData] = useState<CountryRegion[]>([]);
   const [filteredData, setFilteredData] = useState<CountryRegion[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
-  const [ediModalVisible, setEdiModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [currentCountry, setCurrentCountry] = useState<CountryRegion | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -85,7 +65,6 @@ const CountryRegionManagement: React.FC = () => {
     continent: '',
     status: ''
   });
-  const [form] = Form.useForm();
   const [editForm] = Form.useForm();
 
   // 初始化示例数据
@@ -98,10 +77,6 @@ const CountryRegionManagement: React.FC = () => {
         code: 'CN',
         continent: 'Asia',
         areaCode: '+86',
-        ediCodes: [
-          { id: '1', platform: '亿通', ediCode: 'CN001' },
-          { id: '2', platform: 'INTTRA', ediCode: 'CHINA' }
-        ],
         status: 'enabled' as const
       },
       {
@@ -111,9 +86,6 @@ const CountryRegionManagement: React.FC = () => {
         code: 'US',
         continent: 'North America',
         areaCode: '+1',
-        ediCodes: [
-          { id: '3', platform: 'CargoSmart', ediCode: 'US001' }
-        ],
         status: 'enabled' as const
       },
       {
@@ -123,10 +95,6 @@ const CountryRegionManagement: React.FC = () => {
         code: 'GB',
         continent: 'Europe',
         areaCode: '+44',
-        ediCodes: [
-          { id: '4', platform: '乐域', ediCode: 'GB001' },
-          { id: '5', platform: '亿通', ediCode: 'UK' }
-        ],
         status: 'enabled' as const
       },
       {
@@ -136,9 +104,6 @@ const CountryRegionManagement: React.FC = () => {
         code: 'DE',
         continent: 'Europe',
         areaCode: '+49',
-        ediCodes: [
-          { id: '6', platform: 'INTTRA', ediCode: 'DE001' }
-        ],
         status: 'disabled' as const
       },
       {
@@ -148,9 +113,6 @@ const CountryRegionManagement: React.FC = () => {
         code: 'JP',
         continent: 'Asia',
         areaCode: '+81',
-        ediCodes: [
-          { id: '7', platform: '亿通', ediCode: 'JP001' }
-        ],
         status: 'enabled' as const
       }
     ];
@@ -256,28 +218,6 @@ const CountryRegionManagement: React.FC = () => {
       width: 100,
     },
     {
-      title: 'EDI代码',
-      dataIndex: 'ediCodes',
-      width: 150,
-      render: (ediCodes: EDICode[]) => (
-        <Tooltip
-          content={
-            <div>
-              {ediCodes.map(code => (
-                <div key={code.id} style={{ marginBottom: '4px' }}>
-                  <strong>{code.platform}:</strong> {code.ediCode}
-                </div>
-              ))}
-            </div>
-          }
-        >
-          <Tag color="orange" style={{ cursor: 'pointer' }}>
-            {ediCodes.length} 个代码
-          </Tag>
-        </Tooltip>
-      ),
-    },
-    {
       title: '状态',
       dataIndex: 'status',
       width: 100,
@@ -290,7 +230,7 @@ const CountryRegionManagement: React.FC = () => {
     {
       title: '操作',
       dataIndex: 'action',
-      width: 220,
+      width: 150,
       fixed: 'right' as const,
       render: (_: unknown, record: CountryRegion) => (
         <Space>
@@ -314,14 +254,6 @@ const CountryRegionManagement: React.FC = () => {
               {record.status === 'enabled' ? '禁用' : '启用'}
             </Button>
           </Popconfirm>
-          <Button
-            type="text"
-            size="small"
-            icon={<IconSettings />}
-            onClick={() => handleEdiCodeSetting(record)}
-          >
-            EDI代码设置
-          </Button>
         </Space>
       ),
     },
@@ -397,15 +329,6 @@ const CountryRegionManagement: React.FC = () => {
     Message.success(`已禁用 ${selectedRowKeys.length} 个国家（地区）`);
   };
 
-  // 处理EDI代码设置
-  const handleEdiCodeSetting = (record: CountryRegion) => {
-    setCurrentCountry(record);
-    form.setFieldsValue({
-      ediCodes: record.ediCodes
-    });
-    setEdiModalVisible(true);
-  };
-
   // 保存国家（地区）编辑
   const handleSaveCountry = async () => {
     try {
@@ -414,7 +337,6 @@ const CountryRegionManagement: React.FC = () => {
       const countryDataItem = {
         ...values,
         id: isEditing ? currentCountry?.id : Date.now().toString(),
-        ediCodes: isEditing ? currentCountry?.ediCodes || [] : [],
         status: isEditing ? currentCountry?.status : 'enabled' as const
       };
 
@@ -429,7 +351,7 @@ const CountryRegionManagement: React.FC = () => {
         Message.success('国家（地区）信息已更新');
       } else {
         // 新增国家（地区）
-        const newCountry = { ...countryDataItem, id: Date.now().toString(), ediCodes: [] };
+        const newCountry = { ...countryDataItem, id: Date.now().toString() };
         setCountryData(prev => [...prev, newCountry]);
         setFilteredData(prev => [...prev, newCountry]);
         Message.success('国家（地区）已添加');
@@ -439,27 +361,6 @@ const CountryRegionManagement: React.FC = () => {
       editForm.resetFields();
     } catch (error) {
       console.error('保存失败:', error);
-    }
-  };
-
-  // 保存EDI代码
-  const handleSaveEdiCodes = async () => {
-    try {
-      const values = await form.validate();
-      const ediCodes = values.ediCodes || [];
-
-      setCountryData(prev => prev.map(country => 
-        country.id === currentCountry?.id ? { ...country, ediCodes } : country
-      ));
-      setFilteredData(prev => prev.map(country => 
-        country.id === currentCountry?.id ? { ...country, ediCodes } : country
-      ));
-
-      setEdiModalVisible(false);
-      form.resetFields();
-      Message.success('EDI代码已保存');
-    } catch (error) {
-      console.error('保存EDI代码失败:', error);
     }
   };
 
@@ -547,7 +448,7 @@ const CountryRegionManagement: React.FC = () => {
         columns={columns}
         data={filteredData}
         rowKey="id"
-        scroll={{ x: 1400 }}
+        scroll={{ x: 1000 }}
         pagination={{
           pageSize: 10,
           showTotal: true,
@@ -632,63 +533,6 @@ const CountryRegionManagement: React.FC = () => {
               <Input placeholder="请输入区号，如：+86" />
             </Form.Item>
           </div>
-        </Form>
-      </Modal>
-
-      {/* EDI代码设置弹窗 */}
-      <Modal
-        title="EDI代码设置"
-        visible={ediModalVisible}
-        onOk={handleSaveEdiCodes}
-        onCancel={() => setEdiModalVisible(false)}
-        style={{ width: 600 }}
-      >
-        <Form form={form} layout="vertical">
-          <Form.Item field="ediCodes" label="EDI代码列表">
-            <Form.List field="ediCodes">
-              {(fields, { add, remove }) => (
-                <div>
-                  {fields.map((item, index) => (
-                    <div key={item.key} style={{ display: 'flex', gap: '12px', marginBottom: '12px', alignItems: 'flex-start' }}>
-                      <Form.Item
-                        field={`${item.field}.platform`}
-                        rules={[{ required: true, message: '请选择平台' }]}
-                        style={{ flex: 1, marginBottom: 0 }}
-                      >
-                        <Select placeholder="选择平台">
-                          {platformOptions.map(option => (
-                            <Option key={option.value} value={option.value}>{option.label}</Option>
-                          ))}
-                        </Select>
-                      </Form.Item>
-                      <Form.Item
-                        field={`${item.field}.ediCode`}
-                        rules={[{ required: true, message: '请输入EDI代码' }]}
-                        style={{ flex: 1, marginBottom: 0 }}
-                      >
-                        <Input placeholder="请输入EDI代码" />
-                      </Form.Item>
-                      <Button
-                        type="text"
-                        icon={<IconMinus />}
-                        status="danger"
-                        onClick={() => remove(index)}
-                        style={{ marginTop: '4px' }}
-                      />
-                    </div>
-                  ))}
-                  <Button
-                    type="dashed"
-                    icon={<IconPlus />}
-                    onClick={() => add({ id: Date.now().toString(), platform: '', ediCode: '' })}
-                    style={{ width: '100%' }}
-                  >
-                    添加EDI代码
-                  </Button>
-                </div>
-              )}
-            </Form.List>
-          </Form.Item>
         </Form>
       </Modal>
     </Card>
