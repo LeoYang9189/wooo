@@ -300,6 +300,9 @@ const ControlTowerRoutes: React.FC = () => {
       <Route path="/route-maintenance" element={<RouteMaintenance />} />
       <Route path="/route-maintenance/add" element={<RouteForm />} />
       <Route path="/route-maintenance/edit/:id" element={<RouteForm />} />
+      <Route path="/controltower/route-maintenance" element={<RouteMaintenance />} />
+      <Route path="/controltower/route-maintenance/add" element={<RouteForm />} />
+      <Route path="/controltower/route-maintenance/edit/:id" element={<RouteForm />} />
       <Route path="/schedule-query" element={<ScheduleQuery />} />
       {/* --- 结束 --- */}
     </Routes>
