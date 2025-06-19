@@ -33,6 +33,7 @@ import SurchargeManagement from './saas/SurchargeManagement';
 import SurchargeForm from './saas/SurchargeForm';
 import CreatePrecarriageRate from './saas/CreatePrecarriageRate';
 import CreateLastMileRate from './saas/CreateLastMileRate';
+import CreateFclRate from './saas/CreateFclRate';
 import CreateRoute from './saas/CreateRoute';
 import CreateRegion from './saas/CreateRegion';
 import CreateFclInquiry from './saas/CreateFclInquiry';
@@ -214,6 +215,16 @@ const ControlTowerRoutes: React.FC = () => {
           <CreateLastMileRate />
         </SaasPageWrapper>
       } />
+      <Route path="/saas/create-fcl-rate" element={
+        <SaasPageWrapper>
+          <CreateFclRate />
+        </SaasPageWrapper>
+      } />
+      <Route path="/saas/edit-fcl-rate/:id" element={
+        <SaasPageWrapper>
+          <CreateFclRate />
+        </SaasPageWrapper>
+      } />
       
       {/* 新增路由 - 创建页面 */}
       <Route path="/saas/create-route" element={
@@ -300,9 +311,6 @@ const ControlTowerRoutes: React.FC = () => {
       <Route path="/route-maintenance" element={<RouteMaintenance />} />
       <Route path="/route-maintenance/add" element={<RouteForm />} />
       <Route path="/route-maintenance/edit/:id" element={<RouteForm />} />
-      <Route path="/controltower/route-maintenance" element={<RouteMaintenance />} />
-      <Route path="/controltower/route-maintenance/add" element={<RouteForm />} />
-      <Route path="/controltower/route-maintenance/edit/:id" element={<RouteForm />} />
       <Route path="/schedule-query" element={<ScheduleQuery />} />
       {/* --- 结束 --- */}
     </Routes>

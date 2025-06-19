@@ -18,15 +18,15 @@ import {
   Tooltip,
   Tabs,
   Input,
-  Drawer
+  Drawer,
+  Dropdown,
+  Menu
 } from '@arco-design/web-react';
 import { 
   IconSearch, 
   IconPlus, 
   IconUpload, 
-  IconDownload, 
-  IconEdit, 
-  IconDelete, 
+ 
   IconRefresh, 
   IconRobot,
   IconList,
@@ -37,6 +37,73 @@ import {
 } from '@arco-design/web-react/icon';
 import '@arco-design/web-react/dist/css/arco.css';
 import './InquiryManagement.css';
+
+// 添加双倍行高样式和对齐样式
+const customTableStyle = `
+  .table-row-double-height .arco-table-td {
+    height: 60px !important;
+    vertical-align: middle;
+  }
+  .table-row-double-height .arco-table-cell {
+    line-height: 1.2;
+    padding: 12px 16px;
+  }
+  .inquiry-table-nowrap .arco-table-td {
+    text-align: left !important;
+  }
+  .inquiry-table-nowrap .arco-table-th {
+    text-align: center !important;
+  }
+  .inquiry-table-nowrap .arco-table-cell {
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+  }
+  .inquiry-table-nowrap .arco-table-th .arco-table-cell {
+    text-align: center !important;
+    padding: 12px 16px !important;
+  }
+  .inquiry-table-nowrap .arco-table-td .arco-table-cell {
+    text-align: left !important;
+    padding: 12px 16px !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+  }
+  .inquiry-table-nowrap .arco-table-thead .arco-table-th {
+    text-align: center !important;
+  }
+  .inquiry-table-nowrap .arco-table-tbody .arco-table-td {
+    text-align: left !important;
+  }
+  .no-ellipsis {
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+  }
+  .arco-table-selection-col {
+    text-align: center !important;
+  }
+  .arco-table-selection-col .arco-table-cell {
+    text-align: center !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+  .arco-table-selection-col .arco-checkbox {
+    margin: 0 auto !important;
+  }
+  .arco-table-selection-col .arco-checkbox-wrapper {
+    margin: 0 auto !important;
+  }
+`;
+
+// 注入样式
+if (typeof document !== 'undefined') {
+  const styleElement = document.createElement('style');
+  styleElement.textContent = customTableStyle;
+  document.head.appendChild(styleElement);
+}
 import { useNavigate } from 'react-router-dom';
 import ControlTowerSaasLayout from "./ControlTowerSaasLayout";
 
@@ -103,6 +170,77 @@ const getFilterFieldsByTab = (activeTab: string): FilterFieldConfig[] => {
     case 'air':
       return [
         {
+          key: 'routeCode',
+          label: '运价号',
+          type: 'text',
+          placeholder: '请输入运价号'
+        },
+        {
+          key: 'rateType',
+          label: '运价类型',
+          type: 'select',
+          options: [
+            { label: '合约价', value: '合约价' },
+            { label: 'SPOT电商', value: 'SPOT电商' }
+          ],
+          placeholder: '请选择运价类型'
+        },
+        {
+          key: 'departurePort',
+          label: '起运港',
+          type: 'select',
+          options: [
+            { label: 'CNSHA', value: 'CNSHA' },
+            { label: 'CNNGB', value: 'CNNGB' },
+            { label: 'CNQIN', value: 'CNQIN' },
+            { label: 'CNYTN', value: 'CNYTN' }
+          ],
+          placeholder: '请选择起运港'
+        },
+        {
+          key: 'dischargePort',
+          label: '目的港',
+          type: 'select',
+          options: [
+            { label: 'USLAX', value: 'USLAX' },
+            { label: 'USNYC', value: 'USNYC' },
+            { label: 'USLGB', value: 'USLGB' },
+            { label: 'USOAK', value: 'USOAK' }
+          ],
+          placeholder: '请选择目的港'
+        },
+        {
+          key: 'directTransit',
+          label: '直达',
+          type: 'select',
+          options: [
+            { label: '直达', value: '直达' },
+            { label: '中转', value: '中转' }
+          ],
+          placeholder: '请选择直达/中转'
+        },
+        {
+          key: 'transitPort',
+          label: '中转港',
+          type: 'select',
+          options: [
+            { label: 'SINGAPORE', value: 'SINGAPORE' },
+            { label: 'HONG KONG', value: 'HONG KONG' },
+            { label: 'KRPUS', value: 'KRPUS' }
+          ],
+          placeholder: '请选择中转港'
+        },
+        {
+          key: 'transitType',
+          label: '中转类型',
+          type: 'select',
+          options: [
+            { label: '直达', value: '直达' },
+            { label: '中转', value: '中转' }
+          ],
+          placeholder: '请选择中转类型'
+        },
+        {
           key: 'shipCompany',
           label: '船公司',
           type: 'select',
@@ -110,77 +248,179 @@ const getFilterFieldsByTab = (activeTab: string): FilterFieldConfig[] => {
             { label: 'SITC', value: 'SITC' },
             { label: 'COSCO', value: 'COSCO' },
             { label: 'MSK', value: 'MSK' },
-            { label: 'ONE', value: 'ONE' }
+            { label: 'ONE', value: 'ONE' },
+            { label: 'MAERSK', value: 'MAERSK' },
+            { label: 'EVERGREEN', value: 'EVERGREEN' }
           ],
           placeholder: '请选择船公司'
         },
         {
-          key: 'transitType',
-          label: '直达/中转',
+          key: 'contractNo',
+          label: '约号',
           type: 'select',
           options: [
-            { label: '直达', value: 'direct' },
-            { label: '中转', value: 'transit' }
+            { label: 'CONTRACT001', value: 'CONTRACT001' },
+            { label: 'CONTRACT002', value: 'CONTRACT002' },
+            { label: 'CONTRACT003', value: 'CONTRACT003' },
+            { label: 'SPOT', value: 'SPOT' }
           ],
-          placeholder: '请选择直达/中转'
+          placeholder: '请选择约号'
         },
         {
-          key: 'departurePort',
-          label: '起运港',
+          key: 'spaceStatus',
+          label: '舱位状态',
           type: 'select',
           options: [
-            { label: '上海', value: 'CNSHA' },
-            { label: '宁波', value: 'CNNGB' },
-            { label: '青岛', value: 'CNQIN' }
+            { label: '畅接', value: '畅接' },
+            { label: '正常', value: '正常' },
+            { label: '单票申请', value: '单票申请' },
+            { label: '爆舱', value: '爆舱' },
+            { label: '不接', value: '不接' }
           ],
-          placeholder: '请选择起运港'
+          placeholder: '请选择舱位状态'
         },
         {
-          key: 'dischargePort',
-          label: '卸货港',
+          key: 'priceStatus',
+          label: '价格趋势',
           type: 'select',
           options: [
-            { label: '洛杉矶', value: 'USLAX' },
-            { label: '纽约', value: 'USNYC' },
-            { label: '汉堡', value: 'DEHAM' }
+            { label: '价格上涨', value: '价格上涨' },
+            { label: '价格下调', value: '价格下调' },
+            { label: '价格稳定', value: '价格稳定' }
           ],
-          placeholder: '请选择卸货港'
+          placeholder: '请选择价格趋势'
+        },
+        {
+          key: 'cargoType',
+          label: '货物类型',
+          type: 'select',
+          options: [
+            { label: '普货', value: '普货' },
+            { label: '危险品', value: '危险品' },
+            { label: '冷冻品', value: '冷冻品' },
+            { label: '特种箱', value: '特种箱' },
+            { label: '卷钢', value: '卷钢' },
+            { label: '液体', value: '液体' },
+            { label: '化工品', value: '化工品' },
+            { label: '纺织品', value: '纺织品' }
+          ],
+          placeholder: '请选择货物类型'
+        },
+        {
+          key: 'vesselSchedule',
+          label: '船期',
+          type: 'select',
+          options: [
+            { label: '周一', value: '周一' },
+            { label: '周二', value: '周二' },
+            { label: '周三', value: '周三' },
+            { label: '周四', value: '周四' },
+            { label: '周五', value: '周五' },
+            { label: '周六', value: '周六' },
+            { label: '周日', value: '周日' }
+          ],
+          placeholder: '请选择船期'
+        },
+        {
+          key: 'voyage',
+          label: '航程',
+          type: 'text',
+          placeholder: '请输入航程'
+        },
+        {
+          key: 'freeStorageDays',
+          label: '免柜租期',
+          type: 'number',
+          placeholder: '请输入免柜租期'
+        },
+        {
+          key: 'nac',
+          label: 'NAC',
+          type: 'select',
+          options: [
+            { label: 'NAC01', value: 'NAC01' },
+            { label: 'NAC02', value: 'NAC02' },
+            { label: 'NAC03', value: 'NAC03' }
+          ],
+          placeholder: '请选择NAC'
+        },
+        {
+          key: 'validPeriod',
+          label: '有效期',
+          type: 'dateRange',
+          placeholder: '请选择有效期范围'
         },
         {
           key: 'etd',
-          label: '开船日期',
+          label: 'ETD',
           type: 'dateRange',
-          placeholder: '请选择开船日期范围'
+          placeholder: '请选择ETD范围'
         },
         {
-          key: 'route',
-          label: '航线',
-          type: 'select',
-          options: [
-            { label: '亚洲-美洲', value: 'asia-america' },
-            { label: '亚洲-欧洲', value: 'asia-europe' }
-          ],
-          placeholder: '请选择航线'
+          key: 'eta',
+          label: 'ETA',
+          type: 'dateRange',
+          placeholder: '请选择ETA范围'
         },
         {
           key: 'vesselName',
           label: '船名',
-          type: 'select',
-          options: [
-            { label: 'COSCO SHIPPING UNIVERSE', value: 'COSCO SHIPPING UNIVERSE' },
-            { label: 'MSC GULSUN', value: 'MSC GULSUN' }
-          ],
-          placeholder: '请选择船名'
+          type: 'text',
+          placeholder: '请输入船名'
         },
         {
           key: 'voyageNo',
           label: '航次',
-          type: 'select',
-          options: [
-            { label: '001E', value: '001E' },
-            { label: '002W', value: '002W' }
-          ],
-          placeholder: '请选择航次'
+          type: 'text',
+          placeholder: '请输入航次'
+        },
+        {
+          key: 'cutoffDate',
+          label: '截关日',
+          type: 'dateRange',
+          placeholder: '请选择截关日范围'
+        },
+        {
+          key: 'destinationRegion',
+          label: '目的区域',
+          type: 'text',
+          placeholder: '请输入目的区域'
+        },
+        {
+          key: 'entryPerson',
+          label: '创建人',
+          type: 'text',
+          placeholder: '请输入创建人'
+        },
+        {
+          key: 'createDate',
+          label: '创建日期',
+          type: 'dateRange',
+          placeholder: '请选择创建日期范围'
+        },
+        {
+          key: 'rateModifier',
+          label: '运价修改人',
+          type: 'text',
+          placeholder: '请输入运价修改人'
+        },
+        {
+          key: 'modifyDate',
+          label: '修改日期',
+          type: 'dateRange',
+          placeholder: '请选择修改日期范围'
+        },
+        {
+          key: 'approver',
+          label: '审核人',
+          type: 'text',
+          placeholder: '请输入审核人'
+        },
+        {
+          key: 'approvalDate',
+          label: '审核日期',
+          type: 'dateRange',
+          placeholder: '请选择审核日期范围'
         }
       ];
     case 'precarriage':
@@ -322,63 +562,46 @@ interface DataItem {
   routeCode: string; // 运价号
   departurePort: string; // 起运港
   dischargePort: string; // 目的港
-  directTransit: string; // 直达
   transitPort: string; // 中转港
   spaceStatus: string; // 舱位状态
   priceStatus: string; // 价格趋势
-  spaceQuality: string; // 舱位性质
-  currency: string; // 币种
   containerType: string; // 箱种
+  rateStatus: string; // 运价状态
   '20gp': number; // 20'
   '40gp': number; // 40'
   '40hc': number; // 40' HC
-  '40nor': number; // 40' NOR
   '45hc': number; // 45'
-  costTaxRate: string; // 成本税率
-  sellingTaxRate: string; // 卖价税率
-  paymentTerms: string; // 付费条款
+  '40nor': number; // 40' NOR
+  '20nor': number; // 20' NOR
+  '20hc': number; // 20' HC
+  '20tk': number; // 20' TK
+  '40tk': number; // 40' TK
+  '20ot': number; // 20' OT
+  '40ot': number; // 40' OT
+  '20fr': number; // 20' FR
+  '40fr': number; // 40' FR
   shipCompany: string; // 船公司
   contractNo: string; // 约号
-  outportCode: string; // Outport Code
-  routeCodeAlt: string; // 航线代码
-  rateSource: string; // 运价来源
   vesselSchedule: string; // 船期
   voyage: string; // 航程
-  serviceMode: string; // ServiceMode
-  serviceCode: string; // ServiceCode
   cargoType: string; // 货物类型
-  cargo: string; // 货物
-  tariffCode: string; // 挂靠码头
-  freeStorageDays: number; // 免柜租期
-  specialPriceStatus: string; // 特价状态
-  effectiveDateType: string; // 生效日期类型
-  expiryDateType: string; // 失效日期类型
+  freeContainerDays: number; // 免用箱
+  freeStorageDays: number; // 免堆存
   chargeSpecialNote: string; // 接货特殊说明
-  destinationTariffCode: string; // 目的港挂靠码头
-  transportMode: string; // 运输方式
-  code: string; // CODE
-  na: string; // NA
   nac: string; // NAC
-  amsEns: string; // AMS/ENS
   overweightNote: string; // 超重说明
-  importSourceFileWatermark: string; // 导入源文档流水号
-  customSpec: string; // 自定义规格
   notes: string; // 备注
-  validFrom: string; // 有效期自
-  validTo: string; // 有效期止
+  validPeriod: string; // 有效期
   branch: string; // 分公司
-  entryPerson: string; // 录入人
+  entryPerson: string; // 创建人
   createDate: string; // 创建日期
   rateModifier: string; // 运价修改人
   modifyDate: string; // 修改日期
   approver: string; // 审核人
   approvalDate: string; // 审核日期
-  cutoffDate: string; // 截关日
-  destinationRegion: string; // 目的区域
   rateType: string; // 运价类型
   vesselName: string; // 船名
   voyageNo: string; // 航次
-  '20nor': string; // 20' NOR
   etd: string; // ETD
   eta: string; // ETA
   
@@ -448,7 +671,6 @@ interface DataItem {
   modificationDate: string; // 修改日期（截图中的"修改日期"）
   reviewPerson: string; // 审核人（截图中的"审核人"）
   reviewDate: string; // 审核日期（截图中的"审核日期"）
-  customsCutoffDate: string; // 截关日（截图中的"截关日"）
   targetRegion: string; // 目的区域（截图中的"目的区域"）
   freightRateType: string; // 运价类型（截图中的"运价类型"）
   shipName: string; // 船名（截图中的"船名"）
@@ -496,82 +718,58 @@ const FclRates: React.FC = () => {
   const [customTableModalVisible, setCustomTableModalVisible] = useState(false);
   const [columnVisibility, setColumnVisibility] = useState({
     routeCode: true,
+    rateType: true,
     departurePort: true,
     dischargePort: true,
-    directTransit: true,
     transitPort: true,
+    transitType: true,
+    shipCompany: true,
+    contractNo: false,
     spaceStatus: true,
     priceStatus: true,
-    spaceQuality: true,
-    currency: true,
-    containerType: true,
+    cargoType: false,
+    rateStatus: true,
     '20gp': true,
     '40gp': true,
     '40hc': true,
-    '40nor': true,
+    '20nor': false,
+    '40nor': false,
     '45hc': true,
-    costTaxRate: false,
-    sellingTaxRate: false,
-    paymentTerms: false,
-    shipCompany: true,
-    contractNo: false,
-    outportCode: false,
-    routeCodeAlt: false,
-    rateSource: false,
+    '20hc': false,
+    '20tk': false,
+    '40tk': false,
+    '20ot': false,
+    '40ot': false,
+    '20fr': false,
+    '40fr': false,
     vesselSchedule: true,
     voyage: false,
-    serviceMode: false,
-    serviceCode: false,
-    cargoType: false,
-    cargo: false,
-    tariffCode: false,
-    freeStorageDays: false,
-    specialPriceStatus: false,
-    effectiveDateType: false,
-    expiryDateType: false,
+    freeContainerDays: true,
+    freeStorageDays: true,
     chargeSpecialNote: false,
-    destinationTariffCode: false,
-    transportMode: false,
-    code: false,
-    na: false,
     nac: false,
-    amsEns: false,
     overweightNote: false,
-    importSourceFileWatermark: false,
-    customSpec: false,
     notes: false,
-    validFrom: false,
-    validToDate: false,
-    companyBranch: false,
-    dataEntryPerson: false,
-    creationDate: false,
-    rateModifyPerson: false,
-    modificationDate: false,
-    reviewPerson: false,
-    reviewDate: false,
-    customsCutoffDate: false,
-    targetRegion: false,
-    freightRateType: false,
-    shipName: false,
-    voyageNumber: false,
-    container20NOR: false,
-    estimatedDeparture: true,
-    estimatedArrival: false
+    validPeriod: true,
+    etd: false,
+    eta: false,
+    vesselName: false,
+    voyageNo: false,
+    entryPerson: false,
+    createDate: false,
+    rateModifier: false,
+    modifyDate: false,
+    approver: false,
+    approvalDate: false
   });
   const [columnOrder, setColumnOrder] = useState([
-    'routeCode', 'departurePort', 'dischargePort', 'directTransit', 'transitPort',
-    'spaceStatus', 'priceStatus', 'spaceQuality', 'currency', 'containerType',
-    '20gp', '40gp', '40hc', '40nor', '45hc',
-    'costTaxRate', 'sellingTaxRate', 'paymentTerms', 'shipCompany', 'contractNo',
-    'outportCode', 'routeCodeAlt', 'rateSource', 'vesselSchedule', 'voyage',
-    'serviceMode', 'serviceCode', 'cargoType', 'cargo', 'tariffCode',
-    'freeStorageDays', 'specialPriceStatus', 'effectiveDateType', 'expiryDateType',
-    'chargeSpecialNote', 'destinationTariffCode', 'transportMode', 'code', 'na', 'nac',
-    'amsEns', 'overweightNote', 'importSourceFileWatermark', 'customSpec', 'notes',
-    'validFrom', 'validToDate', 'companyBranch', 'dataEntryPerson', 'creationDate',
-    'rateModifyPerson', 'modificationDate', 'reviewPerson', 'reviewDate', 'customsCutoffDate',
-    'targetRegion', 'freightRateType', 'shipName', 'voyageNumber', 'container20NOR',
-    'estimatedDeparture', 'estimatedArrival'
+    'routeCode', 'rateType', 'departurePort', 'dischargePort', 'transitPort',
+    'transitType', 'shipCompany', 'contractNo', 'spaceStatus', 'priceStatus', 'cargoType', 'rateStatus',
+    '20gp', '40gp', '40hc', '20nor', '40nor', '45hc', '20hc', '20tk', '40tk', '20ot', '40ot', '20fr', '40fr',
+    'vesselSchedule', 'voyage', 'freeContainerDays', 'freeStorageDays', 'chargeSpecialNote', 'nac',
+    'overweightNote', 'notes', 'validPeriod', 'etd', 'eta', 'vesselName', 'voyageNo',
+    'entryPerson', 'createDate', 'rateModifier', 'modifyDate', 
+    'approver', 'approvalDate'
   ]);
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const [dragOverItem, setDragOverItem] = useState<string | null>(null);
@@ -592,6 +790,74 @@ const FclRates: React.FC = () => {
   const [schemeName, setSchemeName] = useState('');
   
   const navigate = useNavigate();
+
+  // 操作处理函数
+  const handleViewDetail = (key: string) => {
+    Message.info(`查看详情: ${key}`);
+  };
+
+  const handleEdit = (key: string) => {
+    navigate(`/controltower/saas/edit-fcl-rate/${key}`);
+  };
+
+  const handleToggleStatus = (_key: string, currentStatus: string) => {
+    const newStatus = currentStatus === '正常' ? '下架' : '正常';
+    Message.success(`运价状态已更新为: ${newStatus}`);
+  };
+
+  const handleDelete = (_key: string) => {
+    Modal.confirm({
+      title: '确认删除',
+      content: '确定要删除这条运价记录吗？',
+      onOk: () => {
+        Message.success('删除成功');
+      }
+    });
+  };
+
+  // 批量操作处理函数
+  const handleBatchOnShelf = () => {
+    Modal.confirm({
+      title: '批量上架',
+      content: `确定要将选中的 ${selectedRowKeys.length} 条运价上架吗？`,
+      onOk: () => {
+        Message.success(`成功上架 ${selectedRowKeys.length} 条运价`);
+        setSelectedRowKeys([]);
+      }
+    });
+  };
+
+  const handleBatchOffShelf = () => {
+    Modal.confirm({
+      title: '批量下架',
+      content: `确定要将选中的 ${selectedRowKeys.length} 条运价下架吗？`,
+      onOk: () => {
+        Message.success(`成功下架 ${selectedRowKeys.length} 条运价`);
+        setSelectedRowKeys([]);
+      }
+    });
+  };
+
+  const handleBatchPriceChange = () => {
+    // TODO: 实现批量改价功能
+    Message.info('批量改价功能开发中');
+  };
+
+  const handleBatchValidityChange = () => {
+    // TODO: 实现批量修改有效期功能
+    Message.info('批量修改有效期功能开发中');
+  };
+
+  const handleBatchDelete = () => {
+    Modal.confirm({
+      title: '批量删除',
+      content: `确定要删除选中的 ${selectedRowKeys.length} 条运价吗？此操作不可恢复。`,
+      onOk: () => {
+        Message.success(`成功删除 ${selectedRowKeys.length} 条运价`);
+        setSelectedRowKeys([]);
+      }
+    });
+  };
 
   // 打开AI识别弹窗
   const openAiModal = () => {
@@ -676,67 +942,49 @@ const FclRates: React.FC = () => {
   const resetColumnVisibility = () => {
     setColumnVisibility({
       routeCode: true,
+      rateType: true,
       departurePort: true,
       dischargePort: true,
-      directTransit: true,
       transitPort: true,
+      transitType: true,
+      shipCompany: true,
+      contractNo: false,
       spaceStatus: true,
       priceStatus: true,
-      spaceQuality: true,
-      currency: true,
-      containerType: true,
+      cargoType: false,
+      rateStatus: true,
       '20gp': true,
       '40gp': true,
       '40hc': true,
-      '40nor': true,
+      '20nor': false,
+      '40nor': false,
       '45hc': true,
-      costTaxRate: false,
-      sellingTaxRate: false,
-      paymentTerms: false,
-      shipCompany: true,
-      contractNo: false,
-      outportCode: false,
-      routeCodeAlt: false,
-      rateSource: false,
+      '20hc': false,
+      '20tk': false,
+      '40tk': false,
+      '20ot': false,
+      '40ot': false,
+      '20fr': false,
+      '40fr': false,
       vesselSchedule: true,
       voyage: false,
-      serviceMode: false,
-      serviceCode: false,
-      cargoType: false,
-      cargo: false,
-      tariffCode: false,
-      freeStorageDays: false,
-      specialPriceStatus: false,
-      effectiveDateType: false,
-      expiryDateType: false,
+      freeContainerDays: true,
+      freeStorageDays: true,
       chargeSpecialNote: false,
-      destinationTariffCode: false,
-      transportMode: false,
-      code: false,
-      na: false,
       nac: false,
-      amsEns: false,
       overweightNote: false,
-      importSourceFileWatermark: false,
-      customSpec: false,
       notes: false,
-      validFrom: false,
-      validToDate: false,
-      companyBranch: false,
-      dataEntryPerson: false,
-      creationDate: false,
-      rateModifyPerson: false,
-      modificationDate: false,
-      reviewPerson: false,
-      reviewDate: false,
-      customsCutoffDate: false,
-      targetRegion: false,
-      freightRateType: false,
-      shipName: false,
-      voyageNumber: false,
-      container20NOR: false,
-      estimatedDeparture: true,
-      estimatedArrival: false
+      validPeriod: true,
+      etd: false,
+      eta: false,
+      vesselName: false,
+      voyageNo: false,
+      entryPerson: false,
+      createDate: false,
+      rateModifier: false,
+      modifyDate: false,
+      approver: false,
+      approvalDate: false
     });
   };
 
@@ -751,61 +999,124 @@ const FclRates: React.FC = () => {
     {
       title: '运价号',
       dataIndex: 'routeCode',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
+      width: 180,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
+      sorter: true,
+      resizable: true,
+    },
+    {
+      title: '运价类型',
+      dataIndex: 'rateType',
+      width: 140,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
       sorter: true,
       resizable: true,
     },
     {
       title: '起运港',
       dataIndex: 'departurePort',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
+      width: 180,
+      render: (value: string) => {
+        const [code, name] = value.split('|');
+        return (
+          <Tooltip content={value} mini>
+            <div className="text-left">
+              <div className="text-xs font-mono">{code}</div>
+              <div className="text-xs text-gray-600">{name}</div>
+            </div>
+          </Tooltip>
+        );
+      },
       sorter: true,
       resizable: true,
     },
     {
       title: '目的港',
       dataIndex: 'dischargePort',
-      width: 150,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '直达',
-      dataIndex: 'directTransit',
-      width: 80,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
+      width: 200,
+      render: (value: string) => {
+        const [code, name] = value.split('|');
+        return (
+          <Tooltip content={value} mini>
+            <div className="text-left">
+              <div className="text-xs font-mono">{code}</div>
+              <div className="text-xs text-gray-600">{name}</div>
+            </div>
+          </Tooltip>
+        );
+      },
       sorter: true,
       resizable: true,
     },
     {
       title: '中转港',
       dataIndex: 'transitPort',
+      width: 180,
+      render: (value: string) => {
+        const [code, name] = value.split('|');
+        return (
+          <Tooltip content={value} mini>
+            <div className="text-left">
+              <div className="text-xs font-mono">{code}</div>
+              <div className="text-xs text-gray-600">{name}</div>
+            </div>
+          </Tooltip>
+        );
+      },
+      sorter: true,
+      resizable: true,
+    },
+    {
+      title: '中转类型',
+      dataIndex: 'transitType',
       width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
+      sorter: true,
+      resizable: true,
+    },
+    {
+      title: '船公司',
+      dataIndex: 'shipCompany',
+      width: 220,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
+      sorter: true,
+      resizable: true,
+    },
+    {
+      title: '约号',
+      dataIndex: 'contractNo',
+      width: 160,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
       sorter: true,
       resizable: true,
     },
     {
       title: '舱位状态',
       dataIndex: 'spaceStatus',
-      width: 100,
-      render: (value: string) => (
-        <Tooltip content={value} mini>
-          <Tag color={value === '舱位充足' ? 'blue' : 'orange'} size="small">
-            {value}
-          </Tag>
-        </Tooltip>
-      ),
+      width: 120,
+      render: (value: string) => {
+        const colorMap: Record<string, string> = {
+          '畅接': 'green',
+          '正常': 'blue', 
+          '单票申请': 'orange',
+          '爆舱': 'red',
+          '不接': 'gray'
+        };
+        return (
+          <Tooltip content={value} mini>
+            <Tag color={colorMap[value] || 'blue'} size="small">
+              {value}
+            </Tag>
+          </Tooltip>
+        );
+      },
       sorter: true,
       resizable: true,
     },
     {
       title: '价格趋势',
       dataIndex: 'priceStatus',
-      width: 100,
+      width: 120,
       render: (value: string) => (
         <Tooltip content={value} mini>
           <Tag color={value === '价格上涨' ? 'red' : value === '价格下调' ? 'green' : 'blue'} size="small">
@@ -817,519 +1128,398 @@ const FclRates: React.FC = () => {
       resizable: true,
     },
     {
-      title: '舱位性质',
-      dataIndex: 'spaceQuality',
-      width: 100,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
+      title: '货物类型',
+      dataIndex: 'cargoType',
+      width: 120,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
       sorter: true,
       resizable: true,
     },
     {
-      title: '币种',
-      dataIndex: 'currency',
-      width: 80,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
+      title: '运价状态',
+      dataIndex: 'rateStatus',
+      width: 120,
+      render: (value: string) => {
+        const colorMap: Record<string, string> = {
+          '正常': 'green',
+          '过期': 'red',
+          '草稿': 'orange'
+        };
+        return (
+          <Tooltip content={value} mini>
+            <Tag color={colorMap[value] || 'blue'} size="small">
+              {value}
+            </Tag>
+          </Tooltip>
+        );
+      },
       sorter: true,
       resizable: true,
     },
     {
-      title: '箱种',
-      dataIndex: 'containerType',
-      width: 80,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: "20'",
+      title: "20GP",
       dataIndex: '20gp',
       width: 100,
-      render: (value: number) => <Tooltip content={`$ ${value}`} mini><span className="arco-ellipsis">$ {value}</span></Tooltip>,
+      render: (value: number) => <Tooltip content={value.toString()} mini><span className="no-ellipsis">{value}</span></Tooltip>,
       sorter: true,
       resizable: true,
     },
     {
-      title: "40'",
+      title: "40GP",
       dataIndex: '40gp',
       width: 100,
-      render: (value: number) => <Tooltip content={`$ ${value}`} mini><span className="arco-ellipsis">$ {value}</span></Tooltip>,
+      render: (value: number) => <Tooltip content={value.toString()} mini><span className="no-ellipsis">{value}</span></Tooltip>,
       sorter: true,
       resizable: true,
     },
     {
-      title: "40' HC",
+      title: "40HC",
       dataIndex: '40hc',
       width: 100,
-      render: (value: number) => <Tooltip content={`$ ${value}`} mini><span className="arco-ellipsis">$ {value}</span></Tooltip>,
+      render: (value: number) => <Tooltip content={value.toString()} mini><span className="no-ellipsis">{value}</span></Tooltip>,
       sorter: true,
       resizable: true,
     },
     {
-      title: "40' NOR",
+      title: "20NOR",
+      dataIndex: '20nor',
+      width: 100,
+      render: (value: number) => <Tooltip content={value.toString()} mini><span className="no-ellipsis">{value}</span></Tooltip>,
+      sorter: true,
+      resizable: true,
+    },
+    {
+      title: "40NOR",
       dataIndex: '40nor',
       width: 100,
-      render: (value: number) => <Tooltip content={`$ ${value}`} mini><span className="arco-ellipsis">$ {value}</span></Tooltip>,
+      render: (value: number) => <Tooltip content={value.toString()} mini><span className="no-ellipsis">{value}</span></Tooltip>,
       sorter: true,
       resizable: true,
     },
     {
-      title: "45'",
+      title: "45HC",
       dataIndex: '45hc',
       width: 100,
-      render: (value: number) => <Tooltip content={`$ ${value}`} mini><span className="arco-ellipsis">$ {value}</span></Tooltip>,
+      render: (value: number) => <Tooltip content={value.toString()} mini><span className="no-ellipsis">{value}</span></Tooltip>,
       sorter: true,
       resizable: true,
     },
     {
-      title: '成本税率',
-      dataIndex: 'costTaxRate',
+      title: "20HC",
+      dataIndex: '20hc',
       width: 100,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
+      render: (value: number) => <Tooltip content={value.toString()} mini><span className="no-ellipsis">{value}</span></Tooltip>,
       sorter: true,
       resizable: true,
     },
     {
-      title: '卖价税率',
-      dataIndex: 'sellingTaxRate',
+      title: "20TK",
+      dataIndex: '20tk',
       width: 100,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
+      render: (value: number) => <Tooltip content={value.toString()} mini><span className="no-ellipsis">{value}</span></Tooltip>,
       sorter: true,
       resizable: true,
     },
     {
-      title: '付费条款',
-      dataIndex: 'paymentTerms',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '船公司',
-      dataIndex: 'shipCompany',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '约号',
-      dataIndex: 'contractNo',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: 'Outport Code',
-      dataIndex: 'outportCode',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '航线代码',
-      dataIndex: 'routeCodeAlt',
+      title: "40TK",
+      dataIndex: '40tk',
       width: 100,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
+      render: (value: number) => <Tooltip content={value.toString()} mini><span className="no-ellipsis">{value}</span></Tooltip>,
       sorter: true,
       resizable: true,
     },
     {
-      title: '运价来源',
-      dataIndex: 'rateSource',
+      title: "20OT",
+      dataIndex: '20ot',
       width: 100,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
+      render: (value: number) => <Tooltip content={value.toString()} mini><span className="no-ellipsis">{value}</span></Tooltip>,
+      sorter: true,
+      resizable: true,
+    },
+    {
+      title: "40OT",
+      dataIndex: '40ot',
+      width: 100,
+      render: (value: number) => <Tooltip content={value.toString()} mini><span className="no-ellipsis">{value}</span></Tooltip>,
+      sorter: true,
+      resizable: true,
+    },
+    {
+      title: "20FR",
+      dataIndex: '20fr',
+      width: 100,
+      render: (value: number) => <Tooltip content={value.toString()} mini><span className="no-ellipsis">{value}</span></Tooltip>,
+      sorter: true,
+      resizable: true,
+    },
+    {
+      title: "40FR",
+      dataIndex: '40fr',
+      width: 100,
+      render: (value: number) => <Tooltip content={value.toString()} mini><span className="no-ellipsis">{value}</span></Tooltip>,
       sorter: true,
       resizable: true,
     },
     {
       title: '船期',
       dataIndex: 'vesselSchedule',
-      width: 100,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
+      width: 120,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
       sorter: true,
       resizable: true,
     },
     {
       title: '航程',
       dataIndex: 'voyage',
-      width: 80,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: 'ServiceMode',
-      dataIndex: 'serviceMode',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: 'ServiceCode',
-      dataIndex: 'serviceCode',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '货物类型',
-      dataIndex: 'cargoType',
       width: 100,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
       sorter: true,
       resizable: true,
     },
     {
-      title: '货物',
-      dataIndex: 'cargo',
+      title: '免用箱',
+      dataIndex: 'freeContainerDays',
       width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
+      render: (value: number) => <Tooltip content={`${value}天`} mini><span className="no-ellipsis">{value}天</span></Tooltip>,
       sorter: true,
       resizable: true,
     },
     {
-      title: '挂靠码头',
-      dataIndex: 'tariffCode',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '免柜租期',
+      title: '免堆存',
       dataIndex: 'freeStorageDays',
-      width: 100,
-      render: (value: number) => <Tooltip content={`${value}天`} mini><span className="arco-ellipsis">{value}天</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '特价状态',
-      dataIndex: 'specialPriceStatus',
-      width: 100,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '生效日期类型',
-      dataIndex: 'effectiveDateType',
       width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '失效日期类型',
-      dataIndex: 'expiryDateType',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
+      render: (value: number) => <Tooltip content={`${value}天`} mini><span className="no-ellipsis">{value}天</span></Tooltip>,
       sorter: true,
       resizable: true,
     },
     {
       title: '接货特殊说明',
       dataIndex: 'chargeSpecialNote',
-      width: 150,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      resizable: true,
-    },
-    {
-      title: '目的港挂靠码头',
-      dataIndex: 'destinationTariffCode',
-      width: 150,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '运输方式',
-      dataIndex: 'transportMode',
-      width: 100,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: 'CODE',
-      dataIndex: 'code',
-      width: 80,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: 'NA',
-      dataIndex: 'na',
-      width: 60,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
+      width: 200,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
       sorter: true,
       resizable: true,
     },
     {
       title: 'NAC',
       dataIndex: 'nac',
-      width: 60,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: 'AMS/ENS',
-      dataIndex: 'amsEns',
-      width: 100,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
+      width: 120,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
       sorter: true,
       resizable: true,
     },
     {
       title: '超重说明',
       dataIndex: 'overweightNote',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '导入源文档流水号',
-      dataIndex: 'importSourceFileWatermark',
-      width: 180,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '自定义规格',
-      dataIndex: 'customSpec',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
+      width: 140,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
       sorter: true,
       resizable: true,
     },
     {
       title: '备注',
       dataIndex: 'notes',
-      width: 150,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      resizable: true,
-    },
-    {
-      title: '有效期自',
-      dataIndex: 'validFrom',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
+      width: 180,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
       sorter: true,
       resizable: true,
     },
     {
-      title: '有效期止',
-      dataIndex: 'validToDate',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '分公司',
-      dataIndex: 'companyBranch',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '录入人',
-      dataIndex: 'dataEntryPerson',
-      width: 100,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '创建日期',
-      dataIndex: 'creationDate',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '运价修改人',
-      dataIndex: 'rateModifyPerson',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '修改日期',
-      dataIndex: 'modificationDate',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '审核人',
-      dataIndex: 'reviewPerson',
-      width: 100,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '审核日期',
-      dataIndex: 'reviewDate',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '截关日',
-      dataIndex: 'customsCutoffDate',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '目的区域',
-      dataIndex: 'targetRegion',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '运价类型',
-      dataIndex: 'freightRateType',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '船名',
-      dataIndex: 'shipName',
-      width: 150,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '航次',
-      dataIndex: 'voyageNumber',
-      width: 100,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: "20' NOR",
-      dataIndex: 'container20NOR',
-      width: 100,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
+      title: '有效期',
+      dataIndex: 'validPeriod',
+      width: 240,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
       sorter: true,
       resizable: true,
     },
     {
       title: 'ETD',
-      dataIndex: 'estimatedDeparture',
-      width: 100,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
+      dataIndex: 'etd',
+      width: 120,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
       sorter: true,
       resizable: true,
     },
     {
       title: 'ETA',
-      dataIndex: 'estimatedArrival',
-      width: 100,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
+      dataIndex: 'eta',
+      width: 120,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
+      sorter: true,
+      resizable: true,
+    },
+    {
+      title: '船名',
+      dataIndex: 'vesselName',
+      width: 200,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
+      sorter: true,
+      resizable: true,
+    },
+    {
+      title: '航次',
+      dataIndex: 'voyageNo',
+      width: 120,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
+      sorter: true,
+      resizable: true,
+    },
+    {
+      title: '创建人',
+      dataIndex: 'entryPerson',
+      width: 120,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
+      sorter: true,
+      resizable: true,
+    },
+    {
+      title: '创建日期',
+      dataIndex: 'createDate',
+      width: 120,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
+      sorter: true,
+      resizable: true,
+    },
+    {
+      title: '运价修改人',
+      dataIndex: 'rateModifier',
+      width: 160,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
+      sorter: true,
+      resizable: true,
+    },
+    {
+      title: '修改日期',
+      dataIndex: 'modifyDate',
+      width: 120,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
+      sorter: true,
+      resizable: true,
+    },
+    {
+      title: '审核人',
+      dataIndex: 'approver',
+      width: 120,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
+      sorter: true,
+      resizable: true,
+    },
+    {
+      title: '审核日期',
+      dataIndex: 'approvalDate',
+      width: 120,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
       sorter: true,
       resizable: true,
     },
     {
       title: '操作',
-      dataIndex: 'operations',
+      dataIndex: 'actions',
+      width: 200,
       fixed: 'right' as const,
-      width: 150,
-      render: () => (
-        <div style={{display:'flex',flexWrap:'wrap',gap:4}}>
-          <div style={{display:'flex',gap:4,width:'100%'}}>
-            <Button type="text" size="mini" icon={<IconEdit />}>编辑</Button>
-            <Button type="text" size="mini" icon={<IconDownload />}>下载</Button>
-          </div>
-          <div style={{display:'flex',gap:4,width:'100%'}}>
-            <Button type="text" size="mini" icon={<IconDelete />}>复制</Button>
-          </div>
-        </div>
+      render: (_: unknown, record: DataItem) => (
+        <Space>
+          <Button type="text" size="small" onClick={() => handleViewDetail(record.key)}>
+            详情
+          </Button>
+          <Button type="text" size="small" onClick={() => handleEdit(record.key)}>
+            编辑
+          </Button>
+          <Dropdown
+            droplist={
+              <Menu>
+                <Menu.Item 
+                  key="toggle-status"
+                  onClick={() => handleToggleStatus(record.key, record.rateStatus)}
+                >
+                  {record.rateStatus === '正常' ? '下架' : '上架'}
+                </Menu.Item>
+                {(record.rateStatus === '草稿' || record.rateStatus === '过期') && (
+                  <Menu.Item 
+                    key="delete"
+                    onClick={() => handleDelete(record.key)}
+                    style={{ color: 'red' }}
+                  >
+                    删除
+                  </Menu.Item>
+                )}
+              </Menu>
+            }
+            position="br"
+          >
+            <Button type="text" size="small">
+              更多
+            </Button>
+          </Dropdown>
+        </Space>
       ),
-    },
+    }
   ];
 
   const data: DataItem[] = Array(12).fill(null).map((_, index) => {
     const random20gp = [-30, 510, 560, 865, 1130, 530].sort(() => Math.random() - 0.5)[0];
     const random40gp = random20gp === -30 ? -60 : random20gp === 510 ? 1020 : random20gp === 560 ? 1120 : random20gp === 865 ? 1730 : random20gp === 1130 ? 2260 : 1060;
-    const portPrefix = ['MANILA-NORTH', 'MANILA-SOUTH', 'SUBIC BAY', 'CEBU', 'ILOILO', 'CAGAYAN DE ORO', 'BATANGAS'];
-    const routeCodes = ['CPX4', 'CPS', 'CPX7', 'CPX6'];
+
     const vesselNames = ['MEDKON QUO', 'SITC PENANG', 'SITC YOKOHAMA', 'SITC XINCHENG'];
-    const departurePorts = ['CNSHA', 'CNNGB', 'CNQIN', 'CNYTN'];
+    const departurePorts = [
+      { code: 'CNSHA', fullName: 'SHANGHAI', name: '上海' },
+      { code: 'CNNGB', fullName: 'NINGBO', name: '宁波' },
+      { code: 'CNQIN', fullName: 'QINGDAO', name: '青岛' },
+      { code: 'CNYTN', fullName: 'YANTAI', name: '烟台' }
+    ];
+    const dischargePorts = [
+      { code: 'USLAX', fullName: 'LOS ANGELES', name: '洛杉矶' },
+      { code: 'USNYC', fullName: 'NEW YORK', name: '纽约' },
+      { code: 'USLGB', fullName: 'LONG BEACH', name: '长滩' },
+      { code: 'USOAK', fullName: 'OAKLAND', name: '奥克兰' },
+      { code: 'PHMNL', fullName: 'MANILA', name: '马尼拉' },
+      { code: 'SGSIN', fullName: 'SINGAPORE', name: '新加坡' }
+    ];
+    const transitPorts = [
+      { code: 'SGSIN', fullName: 'SINGAPORE', name: '新加坡' },
+      { code: 'HKHKG', fullName: 'HONG KONG', name: '香港' },
+      { code: 'KRPUS', fullName: 'PUSAN', name: '釜山' }
+    ];
+    
+    const selectedDeparturePort = departurePorts[Math.floor(Math.random() * departurePorts.length)];
+    const selectedDischargePort = dischargePorts[Math.floor(Math.random() * dischargePorts.length)];
+    const selectedTransitPort = transitPorts[Math.floor(Math.random() * transitPorts.length)];
     
     return {
       key: `${index}`,
       routeCode: `FCL${2024}${String(index + 1).padStart(4, '0')}`,
-      departurePort: departurePorts[Math.floor(Math.random() * departurePorts.length)],
-      dischargePort: portPrefix[Math.floor(Math.random() * portPrefix.length)],
-      directTransit: Math.random() > 0.5 ? '直达' : '中转',
-      transitPort: Math.random() > 0.5 ? 'SINGAPORE' : 'HONG KONG',
-      spaceStatus: Math.random() > 0.3 ? '舱位充足' : '舱位紧张',
+      departurePort: `${selectedDeparturePort.fullName} (${selectedDeparturePort.code})|${selectedDeparturePort.name}`,
+      dischargePort: `${selectedDischargePort.fullName} (${selectedDischargePort.code})|${selectedDischargePort.name}`,
+      transitPort: `${selectedTransitPort.fullName} (${selectedTransitPort.code})|${selectedTransitPort.name}`,
+      spaceStatus: ['畅接', '正常', '单票申请', '爆舱', '不接'][Math.floor(Math.random() * 5)],
       priceStatus: ['价格稳定', '价格上涨', '价格下调'][Math.floor(Math.random() * 3)],
-      spaceQuality: ['普通舱位', '优质舱位', '特殊舱位'][Math.floor(Math.random() * 3)],
-      currency: 'USD',
       containerType: ['普通箱', '冷冻箱', '开顶箱'][Math.floor(Math.random() * 3)],
+      rateStatus: ['正常', '过期', '草稿'][Math.floor(Math.random() * 3)],
       '20gp': random20gp,
       '40gp': random40gp,
       '40hc': random40gp + 50,
       '40nor': random40gp - 20,
+      '20nor': random20gp - 10,
+      '20hc': random20gp + 20,
+      '20tk': random20gp + 30,
+      '40tk': random40gp + 40,
+      '20ot': random20gp + 50,
+      '40ot': random40gp + 60,
+      '20fr': random20gp + 70,
+      '40fr': random40gp + 80,
       '45hc': random40gp + 100,
-      costTaxRate: '13%',
-      sellingTaxRate: '13%',
-      paymentTerms: 'PREPAID',
-      shipCompany: 'SITC',
-      contractNo: `CNT${2024}${String(index + 1).padStart(3, '0')}`,
-      outportCode: routeCodes[Math.floor(Math.random() * routeCodes.length)],
-      routeCodeAlt: routeCodes[Math.floor(Math.random() * routeCodes.length)],
-      rateSource: ['官网', '代理', '直签'][Math.floor(Math.random() * 3)],
-      vesselSchedule: `05-${15 + Math.floor(Math.random() * 4)}`,
+      shipCompany: ['MSK-马士基', 'SITC-海丰国际', 'COSCO-中远海运', 'ONE-海洋网联', 'EMC-长荣海运'][Math.floor(Math.random() * 5)],
+      contractNo: Math.random() > 0.3 ? ['CONTRACT001', 'CONTRACT002', 'CONTRACT003', 'SPOT'][Math.floor(Math.random() * 4)] : '',
+      vesselSchedule: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'][Math.floor(Math.random() * 7)],
       voyage: `${4 + Math.floor(Math.random() * 6)}天`,
-      serviceMode: 'FCL',
-      serviceCode: 'STD',
-      cargoType: '普通货物',
-      cargo: '电子产品',
-      tariffCode: 'T001',
+      cargoType: ['普货', '危险品', '冷冻品', '特种箱', '卷钢', '液体', '化工品', '纺织品'][Math.floor(Math.random() * 8)],
+      freeContainerDays: 5 + Math.floor(Math.random() * 8),
       freeStorageDays: 7 + Math.floor(Math.random() * 8),
-      specialPriceStatus: '正常',
-      effectiveDateType: '立即生效',
-      expiryDateType: '固定日期',
       chargeSpecialNote: '需提前预约',
-      destinationTariffCode: 'T002',
-      transportMode: '海运',
-      code: 'FCL',
-      na: 'N/A',
-      nac: 'N/A',
-      amsEns: 'AMS',
+      nac: Math.random() > 0.4 ? ['NAC01', 'NAC02', 'NAC03'][Math.floor(Math.random() * 3)] : '',
       overweightNote: '超重另计',
-      importSourceFileWatermark: `IMP${Date.now()}`,
-      customSpec: '标准规格',
       notes: 'LSE已含',
-      validFrom: '2024-05-01',
-      validTo: '2024-12-31',
+      validPeriod: '2024-05-01 至 2024-12-31',
       branch: '上海分公司',
       entryPerson: '张三',
       createDate: '2024-05-15',
@@ -1337,14 +1527,11 @@ const FclRates: React.FC = () => {
       modifyDate: '2024-05-16',
       approver: '王五',
       approvalDate: '2024-05-17',
-      cutoffDate: '2024-05-20',
-      destinationRegion: '东南亚',
-      rateType: '整箱运价',
-      vesselName: vesselNames[Math.floor(Math.random() * vesselNames.length)],
-      voyageNo: `25${10 + Math.floor(Math.random() * 9)}S`,
-      '20nor': '20NOR',
-      etd: `05-${15 + Math.floor(Math.random() * 4)}`,
-      eta: `06-${1 + Math.floor(Math.random() * 10)}`,
+      rateType: ['合约价', 'SPOT电商'][Math.floor(Math.random() * 2)],
+      vesselName: Math.random() > 0.3 ? vesselNames[Math.floor(Math.random() * vesselNames.length)] : '',
+      voyageNo: Math.random() > 0.3 ? `25${10 + Math.floor(Math.random() * 9)}S` : '',
+      etd: Math.random() > 0.3 ? `05-${15 + Math.floor(Math.random() * 4)}` : '',
+      eta: Math.random() > 0.3 ? `06-${1 + Math.floor(Math.random() * 10)}` : '',
       
       // 根据截图补充的字段
       transitType: Math.random() > 0.5 ? '中转' : '直达',
@@ -1412,7 +1599,6 @@ const FclRates: React.FC = () => {
       modificationDate: '2024-05-16',
       reviewPerson: '王五',
       reviewDate: '2024-05-17',
-      customsCutoffDate: '2024-05-20',
       targetRegion: '东南亚',
       freightRateType: '整箱运价',
       shipName: 'COSCO SHIPPING UNIVERSE',
@@ -1510,67 +1696,51 @@ const FclRates: React.FC = () => {
   const getColumnLabel = (columnKey: string): string => {
     const columnLabels: Record<string, string> = {
       routeCode: '运价号',
+      rateType: '运价类型',
       departurePort: '起运港',
       dischargePort: '目的港',
-      directTransit: '直达',
       transitPort: '中转港',
-      spaceStatus: '舱位状态',
-      priceStatus: '价格趋势',
-      spaceQuality: '舱位性质',
-      currency: '币种',
-      containerType: '箱种',
-      '20gp': "20'",
-      '40gp': "40'",
-      '40hc': "40' HC",
-      '40nor': "40' NOR",
-      '45hc': "45'",
-      costTaxRate: '成本税率',
-      sellingTaxRate: '卖价税率',
-      paymentTerms: '付费条款',
+      transitType: '中转类型',
       shipCompany: '船公司',
       contractNo: '约号',
-      outportCode: 'Outport Code',
-      routeCodeAlt: '航线代码',
-      rateSource: '运价来源',
+      spaceStatus: '舱位状态',
+      priceStatus: '价格趋势',
+      cargoType: '货物类型',
+      rateStatus: '运价状态',
+      '20gp': "20GP",
+      '40gp': "40GP",
+      '40hc': "40HC",
+      '20nor': "20NOR",
+      '40nor': "40NOR",
+      '45hc': "45HC",
+      '20hc': "20HC",
+      '20tk': "20TK",
+      '40tk': "40TK",
+      '20ot': "20OT",
+      '40ot': "40OT",
+      '20fr': "20FR",
+      '40fr': "40FR",
       vesselSchedule: '船期',
       voyage: '航程',
-      serviceMode: 'ServiceMode',
-      serviceCode: 'ServiceCode',
-      cargoType: '货物类型',
-      cargo: '货物',
-      tariffCode: '挂靠码头',
-      freeStorageDays: '免柜租期',
-      specialPriceStatus: '特价状态',
-      effectiveDateType: '生效日期类型',
-      expiryDateType: '失效日期类型',
+      freeContainerDays: '免用箱',
+      freeStorageDays: '免堆存',
       chargeSpecialNote: '接货特殊说明',
-      destinationTariffCode: '目的港挂靠码头',
-      transportMode: '运输方式',
-      code: 'CODE',
-      na: 'NA',
       nac: 'NAC',
-      amsEns: 'AMS/ENS',
       overweightNote: '超重说明',
-      importSourceFileWatermark: '导入源文档流水号',
-      customSpec: '自定义规格',
       notes: '备注',
-      validFrom: '有效期自',
-      validToDate: '有效期止',
-      companyBranch: '分公司',
-      dataEntryPerson: '录入人',
-      creationDate: '创建日期',
-      rateModifyPerson: '运价修改人',
-      modificationDate: '修改日期',
-      reviewPerson: '审核人',
-      reviewDate: '审核日期',
-      customsCutoffDate: '截关日',
-      targetRegion: '目的区域',
-      freightRateType: '运价类型',
-      shipName: '船名',
-      voyageNumber: '航次',
-      container20NOR: "20' NOR",
-      estimatedDeparture: 'ETD',
-      estimatedArrival: 'ETA'
+      validPeriod: '有效期',
+      etd: 'ETD',
+      eta: 'ETA',
+      vesselName: '船名',
+      voyageNo: '航次',
+      cutoffDate: '截关日',
+      destinationRegion: '目的区域',
+      entryPerson: '创建人',
+      createDate: '创建日期',
+      rateModifier: '运价修改人',
+      modifyDate: '修改日期',
+      approver: '审核人',
+      approvalDate: '审核日期'
     };
     return columnLabels[columnKey] || columnKey;
   };
@@ -1628,6 +1798,10 @@ const FclRates: React.FC = () => {
 
   // 新增运价按钮点击事件
   const handleAddRate = () => {
+    if (activeTab === 'fcl') {
+      navigate('/controltower/saas/create-fcl-rate');
+      return;
+    }
     if (activeTab === 'precarriage') {
       navigate('/controltower/saas/create-precarriage-rate');
       return;
@@ -1670,20 +1844,25 @@ const FclRates: React.FC = () => {
     }
     // 其它Tab保持原有内容
     return (
-      <Table
-        rowKey="key"
-        loading={false}
-        columns={columns}
-        data={data}
-        rowSelection={{
-          selectedRowKeys,
-          onChange: onSelectChange,
-        }}
-        pagination={pagination}
-        scroll={{ x: 1800 }}
-        border={false}
-        className="mt-4 inquiry-table-nowrap"
-      />
+              <Table
+          rowKey="key"
+          loading={false}
+          columns={columns}
+          data={data}
+          rowSelection={{
+            selectedRowKeys,
+            onChange: onSelectChange,
+            columnWidth: 60
+          }}
+          pagination={pagination}
+          scroll={{ x: 3200, y: 'calc(100vh - 400px)' }}
+          border={false}
+          className="mt-4 inquiry-table-nowrap"
+          style={{
+            '--table-row-height': '60px'
+          } as React.CSSProperties & { [key: string]: string }}
+          rowClassName={() => 'table-row-double-height'}
+        />
     );
   };
 
@@ -2067,32 +2246,72 @@ const FclRates: React.FC = () => {
         {renderNewFilterArea()}
         
         <Card>
-          <div className="flex justify-between mb-4">
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center space-x-2">
+              <Button type="primary" icon={<IconPlus />} onClick={handleAddRate}>
+                新增运价
+              </Button>
+              {selectedRowKeys.length > 0 && (
+                <Space size="medium">
+                  <Button 
+                    type="outline" 
+                    status="success"
+                    onClick={() => handleBatchOnShelf()}
+                  >
+                    批量上架 ({selectedRowKeys.length})
+                  </Button>
+                  <Button 
+                    type="outline" 
+                    status="warning"
+                    onClick={() => handleBatchOffShelf()}
+                  >
+                    批量下架 ({selectedRowKeys.length})
+                  </Button>
+                  <Button 
+                    type="outline"
+                    onClick={() => handleBatchPriceChange()}
+                  >
+                    批量改价 ({selectedRowKeys.length})
+                  </Button>
+                  <Button 
+                    type="outline"
+                    onClick={() => handleBatchValidityChange()}
+                  >
+                    批量修改有效期 ({selectedRowKeys.length})
+                  </Button>
+                  <Button 
+                    type="outline" 
+                    status="danger" 
+                    onClick={() => handleBatchDelete()}
+                  >
+                    批量删除 ({selectedRowKeys.length})
+                  </Button>
+                </Space>
+              )}
+            </div>
             <Space>
-              <Button type="primary" icon={<IconPlus />} onClick={handleAddRate}>新增运价</Button>
-              <Button icon={<IconUpload />}>批量导入</Button>
-              <Button icon={<IconDownload />}>导出列表</Button>
+              <Button icon={<IconUpload />} onClick={handleFileUpload}>
+                导入
+              </Button>
               <Button 
-                type="primary"
+                icon={<IconRobot />}
+                onClick={openAiModal}
                 style={{
                   background: 'linear-gradient(45deg, #1890ff, #4dabf5)',
                   border: 'none',
-                  boxShadow: '0 4px 12px rgba(24, 144, 255, 0.35)',
-                  padding: '0 28px',
+                  color: 'white'
                 }}
-                icon={<IconRobot />}
-                onClick={openAiModal}
               >
-                AI智能识别
+                AI识别
               </Button>
+              <div 
+                className="flex items-center text-blue-500 cursor-pointer hover:text-blue-700"
+                onClick={openCustomTableModal}
+              >
+                <IconList className="mr-1" />
+                <span>自定义表格</span>
+              </div>
             </Space>
-            <div 
-              className="flex items-center text-blue-500 cursor-pointer hover:text-blue-700"
-              onClick={openCustomTableModal}
-            >
-              <IconList className="mr-1" />
-              <span>自定义表格</span>
-            </div>
           </div>
           {renderContent()}
           <div className="mt-2 text-gray-500 text-sm">共 9232 条</div>
