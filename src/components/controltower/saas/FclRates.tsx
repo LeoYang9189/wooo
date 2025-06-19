@@ -1445,7 +1445,8 @@ const FclRates: React.FC = () => {
                 )}
               </Menu>
             }
-            position="br"
+            position="bl"
+            getPopupContainer={(node) => node.parentElement || document.body}
           >
             <Button type="text" size="small">
               更多
