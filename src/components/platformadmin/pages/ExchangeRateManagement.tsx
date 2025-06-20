@@ -277,9 +277,9 @@ const ExchangeRateManagement: React.FC = () => {
       title: '汇率',
       dataIndex: 'rate',
       width: 120,
-      render: (rate: number) => (
+      render: (rate: number | string) => (
         <span style={{ fontWeight: 'bold', color: '#1890ff' }}>
-          {rate.toFixed(4)}
+          {typeof rate === 'number' ? rate.toFixed(4) : parseFloat(rate).toFixed(4)}
         </span>
       ),
     },
@@ -500,6 +500,7 @@ const ExchangeRateManagement: React.FC = () => {
         id: isEditing ? currentExchangeRate?.id : Date.now().toString(),
         currencyName: currency?.name || '',
         baseCurrencyName: baseCurrency?.name || '',
+        rate: parseFloat(values.rate), // 确保汇率是数字类型
         validDateStart,
         validDateEnd,
         status: isEditing ? currentExchangeRate?.status : 'enabled' as const,
@@ -666,7 +667,11 @@ const ExchangeRateManagement: React.FC = () => {
             <span>{currentExchangeRate.baseCurrencyCode} - {currentExchangeRate.baseCurrencyName}</span>
             
             <span style={{ fontWeight: 500 }}>汇率：</span>
-            <span style={{ fontWeight: 'bold', color: '#1890ff' }}>{currentExchangeRate.rate.toFixed(4)}</span>
+            <span style={{ fontWeight: 'bold', color: '#1890ff' }}>
+              {typeof currentExchangeRate.rate === 'number' 
+                ? currentExchangeRate.rate.toFixed(4) 
+                : parseFloat(currentExchangeRate.rate).toFixed(4)}
+            </span>
             
             <span style={{ fontWeight: 500 }}>有效期：</span>
             <span>{currentExchangeRate.validDateStart} 至 {currentExchangeRate.validDateEnd}</span>
