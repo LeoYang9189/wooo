@@ -483,7 +483,11 @@ const ExchangeRateManagement: React.FC = () => {
       );
 
       if (hasOverlap) {
-        Message.error('该币种对本位币在此时间段内已存在汇率设置，时间不能有交叉！');
+        Message.error({
+          content: '该币种对本位币在此时间段内已存在汇率设置，时间不能有交叉！',
+          duration: 5000,
+          showIcon: true
+        });
         return;
       }
 
