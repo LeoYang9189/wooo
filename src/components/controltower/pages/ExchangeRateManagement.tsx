@@ -471,8 +471,35 @@ const ExchangeRateManagement: React.FC = () => {
 
   // 保存汇率设置编辑
   const handleSaveExchangeRate = async () => {
+    console.log('开始保存汇率设置...');
+    
     try {
+      // 先获取表单值进行检查
+      const formValues = editForm.getFieldsValue();
+      console.log('当前表单值:', formValues);
+      
+      // 检查必填字段
+      if (!formValues.currencyCode) {
+        Message.error('请选择币种');
+        return;
+      }
+      if (!formValues.baseCurrencyCode) {
+        Message.error('请选择本位币');
+        return;
+      }
+      if (!formValues.rate) {
+        Message.error('请输入汇率');
+        return;
+      }
+      if (!formValues.validDateRange || formValues.validDateRange.length !== 2) {
+        Message.error('请选择有效期');
+        return;
+      }
+      
+      // 验证表单
       const values = await editForm.validate();
+      console.log('表单验证通过，验证后的值:', values);
+      
       const [validDateStart, validDateEnd] = values.validDateRange;
       
       // 1. 检查币种和本位币不能相同
@@ -520,6 +547,8 @@ const ExchangeRateManagement: React.FC = () => {
         updateTime: now
       };
 
+      console.log('准备保存的数据:', exchangeRateItem);
+
       if (isEditing) {
         // 更新现有汇率设置
         setExchangeRateData(prev => prev.map(item => 
@@ -540,9 +569,15 @@ const ExchangeRateManagement: React.FC = () => {
       setEditModalVisible(false);
       editForm.resetFields();
     } catch (error) {
-      // 表单验证失败时，不关闭弹窗，让用户看到验证错误信息
+      // 表单验证失败时，显示具体的错误信息
       console.error('表单验证失败:', error);
-      // 不需要额外的错误提示，Arco Design会自动显示字段验证错误
+      
+      // 显示验证错误提示
+      Message.error({
+        content: '请检查表单输入，确保所有必填字段都已正确填写',
+        duration: 5000,
+        showIcon: true
+      });
     }
   };
 
