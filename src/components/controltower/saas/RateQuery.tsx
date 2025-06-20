@@ -26,7 +26,7 @@ import {
   IconRefresh, 
   IconList,
   IconDragDotVertical,
-  IconEye, 
+  IconEye,
   IconDown,
   IconUp,
   IconSettings
