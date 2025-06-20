@@ -189,6 +189,12 @@ const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
           { title: '币种管理', path: '/platformadmin/currency-management' }
         );
         break;
+      case 'exchange-rate-management':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '汇率设置', path: '/platformadmin/exchange-rate-management' }
+        );
+        break;
       // 系统设置
       case 'staff-management':
         breadcrumbs.push(
@@ -361,6 +367,9 @@ const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
             </MenuItem>
             <MenuItem key="currency-management">
               <span>币种管理</span>
+            </MenuItem>
+            <MenuItem key="exchange-rate-management">
+              <span>汇率设置</span>
             </MenuItem>
           </SubMenu>
 

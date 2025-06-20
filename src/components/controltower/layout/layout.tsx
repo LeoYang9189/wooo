@@ -449,6 +449,12 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
           { title: '币种管理', path: undefined }
         );
         break;
+      case 'exchange-rate-management':
+        breadcrumbs.push(
+          { title: '基础资料维护', path: undefined },
+          { title: '汇率设置', path: undefined }
+        );
+        break;
       default:
         // 处理编辑员工页面
         if (simplePath.startsWith('edit-employee/')) {
@@ -703,6 +709,9 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
             </MenuItem>
             <MenuItem key="currency-management">
               <span>币种管理</span>
+            </MenuItem>
+            <MenuItem key="exchange-rate-management">
+              <span>汇率设置</span>
             </MenuItem>
             <MenuItem key="calculation-unit">
               <span>计费单位</span>

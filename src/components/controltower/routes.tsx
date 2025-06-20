@@ -76,6 +76,7 @@ import RouteForm from './pages/RouteForm';
 import ScheduleQuery from './pages/ScheduleQuery';
 import UIStandards from './pages/UIStandards';
 import CurrencyManagement from './pages/CurrencyManagement';
+import ExchangeRateManagement from './pages/ExchangeRateManagement';
 // --- 结束 ---
 
 const ControlTowerRoutes: React.FC = () => {
@@ -314,6 +315,7 @@ const ControlTowerRoutes: React.FC = () => {
       <Route path="/route-maintenance/edit/:id" element={<RouteForm />} />
       <Route path="/schedule-query" element={<ScheduleQuery />} />
       <Route path="/currency-management" element={<CurrencyManagement />} />
+      <Route path="/exchange-rate-management" element={<ExchangeRateManagement />} />
       {/* --- 结束 --- */}
     </Routes>
   );

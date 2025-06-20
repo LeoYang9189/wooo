@@ -28,6 +28,7 @@ import RoleManagement from './pages/RoleManagement';
 import PermissionManagement from './pages/PermissionManagement';
 import PortManagement from './pages/PortManagement';
 import CurrencyManagement from './pages/CurrencyManagement';
+import ExchangeRateManagement from './pages/ExchangeRateManagement';
 
 const PlatformAdminRoutes: React.FC = () => {
   return (
@@ -62,6 +63,7 @@ const PlatformAdminRoutes: React.FC = () => {
       <Route path="/permission-management" element={<PermissionManagement />} />
       <Route path="/port-management" element={<PortManagement />} />
       <Route path="/currency-management" element={<CurrencyManagement />} />
+      <Route path="/exchange-rate-management" element={<ExchangeRateManagement />} />
     </Routes>
   );
 };
