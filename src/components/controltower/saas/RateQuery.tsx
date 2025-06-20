@@ -365,9 +365,113 @@ const getFilterFieldsByTab = (activeTab: string): FilterFieldConfig[] => {
           type: 'select',
           options: [
             { label: '直拖', value: '直拖' },
-            { label: '支线', value: '支线' }
+            { label: '支线', value: '支线' },
+            { label: '海铁', value: '海铁' }
           ],
           placeholder: '请选择运价类型'
+        },
+        {
+          key: 'sublineType',
+          label: '支线类型',
+          type: 'select',
+          options: [
+            { label: '海宁支线', value: '海宁支线' },
+            { label: '乍浦支线', value: '乍浦支线' }
+          ],
+          placeholder: '请选择支线类型'
+        },
+        {
+          key: 'seaRailType',
+          label: '海铁类型',
+          type: 'select',
+          options: [
+            { label: '湖州海铁', value: '湖州海铁' },
+            { label: '义务海铁', value: '义务海铁' }
+          ],
+          placeholder: '请选择海铁类型'
+        },
+        {
+          key: 'origin',
+          label: '起运地',
+          type: 'text',
+          placeholder: '请输入起运地'
+        },
+        {
+          key: 'destination',
+          label: '起运港',
+          type: 'select',
+          options: [
+            { label: 'CNSHA', value: 'CNSHA' },
+            { label: 'CNNGB', value: 'CNNGB' },
+            { label: 'CNQIN', value: 'CNQIN' },
+            { label: 'CNYTN', value: 'CNYTN' }
+          ],
+          placeholder: '请选择起运港'
+        },
+        {
+          key: 'terminal',
+          label: '码头',
+          type: 'text',
+          placeholder: '请输入码头'
+        },
+        {
+          key: 'vendor',
+          label: '供应商',
+          type: 'text',
+          placeholder: '请输入供应商'
+        },
+        {
+          key: 'status',
+          label: '状态',
+          type: 'select',
+          options: [
+            { label: '正常', value: '正常' },
+            { label: '过期', value: '过期' },
+            { label: '下架', value: '下架' }
+          ],
+          placeholder: '请选择状态'
+        },
+        {
+          key: 'validDateRange',
+          label: '有效期',
+          type: 'dateRange',
+          placeholder: '请选择有效期范围'
+        },
+        {
+          key: 'createDate',
+          label: '创建日期',
+          type: 'dateRange',
+          placeholder: '请选择创建日期范围'
+        },
+        {
+          key: 'entryPerson',
+          label: '创建人',
+          type: 'text',
+          placeholder: '请输入创建人'
+        },
+        {
+          key: 'rateModifier',
+          label: '运价修改人',
+          type: 'text',
+          placeholder: '请输入运价修改人'
+        },
+        {
+          key: 'modifyDate',
+          label: '修改日期',
+          type: 'dateRange',
+          placeholder: '请选择修改日期范围'
+        },
+        {
+          key: 'approver',
+          label: '审核人',
+          type: 'text',
+          placeholder: '请输入审核人'
+        },
+        {
+          key: 'approvalDate',
+          label: '审核日期',
+          type: 'dateRange',
+          placeholder: '请选择审核日期范围'
         }
       ];
     case 'oncarriage':
@@ -379,6 +483,20 @@ const getFilterFieldsByTab = (activeTab: string): FilterFieldConfig[] => {
           placeholder: '请输入尾程运价编号'
         },
         {
+          key: 'origin',
+          label: '目的港',
+          type: 'select',
+          options: [
+            { label: 'USLAX', value: 'USLAX' },
+            { label: 'USNYC', value: 'USNYC' },
+            { label: 'USLGB', value: 'USLGB' },
+            { label: 'USOAK', value: 'USOAK' },
+            { label: 'USSEA', value: 'USSEA' },
+            { label: 'USNRF', value: 'USNRF' }
+          ],
+          placeholder: '请选择目的港'
+        },
+        {
           key: 'addressType',
           label: '地址类型',
           type: 'select',
@@ -388,6 +506,109 @@ const getFilterFieldsByTab = (activeTab: string): FilterFieldConfig[] => {
             { label: '易仓', value: '易仓' }
           ],
           placeholder: '请选择地址类型'
+        },
+        {
+          key: 'zipCode',
+          label: '邮编',
+          type: 'text',
+          placeholder: '请输入邮编'
+        },
+        {
+          key: 'state',
+          label: '州',
+          type: 'select',
+          options: [
+            { label: 'California (CA)', value: 'CA' },
+            { label: 'New York (NY)', value: 'NY' },
+            { label: 'Texas (TX)', value: 'TX' },
+            { label: 'Florida (FL)', value: 'FL' },
+            { label: 'Washington (WA)', value: 'WA' },
+            { label: 'Georgia (GA)', value: 'GA' }
+          ],
+          placeholder: '请选择州'
+        },
+        {
+          key: 'province',
+          label: '省/县',
+          type: 'text',
+          placeholder: '请输入省/县'
+        },
+        {
+          key: 'region',
+          label: '区域/城市',
+          type: 'text',
+          placeholder: '请输入区域/城市'
+        },
+        {
+          key: 'address',
+          label: '详细地址',
+          type: 'text',
+          placeholder: '请输入详细地址'
+        },
+        {
+          key: 'warehouseCode',
+          label: '仓库代码',
+          type: 'text',
+          placeholder: '请输入仓库代码'
+        },
+        {
+          key: 'agentName',
+          label: '代理名称',
+          type: 'text',
+          placeholder: '请输入代理名称'
+        },
+        {
+          key: 'status',
+          label: '状态',
+          type: 'select',
+          options: [
+            { label: '正常', value: '正常' },
+            { label: '过期', value: '过期' },
+            { label: '下架', value: '下架' }
+          ],
+          placeholder: '请选择状态'
+        },
+        {
+          key: 'validDateRange',
+          label: '有效期',
+          type: 'dateRange',
+          placeholder: '请选择有效期范围'
+        },
+        {
+          key: 'createDate',
+          label: '创建日期',
+          type: 'dateRange',
+          placeholder: '请选择创建日期范围'
+        },
+        {
+          key: 'entryPerson',
+          label: '创建人',
+          type: 'text',
+          placeholder: '请输入创建人'
+        },
+        {
+          key: 'rateModifier',
+          label: '运价修改人',
+          type: 'text',
+          placeholder: '请输入运价修改人'
+        },
+        {
+          key: 'modifyDate',
+          label: '修改日期',
+          type: 'dateRange',
+          placeholder: '请选择修改日期范围'
+        },
+        {
+          key: 'approver',
+          label: '审核人',
+          type: 'text',
+          placeholder: '请输入审核人'
+        },
+        {
+          key: 'approvalDate',
+          label: '审核日期',
+          type: 'dateRange',
+          placeholder: '请选择审核日期范围'
         }
       ];
     default:
