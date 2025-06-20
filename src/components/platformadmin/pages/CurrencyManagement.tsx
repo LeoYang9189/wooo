@@ -32,6 +32,9 @@ interface Currency {
   nameEn: string; // 名称（英文）
   nameCn: string; // 名称（中文）
   symbol: string; // 符号
+  currencyDecimals: number; // 币种小数位数
+  exchangeRateDecimals: number; // 汇率小数位数
+  roundingRule: 'round_up' | 'round_down' | 'round_half'; // 进位规则
   status: 'enabled' | 'disabled';
 }
 
@@ -64,6 +67,9 @@ const CurrencyManagement: React.FC = () => {
         nameEn: 'United States Dollar',
         nameCn: '美元',
         symbol: '$',
+        currencyDecimals: 2,
+        exchangeRateDecimals: 6,
+        roundingRule: 'round_half',
         status: 'enabled'
       },
       {
@@ -72,6 +78,9 @@ const CurrencyManagement: React.FC = () => {
         nameEn: 'Chinese Yuan',
         nameCn: '人民币',
         symbol: '¥',
+        currencyDecimals: 2,
+        exchangeRateDecimals: 6,
+        roundingRule: 'round_half',
         status: 'enabled'
       },
       {
@@ -80,6 +89,9 @@ const CurrencyManagement: React.FC = () => {
         nameEn: 'Euro',
         nameCn: '欧元',
         symbol: '€',
+        currencyDecimals: 2,
+        exchangeRateDecimals: 6,
+        roundingRule: 'round_half',
         status: 'enabled'
       },
       {
@@ -88,6 +100,9 @@ const CurrencyManagement: React.FC = () => {
         nameEn: 'Japanese Yen',
         nameCn: '日元',
         symbol: '¥',
+        currencyDecimals: 0,
+        exchangeRateDecimals: 8,
+        roundingRule: 'round_up',
         status: 'enabled'
       },
       {
@@ -96,6 +111,9 @@ const CurrencyManagement: React.FC = () => {
         nameEn: 'British Pound',
         nameCn: '英镑',
         symbol: '£',
+        currencyDecimals: 2,
+        exchangeRateDecimals: 6,
+        roundingRule: 'round_down',
         status: 'disabled'
       }
     ];
@@ -187,6 +205,31 @@ const CurrencyManagement: React.FC = () => {
       width: 100,
     },
     {
+      title: '币种小数位数',
+      dataIndex: 'currencyDecimals',
+      width: 120,
+      render: (decimals: number) => `${decimals}位`,
+    },
+    {
+      title: '汇率小数位数',
+      dataIndex: 'exchangeRateDecimals',
+      width: 120,
+      render: (decimals: number) => `${decimals}位`,
+    },
+    {
+      title: '进位规则',
+      dataIndex: 'roundingRule',
+      width: 120,
+      render: (rule: string) => {
+        const ruleMap = {
+          'round_up': '进位',
+          'round_down': '舍位',
+          'round_half': '四舍五入'
+        };
+        return ruleMap[rule as keyof typeof ruleMap] || rule;
+      },
+    },
+    {
       title: '状态',
       dataIndex: 'status',
       width: 100,
@@ -250,7 +293,10 @@ const CurrencyManagement: React.FC = () => {
       code: record.code,
       nameEn: record.nameEn,
       nameCn: record.nameCn,
-      symbol: record.symbol
+      symbol: record.symbol,
+      currencyDecimals: record.currencyDecimals,
+      exchangeRateDecimals: record.exchangeRateDecimals,
+      roundingRule: record.roundingRule
     });
     setEditModalVisible(true);
   };
@@ -319,6 +365,9 @@ const CurrencyManagement: React.FC = () => {
       const currencyItem = {
         ...values,
         id: isEditing ? currentCurrency?.id : Date.now().toString(),
+        currencyDecimals: parseInt(values.currencyDecimals) || 2,
+        exchangeRateDecimals: parseInt(values.exchangeRateDecimals) || 6,
+        roundingRule: values.roundingRule || 'round_half',
         status: isEditing ? currentCurrency?.status : 'enabled' as const
       };
 
@@ -417,7 +466,7 @@ const CurrencyManagement: React.FC = () => {
         columns={columns}
         data={filteredData}
         rowKey="id"
-        scroll={{ x: 1000 }}
+        scroll={{ x: 1400 }}
         pagination={{
           pageSize: 10,
           showTotal: true,
@@ -439,7 +488,7 @@ const CurrencyManagement: React.FC = () => {
         style={{ width: 500 }}
       >
         {currentCurrency && (
-          <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '12px 16px', alignItems: 'center' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '140px 1fr', gap: '12px 16px', alignItems: 'center' }}>
             <span style={{ fontWeight: 500 }}>币种代码：</span>
             <span>{currentCurrency.code}</span>
             
@@ -451,6 +500,19 @@ const CurrencyManagement: React.FC = () => {
             
             <span style={{ fontWeight: 500 }}>符号：</span>
             <span>{currentCurrency.symbol}</span>
+            
+            <span style={{ fontWeight: 500 }}>币种小数位数：</span>
+            <span>{currentCurrency.currencyDecimals}位</span>
+            
+            <span style={{ fontWeight: 500 }}>汇率小数位数：</span>
+            <span>{currentCurrency.exchangeRateDecimals}位</span>
+            
+            <span style={{ fontWeight: 500 }}>进位规则：</span>
+            <span>
+              {currentCurrency.roundingRule === 'round_up' && '进位'}
+              {currentCurrency.roundingRule === 'round_down' && '舍位'}
+              {currentCurrency.roundingRule === 'round_half' && '四舍五入'}
+            </span>
             
             <span style={{ fontWeight: 500 }}>状态：</span>
             <Tag color={currentCurrency.status === 'enabled' ? 'green' : 'red'}>
@@ -511,6 +573,49 @@ const CurrencyManagement: React.FC = () => {
               rules={[{ required: true, message: '请输入中文名称' }]}
             >
               <Input placeholder="请输入中文名称，如：美元" />
+            </Form.Item>
+            
+            <Form.Item
+              field="currencyDecimals"
+              label="币种小数位数"
+              rules={[{ required: true, message: '请选择币种小数位数' }]}
+              initialValue={2}
+            >
+              <Select placeholder="请选择币种小数位数">
+                <Option value={0}>0位</Option>
+                <Option value={1}>1位</Option>
+                <Option value={2}>2位</Option>
+              </Select>
+            </Form.Item>
+            
+            <Form.Item
+              field="exchangeRateDecimals"
+              label="汇率小数位数"
+              rules={[{ required: true, message: '请选择汇率小数位数' }]}
+              initialValue={6}
+            >
+              <Select placeholder="请选择汇率小数位数">
+                <Option value={2}>2位</Option>
+                <Option value={3}>3位</Option>
+                <Option value={4}>4位</Option>
+                <Option value={5}>5位</Option>
+                <Option value={6}>6位</Option>
+                <Option value={7}>7位</Option>
+                <Option value={8}>8位</Option>
+              </Select>
+            </Form.Item>
+            
+            <Form.Item
+              field="roundingRule"
+              label="进位规则"
+              rules={[{ required: true, message: '请选择进位规则' }]}
+              initialValue="round_half"
+            >
+              <Select placeholder="请选择进位规则">
+                <Option value="round_up">进位</Option>
+                <Option value="round_down">舍位</Option>
+                <Option value="round_half">四舍五入</Option>
+              </Select>
             </Form.Item>
           </div>
         </Form>
