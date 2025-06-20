@@ -540,7 +540,9 @@ const ExchangeRateManagement: React.FC = () => {
       setEditModalVisible(false);
       editForm.resetFields();
     } catch (error) {
-      console.error('保存失败:', error);
+      // 表单验证失败时，不关闭弹窗，让用户看到验证错误信息
+      console.error('表单验证失败:', error);
+      // 不需要额外的错误提示，Arco Design会自动显示字段验证错误
     }
   };
 
