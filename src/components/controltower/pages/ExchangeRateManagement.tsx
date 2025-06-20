@@ -367,18 +367,20 @@ const ExchangeRateManagement: React.FC = () => {
                 编辑
               </Button>
             )}
-            <Popconfirm
-              title={`确定要${record.status === 'enabled' ? '禁用' : '启用'}此汇率设置吗？`}
-              onOk={() => handleToggleStatus(record.id, record.status)}
-            >
-              <Button 
-                type="text" 
-                size="small" 
-                status={record.status === 'enabled' ? 'warning' : 'success'}
+            {!expired && (
+              <Popconfirm
+                title={`确定要${record.status === 'enabled' ? '禁用' : '启用'}此汇率设置吗？`}
+                onOk={() => handleToggleStatus(record.id, record.status)}
               >
-                {record.status === 'enabled' ? '禁用' : '启用'}
-              </Button>
-            </Popconfirm>
+                <Button 
+                  type="text" 
+                  size="small" 
+                  status={record.status === 'enabled' ? 'warning' : 'success'}
+                >
+                  {record.status === 'enabled' ? '禁用' : '启用'}
+                </Button>
+              </Popconfirm>
+            )}
 
           </Space>
         );
