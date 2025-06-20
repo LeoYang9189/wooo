@@ -6,7 +6,6 @@ import {
   Select, 
   DatePicker, 
   Card, 
-  Breadcrumb,
   Typography,
   Tag,
   Modal,
@@ -16,13 +15,10 @@ import {
   Tooltip,
   Tabs,
   Input,
-  Drawer,
-  Dropdown,
-  Menu
+  Drawer
 } from '@arco-design/web-react';
 import { 
   IconSearch, 
-  IconPlus,
   IconRefresh,
   IconList,
   IconDragDotVertical,
@@ -694,7 +690,6 @@ interface DataItem {
 
 
 const FclRates: React.FC = () => {
-  const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
   const [customTableModalVisible, setCustomTableModalVisible] = useState(false);
   const [columnVisibility, setColumnVisibility] = useState({
     routeCode: true,
@@ -786,19 +781,7 @@ const FclRates: React.FC = () => {
     navigate(`/controltower-client/view-oncarriage-rate/${key}`);
   };
 
-  const handleEdit = (key: string) => {
-    navigate(`/controltower/saas/edit-fcl-rate/${key}`);
-  };
 
-  const handleDelete = (_key: string) => {
-    Modal.confirm({
-      title: '确认删除',
-      content: '确定要删除这条运价记录吗？',
-      onOk: () => {
-        Message.success('删除成功');
-      }
-    });
-  };
 
 
 
@@ -1452,9 +1435,7 @@ const FclRates: React.FC = () => {
     };
   });
 
-  const onSelectChange = (selectedRowKeys: (string | number)[]) => {
-    setSelectedRowKeys(selectedRowKeys);
-  };
+
 
   // 分页配置
   const pagination = {
@@ -1661,23 +1642,7 @@ const FclRates: React.FC = () => {
     { key: '4', code: 'LMR2024040001', origin: 'NLRTM | ROTTERDAM', addressType: '第三方地址', zipCode: '96001', address: 'Redding, CA', warehouseCode: null, agentName: 'WEST COAST CARRIERS LLC', validDateRange: '2024-03-01 至 2024-05-31', remark: '', status: '过期', '20gp': 1100, '40gp': 1700, '40hc': 1800, '45hc': 2150, '40nor': 1950 },
   ];
 
-  // 新增运价按钮点击事件
-  const handleAddRate = () => {
-    if (activeTab === 'fcl') {
-      navigate('/controltower/saas/create-fcl-rate');
-      return;
-    }
-    if (activeTab === 'precarriage') {
-      navigate('/controltower/saas/create-precarriage-rate');
-      return;
-    }
-    if (activeTab === 'oncarriage') {
-      navigate('/controltower/saas/create-lastmile-rate');
-      return;
-    }
-    // 其它Tab可自定义跳转或提示
-    Message.info('请在对应Tab实现新增运价功能');
-  };
+
 
   // 修改内容区渲染逻辑
   const renderContent = () => {

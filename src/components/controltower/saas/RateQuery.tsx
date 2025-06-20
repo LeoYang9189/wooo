@@ -1747,42 +1747,42 @@ const RateQuery: React.FC = () => {
     {
       title: '港前运价编号',
       dataIndex: 'code',
-      width: 120,
+      width: 140,
       sorter: true,
       resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+      render: (value: string) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
     },
     {
       title: '运价类型',
       dataIndex: 'rateType',
-      width: 100,
+      width: 120,
       sorter: true,
       resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+      render: (value: string) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
     },
     {
       title: '支线类型',
       dataIndex: 'sublineType',
-      width: 120,
+      width: 140,
       sorter: true,
       resizable: true,
-      render: (value: string | null) => value ? <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip> : '-'
+      render: (value: string | null) => value ? <Tooltip content={value} mini><span>{value}</span></Tooltip> : '-'
     },
     {
       title: '起运地',
       dataIndex: 'origin',
-      width: 180,
+      width: 220,
       sorter: true,
       resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+      render: (value: string) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
     },
     {
       title: '起运港',
       dataIndex: 'destination',
-      width: 150,
+      width: 180,
       sorter: true,
       resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+      render: (value: string) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
     },
     {
       title: '码头',
@@ -1790,7 +1790,7 @@ const RateQuery: React.FC = () => {
       width: 120,
       sorter: true,
       resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+      render: (value: string) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
     },
     {
       title: '供应商',
@@ -1798,7 +1798,7 @@ const RateQuery: React.FC = () => {
       width: 150,
       sorter: true,
       resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+      render: (value: string) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
     },
     {
       title: '20GP',
@@ -1806,7 +1806,7 @@ const RateQuery: React.FC = () => {
       width: 100,
       sorter: true,
       resizable: true,
-      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+      render: (value: number) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
     },
     {
       title: '40GP',
@@ -1814,7 +1814,7 @@ const RateQuery: React.FC = () => {
       width: 100,
       sorter: true,
       resizable: true,
-      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+      render: (value: number) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
     },
     {
       title: '40HC',
@@ -1822,7 +1822,7 @@ const RateQuery: React.FC = () => {
       width: 100,
       sorter: true,
       resizable: true,
-      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+      render: (value: number) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
     },
     {
       title: '40NOR',
@@ -1830,7 +1830,7 @@ const RateQuery: React.FC = () => {
       width: 100,
       sorter: true,
       resizable: true,
-      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+      render: (value: number) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
     },
     {
       title: '45HC',
@@ -1838,15 +1838,15 @@ const RateQuery: React.FC = () => {
       width: 100,
       sorter: true,
       resizable: true,
-      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+      render: (value: number) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
     },
     {
       title: '有效期',
       dataIndex: 'validDateRange',
-      width: 180,
+      width: 200,
       sorter: true,
       resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+      render: (value: string) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
     },
     {
       title: '状态',
@@ -1859,10 +1859,10 @@ const RateQuery: React.FC = () => {
     {
       title: '备注',
       dataIndex: 'remark',
-      width: 150,
+      width: 200,
       sorter: true,
       resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+      render: (value: string) => <Tooltip content={value} mini><span>{value || '-'}</span></Tooltip>
     },
     {
       title: '操作',
@@ -2020,26 +2020,26 @@ const RateQuery: React.FC = () => {
     {
       title: '尾程运价编号',
       dataIndex: 'code',
-      width: 120,
+      width: 140,
       sorter: true,
       resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+      render: (value: string) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
     },
     {
       title: '目的港',
       dataIndex: 'origin',
-      width: 150,
+      width: 180,
       sorter: true,
       resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+      render: (value: string) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
     },
     {
       title: '配送地址类型',
       dataIndex: 'addressType',
-      width: 120,
+      width: 140,
       sorter: true,
       resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+      render: (value: string) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
     },
     {
       title: '邮编',
@@ -2051,20 +2051,20 @@ const RateQuery: React.FC = () => {
         if (record.addressType === '亚马逊仓库' || record.addressType === '易仓') {
           return '-';
         }
-        return <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>;
+        return <Tooltip content={value} mini><span>{value}</span></Tooltip>;
       }
     },
     {
       title: '地址',
       dataIndex: 'address',
-      width: 180,
+      width: 200,
       sorter: true,
       resizable: true,
       render: (value: string, record: OncarriageDataItem) => {
         if (record.addressType === '亚马逊仓库' || record.addressType === '易仓') {
           return '-';
         }
-        return <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>;
+        return <Tooltip content={value} mini><span>{value}</span></Tooltip>;
       }
     },
     {
@@ -2073,15 +2073,15 @@ const RateQuery: React.FC = () => {
       width: 120,
       sorter: true,
       resizable: true,
-      render: (value: string | null) => value ? <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip> : '-'
+      render: (value: string | null) => value ? <Tooltip content={value} mini><span>{value}</span></Tooltip> : '-'
     },
     {
       title: '代理名称',
       dataIndex: 'agentName',
-      width: 150,
+      width: 200,
       sorter: true,
       resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+      render: (value: string) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
     },
     {
       title: '20GP',
@@ -2089,7 +2089,7 @@ const RateQuery: React.FC = () => {
       width: 100,
       sorter: true,
       resizable: true,
-      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+      render: (value: number) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
     },
     {
       title: '40GP',
@@ -2097,7 +2097,7 @@ const RateQuery: React.FC = () => {
       width: 100,
       sorter: true,
       resizable: true,
-      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+      render: (value: number) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
     },
     {
       title: '40HC',
@@ -2105,7 +2105,7 @@ const RateQuery: React.FC = () => {
       width: 100,
       sorter: true,
       resizable: true,
-      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+      render: (value: number) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
     },
     {
       title: '40NOR',
@@ -2113,7 +2113,7 @@ const RateQuery: React.FC = () => {
       width: 100,
       sorter: true,
       resizable: true,
-      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+      render: (value: number) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
     },
     {
       title: '45HC',
@@ -2121,15 +2121,15 @@ const RateQuery: React.FC = () => {
       width: 100,
       sorter: true,
       resizable: true,
-      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+      render: (value: number) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
     },
     {
       title: '有效期',
       dataIndex: 'validDateRange',
-      width: 180,
+      width: 200,
       sorter: true,
       resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
+      render: (value: string) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
     },
     {
       title: '状态',
@@ -2142,10 +2142,10 @@ const RateQuery: React.FC = () => {
     {
       title: '备注',
       dataIndex: 'remark',
-      width: 150,
+      width: 200,
       sorter: true,
       resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value || '-'}</span></Tooltip>
+      render: (value: string) => <Tooltip content={value} mini><span>{value || '-'}</span></Tooltip>
     },
     {
       title: '操作',
@@ -2801,7 +2801,7 @@ const RateQuery: React.FC = () => {
               onChange: onSelectChange,
             }}
             pagination={pagination}
-            scroll={{ x: 1800 }}
+            scroll={{ x: 2700 }}
             border={false}
             className="mt-4 inquiry-table-nowrap"
           />

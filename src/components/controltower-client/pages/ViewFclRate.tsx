@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
-  Breadcrumb, 
   Typography, 
   Button, 
   Space, 
   Table,
-  Tag,
   Descriptions
 } from '@arco-design/web-react';
 import { IconArrowLeft, IconDownload } from '@arco-design/web-react/icon';
@@ -51,7 +49,7 @@ interface NonContainerRateItem {
 const ViewFclRate: React.FC = () => {
   const navigate = useNavigate();
   const params = useParams();
-  const [loading, setLoading] = useState(false);
+
   const rateId = params.id;
   
   // 基本信息状态
@@ -97,7 +95,7 @@ const ViewFclRate: React.FC = () => {
 
   const loadRateData = async (id: string) => {
     try {
-      setLoading(true);
+  
       // 模拟API调用获取运价数据
       await new Promise(resolve => setTimeout(resolve, 1000));
       
@@ -235,11 +233,9 @@ const ViewFclRate: React.FC = () => {
         }
       ]);
       
-    } catch (error) {
-      console.error('加载运价数据失败:', error);
-    } finally {
-      setLoading(false);
-    }
+          } catch (error) {
+        console.error('加载运价数据失败:', error);
+      }
   };
 
   // 返回列表页

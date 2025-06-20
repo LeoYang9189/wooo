@@ -18,7 +18,7 @@ const { Title } = Typography;
 const ViewPrecarriageRate: React.FC = () => {
   const navigate = useNavigate();
   const params = useParams();
-  const [loading, setLoading] = useState(false);
+
   const rateId = params.id;
   
   // 基本信息状态
@@ -33,7 +33,7 @@ const ViewPrecarriageRate: React.FC = () => {
 
   const loadRateData = async (id: string) => {
     try {
-      setLoading(true);
+      
       // 模拟API调用获取运价数据
       await new Promise(resolve => setTimeout(resolve, 1000));
       
@@ -67,7 +67,7 @@ const ViewPrecarriageRate: React.FC = () => {
     } catch (error) {
       console.error('加载运价数据失败:', error);
     } finally {
-      setLoading(false);
+      
     }
   };
 

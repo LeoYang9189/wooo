@@ -820,25 +820,7 @@ const CreatePrecarriageRate: React.FC = () => {
       [boxType]: visible
     }));
   };
-  
-  // 重置箱型显示状态
-  const resetBoxTypeVisibility = () => {
-    setBoxTypeVisibility({
-      '20gp': true,
-      '40gp': true,
-      '40hc': true,
-      '20nor': false,
-      '40nor': true,
-      '45hc': true,
-      '20hc': false,
-      '20tk': false,
-      '40tk': false,
-      '20ot': false,
-      '40ot': false,
-      '20fr': false,
-      '40fr': false
-    });
-  };
+
 
   return (
     <ControlTowerSaasLayout 
