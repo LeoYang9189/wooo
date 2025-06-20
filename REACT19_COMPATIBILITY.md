@@ -29,7 +29,38 @@ Accessing element.ref was removed in React 19. ref is now a regular prop. It wil
 - `src/components/controltower/pages/ExchangeRateManagement.tsx`
 - 以及其他使用 Arco Design Form 组件的文件
 
-## 其他警告
+## 其他问题
+
+### Message 组件渲染错误
+```
+CopyReactDOM.render is not a function
+```
+
+**问题来源：**
+- Arco Design 的 Message 组件在 React 19 中的兼容性问题
+- 内部使用了已废弃的 ReactDOM.render 方法
+
+**影响范围：**
+- Message.success、Message.error 等方法调用时出现
+- 不影响核心功能，但会在控制台显示错误
+
+**解决方案：**
+- 等待 Arco Design 发布 React 19 兼容版本
+- 当前可以正常使用，错误不影响功能
+
+### 数据类型错误
+```
+rate.toFixed is not a function
+```
+
+**问题来源：**
+- 表单输入的数值可能是字符串类型
+- 在渲染时直接调用数字方法导致错误
+
+**解决方案：**
+- 在保存数据时使用 `parseFloat()` 确保数值类型
+- 在渲染时检查数据类型，兼容字符串和数字
+- 已在汇率设置页面中修复
 
 ### useDraggable 警告
 ```
