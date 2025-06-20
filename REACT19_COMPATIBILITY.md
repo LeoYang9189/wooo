@@ -31,22 +31,30 @@ Accessing element.ref was removed in React 19. ref is now a regular prop. It wil
 
 ## 其他问题
 
-### Message 组件渲染错误
+### ReactDOM.render 渲染错误
 ```
 CopyReactDOM.render is not a function
 ```
 
 **问题来源：**
-- Arco Design 的 Message 组件在 React 19 中的兼容性问题
+- Arco Design 组件库在 React 19 中的兼容性问题
 - 内部使用了已废弃的 ReactDOM.render 方法
+- 主要出现在 Message、Modal、Form 等组件的内部渲染逻辑中
 
 **影响范围：**
 - Message.success、Message.error 等方法调用时出现
+- Modal 弹窗操作时可能出现
+- Form 表单提交时可能出现（如汇率设置页面的保存操作）
 - 不影响核心功能，但会在控制台显示错误
+
+**出现场景：**
+- 汇率设置页面新增/编辑保存时（`handleSaveExchangeRate` 函数）
+- 其他使用 Arco Design 组件的表单操作
 
 **解决方案：**
 - 等待 Arco Design 发布 React 19 兼容版本
-- 当前可以正常使用，错误不影响功能
+- 当前可以正常使用，错误不影响实际功能
+- 用户操作依然可以正常完成
 
 ### 数据类型错误
 ```
