@@ -12,16 +12,14 @@ import {
   Select,
   Message,
   Popconfirm,
-  Typography,
-  DatePicker
+  Typography
 } from '@arco-design/web-react';
 import {
   IconPlus,
   IconEdit,
   IconSearch,
   IconRefresh,
-  IconEye,
-  IconSettings
+  IconEye
 } from '@arco-design/web-react/icon';
 
 const { Title } = Typography;
@@ -34,8 +32,6 @@ interface Currency {
   nameEn: string; // 名称（英文）
   nameCn: string; // 名称（中文）
   symbol: string; // 符号
-  exchangeRate?: number; // 汇率
-  exchangeRateValidDate?: string; // 汇率有效期
   status: 'enabled' | 'disabled';
 }
 
@@ -50,7 +46,6 @@ const CurrencyManagement: React.FC = () => {
   const [filteredData, setFilteredData] = useState<Currency[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [editModalVisible, setEditModalVisible] = useState(false);
-  const [exchangeRateModalVisible, setExchangeRateModalVisible] = useState(false);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
   const [currentCurrency, setCurrentCurrency] = useState<Currency | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -59,7 +54,6 @@ const CurrencyManagement: React.FC = () => {
     status: ''
   });
   const [editForm] = Form.useForm();
-  const [exchangeRateForm] = Form.useForm();
 
   // 初始化示例数据
   useEffect(() => {
@@ -70,8 +64,6 @@ const CurrencyManagement: React.FC = () => {
         nameEn: 'United States Dollar',
         nameCn: '美元',
         symbol: '$',
-        exchangeRate: 1.0000,
-        exchangeRateValidDate: '2024-12-31',
         status: 'enabled'
       },
       {
@@ -80,8 +72,6 @@ const CurrencyManagement: React.FC = () => {
         nameEn: 'Chinese Yuan',
         nameCn: '人民币',
         symbol: '¥',
-        exchangeRate: 7.2500,
-        exchangeRateValidDate: '2024-12-31',
         status: 'enabled'
       },
       {
@@ -90,8 +80,6 @@ const CurrencyManagement: React.FC = () => {
         nameEn: 'Euro',
         nameCn: '欧元',
         symbol: '€',
-        exchangeRate: 0.9200,
-        exchangeRateValidDate: '2024-12-31',
         status: 'enabled'
       },
       {
@@ -100,8 +88,6 @@ const CurrencyManagement: React.FC = () => {
         nameEn: 'Japanese Yen',
         nameCn: '日元',
         symbol: '¥',
-        exchangeRate: 150.0000,
-        exchangeRateValidDate: '2024-12-31',
         status: 'enabled'
       },
       {
@@ -110,8 +96,6 @@ const CurrencyManagement: React.FC = () => {
         nameEn: 'British Pound',
         nameCn: '英镑',
         symbol: '£',
-        exchangeRate: 0.7900,
-        exchangeRateValidDate: '2024-12-31',
         status: 'disabled'
       }
     ];
@@ -203,18 +187,6 @@ const CurrencyManagement: React.FC = () => {
       width: 100,
     },
     {
-      title: '汇率',
-      dataIndex: 'exchangeRate',
-      width: 120,
-      render: (rate: number) => rate ? rate.toFixed(4) : '-',
-    },
-    {
-      title: '汇率有效期',
-      dataIndex: 'exchangeRateValidDate',
-      width: 150,
-      render: (date: string) => date || '-',
-    },
-    {
       title: '状态',
       dataIndex: 'status',
       width: 100,
@@ -227,7 +199,7 @@ const CurrencyManagement: React.FC = () => {
     {
       title: '操作',
       dataIndex: 'action',
-      width: 280,
+      width: 200,
       fixed: 'right' as const,
       render: (_: unknown, record: Currency) => (
         <Space>
@@ -259,14 +231,6 @@ const CurrencyManagement: React.FC = () => {
               {record.status === 'enabled' ? '禁用' : '启用'}
             </Button>
           </Popconfirm>
-          <Button
-            type="text"
-            size="small"
-            icon={<IconSettings />}
-            onClick={() => handleExchangeRateSetting(record)}
-          >
-            设置汇率
-          </Button>
         </Space>
       ),
     },
@@ -347,16 +311,6 @@ const CurrencyManagement: React.FC = () => {
     Message.success(`已禁用 ${selectedRowKeys.length} 个币种`);
   };
 
-  // 处理汇率设置
-  const handleExchangeRateSetting = (record: Currency) => {
-    setCurrentCurrency(record);
-    exchangeRateForm.setFieldsValue({
-      exchangeRate: record.exchangeRate,
-      exchangeRateValidDate: record.exchangeRateValidDate
-    });
-    setExchangeRateModalVisible(true);
-  };
-
   // 保存币种编辑
   const handleSaveCurrency = async () => {
     try {
@@ -365,8 +319,6 @@ const CurrencyManagement: React.FC = () => {
       const currencyItem = {
         ...values,
         id: isEditing ? currentCurrency?.id : Date.now().toString(),
-        exchangeRate: isEditing ? currentCurrency?.exchangeRate : undefined,
-        exchangeRateValidDate: isEditing ? currentCurrency?.exchangeRateValidDate : undefined,
         status: isEditing ? currentCurrency?.status : 'enabled' as const
       };
 
@@ -391,34 +343,6 @@ const CurrencyManagement: React.FC = () => {
       editForm.resetFields();
     } catch (error) {
       console.error('保存失败:', error);
-    }
-  };
-
-  // 保存汇率设置
-  const handleSaveExchangeRate = async () => {
-    try {
-      const values = await exchangeRateForm.validate();
-      
-      setCurrencyData(prev => prev.map(currency => 
-        currency.id === currentCurrency?.id ? { 
-          ...currency, 
-          exchangeRate: values.exchangeRate,
-          exchangeRateValidDate: values.exchangeRateValidDate
-        } : currency
-      ));
-      setFilteredData(prev => prev.map(currency => 
-        currency.id === currentCurrency?.id ? { 
-          ...currency, 
-          exchangeRate: values.exchangeRate,
-          exchangeRateValidDate: values.exchangeRateValidDate
-        } : currency
-      ));
-
-      setExchangeRateModalVisible(false);
-      exchangeRateForm.resetFields();
-      Message.success('汇率已保存');
-    } catch (error) {
-      console.error('保存汇率失败:', error);
     }
   };
 
@@ -493,7 +417,7 @@ const CurrencyManagement: React.FC = () => {
         columns={columns}
         data={filteredData}
         rowKey="id"
-        scroll={{ x: 1400 }}
+        scroll={{ x: 1000 }}
         pagination={{
           pageSize: 10,
           showTotal: true,
@@ -527,12 +451,6 @@ const CurrencyManagement: React.FC = () => {
             
             <span style={{ fontWeight: 500 }}>符号：</span>
             <span>{currentCurrency.symbol}</span>
-            
-            <span style={{ fontWeight: 500 }}>汇率：</span>
-            <span>{currentCurrency.exchangeRate ? currentCurrency.exchangeRate.toFixed(4) : '-'}</span>
-            
-            <span style={{ fontWeight: 500 }}>汇率有效期：</span>
-            <span>{currentCurrency.exchangeRateValidDate || '-'}</span>
             
             <span style={{ fontWeight: 500 }}>状态：</span>
             <Tag color={currentCurrency.status === 'enabled' ? 'green' : 'red'}>
@@ -595,44 +513,6 @@ const CurrencyManagement: React.FC = () => {
               <Input placeholder="请输入中文名称，如：美元" />
             </Form.Item>
           </div>
-        </Form>
-      </Modal>
-
-      {/* 汇率设置弹窗 */}
-      <Modal
-        title="设置汇率"
-        visible={exchangeRateModalVisible}
-        onOk={handleSaveExchangeRate}
-        onCancel={() => setExchangeRateModalVisible(false)}
-        style={{ width: 500 }}
-      >
-        <Form form={exchangeRateForm} layout="vertical">
-          <Form.Item
-            field="exchangeRate"
-            label="汇率"
-            rules={[
-              { required: true, message: '请输入汇率' },
-              { 
-                validator: (value, callback) => {
-                  if (value && (isNaN(value) || value <= 0)) {
-                    callback('汇率必须为正数');
-                  } else {
-                    callback();
-                  }
-                }
-              }
-            ]}
-          >
-            <Input placeholder="请输入汇率，如：7.2500" type="number" step="0.0001" />
-          </Form.Item>
-          
-          <Form.Item
-            field="exchangeRateValidDate"
-            label="有效期"
-            rules={[{ required: true, message: '请选择有效期' }]}
-          >
-            <DatePicker placeholder="请选择有效期" style={{ width: '100%' }} />
-          </Form.Item>
         </Form>
       </Modal>
     </Card>
