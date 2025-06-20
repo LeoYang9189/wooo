@@ -41,6 +41,7 @@ import CreateAirInquiry from './saas/CreateAirInquiry';
 import InquiryDetail from './saas/InquiryDetail';
 import ViewPrecarriageRate from './saas/ViewPrecarriageRate';
 import ViewLastMileRate from './saas/ViewLastMileRate';
+import ViewFclRate from './saas/ViewFclRate';
 import CombinationRateQuery from './saas/CombinationRateQuery';
 
 // 引入包装器
@@ -259,6 +260,11 @@ const ControlTowerRoutes: React.FC = () => {
       } />
       
       {/* 查看运价页面 */}
+      <Route path="/saas/view-fcl-rate/:id" element={
+        <SaasPageWrapper>
+          <ViewFclRate />
+        </SaasPageWrapper>
+      } />
       <Route path="/saas/view-precarriage-rate/:id" element={
         <SaasPageWrapper>
           <ViewPrecarriageRate />
