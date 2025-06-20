@@ -20,8 +20,7 @@ import {
   IconEdit,
   IconSearch,
   IconRefresh,
-  IconEye,
-  IconDelete
+  IconEye
 } from '@arco-design/web-react/icon';
 
 const { Title } = Typography;
@@ -78,6 +77,23 @@ const ExchangeRateManagement: React.FC = () => {
     status: ''
   });
   const [editForm] = Form.useForm();
+
+  // 检查汇率是否已过期并自动禁用
+  const checkAndUpdateExpiredRates = (data: ExchangeRate[]) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // 设置为当天开始时间
+    
+    return data.map(item => {
+      const endDate = new Date(item.validDateEnd);
+      endDate.setHours(23, 59, 59, 999); // 设置为当天结束时间
+      
+      // 如果有效期结束日已过且状态为启用，自动禁用
+      if (endDate < today && item.status === 'enabled') {
+        return { ...item, status: 'disabled' as const };
+      }
+      return item;
+    });
+  };
 
   // 初始化示例数据
   useEffect(() => {
@@ -142,15 +158,17 @@ const ExchangeRateManagement: React.FC = () => {
         baseCurrencyName: '美元',
         rate: 1.2650,
         validDateStart: '2024-01-01',
-        validDateEnd: '2024-05-31',
-        status: 'disabled',
+        validDateEnd: '2023-12-31', // 已过期的数据
+        status: 'enabled',
         createTime: '2024-01-01 10:00:00',
         updateTime: '2024-01-01 10:00:00'
       }
     ];
 
-    setExchangeRateData(mockData);
-    setFilteredData(mockData);
+    // 检查并更新过期汇率
+    const updatedData = checkAndUpdateExpiredRates(mockData);
+    setExchangeRateData(updatedData);
+    setFilteredData(updatedData);
   }, []);
 
   // 搜索筛选功能
@@ -194,6 +212,15 @@ const ExchangeRateManagement: React.FC = () => {
       status: ''
     });
     setFilteredData(exchangeRateData);
+  };
+
+  // 检查汇率是否已过期
+  const isExpired = (validDateEnd: string): boolean => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const endDate = new Date(validDateEnd);
+    endDate.setHours(23, 59, 59, 999);
+    return endDate < today;
   };
 
   // 检查日期范围是否有交叉
@@ -315,53 +342,46 @@ const ExchangeRateManagement: React.FC = () => {
     {
       title: '操作',
       dataIndex: 'action',
-      width: 220,
+      width: 180,
       fixed: 'right' as const,
-      render: (_: unknown, record: ExchangeRate) => (
-        <Space>
-          <Button
-            type="text"
-            size="small"
-            icon={<IconEye />}
-            onClick={() => handleDetail(record)}
-          >
-            详情
-          </Button>
-          <Button
-            type="text"
-            size="small"
-            icon={<IconEdit />}
-            onClick={() => handleEdit(record)}
-          >
-            编辑
-          </Button>
-          <Popconfirm
-            title={`确定要${record.status === 'enabled' ? '禁用' : '启用'}此汇率设置吗？`}
-            onOk={() => handleToggleStatus(record.id, record.status)}
-          >
-            <Button 
-              type="text" 
-              size="small" 
-              status={record.status === 'enabled' ? 'warning' : 'success'}
+      render: (_: unknown, record: ExchangeRate) => {
+        const expired = isExpired(record.validDateEnd);
+        
+        return (
+          <Space>
+            <Button
+              type="text"
+              size="small"
+              icon={<IconEye />}
+              onClick={() => handleDetail(record)}
             >
-              {record.status === 'enabled' ? '禁用' : '启用'}
+              详情
             </Button>
-          </Popconfirm>
-          <Popconfirm
-            title="确定要删除此汇率设置吗？"
-            onOk={() => handleDelete(record.id)}
-          >
-            <Button 
-              type="text" 
-              size="small" 
-              status="danger"
-              icon={<IconDelete />}
+            {!expired && (
+              <Button
+                type="text"
+                size="small"
+                icon={<IconEdit />}
+                onClick={() => handleEdit(record)}
+              >
+                编辑
+              </Button>
+            )}
+            <Popconfirm
+              title={`确定要${record.status === 'enabled' ? '禁用' : '启用'}此汇率设置吗？`}
+              onOk={() => handleToggleStatus(record.id, record.status)}
             >
-              删除
-            </Button>
-          </Popconfirm>
-        </Space>
-      ),
+              <Button 
+                type="text" 
+                size="small" 
+                status={record.status === 'enabled' ? 'warning' : 'success'}
+              >
+                {record.status === 'enabled' ? '禁用' : '启用'}
+              </Button>
+            </Popconfirm>
+          </Space>
+        );
+      },
     },
   ];
 
@@ -406,13 +426,7 @@ const ExchangeRateManagement: React.FC = () => {
     Message.success(`汇率设置已${newStatus === 'enabled' ? '启用' : '禁用'}`);
   };
 
-  // 处理删除
-  const handleDelete = (id: string) => {
-    setExchangeRateData(prev => prev.filter(item => item.id !== id));
-    setFilteredData(prev => prev.filter(item => item.id !== id));
-    setSelectedRowKeys(prev => prev.filter(key => key !== id));
-    Message.success('汇率设置已删除');
-  };
+
 
   // 批量启用
   const handleBatchEnable = () => {
@@ -452,20 +466,7 @@ const ExchangeRateManagement: React.FC = () => {
     Message.success(`已禁用 ${selectedRowKeys.length} 个汇率设置`);
   };
 
-  // 批量删除
-  const handleBatchDelete = () => {
-    if (selectedRowKeys.length === 0) {
-      Message.warning('请选择要删除的汇率设置');
-      return;
-    }
-    
-    setExchangeRateData(prev => prev.filter(item => !selectedRowKeys.includes(item.id)));
-    setFilteredData(prev => prev.filter(item => !selectedRowKeys.includes(item.id)));
-    
-    const count = selectedRowKeys.length;
-    setSelectedRowKeys([]);
-    Message.success(`已删除 ${count} 个汇率设置`);
-  };
+
 
   // 保存汇率设置编辑
   const handleSaveExchangeRate = async () => {
@@ -473,7 +474,17 @@ const ExchangeRateManagement: React.FC = () => {
       const values = await editForm.validate();
       const [validDateStart, validDateEnd] = values.validDateRange;
       
-      // 检查日期范围是否有交叉（同币种对同本位币）
+      // 1. 检查币种和本位币不能相同
+      if (values.currencyCode === values.baseCurrencyCode) {
+        Message.error({
+          content: '币种和本位币不能相同！',
+          duration: 5000,
+          showIcon: true
+        });
+        return;
+      }
+      
+      // 2. 检查日期范围是否有交叉（同币种对同本位币）
       const hasOverlap = checkDateOverlap(
         validDateStart,
         validDateEnd,
@@ -484,7 +495,7 @@ const ExchangeRateManagement: React.FC = () => {
 
       if (hasOverlap) {
         Message.error({
-          content: '该币种对本位币在此时间段内已存在汇率设置，时间不能有交叉！',
+          content: '该币种对本位币在此时间段内已存在汇率设置，有效期不能有交叉或重叠！',
           duration: 5000,
           showIcon: true
         });
@@ -620,14 +631,6 @@ const ExchangeRateManagement: React.FC = () => {
               <Button type="outline" status="warning" onClick={handleBatchDisable}>
                 批量禁用 ({selectedRowKeys.length})
               </Button>
-              <Popconfirm
-                title={`确定要删除选中的 ${selectedRowKeys.length} 个汇率设置吗？`}
-                onOk={handleBatchDelete}
-              >
-                <Button type="outline" status="danger">
-                  批量删除 ({selectedRowKeys.length})
-                </Button>
-              </Popconfirm>
             </div>
           )}
         </div>
