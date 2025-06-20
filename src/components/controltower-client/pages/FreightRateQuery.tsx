@@ -17,6 +17,7 @@ import {
   IconDownload,
   IconList
 } from '@arco-design/web-react/icon';
+import { useNavigate } from 'react-router-dom';
 const Title = Typography.Title;
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
@@ -39,7 +40,13 @@ interface RateQueryItem {
 }
 
 const FreightRateQuery: React.FC = () => {
+  const navigate = useNavigate();
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
+
+  // 查看运价详情
+  const handleViewDetail = (key: string) => {
+    navigate(`/controltower-client/saas/view-fcl-rate/${key}`);
+  };
 
   // 表格列定义
   const columns = [
@@ -125,6 +132,21 @@ const FreightRateQuery: React.FC = () => {
       width: 150,
       render: (value: string) => <Tooltip content={value}><span className="arco-ellipsis">{value}</span></Tooltip>,
       resizable: true,
+    },
+    {
+      title: '操作',
+      dataIndex: 'actions',
+      width: 100,
+      fixed: 'right' as const,
+      render: (_: unknown, record: RateQueryItem) => (
+        <Button 
+          type="text" 
+          size="small" 
+          onClick={() => handleViewDetail(record.key)}
+        >
+          查看
+        </Button>
+      ),
     }
   ];
 

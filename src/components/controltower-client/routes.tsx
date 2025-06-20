@@ -13,9 +13,10 @@ import OrderManagement from './pages/OrderManagement';
 import OrderDetail from './pages/OrderDetail';
 import BLAddition from './pages/BLAddition';
 import ScheduleQuery from './pages/ScheduleQuery';
+import ViewFclRate from './pages/ViewFclRate';
+import ClientRateQuery from './pages/ClientRateQuery';
 
 // 引入超级运价系统的组件
-import RateQuery from '../controltower/saas/RateQuery';
 import InquiryManagementSaas from '../controltower/saas/InquiryManagement';
 
 // 引入包装器
@@ -43,7 +44,7 @@ const ControlTowerClientRoutes: React.FC = () => {
       {/* 超级运价系统路由 - 使用包装器隐藏重复布局 */}
       <Route path="/saas/rate-query" element={
         <SaasPageWrapper>
-          <RateQuery />
+          <ClientRateQuery />
         </SaasPageWrapper>
       } />
       <Route path="/saas/inquiry-management" element={
@@ -51,6 +52,9 @@ const ControlTowerClientRoutes: React.FC = () => {
           <InquiryManagementSaas />
         </SaasPageWrapper>
       } />
+      
+      {/* 运价详情页面 */}
+      <Route path="/saas/view-fcl-rate/:id" element={<ViewFclRate />} />
     </Routes>
   );
 };
