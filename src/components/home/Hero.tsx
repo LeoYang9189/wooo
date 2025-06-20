@@ -435,7 +435,7 @@ const Hero = () => {
                 {
                   title: "平台运营端",
                   description: "系统管理后台",
-                  path: "/platformadmin",
+                  path: "/platformadmin/login",
                   icon: (
                     <svg viewBox="0 0 64 64" className="w-12 h-12">
                       <defs>

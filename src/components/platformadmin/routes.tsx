@@ -1,5 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+import AdminLogin from './pages/AdminLogin';
 import Dashboard from './pages/Dashboard';
 import UserManagement from './pages/UserManagement';
 import CompanyManagement from './pages/CompanyManagement';
@@ -33,6 +34,7 @@ import ExchangeRateManagement from './pages/ExchangeRateManagement';
 const PlatformAdminRoutes: React.FC = () => {
   return (
     <Routes>
+      <Route path="/login" element={<AdminLogin />} />
       <Route path="/" element={<Dashboard />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/user-management" element={<UserManagement />} />

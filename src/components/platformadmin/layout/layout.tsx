@@ -20,6 +20,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { Message } from '@arco-design/web-react';
 import '../PlatformAdminStyles.css';
 
 const { Header, Sider, Content } = Layout;
@@ -48,6 +49,30 @@ const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
       navigate('/platformadmin');
     } else {
       navigate(key === 'dashboard' ? '/platformadmin' : `/platformadmin/${key}`);
+    }
+  };
+
+  // 处理用户菜单点击
+  const handleUserMenuClick = (key: string) => {
+    switch (key) {
+      case 'logout':
+        // 清除登录状态
+        localStorage.removeItem('platformAdminAuth');
+        Message.success('已安全退出登录');
+        // 跳转到登录页
+        navigate('/platformadmin/login');
+        break;
+      case 'info':
+        // 个人信息页面
+        break;
+      case 'setting':
+        // 账户设置页面
+        break;
+      case 'help':
+        // 帮助中心页面
+        break;
+      default:
+        break;
     }
   };
 
@@ -437,7 +462,7 @@ const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
             </Dropdown>
             <Dropdown
               droplist={
-                <Menu>
+                <Menu onClickMenuItem={handleUserMenuClick}>
                   <Menu.Item key="info"><IconUser className="mr-2" />个人信息</Menu.Item>
                   <Menu.Item key="setting"><IconSettingsOutline className="mr-2" />账户设置</Menu.Item>
                   <Menu.Item key="help"><IconQuestionCircle className="mr-2" />帮助中心</Menu.Item>
