@@ -556,17 +556,30 @@ const ExchangeRateManagement: React.FC = () => {
         setFilteredData(prev => prev.map(item => 
           item.id === currentExchangeRate?.id ? { ...item, ...exchangeRateItem } : item
         ));
-        Message.success('汇率设置已更新');
+        console.log('汇率设置已更新');
       } else {
         // 新增汇率设置
         const newExchangeRate = { ...exchangeRateItem, id: Date.now().toString() };
         setExchangeRateData(prev => [...prev, newExchangeRate]);
         setFilteredData(prev => [...prev, newExchangeRate]);
-        Message.success('汇率设置已添加');
+        console.log('汇率设置已添加');
       }
 
       setEditModalVisible(false);
       editForm.resetFields();
+      
+      // 延迟显示成功消息，避免 React 19 兼容性问题
+      setTimeout(() => {
+        try {
+          if (isEditing) {
+            Message.success('汇率设置已更新');
+          } else {
+            Message.success('汇率设置已添加');
+          }
+        } catch (error) {
+          console.log('成功消息显示失败，但操作已完成:', error);
+        }
+      }, 100);
     } catch (error) {
       // 表单验证失败时，显示具体的错误信息
       console.error('表单验证失败:', error);
