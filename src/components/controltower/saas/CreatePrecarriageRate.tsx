@@ -114,7 +114,7 @@ const districtOptions: Record<string, OptionItem[]> = {
   ],
 };
 
-// 街道/村镇数据 (按区县分组)
+// 街道/镇数据 (按区县分组)
 const streetOptions: Record<string, OptionItem[]> = {
   '萧山区': [
     { value: '新塘街道', label: '新塘街道' },
@@ -181,6 +181,80 @@ const streetOptions: Record<string, OptionItem[]> = {
   ],
 };
 
+// 村/社区数据 (按街道分组)
+const villageOptions: Record<string, OptionItem[]> = {
+  '新塘街道': [
+    { value: '霞浦社区', label: '霞浦社区' },
+    { value: '新塘社区', label: '新塘社区' },
+    { value: '裘江社区', label: '裘江社区' },
+  ],
+  '北干街道': [
+    { value: '加德社区', label: '加德社区' },
+    { value: '龙湖社区', label: '龙湖社区' },
+    { value: '兴议社区', label: '兴议社区' },
+  ],
+  '宁围街道': [
+    { value: '宁围社区', label: '宁围社区' },
+    { value: '盈丰社区', label: '盈丰社区' },
+    { value: '丰北社区', label: '丰北社区' },
+  ],
+  '灵隐街道': [
+    { value: '玉泉社区', label: '玉泉社区' },
+    { value: '青芝坞社区', label: '青芝坞社区' },
+    { value: '曙光社区', label: '曙光社区' },
+  ],
+  '西溪街道': [
+    { value: '西溪社区', label: '西溪社区' },
+    { value: '文华社区', label: '文华社区' },
+    { value: '马塍社区', label: '马塍社区' },
+  ],
+  '文新街道': [
+    { value: '文新社区', label: '文新社区' },
+    { value: '学院路社区', label: '学院路社区' },
+    { value: '崇文社区', label: '崇文社区' },
+  ],
+  '良渚街道': [
+    { value: '良渚社区', label: '良渚社区' },
+    { value: '石桥村', label: '石桥村' },
+    { value: '港南村', label: '港南村' },
+  ],
+  '硖石街道': [
+    { value: '硖石社区', label: '硖石社区' },
+    { value: '西山社区', label: '西山社区' },
+    { value: '联合社区', label: '联合社区' },
+  ],
+  '当湖街道': [
+    { value: '当湖社区', label: '当湖社区' },
+    { value: '鸣珂社区', label: '鸣珂社区' },
+    { value: '白马社区', label: '白马社区' },
+  ],
+  '乍浦镇': [
+    { value: '乍浦社区', label: '乍浦社区' },
+    { value: '南湾社区', label: '南湾社区' },
+    { value: '天妃社区', label: '天妃社区' },
+  ],
+  '娄葑街道': [
+    { value: '娄葑社区', label: '娄葑社区' },
+    { value: '葑谊社区', label: '葑谊社区' },
+    { value: '新苏社区', label: '新苏社区' },
+  ],
+  '斜塘街道': [
+    { value: '斜塘社区', label: '斜塘社区' },
+    { value: '金鸡湖社区', label: '金鸡湖社区' },
+    { value: '凤凰城社区', label: '凤凰城社区' },
+  ],
+  '陆家嘴街道': [
+    { value: '陆家嘴社区', label: '陆家嘴社区' },
+    { value: '滨江社区', label: '滨江社区' },
+    { value: '富都社区', label: '富都社区' },
+  ],
+  '张江镇': [
+    { value: '张江社区', label: '张江社区' },
+    { value: '科苑社区', label: '科苑社区' },
+    { value: '藿香社区', label: '藿香社区' },
+  ],
+};
+
 // 区域项接口定义
 interface AreaItem {
   key: number;
@@ -188,9 +262,11 @@ interface AreaItem {
   city: string;
   district: string;
   street: string;
+  village: string; // 新增村/社区字段
+  detailAddress: string; // 新增每个区域的详细地址字段
 }
 
-// 集装箱运价项目接口
+// 集装箱运价项目接口 - 与整箱运价保持一致
 interface RateItem {
   key: number;
   feeName: string;
@@ -198,8 +274,16 @@ interface RateItem {
   '20gp': string;
   '40gp': string;
   '40hc': string;
-  '45hc': string;
+  '20nor': string;
   '40nor': string;
+  '45hc': string;
+  '20hc': string;
+  '20tk': string;
+  '40tk': string;
+  '20ot': string;
+  '40ot': string;
+  '20fr': string;
+  '40fr': string;
   specialNote: string; // 添加特殊备注字段
 }
 
@@ -228,7 +312,9 @@ const CreatePrecarriageRate: React.FC = () => {
     province: '',
     city: '',
     district: '',
-    street: ''
+    street: '',
+    village: '',
+    detailAddress: ''
   }]);
   
   // 城市选项状态
@@ -237,9 +323,10 @@ const CreatePrecarriageRate: React.FC = () => {
   const [districtsForCity, setDistrictsForCity] = useState<Record<number, any[]>>({});
   // 街道选项状态
   const [streetsForDistrict, setStreetsForDistrict] = useState<Record<number, any[]>>({});
+  // 村/社区选项状态
+  const [villagesForStreet, setVillagesForStreet] = useState<Record<number, any[]>>({});
   
-  // 详细地址是否可编辑状态
-  const [isOriginDetailDisabled, setIsOriginDetailDisabled] = useState(false);
+  // 删除原有的详细地址禁用状态，因为现在每个区域都有自己的详细地址
   
   // 集装箱运价列表状态
   const [rateList, setRateList] = useState<RateItem[]>([
@@ -250,8 +337,16 @@ const CreatePrecarriageRate: React.FC = () => {
       '20gp': '',
       '40gp': '',
       '40hc': '',
-      '45hc': '',
+      '20nor': '',
       '40nor': '',
+      '45hc': '',
+      '20hc': '',
+      '20tk': '',
+      '40tk': '',
+      '20ot': '',
+      '40ot': '',
+      '20fr': '',
+      '40fr': '',
       specialNote: '' // 添加特殊备注字段
     }
   ]);
@@ -270,13 +365,21 @@ const CreatePrecarriageRate: React.FC = () => {
   
   // 箱型设置状态
   const [boxTypeModalVisible, setBoxTypeModalVisible] = useState(false);
-  // 箱型显示设置
+  // 箱型显示设置 - 与整箱运价保持一致
   const [boxTypeVisibility, setBoxTypeVisibility] = useState({
     '20gp': true,
     '40gp': true,
     '40hc': true,
+    '20nor': false,
+    '40nor': true,
     '45hc': true,
-    '40nor': true
+    '20hc': false,
+    '20tk': false,
+    '40tk': false,
+    '20ot': false,
+    '40ot': false,
+    '20fr': false,
+    '40fr': false
   });
   
   // 保存表单状态
@@ -284,6 +387,7 @@ const CreatePrecarriageRate: React.FC = () => {
     code: 'PCR' + new Date().getTime().toString().slice(-8), // 生成一个基于时间戳的编号
     rateType: '直拖',
     sublineType: '',
+    seaRailType: '', // 新增海铁类型字段
     originDetail: '',
     destination: '',
     terminal: '',
@@ -333,7 +437,9 @@ const CreatePrecarriageRate: React.FC = () => {
       province: '',
       city: '',
       district: '',
-      street: ''
+      street: '',
+      village: '',
+      detailAddress: ''
     };
     
     // 如果存在上一个区域，则复制到区/县级别
@@ -388,9 +494,6 @@ const CreatePrecarriageRate: React.FC = () => {
     }
     const newAreaList = areaList.filter(area => area.key !== key);
     setAreaList(newAreaList);
-    
-    // 更新详细地址禁用状态
-    checkOriginDetailStatus(newAreaList);
   };
 
   // 更新区域字段
@@ -404,6 +507,7 @@ const CreatePrecarriageRate: React.FC = () => {
           updatedArea.city = '';
           updatedArea.district = '';
           updatedArea.street = '';
+          updatedArea.village = '';
           
           // 更新城市选项
           if (value && cityOptions[value]) {
@@ -415,6 +519,7 @@ const CreatePrecarriageRate: React.FC = () => {
         if (field === 'city') {
           updatedArea.district = '';
           updatedArea.street = '';
+          updatedArea.village = '';
           
           // 更新区县选项
           if (value && districtOptions[value]) {
@@ -422,13 +527,24 @@ const CreatePrecarriageRate: React.FC = () => {
           }
         }
         
-        // 当选择区县时，重置街道
+        // 当选择区县时，重置街道和村/社区
         if (field === 'district') {
           updatedArea.street = '';
+          updatedArea.village = '';
           
           // 更新街道选项
           if (value && streetOptions[value]) {
             setStreetsForDistrict(prev => ({ ...prev, [key]: streetOptions[value] }));
+          }
+        }
+        
+        // 当选择街道时，重置村/社区
+        if (field === 'street') {
+          updatedArea.village = '';
+          
+          // 更新村/社区选项
+          if (value && villageOptions[value]) {
+            setVillagesForStreet(prev => ({ ...prev, [key]: villageOptions[value] }));
           }
         }
         
@@ -450,31 +566,9 @@ const CreatePrecarriageRate: React.FC = () => {
     });
     
     setAreaList(newAreaList);
-    
-    // 检查详细地址输入框状态
-    checkOriginDetailStatus(newAreaList);
   };
 
-  // 检查详细地址输入框状态
-  const checkOriginDetailStatus = (areas: AreaItem[]) => {
-    // 计算有多少个街道被选择了
-    const streetSelectedCount = areas.filter(area => area.street).length;
-    
-    // 如果选择了2个或以上的街道，则禁用详细地址
-    const shouldDisable = streetSelectedCount >= 2;
-    
-    if (shouldDisable) {
-      // 如果之前是启用状态，现在要禁用，清空详细地址
-      if (!isOriginDetailDisabled) {
-        setFormState(prev => ({
-          ...prev,
-          originDetail: ''
-        }));
-      }
-    }
-    
-    setIsOriginDetailDisabled(shouldDisable);
-  };
+  // 删除原有的详细地址状态检查函数，现在每个区域都有自己的详细地址
 
   // 处理AI识别
   const handleAiRecognize = () => {
@@ -490,7 +584,9 @@ const CreatePrecarriageRate: React.FC = () => {
             province: '浙江省',
             city: '杭州市',
             district: '萧山区',
-            street: addressText.includes('新塘') ? '新塘街道' : ''
+            street: addressText.includes('新塘') ? '新塘街道' : '',
+            village: '',
+            detailAddress: ''
           };
           recognizedAreas.push(area);
           
@@ -504,6 +600,9 @@ const CreatePrecarriageRate: React.FC = () => {
           if (area.district && streetOptions[area.district]) {
             setStreetsForDistrict(prev => ({ ...prev, [1]: streetOptions[area.district] }));
           }
+          if (area.street && villageOptions[area.street]) {
+            setVillagesForStreet(prev => ({ ...prev, [1]: villageOptions[area.street] }));
+          }
         }
         
         if (addressText.includes('苏州') && addressText.includes('工业园')) {
@@ -512,7 +611,9 @@ const CreatePrecarriageRate: React.FC = () => {
             province: '江苏省',
             city: '苏州市',
             district: '工业园区',
-            street: addressText.includes('娄葑') ? '娄葑街道' : ''
+            street: addressText.includes('娄葑') ? '娄葑街道' : '',
+            village: '',
+            detailAddress: ''
           };
           recognizedAreas.push(area);
           
@@ -527,6 +628,9 @@ const CreatePrecarriageRate: React.FC = () => {
           if (area.district && streetOptions[area.district]) {
             setStreetsForDistrict(prev => ({ ...prev, [key]: streetOptions[area.district] }));
           }
+          if (area.street && villageOptions[area.street]) {
+            setVillagesForStreet(prev => ({ ...prev, [key]: villageOptions[area.street] }));
+          }
         }
         
         if (addressText.includes('上海') && addressText.includes('浦东')) {
@@ -535,7 +639,9 @@ const CreatePrecarriageRate: React.FC = () => {
             province: '上海市',
             city: '上海市',
             district: '浦东新区',
-            street: addressText.includes('张江') ? '张江镇' : ''
+            street: addressText.includes('张江') ? '张江镇' : '',
+            village: '',
+            detailAddress: ''
           };
           recognizedAreas.push(area);
           
@@ -550,20 +656,18 @@ const CreatePrecarriageRate: React.FC = () => {
           if (area.district && streetOptions[area.district]) {
             setStreetsForDistrict(prev => ({ ...prev, [key]: streetOptions[area.district] }));
           }
+          if (area.street && villageOptions[area.street]) {
+            setVillagesForStreet(prev => ({ ...prev, [key]: villageOptions[area.street] }));
+          }
         }
         
         if (recognizedAreas.length > 0) {
           setAreaList(recognizedAreas);
           
-          // 判断详细地址是否需要禁用
-          checkOriginDetailStatus(recognizedAreas);
-          
-          // 如果只有一个区域且有街道，则自动填入详细地址
-          if (recognizedAreas.length === 1 && recognizedAreas[0].street && !isOriginDetailDisabled) {
-            setFormState(prev => ({
-              ...prev,
-              originDetail: '详细地址：' + addressText
-            }));
+          // 如果只有一个区域且有街道，则自动填入该区域的详细地址
+          if (recognizedAreas.length === 1 && recognizedAreas[0].street) {
+            recognizedAreas[0].detailAddress = '详细地址：' + addressText;
+            setAreaList([...recognizedAreas]); // 更新状态
           }
         } else {
           Message.info('无法识别地址，请手动选择');
@@ -600,6 +704,8 @@ const CreatePrecarriageRate: React.FC = () => {
 
   // 支线类型是否显示
   const showSublineType = formState.rateType === '支线';
+  // 海铁类型是否显示
+  const showSeaRailType = formState.rateType === '海铁';
 
   // 打开AI识别弹窗
   const openAiModal = () => {
@@ -628,8 +734,16 @@ const CreatePrecarriageRate: React.FC = () => {
       '20gp': '',
       '40gp': '',
       '40hc': '',
-      '45hc': '',
+      '20nor': '',
       '40nor': '',
+      '45hc': '',
+      '20hc': '',
+      '20tk': '',
+      '40tk': '',
+      '20ot': '',
+      '40ot': '',
+      '20fr': '',
+      '40fr': '',
       specialNote: '' // 添加特殊备注字段
     }]);
   };
@@ -713,8 +827,16 @@ const CreatePrecarriageRate: React.FC = () => {
       '20gp': true,
       '40gp': true,
       '40hc': true,
+      '20nor': false,
+      '40nor': true,
       '45hc': true,
-      '40nor': true
+      '20hc': false,
+      '20tk': false,
+      '40tk': false,
+      '20ot': false,
+      '40ot': false,
+      '20fr': false,
+      '40fr': false
     });
   };
 
@@ -761,6 +883,7 @@ const CreatePrecarriageRate: React.FC = () => {
                       >
                         <Radio value="直拖">直拖</Radio>
                         <Radio value="支线">支线</Radio>
+                        <Radio value="海铁">海铁</Radio>
                       </RadioGroup>
                     </FormItem>
                   </Col>
@@ -775,9 +898,25 @@ const CreatePrecarriageRate: React.FC = () => {
                           onChange={(value) => handleFormChange('sublineType', value)}
                           allowClear
                         >
-                          <Option value="湖州海铁">湖州海铁</Option>
                           <Option value="海宁支线">海宁支线</Option>
                           <Option value="乍浦支线">乍浦支线</Option>
+                        </Select>
+                      </FormItem>
+                    </Col>
+                  )}
+
+                  {showSeaRailType && (
+                    <Col span={24}>
+                      <FormItem label="海铁类型" field="seaRailType">
+                        <Select 
+                          placeholder="请选择海铁类型" 
+                          style={{ width: '100%' }}
+                          value={formState.seaRailType}
+                          onChange={(value) => handleFormChange('seaRailType', value)}
+                          allowClear
+                        >
+                          <Option value="湖州海铁">湖州海铁</Option>
+                          <Option value="义务海铁">义务海铁</Option>
                         </Select>
                       </FormItem>
                     </Col>
@@ -805,26 +944,29 @@ const CreatePrecarriageRate: React.FC = () => {
                         </Button>
                     </div>
                     </div>
-                    <div className="mb-2 text-xs text-gray-500">
-                      提示：可添加多个区域，当选择2个及以上街道/村镇时，详细地址将禁用
-                    </div>
+
                     
                     {areaList.map((area, index) => (
-                      <div key={area.key} className="mb-3 border-b border-gray-200 pb-2">
-                        <div className="flex justify-between items-center mb-1">
-                          <div className="text-xs text-gray-500">区域 {index + 1}</div>
+                      <div key={area.key} className="mb-4 border border-gray-200 rounded-lg p-3 bg-gray-50">
+                        <div className="flex justify-between items-center mb-3">
+                          <div className="text-sm text-gray-600 font-medium">区域 {index + 1}</div>
                           <Button 
                             type="text" 
                             icon={<IconMinus />} 
                             onClick={() => removeArea(area.key)} 
-                            size="mini"
+                            size="small"
+                            status="danger"
+                            disabled={areaList.length === 1}
                           />
                         </div>
-                        <Row gutter={[8, 0]}>
-                          <Col span={5}>
+                        {/* 五级行政区划选择 - 分两行显示 */}
+                        {/* 第一行：省市区 */}
+                        <div className="text-xs text-gray-400 mb-1">行政区划</div>
+                        <Row gutter={[12, 8]} style={{ marginBottom: '12px' }}>
+                          <Col span={8}>
                             <FormItem label="" required style={{ marginBottom: 0 }}>
                               <Select 
-                                placeholder="省份"
+                                placeholder="省份/直辖市/自治区"
                                 options={provinceOptions}
                                 value={area.province}
                                 onChange={(value) => updateAreaField(area.key, 'province', value)}
@@ -834,10 +976,10 @@ const CreatePrecarriageRate: React.FC = () => {
                               />
                             </FormItem>
                           </Col>
-                          <Col span={5}>
-                            <FormItem label="" required style={{ marginBottom: 0 }}>
+                          <Col span={8}>
+                            <FormItem label="" style={{ marginBottom: 0 }}>
                               <Select 
-                                placeholder="城市"
+                                placeholder="城市/地级市"
                                 options={citiesForProvince[area.key] || []}
                                 value={area.city}
                                 onChange={(value) => updateAreaField(area.key, 'city', value)}
@@ -848,10 +990,10 @@ const CreatePrecarriageRate: React.FC = () => {
                               />
                             </FormItem>
                           </Col>
-                          <Col span={5}>
-                            <FormItem label="" required style={{ marginBottom: 0 }}>
+                          <Col span={8}>
+                            <FormItem label="" style={{ marginBottom: 0 }}>
                               <Select 
-                                placeholder="区/县"
+                                placeholder="区/县/县级市"
                                 options={districtsForCity[area.key] || []}
                                 value={area.district}
                                 onChange={(value) => updateAreaField(area.key, 'district', value)}
@@ -862,10 +1004,15 @@ const CreatePrecarriageRate: React.FC = () => {
                               />
                             </FormItem>
                           </Col>
-                          <Col span={9}>
+                        </Row>
+                        
+                        {/* 第二行：街道、村社区、详细地址 */}
+                        <div className="text-xs text-gray-400 mb-1">详细定位</div>
+                        <Row gutter={[12, 8]}>
+                          <Col span={7}>
                             <FormItem label="" style={{ marginBottom: 0 }}>
                               <Select 
-                                placeholder="街道/村镇"
+                                placeholder="街道/镇/乡"
                                 options={streetsForDistrict[area.key] ? 
                                   streetsForDistrict[area.key].map(option => {
                                     // 检查该街道是否已被其他区域选择
@@ -885,23 +1032,38 @@ const CreatePrecarriageRate: React.FC = () => {
                               />
                             </FormItem>
                           </Col>
+                          <Col span={7}>
+                            <FormItem label="" style={{ marginBottom: 0 }}>
+                              <Select 
+                                placeholder="村/社区/居委会"
+                                options={villagesForStreet[area.key] || []}
+                                value={area.village}
+                                onChange={(value) => updateAreaField(area.key, 'village', value)}
+                                style={{ width: '100%' }}
+                                size="default"
+                                disabled={!area.street}
+                                allowClear
+                              />
+                            </FormItem>
+                          </Col>
+                          <Col span={10}>
+                            <FormItem label="" style={{ marginBottom: 0 }}>
+                              <Input 
+                                placeholder="详细地址（门牌号、楼栋号、房间号等）"
+                                value={area.detailAddress}
+                                onChange={(value) => updateAreaField(area.key, 'detailAddress', value)}
+                                style={{ width: '100%' }}
+                                size="default"
+                                allowClear
+                              />
+                            </FormItem>
+                          </Col>
                         </Row>
                       </div>
                     ))}
                   </Col>
                   
-                  <Col span={24}>
-                    <FormItem label="详细地址" field="originDetail">
-                      <Input.TextArea
-                        placeholder={isOriginDetailDisabled ? "选择多个街道/村镇时不可填写详细地址" : "请输入详细地址"}
-                        value={formState.originDetail}
-                        onChange={(value) => handleFormChange('originDetail', value)}
-                        style={{ minHeight: '60px' }}
-                        disabled={isOriginDetailDisabled}
-                        allowClear
-                      />
-                    </FormItem>
-                  </Col>
+                  {/* 删除全局详细地址，现在每个区域都有自己的详细地址 */}
                 </Row>
               </div>
                   </Col>
@@ -1119,6 +1281,19 @@ const CreatePrecarriageRate: React.FC = () => {
                         />
                       )
                     }] : []),
+                    ...(boxTypeVisibility['20nor'] ? [{
+                      title: '20NOR',
+                      dataIndex: '20nor',
+                      width: 120,
+                      render: (value: string, record: RateItem) => (
+                      <Input 
+                        placeholder="请输入运价" 
+                          value={value}
+                          onChange={val => updateRateItem(record.key, '20nor', val)}
+                          allowClear
+                        />
+                      )
+                    }] : []),
                     ...(boxTypeVisibility['40nor'] ? [{
                       title: '40NOR',
                       dataIndex: '40nor',
@@ -1128,6 +1303,97 @@ const CreatePrecarriageRate: React.FC = () => {
                         placeholder="请输入运价" 
                           value={value}
                           onChange={val => updateRateItem(record.key, '40nor', val)}
+                          allowClear
+                        />
+                      )
+                    }] : []),
+                    ...(boxTypeVisibility['20hc'] ? [{
+                      title: '20HC',
+                      dataIndex: '20hc',
+                      width: 120,
+                      render: (value: string, record: RateItem) => (
+                      <Input 
+                        placeholder="请输入运价" 
+                          value={value}
+                          onChange={val => updateRateItem(record.key, '20hc', val)}
+                          allowClear
+                        />
+                      )
+                    }] : []),
+                    ...(boxTypeVisibility['20tk'] ? [{
+                      title: '20TK',
+                      dataIndex: '20tk',
+                      width: 120,
+                      render: (value: string, record: RateItem) => (
+                      <Input 
+                        placeholder="请输入运价" 
+                          value={value}
+                          onChange={val => updateRateItem(record.key, '20tk', val)}
+                          allowClear
+                        />
+                      )
+                    }] : []),
+                    ...(boxTypeVisibility['40tk'] ? [{
+                      title: '40TK',
+                      dataIndex: '40tk',
+                      width: 120,
+                      render: (value: string, record: RateItem) => (
+                      <Input 
+                        placeholder="请输入运价" 
+                          value={value}
+                          onChange={val => updateRateItem(record.key, '40tk', val)}
+                          allowClear
+                        />
+                      )
+                    }] : []),
+                    ...(boxTypeVisibility['20ot'] ? [{
+                      title: '20OT',
+                      dataIndex: '20ot',
+                      width: 120,
+                      render: (value: string, record: RateItem) => (
+                      <Input 
+                        placeholder="请输入运价" 
+                          value={value}
+                          onChange={val => updateRateItem(record.key, '20ot', val)}
+                          allowClear
+                        />
+                      )
+                    }] : []),
+                    ...(boxTypeVisibility['40ot'] ? [{
+                      title: '40OT',
+                      dataIndex: '40ot',
+                      width: 120,
+                      render: (value: string, record: RateItem) => (
+                      <Input 
+                        placeholder="请输入运价" 
+                          value={value}
+                          onChange={val => updateRateItem(record.key, '40ot', val)}
+                          allowClear
+                        />
+                      )
+                    }] : []),
+                    ...(boxTypeVisibility['20fr'] ? [{
+                      title: '20FR',
+                      dataIndex: '20fr',
+                      width: 120,
+                      render: (value: string, record: RateItem) => (
+                      <Input 
+                        placeholder="请输入运价" 
+                          value={value}
+                          onChange={val => updateRateItem(record.key, '20fr', val)}
+                          allowClear
+                        />
+                      )
+                    }] : []),
+                    ...(boxTypeVisibility['40fr'] ? [{
+                      title: '40FR',
+                      dataIndex: '40fr',
+                      width: 120,
+                      render: (value: string, record: RateItem) => (
+                      <Input 
+                        placeholder="请输入运价" 
+                          value={value}
+                          onChange={val => updateRateItem(record.key, '40fr', val)}
                           allowClear
                         />
                       )
@@ -1299,57 +1565,52 @@ const CreatePrecarriageRate: React.FC = () => {
         </div>
       </Modal>
 
-      {/* 箱型设置弹窗 */}
+      {/* 箱型设置弹窗 - 与整箱运价一致 */}
       <Modal
-        title="设置箱型"
+        title="箱型设置"
         visible={boxTypeModalVisible}
         onCancel={closeBoxTypeModal}
         footer={[
-          <Button key="reset" onClick={resetBoxTypeVisibility} style={{ float: 'left' }}>重置</Button>,
-          <Button key="cancel" onClick={closeBoxTypeModal}>取消</Button>,
-          <Button key="apply" type="primary" onClick={closeBoxTypeModal}>确认</Button>
+          <Button key="cancel" onClick={closeBoxTypeModal}>
+            取消
+          </Button>,
+          <Button key="confirm" type="primary" onClick={closeBoxTypeModal}>
+            确定
+          </Button>
         ]}
-        style={{ width: 500 }}
+        style={{ width: '600px' }}
       >
-        <div className="p-4">
-          <div className="text-gray-500 mb-4">选择需要显示的箱型</div>
-          <Space direction="vertical" style={{ width: '100%' }}>
-            <div className="flex items-center justify-between p-2 border-b">
-              <span>20GP</span>
-              <Switch 
-                checked={boxTypeVisibility['20gp']} 
-                onChange={checked => handleBoxTypeVisibilityChange('20gp', checked)}
-              />
-            </div>
-            <div className="flex items-center justify-between p-2 border-b">
-              <span>40GP</span>
-              <Switch 
-                checked={boxTypeVisibility['40gp']} 
-                onChange={checked => handleBoxTypeVisibilityChange('40gp', checked)}
-              />
-            </div>
-            <div className="flex items-center justify-between p-2 border-b">
-              <span>40HC</span>
-              <Switch 
-                checked={boxTypeVisibility['40hc']} 
-                onChange={checked => handleBoxTypeVisibilityChange('40hc', checked)}
-              />
-            </div>
-            <div className="flex items-center justify-between p-2 border-b">
-              <span>45HC</span>
-              <Switch 
-                checked={boxTypeVisibility['45hc']} 
-                onChange={checked => handleBoxTypeVisibilityChange('45hc', checked)}
-              />
-            </div>
-            <div className="flex items-center justify-between p-2 border-b">
-              <span>40NOR</span>
-              <Switch 
-                checked={boxTypeVisibility['40nor']} 
-                onChange={checked => handleBoxTypeVisibilityChange('40nor', checked)}
-              />
-            </div>
-          </Space>
+        <div style={{ padding: '16px 0' }}>
+          <div style={{ marginBottom: '16px', color: '#666', fontSize: '14px' }}>
+            选择要在运价表格中显示的箱型：
+          </div>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+            {Object.entries(boxTypeVisibility).map(([key, visible]) => (
+              <div key={key} style={{ display: 'flex', alignItems: 'center' }}>
+                <Switch
+                  checked={visible}
+                  onChange={(checked) => handleBoxTypeVisibilityChange(key, checked)}
+                  style={{ marginRight: '8px' }}
+                />
+                <span style={{ fontSize: '14px' }}>
+                  {key === '20gp' && '20GP'}
+                  {key === '40gp' && '40GP'}
+                  {key === '40hc' && '40HC'}
+                  {key === '20nor' && '20NOR'}
+                  {key === '40nor' && '40NOR'}
+                  {key === '45hc' && '45HC'}
+                  {key === '20hc' && '20HC'}
+                  {key === '20tk' && '20TK'}
+                  {key === '40tk' && '40TK'}
+                  {key === '20ot' && '20OT'}
+                  {key === '40ot' && '40OT'}
+                  {key === '20fr' && '20FR'}
+                  {key === '40fr' && '40FR'}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </Modal>
     </ControlTowerSaasLayout>

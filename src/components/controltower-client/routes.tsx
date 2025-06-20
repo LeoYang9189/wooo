@@ -14,10 +14,13 @@ import OrderDetail from './pages/OrderDetail';
 import BLAddition from './pages/BLAddition';
 import ScheduleQuery from './pages/ScheduleQuery';
 import ViewFclRate from './pages/ViewFclRate';
-import ClientRateQuery from './pages/ClientRateQuery';
+import ViewPrecarriageRate from './pages/ViewPrecarriageRate';
+import ViewOncarriageRate from './pages/ViewOncarriageRate';
 
-// 引入超级运价系统的组件
+// 引入客户版运价组件
+import FclRatesClient from './pages/FclRatesClient';
 import InquiryManagementSaas from '../controltower/saas/InquiryManagement';
+import CombinationRateQuery from '../controltower/saas/CombinationRateQuery';
 
 // 引入包装器
 import SaasPageWrapper from './pages/SaasPageWrapper';
@@ -44,7 +47,7 @@ const ControlTowerClientRoutes: React.FC = () => {
       {/* 超级运价系统路由 - 使用包装器隐藏重复布局 */}
       <Route path="/saas/rate-query" element={
         <SaasPageWrapper>
-          <ClientRateQuery />
+          <FclRatesClient />
         </SaasPageWrapper>
       } />
       <Route path="/saas/inquiry-management" element={
@@ -52,9 +55,16 @@ const ControlTowerClientRoutes: React.FC = () => {
           <InquiryManagementSaas />
         </SaasPageWrapper>
       } />
+      <Route path="/combination-rate-query" element={
+        <SaasPageWrapper>
+          <CombinationRateQuery />
+        </SaasPageWrapper>
+      } />
       
-      {/* 运价详情页面 */}
-      <Route path="/saas/view-fcl-rate/:id" element={<ViewFclRate />} />
+      {/* 查看运价详情页面 */}
+      <Route path="/view-fcl-rate/:id" element={<ViewFclRate />} />
+      <Route path="/view-precarriage-rate/:id" element={<ViewPrecarriageRate />} />
+      <Route path="/view-oncarriage-rate/:id" element={<ViewOncarriageRate />} />
     </Routes>
   );
 };

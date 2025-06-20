@@ -17,7 +17,6 @@ import BLAddition from './pages/BLAddition';
 // 引入控制塔下的超级运价系统组件
 import FclRates from './saas/FclRates';
 import RateQuery from './saas/RateQuery';
-import PrecarriageRates from './saas/PrecarriageRates';
 import LastMileRates from './saas/LastMileRates';
 import InquiryManagementSaas from './saas/InquiryManagement';
 import RouteManagement from './saas/RouteManagement';
@@ -115,11 +114,6 @@ const ControlTowerRoutes: React.FC = () => {
       <Route path="/saas/rate-query" element={
         <SaasPageWrapper>
           <RateQuery />
-        </SaasPageWrapper>
-      } />
-      <Route path="/saas/precarriage-rates" element={
-        <SaasPageWrapper>
-          <PrecarriageRates />
         </SaasPageWrapper>
       } />
       <Route path="/saas/lastmile-rates" element={

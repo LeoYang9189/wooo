@@ -1,26 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
+  Breadcrumb, 
   Typography, 
   Button, 
   Space, 
-  Input, 
-  Select, 
-  Form, 
-  Grid, 
-  DatePicker,
   Table,
   Tag,
-  InputNumber,
-  Message
+  Descriptions
 } from '@arco-design/web-react';
 import { IconArrowLeft, IconDownload } from '@arco-design/web-react/icon';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const { Title } = Typography;
-const { Row, Col } = Grid;
-const FormItem = Form.Item;
-const Option = Select.Option;
 
 // 按箱型计费项目接口
 interface ContainerRateItem {
@@ -54,80 +46,30 @@ interface NonContainerRateItem {
 }
 
 /**
- * 整箱运价查看页面（客户版只读）
+ * 整箱运价查看页面
  */
 const ViewFclRate: React.FC = () => {
   const navigate = useNavigate();
   const params = useParams();
-  const [form] = Form.useForm();
-  
+  const [loading, setLoading] = useState(false);
   const rateId = params.id;
   
   // 基本信息状态
-  const [rateType, setRateType] = useState('合约价');
-  const [transitType, setTransitType] = useState('直达');
+  const [rateData, setRateData] = useState<any>({
+    routeLine: '', // 确保有默认值
+  });
   
-  // 按箱型计费列表状态
-  const [containerRateList] = useState<ContainerRateItem[]>([
-    {
-      key: 1,
-      feeName: '海运费',
-      currency: 'USD',
-      '20gp': '1500',
-      '40gp': '2800',
-      '40hc': '2900',
-      '45hc': '3100',
-      '40nor': '2750',
-      '20nor': '1450',
-      '20hc': '1550',
-      '20tk': '1600',
-      '40tk': '2950',
-      '20ot': '1650',
-      '40ot': '3000',
-      '20fr': '1700',
-      '40fr': '3050',
-      specialNote: '含码头费'
-    },
-    {
-      key: 2,
-      feeName: '燃油费',
-      currency: 'USD',
-      '20gp': '150',
-      '40gp': '280',
-      '40hc': '290',
-      '45hc': '310',
-      '40nor': '275',
-      '20nor': '145',
-      '20hc': '155',
-      '20tk': '160',
-      '40tk': '295',
-      '20ot': '165',
-      '40ot': '300',
-      '20fr': '170',
-      '40fr': '305',
-      specialNote: '按月调整'
-    }
-  ]);
+  // 按箱型计费列表状态 - 海运费
+  const [containerRateList, setContainerRateList] = useState<ContainerRateItem[]>([]);
+  
+  // 按箱型计费列表状态 - 附加费
+  const [containerSurchargeList, setContainerSurchargeList] = useState<ContainerRateItem[]>([]);
   
   // 非按箱型计费列表状态
-  const [nonContainerRateList] = useState<NonContainerRateItem[]>([
-    {
-      key: 1,
-      feeName: '订舱费',
-      currency: 'USD',
-      unit: '票',
-      price: '50',
-      specialNote: '每票固定费用'
-    },
-    {
-      key: 2,
-      feeName: '文件费',
-      currency: 'USD',
-      unit: '票',
-      price: '30',
-      specialNote: '单证处理费'
-    }
-  ]);
+  const [nonContainerRateList, setNonContainerRateList] = useState<NonContainerRateItem[]>([]);
+  
+  // 非按箱型计费列表状态 - 附加费
+  const [nonContainerSurchargeList, setNonContainerSurchargeList] = useState<NonContainerRateItem[]>([]);
   
   // 箱型显示设置
   const [boxTypeVisibility] = useState({
@@ -145,17 +87,17 @@ const ViewFclRate: React.FC = () => {
     '20fr': false,
     '40fr': false
   });
-  
-  // 在组件加载时加载数据
+
+  // 加载运价数据
   useEffect(() => {
     if (rateId) {
       loadRateData(rateId);
     }
   }, [rateId]);
 
-  // 加载运价数据
   const loadRateData = async (id: string) => {
     try {
+      setLoading(true);
       // 模拟API调用获取运价数据
       await new Promise(resolve => setTimeout(resolve, 1000));
       
@@ -172,385 +114,463 @@ const ViewFclRate: React.FC = () => {
         contractNo: 'CONTRACT001',
         priceStatus: '价格稳定',
         nac: 'NAC01',
+        routeLine: '美加线',
         vesselSchedule: ['周一', '周三'],
         voyage: 15,
         chargeSpecialNote: '注意包装',
-        shipName: 'COSCO SHIPPING UNIVERSE',
+        shipName: 'COSCO SHIPPING',
         voyageNumber: 'V001',
         freeContainerDays: 7,
         freeStorageDays: 5,
-        validPeriod: ['2024-05-01 10:00:00', '2024-12-31 18:00:00'],
-        overweightNote: '超重另计',
-        notes: '特价优惠，LSE已含'
+        validFrom: '2024-04-01',
+        validTo: '2024-04-30',
+        overweightNote: '超重加收费用',
+        notes: '该运价已包含基本港杂费'
       };
       
-      // 设置表单数据
-      form.setFieldsValue(mockData);
-      setRateType(mockData.rateType);
-      setTransitType(mockData.transitType);
+      setRateData(mockData);
+      
+      // 模拟按箱型计费数据 - 海运费
+      setContainerRateList([
+        {
+          key: 1,
+          feeName: '海运费',
+          currency: 'USD',
+          '20gp': '1500',
+          '40gp': '2500',
+          '40hc': '2700',
+          '45hc': '2900',
+          '40nor': '2500',
+          '20nor': '1500',
+          '20hc': '',
+          '20tk': '',
+          '40tk': '',
+          '20ot': '',
+          '40ot': '',
+          '20fr': '',
+          '40fr': '',
+          specialNote: '包含基本港杂费'
+        }
+      ]);
+      
+      // 模拟按箱型计费数据 - 附加费
+      setContainerSurchargeList([
+        {
+          key: 1,
+          feeName: 'THC',
+          currency: 'USD',
+          '20gp': '120',
+          '40gp': '180',
+          '40hc': '180',
+          '45hc': '200',
+          '40nor': '180',
+          '20nor': '120',
+          '20hc': '',
+          '20tk': '',
+          '40tk': '',
+          '20ot': '',
+          '40ot': '',
+          '20fr': '',
+          '40fr': '',
+          specialNote: '码头操作费'
+        },
+        {
+          key: 2,
+          feeName: '操作费',
+          currency: 'USD',
+          '20gp': '50',
+          '40gp': '80',
+          '40hc': '80',
+          '45hc': '90',
+          '40nor': '80',
+          '20nor': '50',
+          '20hc': '',
+          '20tk': '',
+          '40tk': '',
+          '20ot': '',
+          '40ot': '',
+          '20fr': '',
+          '40fr': '',
+          specialNote: '订舱操作费'
+        }
+      ]);
+      
+      // 模拟非按箱型计费数据 - 海运费
+      setNonContainerRateList([
+        {
+          key: 1,
+          feeName: '订舱费',
+          currency: 'USD',
+          unit: '票',
+          price: '50',
+          specialNote: '每票收取'
+        }
+      ]);
+      
+      // 模拟非按箱型计费数据 - 附加费
+      setNonContainerSurchargeList([
+        {
+          key: 1,
+          feeName: '铅封费',
+          currency: 'USD',
+          unit: '个',
+          price: '15',
+          specialNote: '每个铅封收取'
+        },
+        {
+          key: 2,
+          feeName: '打单费',
+          currency: 'USD',
+          unit: '票',
+          price: '25',
+          specialNote: '单据打印费'
+        },
+        {
+          key: 3,
+          feeName: 'EDI费',
+          currency: 'USD',
+          unit: '票',
+          price: '30',
+          specialNote: '电子数据交换费'
+        }
+      ]);
       
     } catch (error) {
       console.error('加载运价数据失败:', error);
-      Message.error('加载运价数据失败');
+    } finally {
+      setLoading(false);
     }
   };
 
   // 返回列表页
   const handleGoBack = () => {
-    navigate(-1);
+    navigate('/controltower-client/saas/rate-query');
   };
 
   // 导出运价
-  const handleExport = () => {
-    Message.success('运价导出功能开发中...');
+  const handleExportRate = () => {
+    console.log('导出运价数据');
+    // TODO: 实现导出功能
   };
 
   return (
-    <div style={{ padding: '16px' }}>
+    <div>
+      {/* 页面头部 */}
       <Card style={{ marginBottom: '20px' }}>
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center space-x-4">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
             <Title heading={4} style={{ margin: 0 }}>查看整箱运价</Title>
-            <div className="flex items-center">
-              <span className="text-gray-500 mr-2">运价状态：</span>
-              <Tag color="green" size="small">正常</Tag>
-            </div>
           </div>
           <Space>
-             <Button onClick={handleGoBack} icon={<IconArrowLeft />}>返回</Button>
-             <Button type="primary" onClick={handleExport} icon={<IconDownload />}>
-               导出运价
-             </Button>
-           </Space>
+            <Button onClick={handleGoBack} icon={<IconArrowLeft />}>返回</Button>
+            <Button 
+              type="primary" 
+              onClick={handleExportRate} 
+              icon={<IconDownload />}
+            >
+              导出运价
+            </Button>
+          </Space>
         </div>
-
-        <Form
-          form={form}
-          layout="vertical"
-          disabled={true}
-        >
-          {/* 基本信息区域 */}
-          <Card title="基本信息" className="mb-6">
-            <Row gutter={24}>
-              <Col span={6}>
-                <FormItem label="运价号" field="routeCode">
-                  <Input placeholder="运价号" />
-                </FormItem>
-              </Col>
-              <Col span={6}>
-                <FormItem label="运价类型" field="rateType">
-                  <Select placeholder="运价类型" value={rateType}>
-                    <Option value="合约价">合约价</Option>
-                    <Option value="SPOT电商">SPOT电商</Option>
-                  </Select>
-                </FormItem>
-              </Col>
-              <Col span={6}>
-                <FormItem label="货物类型" field="cargoType">
-                  <Select placeholder="货物类型">
-                    <Option value="普货">普货</Option>
-                    <Option value="危险品">危险品</Option>
-                    <Option value="冷冻品">冷冻品</Option>
-                  </Select>
-                </FormItem>
-              </Col>
-              <Col span={6}>
-                <FormItem label="舱位状态" field="spaceStatus">
-                  <Select placeholder="舱位状态">
-                    <Option value="畅接">畅接</Option>
-                    <Option value="正常">正常</Option>
-                    <Option value="单票申请">单票申请</Option>
-                    <Option value="爆舱">爆舱</Option>
-                    <Option value="不接">不接</Option>
-                  </Select>
-                </FormItem>
-              </Col>
-            </Row>
-            
-            <Row gutter={24}>
-              <Col span={6}>
-                <FormItem label="价格趋势" field="priceStatus">
-                  <Select placeholder="价格趋势">
-                    <Option value="价格上涨">价格上涨</Option>
-                    <Option value="价格下调">价格下调</Option>
-                    <Option value="价格稳定">价格稳定</Option>
-                  </Select>
-                </FormItem>
-              </Col>
-            </Row>
-          </Card>
-
-          {/* 航线信息区域 */}
-          <Card title="航线信息" className="mb-6">
-            <Row gutter={24}>
-              <Col span={6}>
-                <FormItem label="起运港" field="departurePort">
-                  <Select placeholder="起运港" showSearch>
-                    <Option value="CNSHA">CNSHA | 上海</Option>
-                    <Option value="CNNGB">CNNGB | 宁波</Option>
-                    <Option value="CNYTN">CNYTN | 烟台</Option>
-                    <Option value="CNQIN">CNQIN | 青岛</Option>
-                  </Select>
-                </FormItem>
-              </Col>
-              <Col span={6}>
-                <FormItem label="目的港" field="dischargePort">
-                  <Select placeholder="目的港" showSearch>
-                    <Option value="USLAX">USLAX | 洛杉矶</Option>
-                    <Option value="USNYC">USNYC | 纽约</Option>
-                    <Option value="USLGB">USLGB | 长滩</Option>
-                    <Option value="USOAK">USOAK | 奥克兰</Option>
-                  </Select>
-                </FormItem>
-              </Col>
-              <Col span={6}>
-                <FormItem label="直达/中转" field="transitType">
-                  <Select placeholder="运输方式" value={transitType}>
-                    <Option value="直达">直达</Option>
-                    <Option value="中转">中转</Option>
-                  </Select>
-                </FormItem>
-              </Col>
-              <Col span={6}>
-                <FormItem label="船名" field="shipName">
-                  <Input placeholder="船名" />
-                </FormItem>
-              </Col>
-            </Row>
-            
-            <Row gutter={24}>
-              <Col span={6}>
-                <FormItem label="航次" field="voyageNumber">
-                  <Input placeholder="航次" />
-                </FormItem>
-              </Col>
-              <Col span={6}>
-                <FormItem label="船期" field="vesselSchedule">
-                  <Select placeholder="船期" mode="multiple">
-                    <Option value="周一">周一</Option>
-                    <Option value="周二">周二</Option>
-                    <Option value="周三">周三</Option>
-                    <Option value="周四">周四</Option>
-                    <Option value="周五">周五</Option>
-                    <Option value="周六">周六</Option>
-                    <Option value="周日">周日</Option>
-                  </Select>
-                </FormItem>
-              </Col>
-              <Col span={6}>
-                <FormItem label="航程" field="voyage">
-                  <InputNumber placeholder="航程(天)" min={0} />
-                </FormItem>
-              </Col>
-            </Row>
-            
-            {transitType === '中转' && (
-              <Row gutter={24}>
-                <Col span={6}>
-                  <FormItem label="中转港" field="transitPort">
-                    <Select placeholder="中转港" showSearch>
-                      <Option value="KRPUS">KRPUS | 釜山</Option>
-                      <Option value="SGSIN">SGSIN | 新加坡</Option>
-                      <Option value="HKHKG">HKHKG | 香港</Option>
-                    </Select>
-                  </FormItem>
-                </Col>
-              </Row>
-            )}
-          </Card>
-
-          {/* 船公司信息区域 */}
-          <Card title="船公司信息" className="mb-6">
-            <Row gutter={24}>
-              <Col span={6}>
-                <FormItem label="船公司" field="shipCompany">
-                  <Select placeholder="船公司" showSearch>
-                    <Option value="COSCO">中远海运</Option>
-                    <Option value="MSC">地中海</Option>
-                    <Option value="MAERSK">马士基</Option>
-                    <Option value="EVERGREEN">长荣</Option>
-                  </Select>
-                </FormItem>
-              </Col>
-              <Col span={6}>
-                <FormItem label="约号" field="contractNo">
-                  <Select placeholder="约号" showSearch>
-                    <Option value="CONTRACT001">CONTRACT001</Option>
-                    <Option value="CONTRACT002">CONTRACT002</Option>
-                    <Option value="CONTRACT003">CONTRACT003</Option>
-                    <Option value="SPOT">SPOT</Option>
-                  </Select>
-                </FormItem>
-              </Col>
-              <Col span={6}>
-                <FormItem label="NAC" field="nac">
-                  <Select placeholder="NAC">
-                    <Option value="NAC01">NAC01</Option>
-                    <Option value="NAC02">NAC02</Option>
-                    <Option value="NAC03">NAC03</Option>
-                  </Select>
-                </FormItem>
-              </Col>
-            </Row>
-          </Card>
-
-          {/* 免费期限设置 */}
-          <Card title="D&D" className="mb-6">
-            <Row gutter={24}>
-              <Col span={8}>
-                <FormItem label="免用箱" field="freeContainerDays">
-                  <InputNumber placeholder="免用箱(天)" min={0} />
-                </FormItem>
-              </Col>
-              <Col span={8}>
-                <FormItem label="免堆存" field="freeStorageDays">
-                  <InputNumber placeholder="免堆存(天)" min={0} />
-                </FormItem>
-              </Col>
-            </Row>
-          </Card>
-
-          {/* 有效期设置 */}
-          <Card title="有效期设置" className="mb-6">
-            <Row gutter={24}>
-              <Col span={12}>
-                <FormItem label="有效期" field="validPeriod">
-                  <DatePicker.RangePicker
-                    showTime={{ format: 'HH:mm' }}
-                    format="YYYY-MM-DD HH:mm"
-                    placeholder={['开始时间', '结束时间']}
-                    style={{ width: '100%' }}
-                  />
-                </FormItem>
-              </Col>
-            </Row>
-          </Card>
-
-          {/* 备注信息 */}
-          <Card title="备注信息" className="mb-6">
-            <Row gutter={24}>
-              <Col span={12}>
-                <FormItem label="超重说明" field="overweightNote">
-                  <Input placeholder="超重说明" />
-                </FormItem>
-              </Col>
-              <Col span={12}>
-                <FormItem label="接货特殊说明" field="chargeSpecialNote">
-                  <Input placeholder="接货特殊说明" />
-                </FormItem>
-              </Col>
-            </Row>
-            <Row gutter={24}>
-              <Col span={24}>
-                <FormItem label="备注" field="notes">
-                  <Input.TextArea placeholder="备注" rows={3} />
-                </FormItem>
-              </Col>
-            </Row>
-          </Card>
-
-          {/* 运价明细区域 */}
-          <Card title="运价明细" className="mb-6">
-            {/* 按箱型计费区域 */}
-            <div className="mb-8">
-              <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2 mb-4">按箱型计费</div>
-              
-              <Table
-                borderCell={true}
-                columns={[
-                  {
-                    title: '费用名称',
-                    dataIndex: 'feeName',
-                    width: 180,
-                  },
-                  {
-                    title: '币种',
-                    dataIndex: 'currency',
-                    width: 120,
-                  },
-                  ...(boxTypeVisibility['20gp'] ? [{
-                    title: '20GP',
-                    dataIndex: '20gp',
-                    width: 120,
-                  }] : []),
-                  ...(boxTypeVisibility['40gp'] ? [{
-                    title: '40GP',
-                    dataIndex: '40gp',
-                    width: 120,
-                  }] : []),
-                  ...(boxTypeVisibility['40hc'] ? [{
-                    title: '40HC',
-                    dataIndex: '40hc',
-                    width: 120,
-                  }] : []),
-                  ...(boxTypeVisibility['20nor'] ? [{
-                    title: '20NOR',
-                    dataIndex: '20nor',
-                    width: 120,
-                  }] : []),
-                  ...(boxTypeVisibility['40nor'] ? [{
-                    title: '40NOR',
-                    dataIndex: '40nor',
-                    width: 120,
-                  }] : []),
-                  ...(boxTypeVisibility['45hc'] ? [{
-                    title: '45HC',
-                    dataIndex: '45hc',
-                    width: 120,
-                  }] : []),
-                  {
-                    title: '特殊备注',
-                    dataIndex: 'specialNote',
-                    width: 200,
-                  }
-                ]}
-                data={containerRateList}
-                pagination={false}
-                scroll={{ x: 'max-content' }}
-              />
-            </div>
-
-            {/* 非按箱型计费区域 */}
-            <div className="mb-4">
-              <div className="text-green-600 font-bold border-l-4 border-green-600 pl-2 mb-4">非按箱型计费</div>
-              
-              <Table
-                borderCell={true}
-                columns={[
-                  {
-                    title: '费用名称',
-                    dataIndex: 'feeName',
-                    width: 200,
-                  },
-                  {
-                    title: '币种',
-                    dataIndex: 'currency',
-                    width: 120,
-                  },
-                  {
-                    title: '计费单位',
-                    dataIndex: 'unit',
-                    width: 120,
-                  },
-                  {
-                    title: '单价',
-                    dataIndex: 'price',
-                    width: 150,
-                  },
-                  {
-                    title: '特殊备注',
-                    dataIndex: 'specialNote',
-                    width: 250,
-                  }
-                ]}
-                data={nonContainerRateList}
-                pagination={false}
-                scroll={{ x: 'max-content' }}
-              />
-            </div>
-          </Card>
-        </Form>
       </Card>
+
+        {/* 基本信息区域 */}
+        <Card title="基本信息" className="mb-6">
+          <Descriptions 
+            column={3}
+            layout="vertical"
+            data={[
+              { label: '运价号', value: rateData.routeCode },
+              { label: '运价类型', value: rateData.rateType },
+              { label: '货物类型', value: rateData.cargoType },
+              { label: '舱位状态', value: rateData.spaceStatus },
+              { label: '价格趋势', value: rateData.priceStatus },
+            ]}
+          />
+        </Card>
+
+        {/* 航线信息区域 */}
+        <Card title="航线信息" className="mb-6">
+          <Descriptions 
+            column={3}
+            layout="vertical"
+            data={[
+              { label: '航线', value: rateData.routeLine || '美加线' },
+              { label: '起运港', value: rateData.departurePort },
+              { label: '目的港', value: rateData.dischargePort },
+              { label: '直达/中转', value: rateData.transitType },
+              { label: '船名', value: rateData.shipName },
+              { label: '航次', value: rateData.voyageNumber },
+              { label: '船期', value: rateData.vesselSchedule?.join(', ') },
+              { label: '航程', value: `${rateData.voyage} 天` },
+            ]}
+          />
+        </Card>
+
+        {/* 船公司信息区域 */}
+        <Card title="船公司信息" className="mb-6">
+          <Descriptions 
+            column={3}
+            layout="vertical"
+            data={[
+              { label: '船公司', value: rateData.shipCompany },
+              { label: '约号', value: rateData.contractNo },
+              { label: 'NAC', value: rateData.nac },
+            ]}
+          />
+        </Card>
+
+        {/* 免费期限设置 */}
+        <Card title="D&D" className="mb-6">
+          <Descriptions 
+            column={2}
+            layout="vertical"
+            data={[
+              { label: '免用箱', value: `${rateData.freeContainerDays} 天` },
+              { label: '免堆存', value: `${rateData.freeStorageDays} 天` },
+            ]}
+          />
+        </Card>
+
+        {/* 有效期设置 */}
+        <Card title="有效期设置" className="mb-6">
+          <Descriptions 
+            column={1}
+            layout="vertical"
+            data={[
+              { label: '有效期', value: `${rateData.validFrom} ~ ${rateData.validTo}` },
+            ]}
+          />
+        </Card>
+
+        {/* 备注信息 */}
+        <Card title="备注信息" className="mb-6">
+          <Descriptions 
+            column={2}
+            layout="vertical"
+            data={[
+              { label: '超重说明', value: rateData.overweightNote },
+              { label: '接货特殊说明', value: rateData.chargeSpecialNote },
+              { label: '备注', value: rateData.notes, span: 2 },
+            ]}
+          />
+        </Card>
+
+        {/* 海运费区域 */}
+        <Card title="海运费" className="mb-6">
+          {/* 按箱型计费 - 海运费 */}
+          <div className="mb-8">
+            <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2 mb-4">按箱型计费</div>
+            
+            <Table
+              borderCell={true}
+              columns={[
+                {
+                  title: '费用名称',
+                  dataIndex: 'feeName',
+                  width: 180,
+                },
+                {
+                  title: '币种',
+                  dataIndex: 'currency',
+                  width: 120,
+                },
+                ...(boxTypeVisibility['20gp'] ? [{
+                  title: '20GP',
+                  dataIndex: '20gp',
+                  width: 120,
+                  render: (value: string) => value ? `$ ${value}` : '-'
+                }] : []),
+                ...(boxTypeVisibility['40gp'] ? [{
+                  title: '40GP',
+                  dataIndex: '40gp',
+                  width: 120,
+                  render: (value: string) => value ? `$ ${value}` : '-'
+                }] : []),
+                ...(boxTypeVisibility['40hc'] ? [{
+                  title: '40HC',
+                  dataIndex: '40hc',
+                  width: 120,
+                  render: (value: string) => value ? `$ ${value}` : '-'
+                }] : []),
+                ...(boxTypeVisibility['20nor'] ? [{
+                  title: '20NOR',
+                  dataIndex: '20nor',
+                  width: 120,
+                  render: (value: string) => value ? `$ ${value}` : '-'
+                }] : []),
+                ...(boxTypeVisibility['40nor'] ? [{
+                  title: '40NOR',
+                  dataIndex: '40nor',
+                  width: 120,
+                  render: (value: string) => value ? `$ ${value}` : '-'
+                }] : []),
+                ...(boxTypeVisibility['45hc'] ? [{
+                  title: '45HC',
+                  dataIndex: '45hc',
+                  width: 120,
+                  render: (value: string) => value ? `$ ${value}` : '-'
+                }] : []),
+                {
+                  title: '特殊备注',
+                  dataIndex: 'specialNote',
+                  width: 200,
+                }
+              ]}
+              data={containerRateList}
+              pagination={false}
+              scroll={{ x: 'max-content' }}
+            />
+          </div>
+
+          {/* 非按箱型计费 - 海运费 */}
+          <div className="mb-4">
+            <div className="text-green-600 font-bold border-l-4 border-green-600 pl-2 mb-4">非按箱型计费</div>
+            
+            <Table
+              borderCell={true}
+              columns={[
+                {
+                  title: '费用名称',
+                  dataIndex: 'feeName',
+                  width: 200,
+                },
+                {
+                  title: '币种',
+                  dataIndex: 'currency',
+                  width: 120,
+                },
+                {
+                  title: '计费单位',
+                  dataIndex: 'unit',
+                  width: 120,
+                },
+                {
+                  title: '单价',
+                  dataIndex: 'price',
+                  width: 150,
+                  render: (value: string, record: NonContainerRateItem) => value ? `${record.currency} ${value}` : '-'
+                },
+                {
+                  title: '特殊备注',
+                  dataIndex: 'specialNote',
+                  width: 250,
+                }
+              ]}
+              data={nonContainerRateList}
+              pagination={false}
+              scroll={{ x: 'max-content' }}
+            />
+          </div>
+        </Card>
+
+        {/* 附加费区域 */}
+        <Card title="附加费" className="mb-6">
+          {/* 按箱型计费 - 附加费 */}
+          <div className="mb-8">
+            <div className="text-orange-600 font-bold border-l-4 border-orange-600 pl-2 mb-4">按箱型计费</div>
+            
+            <Table
+              borderCell={true}
+              columns={[
+                {
+                  title: '费用名称',
+                  dataIndex: 'feeName',
+                  width: 180,
+                },
+                {
+                  title: '币种',
+                  dataIndex: 'currency',
+                  width: 120,
+                },
+                ...(boxTypeVisibility['20gp'] ? [{
+                  title: '20GP',
+                  dataIndex: '20gp',
+                  width: 120,
+                  render: (value: string) => value ? `$ ${value}` : '-'
+                }] : []),
+                ...(boxTypeVisibility['40gp'] ? [{
+                  title: '40GP',
+                  dataIndex: '40gp',
+                  width: 120,
+                  render: (value: string) => value ? `$ ${value}` : '-'
+                }] : []),
+                ...(boxTypeVisibility['40hc'] ? [{
+                  title: '40HC',
+                  dataIndex: '40hc',
+                  width: 120,
+                  render: (value: string) => value ? `$ ${value}` : '-'
+                }] : []),
+                ...(boxTypeVisibility['20nor'] ? [{
+                  title: '20NOR',
+                  dataIndex: '20nor',
+                  width: 120,
+                  render: (value: string) => value ? `$ ${value}` : '-'
+                }] : []),
+                ...(boxTypeVisibility['40nor'] ? [{
+                  title: '40NOR',
+                  dataIndex: '40nor',
+                  width: 120,
+                  render: (value: string) => value ? `$ ${value}` : '-'
+                }] : []),
+                ...(boxTypeVisibility['45hc'] ? [{
+                  title: '45HC',
+                  dataIndex: '45hc',
+                  width: 120,
+                  render: (value: string) => value ? `$ ${value}` : '-'
+                }] : []),
+                {
+                  title: '特殊备注',
+                  dataIndex: 'specialNote',
+                  width: 200,
+                }
+              ]}
+              data={containerSurchargeList}
+              pagination={false}
+              scroll={{ x: 'max-content' }}
+            />
+          </div>
+
+          {/* 非按箱型计费 - 附加费 */}
+          <div className="mb-4">
+            <div className="text-purple-600 font-bold border-l-4 border-purple-600 pl-2 mb-4">非按箱型计费</div>
+            
+            <Table
+              borderCell={true}
+              columns={[
+                {
+                  title: '费用名称',
+                  dataIndex: 'feeName',
+                  width: 200,
+                },
+                {
+                  title: '币种',
+                  dataIndex: 'currency',
+                  width: 120,
+                },
+                {
+                  title: '计费单位',
+                  dataIndex: 'unit',
+                  width: 120,
+                },
+                {
+                  title: '单价',
+                  dataIndex: 'price',
+                  width: 150,
+                  render: (value: string, record: NonContainerRateItem) => value ? `${record.currency} ${value}` : '-'
+                },
+                {
+                  title: '特殊备注',
+                  dataIndex: 'specialNote',
+                  width: 250,
+                }
+              ]}
+              data={nonContainerSurchargeList}
+              pagination={false}
+              scroll={{ x: 'max-content' }}
+            />
+          </div>
+        </Card>
     </div>
   );
 };

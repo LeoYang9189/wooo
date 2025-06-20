@@ -7,40 +7,108 @@ import {
   DatePicker, 
   Card, 
   Breadcrumb,
+  Typography,
   Tag,
   Modal,
   Message,
   Switch,
+  Grid,
   Tooltip,
   Tabs,
   Input,
   Drawer,
-  Grid,
-  Typography
+  Dropdown,
+  Menu
 } from '@arco-design/web-react';
 import { 
   IconSearch, 
-  IconDownload, 
-  IconEdit, 
-  IconDelete, 
-  IconRefresh, 
+  IconPlus,
+  IconRefresh,
   IconList,
   IconDragDotVertical,
-  IconEye,
   IconDown,
   IconUp,
-  IconSettings
+  IconSettings,
+  IconDownload,
+  IconEye
 } from '@arco-design/web-react/icon';
-import { useNavigate, useLocation } from 'react-router-dom';
-import ControlTowerSaasLayout from "./ControlTowerSaasLayout";
+import '@arco-design/web-react/dist/css/arco.css';
 import './InquiryManagement.css';
 
+// 添加双倍行高样式和对齐样式
+const customTableStyle = `
+  .table-row-double-height .arco-table-td {
+    height: 60px !important;
+    vertical-align: middle;
+  }
+  .table-row-double-height .arco-table-cell {
+    line-height: 1.2;
+    padding: 12px 16px;
+  }
+  .inquiry-table-nowrap .arco-table-td {
+    text-align: left !important;
+  }
+  .inquiry-table-nowrap .arco-table-th {
+    text-align: center !important;
+  }
+  .inquiry-table-nowrap .arco-table-cell {
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+  }
+  .inquiry-table-nowrap .arco-table-th .arco-table-cell {
+    text-align: center !important;
+    padding: 12px 16px !important;
+  }
+  .inquiry-table-nowrap .arco-table-td .arco-table-cell {
+    text-align: left !important;
+    padding: 12px 16px !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+  }
+  .inquiry-table-nowrap .arco-table-thead .arco-table-th {
+    text-align: center !important;
+  }
+  .inquiry-table-nowrap .arco-table-tbody .arco-table-td {
+    text-align: left !important;
+  }
+  .no-ellipsis {
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+  }
+  .arco-table-selection-col {
+    text-align: center !important;
+  }
+  .arco-table-selection-col .arco-table-cell {
+    text-align: center !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+  .arco-table-selection-col .arco-checkbox {
+    margin: 0 auto !important;
+  }
+  .arco-table-selection-col .arco-checkbox-wrapper {
+    margin: 0 auto !important;
+  }
+`;
+
+// 注入样式
+if (typeof document !== 'undefined') {
+  const styleElement = document.createElement('style');
+  styleElement.textContent = customTableStyle;
+  document.head.appendChild(styleElement);
+}
+import { useNavigate } from 'react-router-dom';
+
+const Title = Typography.Title;
 const Option = Select.Option;
 const RangePicker = DatePicker.RangePicker;
-const TabPane = Tabs.TabPane;
+
 const Row = Grid.Row;
 const Col = Grid.Col;
-const Title = Typography.Title;
 
 // 筛选模式枚举
 export enum FilterMode {
@@ -167,6 +235,21 @@ const getFilterFieldsByTab = (activeTab: string): FilterFieldConfig[] => {
             { label: '中转', value: '中转' }
           ],
           placeholder: '请选择中转类型'
+        },
+        {
+          key: 'routeLine',
+          label: '航线',
+          type: 'select',
+          options: [
+            { label: '东南亚航线', value: '东南亚航线' },
+            { label: '美加线', value: '美加线' },
+            { label: '欧地线', value: '欧地线' },
+            { label: '澳新线', value: '澳新线' },
+            { label: '中东线', value: '中东线' },
+            { label: '南美线', value: '南美线' },
+            { label: '非洲线', value: '非洲线' }
+          ],
+          placeholder: '请选择航线'
         },
         {
           key: 'shipCompany',
@@ -368,6 +451,55 @@ const getFilterFieldsByTab = (activeTab: string): FilterFieldConfig[] => {
             { label: '支线', value: '支线' }
           ],
           placeholder: '请选择运价类型'
+        },
+        {
+          key: 'origin',
+          label: '起运地',
+          type: 'text',
+          placeholder: '请输入起运地'
+        },
+        {
+          key: 'destination',
+          label: '起运港',
+          type: 'select',
+          options: [
+            { label: 'CNSHA | SHANGHAI', value: 'CNSHA | SHANGHAI' },
+            { label: 'CNNGB | NINGBO', value: 'CNNGB | NINGBO' }
+          ],
+          placeholder: '请选择起运港'
+        },
+        {
+          key: 'terminal',
+          label: '码头',
+          type: 'select',
+          options: [
+            { label: '洋山', value: '洋山' },
+            { label: '北仑', value: '北仑' }
+          ],
+          placeholder: '请选择码头'
+        },
+        {
+          key: 'vendor',
+          label: '供应商',
+          type: 'text',
+          placeholder: '请输入供应商'
+        },
+        {
+          key: 'validDateRange',
+          label: '有效期',
+          type: 'dateRange',
+          placeholder: '请选择有效期范围'
+        },
+        {
+          key: 'status',
+          label: '状态',
+          type: 'select',
+          options: [
+            { label: '正常', value: '正常' },
+            { label: '过期', value: '过期' },
+            { label: '下架', value: '下架' }
+          ],
+          placeholder: '请选择状态'
         }
       ];
     case 'oncarriage':
@@ -379,15 +511,56 @@ const getFilterFieldsByTab = (activeTab: string): FilterFieldConfig[] => {
           placeholder: '请输入尾程运价编号'
         },
         {
+          key: 'origin',
+          label: '目的港',
+          type: 'text',
+          placeholder: '请输入目的港'
+        },
+        {
           key: 'addressType',
-          label: '地址类型',
+          label: '配送地址类型',
           type: 'select',
           options: [
             { label: '第三方地址', value: '第三方地址' },
             { label: '亚马逊仓库', value: '亚马逊仓库' },
             { label: '易仓', value: '易仓' }
           ],
-          placeholder: '请选择地址类型'
+          placeholder: '请选择配送地址类型'
+        },
+        {
+          key: 'zipCode',
+          label: '邮编',
+          type: 'text',
+          placeholder: '请输入邮编'
+        },
+        {
+          key: 'address',
+          label: '地址',
+          type: 'text',
+          placeholder: '请输入地址'
+        },
+        {
+          key: 'agentName',
+          label: '代理名称',
+          type: 'text',
+          placeholder: '请输入代理名称'
+        },
+        {
+          key: 'validDateRange',
+          label: '有效期',
+          type: 'dateRange',
+          placeholder: '请选择有效期范围'
+        },
+        {
+          key: 'status',
+          label: '状态',
+          type: 'select',
+          options: [
+            { label: '正常', value: '正常' },
+            { label: '过期', value: '过期' },
+            { label: '下架', value: '下架' }
+          ],
+          placeholder: '请选择状态'
         }
       ];
     default:
@@ -404,7 +577,6 @@ interface DataItem {
   spaceStatus: string; // 舱位状态
   priceStatus: string; // 价格趋势
   containerType: string; // 箱种
-  rateStatus: string; // 运价状态
   '20gp': number; // 20'
   '40gp': number; // 40'
   '40hc': number; // 40' HC
@@ -445,6 +617,7 @@ interface DataItem {
   
   // 根据截图补充的字段
   transitType: string; // 中转类型
+  routeLine: string; // 航线
   transitDays: number; // 中转天数
   bookingDeadline: string; // 订舱截止时间
   documentDeadline: string; // 单证截止时间
@@ -518,32 +691,11 @@ interface DataItem {
   estimatedArrival: string; // ETA（截图中的"ETA"）
 }
 
-// LCL和Air运价数据接口
-interface LclAirDataItem {
-  key: string;
-  shipCompany: string;
-  dischargePort: string;
-  etd: string;
-  transitType: string;
-  transit: number;
-  weight: number; // KGS
-  volume: number; // CBM
-  routeCode: string;
-  vesselName: string;
-  voyageNo: string;
-  spaceStatus: string;
-  remark: string;
-}
 
 
-const RateQuery: React.FC = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
+const FclRates: React.FC = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
-  const [activeTab, setActiveTab] = useState<string>('fcl');
   const [customTableModalVisible, setCustomTableModalVisible] = useState(false);
-  
-  // 完整的列可见性状态 - 包含所有可能的字段
   const [columnVisibility, setColumnVisibility] = useState({
     routeCode: true,
     rateType: true,
@@ -551,12 +703,12 @@ const RateQuery: React.FC = () => {
     dischargePort: true,
     transitPort: true,
     transitType: true,
+    routeLine: true,
     shipCompany: true,
     contractNo: false,
     spaceStatus: true,
     priceStatus: true,
     cargoType: false,
-    rateStatus: true,
     '20gp': true,
     '40gp': true,
     '40hc': true,
@@ -590,50 +742,70 @@ const RateQuery: React.FC = () => {
     approver: false,
     approvalDate: false
   });
-
-  // 筛选功能状态
-  const [filterExpanded, setFilterExpanded] = useState(true);
-  const [filterFieldModalVisible, setFilterFieldModalVisible] = useState(false);
-  const [schemeModalVisible, setSchemeModalVisible] = useState(false);
-  const [newSchemeName, setNewSchemeName] = useState('');
-  
-  // 筛选条件状态
-  const [filterConditions, setFilterConditions] = useState<FilterCondition[]>([]);
-  const [filterSchemes, setFilterSchemes] = useState<FilterScheme[]>([]);
-  const [currentSchemeId, setCurrentSchemeId] = useState<string>('default');
-
-  // 拖拽状态
+  const [columnOrder, setColumnOrder] = useState([
+    'routeCode', 'rateType', 'departurePort', 'dischargePort', 'transitPort',
+    'transitType', 'routeLine', 'shipCompany', 'contractNo', 'spaceStatus', 'priceStatus', 'cargoType',
+    '20gp', '40gp', '40hc', '20nor', '40nor', '45hc', '20hc', '20tk', '40tk', '20ot', '40ot', '20fr', '40fr',
+    'vesselSchedule', 'voyage', 'freeContainerDays', 'freeStorageDays', 'chargeSpecialNote', 'nac',
+    'overweightNote', 'notes', 'validPeriod', 'etd', 'eta', 'vesselName', 'voyageNo',
+    'entryPerson', 'createDate', 'rateModifier', 'modifyDate', 
+    'approver', 'approvalDate'
+  ]);
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const [dragOverItem, setDragOverItem] = useState<string | null>(null);
-  const [columnOrder, setColumnOrder] = useState<string[]>([]);
-
-  // 筛选字段拖拽状态
+  
+  // 筛选字段拖拽相关状态
   const [draggedFilterField, setDraggedFilterField] = useState<string | null>(null);
   const [dragOverFilterField, setDragOverFilterField] = useState<string | null>(null);
   const [filterFieldOrder, setFilterFieldOrder] = useState<string[]>([]);
+  
+  // 添加缺失的状态变量
+  const [activeTab, setActiveTab] = useState<string>('fcl');
+  const [filterConditions, setFilterConditions] = useState<FilterCondition[]>([]);
+  const [filterSchemes, setFilterSchemes] = useState<FilterScheme[]>([]);
+  const [currentSchemeId, setCurrentSchemeId] = useState<string>('default');
+  const [filterExpanded, setFilterExpanded] = useState(false);
+  const [filterFieldModalVisible, setFilterFieldModalVisible] = useState(false);
+  const [schemeModalVisible, setSchemeModalVisible] = useState(false);
+  const [schemeName, setSchemeName] = useState('');
+  
+  const navigate = useNavigate();
 
-  // 筛选区收起/展开状态
+  // 操作处理函数  
+  const handleViewDetail = (key: string) => {
+    navigate(`/controltower-client/view-fcl-rate/${key}`);
+  };
 
-  // useEffect 初始化字段顺序
-  useEffect(() => {
-    const allColumns = Object.keys(columnVisibility);
-    setColumnOrder(allColumns);
-    
-    const filterFields = getFilterFieldsByTab(activeTab);
-    const filterFieldKeys = filterFields.map(f => f.key);
-    setFilterFieldOrder(filterFieldKeys);
-  }, [activeTab]);
+  // 处理查看港前运价详情
+  const handleViewPrecarriageRate = (key: string) => {
+    navigate(`/controltower-client/view-precarriage-rate/${key}`);
+  };
 
-  // useEffect 初始化筛选条件
-  useEffect(() => {
-    const defaultConditions = initializeDefaultConditions(activeTab);
-    setFilterConditions(defaultConditions);
-    
-    const defaultScheme = initializeDefaultScheme(activeTab);
-    setFilterSchemes([defaultScheme]);
-  }, [activeTab]);
+  // 处理查看尾程运价详情
+  const handleViewOncarriageRate = (key: string) => {
+    navigate(`/controltower-client/view-oncarriage-rate/${key}`);
+  };
 
-  // 切换筛选区收起/展开
+  const handleEdit = (key: string) => {
+    navigate(`/controltower/saas/edit-fcl-rate/${key}`);
+  };
+
+  const handleDelete = (_key: string) => {
+    Modal.confirm({
+      title: '确认删除',
+      content: '确定要删除这条运价记录吗？',
+      onOk: () => {
+        Message.success('删除成功');
+      }
+    });
+  };
+
+
+
+  // 打开组合方案查询页面
+  const openCombinationQuery = () => {
+    navigate('/controltower-client/combination-rate-query');
+  };
 
   // 打开自定义表格弹窗
   const openCustomTableModal = () => {
@@ -662,12 +834,12 @@ const RateQuery: React.FC = () => {
       dischargePort: true,
       transitPort: true,
       transitType: true,
+      routeLine: true,
       shipCompany: true,
       contractNo: false,
       spaceStatus: true,
       priceStatus: true,
       cargoType: false,
-      rateStatus: true,
       '20gp': true,
       '40gp': true,
       '40hc': true,
@@ -710,26 +882,7 @@ const RateQuery: React.FC = () => {
     closeCustomTableModal();
   };
 
-  // 处理Tab切换
-  const handleTabChange = (key: string) => {
-    setActiveTab(key);
-    setSelectedRowKeys([]);
-  };
-
-  // 打开组合方案查询页面
-  const openCombinationQuery = () => {
-    navigate('/controltower/saas/combination-rate-query');
-  };
-
-  const onSelectChange = (selectedRowKeys: (string | number)[]) => {
-    setSelectedRowKeys(selectedRowKeys);
-  };
-
-  // 判断是否为客户端访问
-  const isClientAccess = location.pathname.includes('/controltower-client/');
-
-  // FCL列定义
-  const fclColumns = [
+  const columns = [
     {
       title: '运价号',
       dataIndex: 'routeCode',
@@ -809,6 +962,14 @@ const RateQuery: React.FC = () => {
       resizable: true,
     },
     {
+      title: '航线',
+      dataIndex: 'routeLine',
+      width: 140,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
+      sorter: true,
+      resizable: true,
+    },
+    {
       title: '船公司',
       dataIndex: 'shipCompany',
       width: 220,
@@ -837,11 +998,11 @@ const RateQuery: React.FC = () => {
           '不接': 'gray'
         };
         return (
-          <Tooltip content={value} mini>
+        <Tooltip content={value} mini>
             <Tag color={colorMap[value] || 'blue'} size="small">
-              {value}
-            </Tag>
-          </Tooltip>
+            {value}
+          </Tag>
+        </Tooltip>
         );
       },
       sorter: true,
@@ -869,28 +1030,6 @@ const RateQuery: React.FC = () => {
       sorter: true,
       resizable: true,
     },
-    // 运价状态列 - 仅在运营版显示
-    ...(isClientAccess ? [] : [{
-      title: '运价状态',
-      dataIndex: 'rateStatus',
-      width: 120,
-      render: (value: string) => {
-        const colorMap: Record<string, string> = {
-          '正常': 'green',
-          '过期': 'red',
-          '草稿': 'orange'
-        };
-        return (
-          <Tooltip content={value} mini>
-            <Tag color={colorMap[value] || 'blue'} size="small">
-              {value}
-            </Tag>
-          </Tooltip>
-        );
-      },
-      sorter: true,
-      resizable: true,
-    }]),
     {
       title: "20GP",
       dataIndex: '20gp',
@@ -1149,19 +1288,18 @@ const RateQuery: React.FC = () => {
     },
     {
       title: '操作',
-      dataIndex: 'operations',
+      dataIndex: 'actions',
+      width: 100,
       fixed: 'right' as const,
-      width: 80,
-      render: (_: any, record: DataItem) => (
-        <Button type="text" size="mini" icon={<IconEye />} onClick={() => handleViewFclRate(record.key)}>
+      render: (_: unknown, record: DataItem) => (
+        <Button type="text" size="small" onClick={() => handleViewDetail(record.key)}>
           查看
         </Button>
       ),
-    },
+    }
   ];
 
-  // FCL数据
-  const fclData: DataItem[] = Array(12).fill(null).map((_, index) => {
+  const data: DataItem[] = Array(12).fill(null).map((_, index) => {
     const random20gp = [-30, 510, 560, 865, 1130, 530].sort(() => Math.random() - 0.5)[0];
     const random40gp = random20gp === -30 ? -60 : random20gp === 510 ? 1020 : random20gp === 560 ? 1120 : random20gp === 865 ? 1730 : random20gp === 1130 ? 2260 : 1060;
 
@@ -1199,7 +1337,6 @@ const RateQuery: React.FC = () => {
       spaceStatus: ['畅接', '正常', '单票申请', '爆舱', '不接'][Math.floor(Math.random() * 5)],
       priceStatus: ['价格稳定', '价格上涨', '价格下调'][Math.floor(Math.random() * 3)],
       containerType: ['普通箱', '冷冻箱', '开顶箱'][Math.floor(Math.random() * 3)],
-      rateStatus: isClientAccess ? '正常' : ['正常', '过期', '草稿'][Math.floor(Math.random() * 3)],
       '20gp': random20gp,
       '40gp': random40gp,
       '40hc': random40gp + 50,
@@ -1240,6 +1377,7 @@ const RateQuery: React.FC = () => {
       
       // 根据截图补充的字段
       transitType: Math.random() > 0.5 ? '中转' : '直达',
+      routeLine: ['东南亚航线', '美加线', '欧地线', '澳新线', '中东线', '南美线', '非洲线'][Math.floor(Math.random() * 7)],
       transitDays: Math.floor(Math.random() * 10) + 1,
       bookingDeadline: `2024-05-${15 + Math.floor(Math.random() * 10)}`,
       documentDeadline: `2024-05-${15 + Math.floor(Math.random() * 10)}`,
@@ -1314,757 +1452,23 @@ const RateQuery: React.FC = () => {
     };
   });
 
-  // LCL和空运列定义
-  const lclAirColumns = [
-    {
-      title: '船公司/航司',
-      dataIndex: 'shipCompany',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '卸货港',
-      dataIndex: 'dischargePort',
-      width: 150,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: 'ETD',
-      dataIndex: 'etd',
-      width: 100,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '直达/中转',
-      dataIndex: 'transitType',
-      width: 100,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '航程',
-      dataIndex: 'transit',
-      width: 80,
-      render: (value: number) => <Tooltip content={String(value)} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '重量(KGS)',
-      dataIndex: 'weight',
-      width: 110,
-      render: (value: number) => <Tooltip content={`$ ${value}`} mini><span className="arco-ellipsis">$ {value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '体积(CBM)',
-      dataIndex: 'volume',
-      width: 110,
-      render: (value: number) => <Tooltip content={`$ ${value}`} mini><span className="arco-ellipsis">$ {value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '航线代码',
-      dataIndex: 'routeCode',
-      width: 100,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '船名/航班',
-      dataIndex: 'vesselName',
-      width: 150,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '航次',
-      dataIndex: 'voyageNo',
-      width: 100,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '舱位状态',
-      dataIndex: 'spaceStatus',
-      width: 100,
-      render: (value: string) => (
-        <Tooltip content={value} mini>
-          <Tag color={value === '舱位充足' ? 'blue' : 'orange'} size="small">
-            {value}
-          </Tag>
-        </Tooltip>
-      ),
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '备注',
-      dataIndex: 'remark',
-      width: 150,
-      render: (value: string) => <Tooltip content={value || 'LSE已含'} mini><span className="arco-ellipsis">{value || 'LSE已含'}</span></Tooltip>,
-      resizable: true,
-    },
-    {
-      title: '操作',
-      dataIndex: 'operations',
-      fixed: 'right' as const,
-      width: 150,
-      render: () => (
-        <div style={{display:'flex',flexWrap:'wrap',gap:4}}>
-          <div style={{display:'flex',gap:4,width:'100%'}}>
-            <Button type="text" size="mini" icon={<IconEdit />}>编辑</Button>
-            <Button type="text" size="mini" icon={<IconDownload />}>下载</Button>
-          </div>
-          <div style={{display:'flex',gap:4,width:'100%'}}>
-            <Button type="text" size="mini" icon={<IconDelete />}>复制</Button>
-          </div>
-        </div>
-      ),
-    },
-  ];
-
-  // LCL数据
-  const lclData: LclAirDataItem[] = Array(12).fill(null).map((_, index) => {
-    const randomWeight = (75 + Math.floor(Math.random() * 50));
-    const randomVolume = (12 + Math.floor(Math.random() * 8));
-    const portPrefix = ['MANILA-NORTH', 'MANILA-SOUTH', 'SUBIC BAY', 'CEBU', 'ILOILO', 'CAGAYAN DE ORO', 'BATANGAS'];
-    const routeCodes = ['CPX4', 'CPS', 'CPX7', 'CPX6'];
-    const vesselNames = ['MEDKON QUO', 'SITC PENANG', 'SITC YOKOHAMA', 'SITC XINCHENG'];
-    
-    return {
-      key: `lcl-${index}`,
-      shipCompany: 'SITC',
-      dischargePort: portPrefix[Math.floor(Math.random() * portPrefix.length)],
-      etd: `05-${15 + Math.floor(Math.random() * 4)}`,
-      transitType: '直达',
-      transit: 4 + Math.floor(Math.random() * 6),
-      weight: randomWeight,
-      volume: randomVolume,
-      routeCode: routeCodes[Math.floor(Math.random() * routeCodes.length)],
-      vesselName: vesselNames[Math.floor(Math.random() * vesselNames.length)],
-      voyageNo: `25${10 + Math.floor(Math.random() * 9)}S`,
-      spaceStatus: Math.random() > 0.3 ? '舱位充足' : '运费下调',
-      remark: Math.random() > 0.5 ? 'LSE已含' : '运费下调',
-    };
-  });
-
-  // 空运数据
-  const airData: LclAirDataItem[] = Array(12).fill(null).map((_, index) => {
-    const randomWeight = (125 + Math.floor(Math.random() * 75));
-    const randomVolume = (5 + Math.floor(Math.random() * 6));
-    const portPrefix = ['LAX', 'JFK', 'ORD', 'ATL', 'DFW', 'SFO', 'MIA'];
-    const routeCodes = ['CA101', 'MU123', 'CZ456', 'CI789'];
-    const flightNames = ['CA501', 'MU208', 'CZ308', 'CI118'];
-    
-    return {
-      key: `air-${index}`,
-      shipCompany: ['南方航空', '东方航空', '国际航空', '中华航空'][Math.floor(Math.random() * 4)],
-      dischargePort: portPrefix[Math.floor(Math.random() * portPrefix.length)],
-      etd: `05-${15 + Math.floor(Math.random() * 4)}`,
-      transitType: Math.random() > 0.6 ? '直达' : '中转',
-      transit: 1 + Math.floor(Math.random() * 3),
-      weight: randomWeight,
-      volume: randomVolume,
-      routeCode: routeCodes[Math.floor(Math.random() * routeCodes.length)],
-      vesselName: flightNames[Math.floor(Math.random() * flightNames.length)],
-      voyageNo: `A${Math.floor(1000 + Math.random() * 9000)}`,
-      spaceStatus: Math.random() > 0.3 ? '舱位充足' : '运费下调',
-      remark: Math.random() > 0.5 ? 'AMS已含' : '运费下调',
-    };
-  });
-
-  // 港前运价状态颜色映射
-  const precarriageStatusColorClasses: Record<string, string> = {
-    '正常': 'bg-green-500',
-    '过期': 'bg-gray-500',
-    '下架': 'bg-red-500'
+  const onSelectChange = (selectedRowKeys: (string | number)[]) => {
+    setSelectedRowKeys(selectedRowKeys);
   };
 
-  // 获取港前运价状态标签
-  const getPrecarriageRateStatusTag = (status: string) => {
-    const colorClass = precarriageStatusColorClasses[status] || 'bg-blue-500';
-    
-    return (
-      <div className="flex items-center">
-        <div className={`w-2 h-2 rounded-full ${colorClass} mr-2`}></div>
-        <span>{status}</span>
-      </div>
-    );
-  };
-
-  // 处理查看整箱运价详情
-  const handleViewFclRate = (id: string) => {
-    // 检查当前路径，如果是客户端则导航到客户端的查看页面
-    const currentPath = location.pathname;
-    if (currentPath.includes('/controltower-client/')) {
-      navigate(`/controltower-client/view-fcl-rate/${id}`);
-    } else {
-      navigate(`/controltower/saas/view-fcl-rate/${id}`);
-    }
-  };
-
-  // 处理查看港前运价详情
-  const handleViewPrecarriageRate = (id: string) => {
-    navigate(`/controltower/saas/view-precarriage-rate/${id}`);
-  };
-
-  // 港前运价列定义 - 复刻自PrecarriageRates.tsx
-  const precarriageColumns = [
-    {
-      title: '港前运价编号',
-      dataIndex: 'code',
-      width: 120,
-      sorter: true,
-      resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
-    },
-    {
-      title: '运价类型',
-      dataIndex: 'rateType',
-      width: 100,
-      sorter: true,
-      resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
-    },
-    {
-      title: '支线类型',
-      dataIndex: 'sublineType',
-      width: 120,
-      sorter: true,
-      resizable: true,
-      render: (value: string | null) => value ? <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip> : '-'
-    },
-    {
-      title: '起运地',
-      dataIndex: 'origin',
-      width: 180,
-      sorter: true,
-      resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
-    },
-    {
-      title: '起运港',
-      dataIndex: 'destination',
-      width: 150,
-      sorter: true,
-      resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
-    },
-    {
-      title: '码头',
-      dataIndex: 'terminal',
-      width: 120,
-      sorter: true,
-      resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
-    },
-    {
-      title: '供应商',
-      dataIndex: 'vendor',
-      width: 150,
-      sorter: true,
-      resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
-    },
-    {
-      title: '20GP',
-      dataIndex: '20gp',
-      width: 100,
-      sorter: true,
-      resizable: true,
-      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
-    },
-    {
-      title: '40GP',
-      dataIndex: '40gp',
-      width: 100,
-      sorter: true,
-      resizable: true,
-      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
-    },
-    {
-      title: '40HC',
-      dataIndex: '40hc',
-      width: 100,
-      sorter: true,
-      resizable: true,
-      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
-    },
-    {
-      title: '40NOR',
-      dataIndex: '40nor',
-      width: 100,
-      sorter: true,
-      resizable: true,
-      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
-    },
-    {
-      title: '45HC',
-      dataIndex: '45hc',
-      width: 100,
-      sorter: true,
-      resizable: true,
-      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
-    },
-    {
-      title: '有效期',
-      dataIndex: 'validDateRange',
-      width: 180,
-      sorter: true,
-      resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
-    },
-    {
-      title: '状态',
-      dataIndex: 'status',
-      width: 100,
-      sorter: true,
-      resizable: true,
-      render: (value: string) => <Tooltip content={value} mini>{getPrecarriageRateStatusTag(value)}</Tooltip>
-    },
-    {
-      title: '备注',
-      dataIndex: 'remark',
-      width: 150,
-      sorter: true,
-      resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
-    },
-    {
-      title: '操作',
-      dataIndex: 'operations',
-      fixed: 'right' as const,
-      width: 80,
-      render: (_: any, record: PrecarriageDataItem) => (
-        <Button type="text" size="mini" icon={<IconEye />} onClick={() => handleViewPrecarriageRate(record.key)}>查看</Button>
-      ),
-    },
-  ];
-
-  // 港前运价数据接口
-  interface PrecarriageDataItem {
-    key: string;
-    code: string; // 港前运价编号
-    rateType: string; // 运价类型
-    sublineType: string | null; // 支线类型
-    origin: string; // 起运地
-    destination: string; // 起运港
-    terminal: string; // 码头
-    vendor: string; // 供应商
-    '20gp': number;
-    '40gp': number;
-    '40hc': number;
-    '40nor': number;
-    '45hc': number;
-    validDateRange: string; // 有效期区间
-    status: '正常' | '过期' | '下架'; // 状态
-    remark: string; // 备注
-  }
-
-  // 港前运价数据
-  const precarriageData: PrecarriageDataItem[] = [
-    {
-      key: '1',
-      code: 'PCR2024050001',
-      rateType: '直拖',
-      sublineType: null,
-      origin: '浙江省杭州市萧山区',
-      destination: 'CNSHA | SHANGHAI',
-      terminal: '洋山',
-      vendor: '安吉物流',
-      '20gp': 800,
-      '40gp': 1200,
-      '40hc': 1300,
-      '40nor': 1250,
-      '45hc': 1500,
-      validDateRange: '2024-05-01 至 2024-12-31',
-      status: '正常',
-      remark: '',
-    },
-    {
-      key: '2',
-      code: 'PCR2024050002',
-      rateType: '支线',
-      sublineType: '湖州海铁',
-      origin: '浙江省湖州市吴兴区',
-      destination: 'CNNGB | NINGBO',
-      terminal: '北仑',
-      vendor: '中远海运',
-      '20gp': 400,
-      '40gp': 700,
-      '40hc': 750,
-      '40nor': 720,
-      '45hc': 850,
-      validDateRange: '2024-05-15 至 2024-11-30',
-      status: '正常',
-      remark: '',
-    },
-    {
-      key: '3',
-      code: 'PCR2024050003',
-      rateType: '直拖',
-      sublineType: null,
-      origin: '江苏省苏州市工业园区',
-      destination: 'CNSHA | SHANGHAI',
-      terminal: '外高桥',
-      vendor: '德邦物流',
-      '20gp': 850,
-      '40gp': 1250,
-      '40hc': 1350,
-      '40nor': 1300,
-      '45hc': 1550,
-      validDateRange: '2024-04-01 至 2024-12-15',
-      status: '正常',
-      remark: '需提前24小时预约',
-    },
-    {
-      key: '4',
-      code: 'PCR2024040001',
-      rateType: '直拖',
-      sublineType: null,
-      origin: '上海市嘉定区',
-      destination: 'CNSHA | SHANGHAI',
-      terminal: '洋山',
-      vendor: '顺丰物流',
-      '20gp': 750,
-      '40gp': 1150,
-      '40hc': 1250,
-      '40nor': 1200,
-      '45hc': 1450,
-      validDateRange: '2024-03-01 至 2024-05-31',
-      status: '过期',
-      remark: '',
-    },
-  ];
-
-  // 尾程运价状态颜色映射
-  const lastMileStatusColorClasses: Record<string, string> = {
-    '正常': 'bg-green-500',
-    '过期': 'bg-gray-500',
-    '下架': 'bg-red-500'
-  };
-
-  // 获取尾程运价状态标签
-  const getLastMileRateStatusTag = (status: string) => {
-    const colorClass = lastMileStatusColorClasses[status] || 'bg-blue-500';
-    
-    return (
-      <div className="flex items-center">
-        <div className={`w-2 h-2 rounded-full ${colorClass} mr-2`}></div>
-        <span>{status}</span>
-      </div>
-    );
-  };
-
-  // 尾程运价数据接口
-  interface OncarriageDataItem {
-    key: string;
-    code: string; // 尾程运价编号
-    origin: string; // 目的港
-    addressType: '第三方地址' | '亚马逊仓库' | '易仓'; // 配送地址类型
-    zipCode: string; // 邮编
-    address: string; // 地址
-    warehouseCode: string | null; // 仓库代码
-    agentName: string; // 代理名称
-    validDateRange: string; // 有效期区间
-    remark: string; // 备注
-    status: '正常' | '过期' | '下架'; // 状态
-    '20gp': number; // 20GP价格
-    '40gp': number; // 40GP价格
-    '40hc': number; // 40HC价格
-    '45hc': number; // 45HC价格
-    '40nor': number; // 40NOR价格
-  }
-  
-  // 处理查看尾程运价详情
-  const handleViewLastMileRate = (id: string) => {
-    navigate(`/controltower/saas/view-lastmile-rate/${id}`);
-  };
-
-  // 尾程运价列定义
-  const oncarriageColumns = [
-    {
-      title: '尾程运价编号',
-      dataIndex: 'code',
-      width: 120,
-      sorter: true,
-      resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
-    },
-    {
-      title: '目的港',
-      dataIndex: 'origin',
-      width: 150,
-      sorter: true,
-      resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
-    },
-    {
-      title: '配送地址类型',
-      dataIndex: 'addressType',
-      width: 120,
-      sorter: true,
-      resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
-    },
-    {
-      title: '邮编',
-      dataIndex: 'zipCode',
-      width: 100,
-      sorter: true,
-      resizable: true,
-      render: (value: string, record: OncarriageDataItem) => {
-        if (record.addressType === '亚马逊仓库' || record.addressType === '易仓') {
-          return '-';
-        }
-        return <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>;
-      }
-    },
-    {
-      title: '地址',
-      dataIndex: 'address',
-      width: 180,
-      sorter: true,
-      resizable: true,
-      render: (value: string, record: OncarriageDataItem) => {
-        if (record.addressType === '亚马逊仓库' || record.addressType === '易仓') {
-          return '-';
-        }
-        return <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>;
-      }
-    },
-    {
-      title: '仓库代码',
-      dataIndex: 'warehouseCode',
-      width: 120,
-      sorter: true,
-      resizable: true,
-      render: (value: string | null) => value ? <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip> : '-'
-    },
-    {
-      title: '代理名称',
-      dataIndex: 'agentName',
-      width: 150,
-      sorter: true,
-      resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
-    },
-    {
-      title: '20GP',
-      dataIndex: '20gp',
-      width: 100,
-      sorter: true,
-      resizable: true,
-      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
-    },
-    {
-      title: '40GP',
-      dataIndex: '40gp',
-      width: 100,
-      sorter: true,
-      resizable: true,
-      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
-    },
-    {
-      title: '40HC',
-      dataIndex: '40hc',
-      width: 100,
-      sorter: true,
-      resizable: true,
-      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
-    },
-    {
-      title: '40NOR',
-      dataIndex: '40nor',
-      width: 100,
-      sorter: true,
-      resizable: true,
-      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
-    },
-    {
-      title: '45HC',
-      dataIndex: '45hc',
-      width: 100,
-      sorter: true,
-      resizable: true,
-      render: (value: number) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
-    },
-    {
-      title: '有效期',
-      dataIndex: 'validDateRange',
-      width: 180,
-      sorter: true,
-      resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value}</span></Tooltip>
-    },
-    {
-      title: '状态',
-      dataIndex: 'status',
-      width: 100,
-      sorter: true,
-      resizable: true,
-      render: (value: string) => <Tooltip content={value} mini>{getLastMileRateStatusTag(value)}</Tooltip>
-    },
-    {
-      title: '备注',
-      dataIndex: 'remark',
-      width: 150,
-      sorter: true,
-      resizable: true,
-      render: (value: string) => <Tooltip content={value} mini><span className="arco-ellipsis">{value || '-'}</span></Tooltip>
-    },
-    {
-      title: '操作',
-      dataIndex: 'operations',
-      fixed: 'right' as const,
-      width: 80,
-      render: (_: any, record: OncarriageDataItem) => (
-        <Button type="text" size="mini" icon={<IconEye />} onClick={() => handleViewLastMileRate(record.key)}>查看</Button>
-      ),
-    },
-  ];
-
-  // 尾程运价数据
-  const oncarriageData: OncarriageDataItem[] = [
-    {
-      key: '1',
-      code: 'LMR2024050001',
-      origin: 'USLAX | LOS ANGELES',
-      addressType: '第三方地址',
-      zipCode: '92101',
-      address: 'San Diego, CA',
-      warehouseCode: null,
-      agentName: 'XPO TRUCK LLC',
-      validDateRange: '2024-05-01 至 2024-12-31',
-      remark: '',
-      status: '正常',
-      '20gp': 1200,
-      '40gp': 1800,
-      '40hc': 1900,
-      '45hc': 2200,
-      '40nor': 2000
-    },
-    {
-      key: '2',
-      code: 'LMR2024050002',
-      origin: 'USNYC | NEW YORK',
-      addressType: '亚马逊仓库',
-      zipCode: '',
-      address: '',
-      warehouseCode: 'ONT8',
-      agentName: 'DRAYEASY INC',
-      validDateRange: '2024-05-15 至 2024-11-30',
-      remark: '',
-      status: '正常',
-      '20gp': 980,
-      '40gp': 1650,
-      '40hc': 1750,
-      '45hc': 2050,
-      '40nor': 1800
-    },
-    {
-      key: '3',
-      code: 'LMR2024050003',
-      origin: 'DEHAM | HAMBURG',
-      addressType: '易仓',
-      zipCode: '',
-      address: '',
-      warehouseCode: 'LAX203',
-      agentName: 'AMERICAN FREIGHT SOLUTIONS',
-      validDateRange: '2024-04-01 至 2024-12-15',
-      remark: '需提前24小时预约',
-      status: '正常',
-      '20gp': 1300,
-      '40gp': 1950,
-      '40hc': 2050,
-      '45hc': 2400,
-      '40nor': 2100
-    },
-    {
-      key: '4',
-      code: 'LMR2024040001',
-      origin: 'NLRTM | ROTTERDAM',
-      addressType: '第三方地址',
-      zipCode: '96001',
-      address: 'Redding, CA',
-      warehouseCode: null,
-      agentName: 'WEST COAST CARRIERS LLC',
-      validDateRange: '2024-03-01 至 2024-05-31',
-      remark: '',
-      status: '过期',
-      '20gp': 1100,
-      '40gp': 1700,
-      '40hc': 1800,
-      '45hc': 2150,
-      '40nor': 1950
-    },
-  ];
-
-  // 获取表格数据
-  const getTableData = (): any => {
-    switch (activeTab) {
-      case 'lcl':
-        return lclData;
-      case 'air':
-        return airData;
-      case 'precarriage':
-        return precarriageData;
-      case 'oncarriage':
-        return oncarriageData;
-      case 'fcl':
-      default:
-        return fclData;
-    }
-  };
-
-  // 获取表格列
-  const getTableColumns = (): any => {
-    switch (activeTab) {
-      case 'lcl':
-        return lclAirColumns;
-      case 'air':
-        return lclAirColumns;
-      case 'precarriage':
-        return precarriageColumns;
-      case 'oncarriage':
-        return oncarriageColumns;
-      case 'fcl':
-      default:
-        return fclColumns;
-    }
-  };
-  
-  // 定义类型安全的表格组件渲染
-
+  // 分页配置
   const pagination = {
-    showTotal: true,
-    total: 9232,
-    pageSize: 12,
-    current: 1,
-    showJumper: true,
     sizeCanChange: true,
+    showTotal: true,
+    pageSize: 20,
+    current: 1,
     pageSizeChangeResetCurrent: true,
-    sizeOptions: [12, 50, 100, 200],
   };
 
-  // 定义每个tab下的筛选表单内容
-
-  // 拖拽功能
-  const handleDragStart = (_e: React.DragEvent, columnKey: string) => {
+  // 拖拽排序处理函数
+  const handleDragStart = (e: React.DragEvent, columnKey: string) => {
     setDraggedItem(columnKey);
+    e.dataTransfer.effectAllowed = 'move';
   };
 
   const handleDragOver = (e: React.DragEvent, columnKey: string) => {
@@ -2074,16 +1478,19 @@ const RateQuery: React.FC = () => {
 
   const handleDrop = (e: React.DragEvent, targetColumnKey: string) => {
     e.preventDefault();
+    
     if (draggedItem && draggedItem !== targetColumnKey) {
       const newOrder = [...columnOrder];
       const draggedIndex = newOrder.indexOf(draggedItem);
       const targetIndex = newOrder.indexOf(targetColumnKey);
       
+      // 移动元素
       newOrder.splice(draggedIndex, 1);
       newOrder.splice(targetIndex, 0, draggedItem);
       
       setColumnOrder(newOrder);
     }
+    
     setDraggedItem(null);
     setDragOverItem(null);
   };
@@ -2093,9 +1500,10 @@ const RateQuery: React.FC = () => {
     setDragOverItem(null);
   };
 
-  // 筛选字段拖拽功能
-  const handleFilterFieldDragStart = (_e: React.DragEvent, fieldKey: string) => {
+  // 筛选字段拖拽排序处理函数
+  const handleFilterFieldDragStart = (e: React.DragEvent, fieldKey: string) => {
     setDraggedFilterField(fieldKey);
+    e.dataTransfer.effectAllowed = 'move';
   };
 
   const handleFilterFieldDragOver = (e: React.DragEvent, fieldKey: string) => {
@@ -2105,16 +1513,19 @@ const RateQuery: React.FC = () => {
 
   const handleFilterFieldDrop = (e: React.DragEvent, targetFieldKey: string) => {
     e.preventDefault();
+    
     if (draggedFilterField && draggedFilterField !== targetFieldKey) {
       const newOrder = [...filterFieldOrder];
       const draggedIndex = newOrder.indexOf(draggedFilterField);
       const targetIndex = newOrder.indexOf(targetFieldKey);
       
+      // 移动元素
       newOrder.splice(draggedIndex, 1);
       newOrder.splice(targetIndex, 0, draggedFilterField);
       
       setFilterFieldOrder(newOrder);
     }
+    
     setDraggedFilterField(null);
     setDragOverFilterField(null);
   };
@@ -2124,7 +1535,7 @@ const RateQuery: React.FC = () => {
     setDragOverFilterField(null);
   };
 
-  // 获取列标签
+  // 获取列的中文名称
   const getColumnLabel = (columnKey: string): string => {
     const columnLabels: Record<string, string> = {
       routeCode: '运价号',
@@ -2133,12 +1544,12 @@ const RateQuery: React.FC = () => {
       dischargePort: '目的港',
       transitPort: '中转港',
       transitType: '中转类型',
+      routeLine: '航线',
       shipCompany: '船公司',
       contractNo: '约号',
       spaceStatus: '舱位状态',
       priceStatus: '价格趋势',
       cargoType: '货物类型',
-      rateStatus: '运价状态',
       '20gp': "20GP",
       '40gp': "40GP",
       '40hc': "40HC",
@@ -2177,14 +1588,152 @@ const RateQuery: React.FC = () => {
     return columnLabels[columnKey] || columnKey;
   };
 
+  // ====== 港前运价 columns & data ======
+  const precarriageColumns = [
+    { title: '港前运价编号', dataIndex: 'code', width: 120 },
+    { title: '运价类型', dataIndex: 'rateType', width: 100 },
+    { title: '支线类型', dataIndex: 'sublineType', width: 120, render: (v: string|null) => v || '-' },
+    { title: '起运地', dataIndex: 'origin', width: 180 },
+    { title: '起运港', dataIndex: 'destination', width: 150 },
+    { title: '码头', dataIndex: 'terminal', width: 120 },
+    { title: '供应商', dataIndex: 'vendor', width: 150 },
+    { title: '20GP', dataIndex: '20gp', width: 100 },
+    { title: '40GP', dataIndex: '40gp', width: 100 },
+    { title: '40HC', dataIndex: '40hc', width: 100 },
+    { title: '40NOR', dataIndex: '40nor', width: 100 },
+    { title: '45HC', dataIndex: '45hc', width: 100 },
+    { title: '有效期', dataIndex: 'validDateRange', width: 180 },
+    { title: '状态', dataIndex: 'status', width: 100 },
+    { title: '备注', dataIndex: 'remark', width: 150 },
+    {
+      title: '操作',
+      dataIndex: 'operations',
+      fixed: 'right' as const,
+      width: 80,
+      render: (_: any, record: any) => (
+        <Button type="text" size="mini" icon={<IconEye />} onClick={() => handleViewPrecarriageRate(record.key)}>
+          查看
+        </Button>
+      ),
+    },
+  ];
+  const precarriageData = [
+    { key: '1', code: 'PCR2024050001', rateType: '直拖', sublineType: null, origin: '浙江省杭州市萧山区', destination: 'CNSHA | SHANGHAI', terminal: '洋山', vendor: '安吉物流', '20gp': 800, '40gp': 1200, '40hc': 1300, '40nor': 1250, '45hc': 1500, validDateRange: '2024-05-01 至 2024-12-31', status: '正常', remark: '' },
+    { key: '2', code: 'PCR2024050002', rateType: '支线', sublineType: '湖州海铁', origin: '浙江省湖州市吴兴区', destination: 'CNNGB | NINGBO', terminal: '北仑', vendor: '中远海运', '20gp': 400, '40gp': 700, '40hc': 750, '40nor': 720, '45hc': 850, validDateRange: '2024-05-15 至 2024-11-30', status: '正常', remark: '' },
+    { key: '3', code: 'PCR2024050003', rateType: '直拖', sublineType: null, origin: '江苏省苏州市工业园区', destination: 'CNSHA | SHANGHAI', terminal: '外高桥', vendor: '德邦物流', '20gp': 850, '40gp': 1250, '40hc': 1350, '40nor': 1300, '45hc': 1550, validDateRange: '2024-04-01 至 2024-12-15', status: '正常', remark: '需提前24小时预约' },
+    { key: '4', code: 'PCR2024040001', rateType: '直拖', sublineType: null, origin: '上海市嘉定区', destination: 'CNSHA | SHANGHAI', terminal: '洋山', vendor: '顺丰物流', '20gp': 750, '40gp': 1150, '40hc': 1250, '40nor': 1200, '45hc': 1450, validDateRange: '2024-03-01 至 2024-05-31', status: '过期', remark: '' },
+    { key: '5', code: 'PCR2024050004', rateType: '支线', sublineType: '乍浦支线', origin: '浙江省嘉兴市平湖市', destination: 'CNSHA | SHANGHAI', terminal: '洋山', vendor: '海得航运', '20gp': 450, '40gp': 750, '40hc': 800, '40nor': 780, '45hc': 920, validDateRange: '2024-05-01 至 2024-10-31', status: '正常', remark: '周一、周四发船' },
+    { key: '6', code: 'PCR2024030001', rateType: '支线', sublineType: '海宁支线', origin: '浙江省嘉兴市海宁市', destination: 'CNNGB | NINGBO', terminal: '北仑', vendor: '浙江海洋航运', '20gp': 500, '40gp': 800, '40hc': 850, '40nor': 830, '45hc': 950, validDateRange: '2024-03-15 至 2024-04-30', status: '下架', remark: '已停运' },
+  ];
+  // ====== 尾程运价 columns & data ======
+  const oncarriageColumns = [
+    { title: '尾程运价编号', dataIndex: 'code', width: 120 },
+    { title: '目的港', dataIndex: 'origin', width: 150 },
+    { title: '配送地址类型', dataIndex: 'addressType', width: 120 },
+    { title: '邮编', dataIndex: 'zipCode', width: 100 },
+    { title: '地址', dataIndex: 'address', width: 180 },
+    { title: '仓库代码', dataIndex: 'warehouseCode', width: 120, render: (v: string|null) => v || '-' },
+    { title: '代理名称', dataIndex: 'agentName', width: 150 },
+    { title: '20GP', dataIndex: '20gp', width: 100 },
+    { title: '40GP', dataIndex: '40gp', width: 100 },
+    { title: '40HC', dataIndex: '40hc', width: 100 },
+    { title: '40NOR', dataIndex: '40nor', width: 100 },
+    { title: '45HC', dataIndex: '45hc', width: 100 },
+    { title: '有效期', dataIndex: 'validDateRange', width: 180 },
+    { title: '状态', dataIndex: 'status', width: 100 },
+    { title: '备注', dataIndex: 'remark', width: 150 },
+    {
+      title: '操作',
+      dataIndex: 'operations',
+      fixed: 'right' as const,
+      width: 80,
+      render: (_: any, record: any) => (
+        <Button type="text" size="mini" icon={<IconEye />} onClick={() => handleViewOncarriageRate(record.key)}>
+          查看
+        </Button>
+      ),
+    },
+  ];
+  const oncarriageData = [
+    { key: '1', code: 'LMR2024050001', origin: 'USLAX | LOS ANGELES', addressType: '第三方地址', zipCode: '92101', address: 'San Diego, CA', warehouseCode: null, agentName: 'XPO TRUCK LLC', validDateRange: '2024-05-01 至 2024-12-31', remark: '', status: '正常', '20gp': 1200, '40gp': 1800, '40hc': 1900, '45hc': 2200, '40nor': 2000 },
+    { key: '2', code: 'LMR2024050002', origin: 'USNYC | NEW YORK', addressType: '亚马逊仓库', zipCode: '', address: '', warehouseCode: 'ONT8', agentName: 'DRAYEASY INC', validDateRange: '2024-05-15 至 2024-11-30', remark: '', status: '正常', '20gp': 980, '40gp': 1650, '40hc': 1750, '45hc': 2050, '40nor': 1800 },
+    { key: '3', code: 'LMR2024050003', origin: 'DEHAM | HAMBURG', addressType: '易仓', zipCode: '', address: '', warehouseCode: 'LAX203', agentName: 'AMERICAN FREIGHT SOLUTIONS', validDateRange: '2024-04-01 至 2024-12-15', remark: '需提前24小时预约', status: '正常', '20gp': 1300, '40gp': 1950, '40hc': 2050, '45hc': 2400, '40nor': 2100 },
+    { key: '4', code: 'LMR2024040001', origin: 'NLRTM | ROTTERDAM', addressType: '第三方地址', zipCode: '96001', address: 'Redding, CA', warehouseCode: null, agentName: 'WEST COAST CARRIERS LLC', validDateRange: '2024-03-01 至 2024-05-31', remark: '', status: '过期', '20gp': 1100, '40gp': 1700, '40hc': 1800, '45hc': 2150, '40nor': 1950 },
+  ];
+
+  // 新增运价按钮点击事件
+  const handleAddRate = () => {
+    if (activeTab === 'fcl') {
+      navigate('/controltower/saas/create-fcl-rate');
+      return;
+    }
+    if (activeTab === 'precarriage') {
+      navigate('/controltower/saas/create-precarriage-rate');
+      return;
+    }
+    if (activeTab === 'oncarriage') {
+      navigate('/controltower/saas/create-lastmile-rate');
+      return;
+    }
+    // 其它Tab可自定义跳转或提示
+    Message.info('请在对应Tab实现新增运价功能');
+  };
+
+  // 修改内容区渲染逻辑
+  const renderContent = () => {
+    if (activeTab === 'precarriage') {
+      return (
+        <Table
+          rowKey="key"
+          columns={precarriageColumns}
+          data={precarriageData}
+          pagination={pagination}
+          scroll={{ x: 1800 }}
+          border={false}
+          className="mt-4 inquiry-table-nowrap"
+        />
+      );
+    }
+    if (activeTab === 'oncarriage') {
+      return (
+        <Table
+          rowKey="key"
+          columns={oncarriageColumns}
+          data={oncarriageData}
+          pagination={pagination}
+          scroll={{ x: 1800 }}
+          border={false}
+          className="mt-4 inquiry-table-nowrap"
+        />
+      );
+    }
+    // 其它Tab保持原有内容
+    return (
+      <Table
+        rowKey="key"
+        loading={false}
+        columns={columns}
+        data={data}
+        pagination={pagination}
+        scroll={{ x: 3200, y: 'calc(100vh - 400px)' }}
+        border={false}
+        className="mt-4 inquiry-table-nowrap"
+        style={{
+          '--table-row-height': '60px'
+        } as React.CSSProperties & { [key: string]: string }}
+        rowClassName={() => 'table-row-double-height'}
+      />
+    );
+  };
+
   // 初始化默认筛选条件
   const initializeDefaultConditions = (activeTab: string): FilterCondition[] => {
-    const filterFields = getFilterFieldsByTab(activeTab);
-    return filterFields.map(field => ({
+    const fields = getFilterFieldsByTab(activeTab);
+    return fields.map(field => ({
       key: field.key,
       mode: FilterMode.EQUAL,
-      value: '',
-      visible: ['shipCompany', 'transitType', 'departurePort', 'dischargePort'].includes(field.key)
+      value: undefined,
+      visible: true
     }));
   };
 
@@ -2198,98 +1747,115 @@ const RateQuery: React.FC = () => {
     };
   };
 
-  // 获取可见的筛选条件
+  // 组件初始化 - 监听activeTab变化
+  useEffect(() => {
+    const defaultScheme = initializeDefaultScheme(activeTab);
+    setFilterSchemes([defaultScheme]);
+    setFilterConditions(defaultScheme.conditions);
+    setCurrentSchemeId('default');
+    
+    // 初始化筛选字段顺序
+    const fields = getFilterFieldsByTab(activeTab);
+    setFilterFieldOrder(fields.map(field => field.key));
+  }, [activeTab]);
+
+  // 获取可见的筛选条件（用于渲染）
   const getVisibleConditions = (): FilterCondition[] => {
     return filterConditions.filter(condition => condition.visible);
   };
 
-  // 获取第一行筛选条件
+  // 获取第一行筛选条件（用于收起状态）
   const getFirstRowConditions = (): FilterCondition[] => {
-    const visible = getVisibleConditions();
-    return visible.slice(0, 4);
+    const visibleConditions = getVisibleConditions();
+    return visibleConditions.slice(0, 4); // 假设第一行显示4个条件
   };
 
-  // 切换筛选区展开/收起
+  // 切换筛选区展开状态
   const toggleFilterExpanded = () => {
     setFilterExpanded(!filterExpanded);
   };
 
-  // 更新筛选条件
+  // 更新筛选条件值
   const updateFilterCondition = (key: string, mode: FilterMode, value: any) => {
     setFilterConditions(prev => prev.map(condition => 
-      condition.key === key ? { ...condition, mode, value } : condition
+      condition.key === key 
+        ? { ...condition, mode, value }
+        : condition
     ));
   };
 
   // 重置筛选条件
   const resetFilterConditions = () => {
-    const defaultConditions = initializeDefaultConditions(activeTab);
-    setFilterConditions(defaultConditions);
-    
-    const defaultScheme = initializeDefaultScheme(activeTab);
-    setFilterSchemes([defaultScheme]);
-    setCurrentSchemeId('default');
-    
-    Message.success('筛选条件已重置');
+    const defaultScheme = filterSchemes.find(scheme => scheme.isDefault);
+    if (defaultScheme) {
+      setFilterConditions(defaultScheme.conditions.map(condition => ({
+        ...condition,
+        value: undefined
+      })));
+      setCurrentSchemeId('default');
+    }
   };
 
   // 应用筛选方案
   const applyFilterScheme = (schemeId: string) => {
     const scheme = filterSchemes.find(s => s.id === schemeId);
     if (scheme) {
-      setFilterConditions(scheme.conditions);
+      setFilterConditions([...scheme.conditions]);
       setCurrentSchemeId(schemeId);
     }
   };
 
-  // 打开筛选字段Modal
+  // 打开增减条件弹窗
   const openFilterFieldModal = () => {
     setFilterFieldModalVisible(true);
   };
 
-  // 关闭筛选字段Modal
+  // 关闭增减条件弹窗
   const closeFilterFieldModal = () => {
     setFilterFieldModalVisible(false);
   };
 
-  // 打开方案Modal
+  // 打开另存为方案弹窗
   const openSchemeModal = () => {
+    setSchemeName('');
     setSchemeModalVisible(true);
   };
 
-  // 关闭方案Modal
+  // 关闭另存为方案弹窗
   const closeSchemeModal = () => {
     setSchemeModalVisible(false);
-    setNewSchemeName('');
+    setSchemeName('');
   };
 
   // 保存筛选方案
   const saveFilterScheme = () => {
-    if (!newSchemeName.trim()) {
-      Message.error('请输入方案名称');
+    if (!schemeName.trim()) {
       return;
     }
     
     const newScheme: FilterScheme = {
       id: Date.now().toString(),
-      name: newSchemeName,
-      conditions: [...filterConditions]
+      name: schemeName.trim(),
+      conditions: [...filterConditions],
+      isDefault: false
     };
     
     setFilterSchemes(prev => [...prev, newScheme]);
     setCurrentSchemeId(newScheme.id);
     closeSchemeModal();
-    Message.success('方案保存成功');
+    Message.success('筛选方案保存成功');
   };
 
   // 更新筛选条件可见性
   const updateFilterConditionVisibility = (key: string, visible: boolean) => {
     setFilterConditions(prev => prev.map(condition => 
-      condition.key === key ? { ...condition, visible } : condition
+      condition.key === key 
+        ? { ...condition, visible }
+        : condition
     ));
   };
 
-  // 渲染筛选条件
+  // 渲染单个筛选条件
   const renderFilterCondition = (condition: FilterCondition) => {
     const fieldConfig = getFilterFieldsByTab(activeTab).find(field => field.key === condition.key);
     if (!fieldConfig) return null;
@@ -2379,6 +1945,14 @@ const RateQuery: React.FC = () => {
     );
   };
 
+  // 执行查询
+  const handleSearch = () => {
+    // 根据筛选条件过滤数据
+    console.log('执行查询，当前筛选条件：', filterConditions);
+    // 这里可以添加实际的查询逻辑，比如调用API或过滤本地数据
+    Message.success('查询完成');
+  };
+
   // 渲染新版筛选区域
   const renderNewFilterArea = () => {
     const conditionsToShow = filterExpanded ? getVisibleConditions() : getFirstRowConditions();
@@ -2414,6 +1988,7 @@ const RateQuery: React.FC = () => {
               <Button 
                 type="primary" 
                 icon={<IconSearch />}
+                onClick={handleSearch}
                 className="search-btn"
                 size="small"
               >
@@ -2521,22 +2096,17 @@ const RateQuery: React.FC = () => {
   };
 
   return (
-    <ControlTowerSaasLayout menuSelectedKey="3" breadcrumb={
-      <Breadcrumb>
-        <Breadcrumb.Item>运价管理</Breadcrumb.Item>
-        <Breadcrumb.Item>运价查询</Breadcrumb.Item>
-      </Breadcrumb>
-    }>
+    <div>
       <Card>
-        <Tabs activeTab={activeTab} onChange={handleTabChange} className="mb-4">
-          <TabPane key="fcl" title="整箱运价" />
-          <TabPane key="lcl" title="拼箱运价" />
-          <TabPane key="air" title="空运运价" />
-          <TabPane key="precarriage" title="港前运价" />
-          <TabPane key="oncarriage" title="尾程运价" />
+        <Tabs activeTab={activeTab} onChange={setActiveTab} className="mb-4">
+          <Tabs.TabPane key="fcl" title="整箱运价" />
+          <Tabs.TabPane key="lcl" title="拼箱运价" />
+          <Tabs.TabPane key="air" title="空运运价" />
+          <Tabs.TabPane key="precarriage" title="港前运价" />
+          <Tabs.TabPane key="oncarriage" title="尾程运价" />
         </Tabs>
         
-        {/* 新的筛选区域 */}
+        {/* 使用新的筛选区域 */}
         {renderNewFilterArea()}
         
         <Card>
@@ -2570,127 +2140,84 @@ const RateQuery: React.FC = () => {
               <span>自定义表格</span>
             </div>
           </div>
-          <Table
-            rowKey="key"
-            loading={false}
-            columns={getTableColumns()}
-            data={getTableData()}
-            rowSelection={{
-              selectedRowKeys,
-              onChange: onSelectChange,
-            }}
-            pagination={pagination}
-            scroll={{ x: 1800 }}
-            border={false}
-            className="mt-4 inquiry-table-nowrap"
-          />
-          
-          {/* 添加自定义样式 */}
-          <style dangerouslySetInnerHTML={{
-            __html: `
-              .no-ellipsis {
-                white-space: nowrap !important;
-                overflow: visible !important;
-                text-overflow: unset !important;
-              }
-              .inquiry-table-nowrap .arco-table-td .arco-table-cell {
-                white-space: nowrap !important;
-                overflow: visible !important;
-                text-overflow: unset !important;
-              }
-            `
-          }} />
+          {renderContent()}
           <div className="mt-2 text-gray-500 text-sm">共 9232 条</div>
         </Card>
       </Card>
-
       {/* 自定义表格抽屉 */}
       <Drawer
+        width={480}
         title={
-          <div className="flex items-center gap-2">
-            <IconSettings />
-            <span>自定义表格</span>
+          <div className="flex items-center">
+            <IconSettings className="mr-2" />
+            <span>自定义表格设置</span>
           </div>
         }
         visible={customTableModalVisible}
         onCancel={closeCustomTableModal}
-        width={480}
         footer={
           <div className="flex justify-between">
-            <Button onClick={resetColumnVisibility}>
-              重置默认
-            </Button>
-            <div>
-              <Button onClick={closeCustomTableModal} style={{ marginRight: 8 }}>
-                取消
-              </Button>
-              <Button type="primary" onClick={applyColumnSettings}>
-                确认
-              </Button>
-            </div>
+            <Button onClick={resetColumnVisibility}>重置默认</Button>
+            <Space>
+              <Button onClick={closeCustomTableModal}>取消</Button>
+              <Button type="primary" onClick={applyColumnSettings}>确认</Button>
+            </Space>
           </div>
         }
       >
-        <div className="space-y-4">
-          {/* 快捷操作区域 */}
-          <div className="bg-gray-50 p-3 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">
-                已选择 {Object.values(columnVisibility).filter(Boolean).length} / {Object.keys(columnVisibility).length} 个字段
-              </span>
-              <div className="space-x-2">
-                <Button 
-                  size="small" 
-                  onClick={() => {
-                    const newVisibility: any = {};
-                    Object.keys(columnVisibility).forEach(key => {
-                      newVisibility[key] = true;
-                    });
-                    setColumnVisibility(newVisibility);
-                  }}
-                >
-                  全选
-                </Button>
-                <Button 
-                  size="small" 
-                  onClick={() => {
-                    const newVisibility: any = {};
-                    Object.keys(columnVisibility).forEach(key => {
-                      newVisibility[key] = false;
-                    });
-                    setColumnVisibility(newVisibility);
-                  }}
-                >
-                  清空
-                </Button>
-              </div>
+        <div className="h-full flex flex-col">
+          {/* 快捷操作 */}
+          <div className="flex justify-between items-center mb-4 p-4 bg-gray-50">
+            <div className="text-sm text-gray-600">
+              已选择 {Object.values(columnVisibility).filter(Boolean).length}/{Object.keys(columnVisibility).length} 个字段
             </div>
+            <Space>
+              <Button size="small" onClick={() => {
+                const newVisibility = {...columnVisibility};
+                Object.keys(newVisibility).forEach(key => {
+                  (newVisibility as any)[key] = true;
+                });
+                setColumnVisibility(newVisibility);
+              }}>全选</Button>
+              <Button size="small" onClick={() => {
+                const newVisibility = {...columnVisibility};
+                Object.keys(newVisibility).forEach(key => {
+                  (newVisibility as any)[key] = false;
+                });
+                setColumnVisibility(newVisibility);
+              }}>清空</Button>
+            </Space>
           </div>
-
-          {/* 字段列表 */}
-          <div className="space-y-2">
+          
+          {/* 可拖拽的字段列表 */}
+          <div className="flex-1 overflow-y-auto px-4">
             {columnOrder.map((columnKey, index) => (
               <div
                 key={columnKey}
-                className={`flex items-center gap-3 p-3 border border-gray-200 bg-white hover:bg-gray-50 transition-colors ${
-                  draggedItem === columnKey ? 'opacity-50' : ''
-                } ${
-                  dragOverItem === columnKey ? 'border-blue-400 border-2' : ''
-                }`}
+                className={`
+                  flex items-center justify-between p-3 mb-2 bg-white border cursor-move
+                  hover:shadow-sm transition-all duration-200
+                  ${draggedItem === columnKey ? 'opacity-50' : ''}
+                  ${dragOverItem === columnKey ? 'border-blue-400 bg-blue-50' : 'border-gray-200'}
+                `}
                 draggable
                 onDragStart={(e) => handleDragStart(e, columnKey)}
                 onDragOver={(e) => handleDragOver(e, columnKey)}
                 onDrop={(e) => handleDrop(e, columnKey)}
                 onDragEnd={handleDragEnd}
               >
-                <IconDragDotVertical className="text-gray-400 cursor-move" />
-                <div className="flex items-center justify-center w-6 h-5 bg-gray-100 text-xs text-gray-600 font-medium rounded" style={{ minWidth: '24px' }}>
-                  {index + 1}
+                <div className="flex items-center flex-1">
+                  <IconDragDotVertical className="text-gray-400 mr-3 cursor-grab" />
+                  <div className="flex items-center">
+                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 mr-3 min-w-[30px] text-center">
+                      {index + 1}
+                    </span>
+                    <span className="text-sm font-medium">{getColumnLabel(columnKey)}</span>
+                  </div>
                 </div>
-                <span className="flex-1 text-sm">{getColumnLabel(columnKey)}</span>
-                <Switch
+                <Switch 
                   size="small"
-                  checked={columnVisibility[columnKey as keyof typeof columnVisibility]}
+                  checked={(columnVisibility as any)[columnKey] || false} 
                   onChange={(checked) => handleColumnVisibilityChange(columnKey, checked)}
                 />
               </div>
@@ -2699,93 +2226,89 @@ const RateQuery: React.FC = () => {
         </div>
       </Drawer>
 
-      {/* 筛选字段抽屉 */}
+      {/* 增减条件抽屉 - 与自定义表格一致的样式 */}
       <Drawer
+        width={480}
         title={
-          <div className="flex items-center gap-2">
-            <IconSettings />
-            <span>增减条件</span>
+          <div className="flex items-center">
+            <IconSettings className="mr-2" />
+            <span>筛选字段设置</span>
           </div>
         }
         visible={filterFieldModalVisible}
         onCancel={closeFilterFieldModal}
-        width={480}
         footer={
           <div className="flex justify-between">
             <Button onClick={() => {
-              const defaultConditions = initializeDefaultConditions(activeTab);
-              setFilterConditions(defaultConditions);
-            }}>
-              重置默认
-            </Button>
-            <div>
-              <Button onClick={closeFilterFieldModal} style={{ marginRight: 8 }}>
-                取消
-              </Button>
-              <Button type="primary" onClick={closeFilterFieldModal}>
-                确认
-              </Button>
-            </div>
+              const fields = getFilterFieldsByTab(activeTab);
+              setFilterFieldOrder(fields.map(field => field.key));
+              fields.forEach(field => {
+                updateFilterConditionVisibility(field.key, true);
+              });
+            }}>重置默认</Button>
+            <Space>
+              <Button onClick={closeFilterFieldModal}>取消</Button>
+              <Button type="primary" onClick={closeFilterFieldModal}>确认</Button>
+            </Space>
           </div>
         }
       >
-        <div className="space-y-4">
-          {/* 快捷操作区域 */}
-          <div className="bg-gray-50 p-3 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">
-                已选择 {filterConditions.filter(c => c.visible).length} / {filterConditions.length} 个字段
-              </span>
-              <div className="space-x-2">
-                <Button 
-                  size="small" 
-                  onClick={() => {
-                    setFilterConditions(prev => prev.map(condition => ({ ...condition, visible: true })));
-                  }}
-                >
-                  全选
-                </Button>
-                <Button 
-                  size="small" 
-                  onClick={() => {
-                    setFilterConditions(prev => prev.map(condition => ({ ...condition, visible: false })));
-                  }}
-                >
-                  清空
-                </Button>
-              </div>
+        <div className="h-full flex flex-col">
+          {/* 快捷操作 */}
+          <div className="flex justify-between items-center mb-4 p-4 bg-gray-50">
+            <div className="text-sm text-gray-600">
+              已选择 {filterConditions.filter(c => c.visible).length}/{getFilterFieldsByTab(activeTab).length} 个字段
             </div>
+            <Space>
+              <Button size="small" onClick={() => {
+                getFilterFieldsByTab(activeTab).forEach(field => {
+                  updateFilterConditionVisibility(field.key, true);
+                });
+              }}>全选</Button>
+              <Button size="small" onClick={() => {
+                getFilterFieldsByTab(activeTab).forEach(field => {
+                  updateFilterConditionVisibility(field.key, false);
+                });
+              }}>清空</Button>
+            </Space>
           </div>
-
-          {/* 筛选字段列表 */}
-          <div className="space-y-2">
+          
+          {/* 可拖拽的字段列表 */}
+          <div className="flex-1 overflow-y-auto px-4">
             {filterFieldOrder.map((fieldKey, index) => {
-              const condition = filterConditions.find(c => c.key === fieldKey);
               const field = getFilterFieldsByTab(activeTab).find(f => f.key === fieldKey);
-              if (!condition || !field) return null;
-
+              const condition = filterConditions.find(c => c.key === fieldKey);
+              const isSelected = condition?.visible || false;
+              
+              if (!field) return null;
+              
               return (
                 <div
                   key={fieldKey}
-                  className={`flex items-center gap-3 p-3 border border-gray-200 bg-white hover:bg-gray-50 transition-colors ${
-                    draggedFilterField === fieldKey ? 'opacity-50' : ''
-                  } ${
-                    dragOverFilterField === fieldKey ? 'border-blue-400 border-2' : ''
-                  }`}
+                  className={`
+                    flex items-center justify-between p-3 mb-2 bg-white border cursor-move
+                    hover:shadow-sm transition-all duration-200
+                    ${draggedFilterField === fieldKey ? 'opacity-50' : ''}
+                    ${dragOverFilterField === fieldKey ? 'border-blue-400 bg-blue-50' : 'border-gray-200'}
+                  `}
                   draggable
                   onDragStart={(e) => handleFilterFieldDragStart(e, fieldKey)}
                   onDragOver={(e) => handleFilterFieldDragOver(e, fieldKey)}
                   onDrop={(e) => handleFilterFieldDrop(e, fieldKey)}
                   onDragEnd={handleFilterFieldDragEnd}
                 >
-                  <IconDragDotVertical className="text-gray-400 cursor-move" />
-                  <div className="flex items-center justify-center w-6 h-5 bg-gray-100 text-xs text-gray-600 font-medium rounded" style={{ minWidth: '24px' }}>
-                    {index + 1}
+                  <div className="flex items-center flex-1">
+                    <IconDragDotVertical className="text-gray-400 mr-3 cursor-grab" />
+                    <div className="flex items-center">
+                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 mr-3 min-w-[30px] text-center">
+                        {index + 1}
+                      </span>
+                      <span className="text-sm font-medium">{field.label}</span>
+                    </div>
                   </div>
-                  <span className="flex-1 text-sm">{field.label}</span>
-                  <Switch
+                  <Switch 
                     size="small"
-                    checked={condition.visible}
+                    checked={isSelected} 
                     onChange={(checked) => updateFilterConditionVisibility(fieldKey, checked)}
                   />
                 </div>
@@ -2795,45 +2318,35 @@ const RateQuery: React.FC = () => {
         </div>
       </Drawer>
 
-      {/* 保存方案弹窗 */}
+      {/* 另存为方案弹窗 */}
       <Modal
-        title="保存筛选方案"
+        title="另存为筛选方案"
         visible={schemeModalVisible}
         onCancel={closeSchemeModal}
-        onOk={saveFilterScheme}
-        okText="保存"
-        cancelText="取消"
+        footer={[
+          <Button key="cancel" onClick={closeSchemeModal}>取消</Button>,
+          <Button key="save" type="primary" onClick={saveFilterScheme} disabled={!schemeName.trim()}>保存</Button>,
+        ]}
+        style={{ width: 400 }}
       >
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              方案名称
-            </label>
-            <Input
-              placeholder="请输入方案名称"
-              value={newSchemeName}
-              onChange={setNewSchemeName}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              当前筛选条件
-            </label>
-            <div className="bg-gray-50 p-3 rounded">
-              {getVisibleConditions().map(condition => {
-                const field = getFilterFieldsByTab(activeTab).find(f => f.key === condition.key);
-                return (
-                  <div key={condition.key} className="text-sm text-gray-600">
-                    {field?.label}: {FilterModeOptions.find(m => m.value === condition.mode)?.label} {condition.value || '(空)'}
-                  </div>
-                );
-              })}
-            </div>
+        <div className="p-4">
+          <div className="mb-4 text-gray-600">请输入方案名称：</div>
+          <Input
+            value={schemeName}
+            onChange={setSchemeName}
+            placeholder="请输入方案名称"
+            maxLength={50}
+            showWordLimit
+          />
+          <div className="mt-4 text-xs text-gray-500">
+            保存后可在"选择方案"下拉中找到此方案
           </div>
         </div>
       </Modal>
-    </ControlTowerSaasLayout>
+
+
+    </div>
   );
 };
 
-export default RateQuery; 
+export default FclRates; 

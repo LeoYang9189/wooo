@@ -86,6 +86,17 @@ const ControlTowerClientLayout: React.FC<LayoutProps> = ({ children }) => {
       return breadcrumbs;
     }
 
+    // 检查是否是查看运价详情页面（格式：/view-fcl-rate/:id）
+    if (path.startsWith('view-fcl-rate/')) {
+      const rateId = path.split('/')[1]; // 获取运价ID
+      breadcrumbs.push(
+        { title: '超级运价', path: undefined },
+        { title: '运价查询', path: '/controltower-client/saas/rate-query' },
+        { title: `运价详情 ${rateId}`, path: undefined } // 当前运价详情，无链接
+      );
+      return breadcrumbs;
+    }
+
     // 处理超级运价系统页面
     if (path.startsWith('saas/')) {
       const saasPath = path.replace('saas/', '');

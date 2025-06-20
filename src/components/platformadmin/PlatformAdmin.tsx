@@ -67,14 +67,14 @@ const PlatformAdmin: React.FC = () => {
 
   // 如果是登录页面或已认证，显示相应内容
   if (location.pathname.includes('/login') || isAuthenticated) {
-    return (
+  return (
       <>
         {location.pathname.includes('/login') ? (
           <PlatformAdminRoutes />
         ) : (
-          <PlatformAdminLayout>
-            <PlatformAdminRoutes />
-          </PlatformAdminLayout>
+    <PlatformAdminLayout>
+      <PlatformAdminRoutes />
+    </PlatformAdminLayout>
         )}
       </>
     );

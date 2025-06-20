@@ -1280,40 +1280,40 @@ const RouteForm: React.FC = () => {
           maxHeight: '600px'
         }}>
           {/* 冻结列容器（船名和操船方信息） */}
-          <div style={{
+            <div style={{
             width: '580px',
-            backgroundColor: '#fff',
-            borderRight: '2px solid #d0d0d0',
-            boxShadow: '2px 0 4px rgba(0,0,0,0.1)',
-            zIndex: 10,
+              backgroundColor: '#fff',
+              borderRight: '2px solid #d0d0d0',
+              boxShadow: '2px 0 4px rgba(0,0,0,0.1)',
+              zIndex: 10,
             position: 'relative',
             display: 'flex',
             flexDirection: 'column'
-          }}>
-            {/* 冻结列表头 */}
-            <div style={{ 
-              display: 'flex',
-              backgroundColor: '#f5f5f5',
-              fontWeight: 'bold',
+            }}>
+              {/* 冻结列表头 */}
+              <div style={{ 
+                display: 'flex',
+                backgroundColor: '#f5f5f5',
+                fontWeight: 'bold',
               borderBottom: '1px solid #e0e0e0',
               flexShrink: 0
-            }}>
-              <div style={{ 
-                width: '160px',
-                padding: '12px 8px', 
-                borderRight: '1px solid #e0e0e0',
-                textAlign: 'center'
               }}>
-                船名
-              </div>
-              <div style={{ 
+                <div style={{ 
+                  width: '160px',
+                  padding: '12px 8px', 
+                  borderRight: '1px solid #e0e0e0',
+                  textAlign: 'center'
+                }}>
+                  船名
+                </div>
+                <div style={{ 
                 width: '140px',
-                padding: '12px 8px',
+                  padding: '12px 8px',
                 borderRight: '1px solid #e0e0e0',
-                textAlign: 'center'
-              }}>
-                操船方
-              </div>
+                  textAlign: 'center'
+                }}>
+                  操船方
+                </div>
               <div style={{ 
                 width: '140px',
                 padding: '12px 8px',
@@ -1329,7 +1329,7 @@ const RouteForm: React.FC = () => {
               }}>
                 报关航次
               </div>
-            </div>
+              </div>
 
             {/* 冻结列数据容器 - 可滚动 */}
             <div 
@@ -1456,44 +1456,44 @@ const RouteForm: React.FC = () => {
                 </div>
               ))}
             </div>
-          </div>
+            </div>
 
-          {/* 可滚动区域（港口列） */}
-          <div style={{
-            flex: 1,
+            {/* 可滚动区域（港口列） */}
+            <div style={{
+              flex: 1,
             display: 'flex',
             flexDirection: 'column',
             maxWidth: 'calc(100vw - 780px)' // 预留左侧菜单和边距空间
-          }}>
-            {/* 港口列表头 */}
-            <div style={{ 
-              display: 'flex',
-              backgroundColor: '#f5f5f5',
-              fontWeight: 'bold',
+            }}>
+                {/* 港口列表头 */}
+                <div style={{ 
+                  display: 'flex',
+                  backgroundColor: '#f5f5f5',
+                  fontWeight: 'bold',
               borderBottom: '1px solid #e0e0e0',
               flexShrink: 0,
               overflowX: 'auto',
               minWidth: `${formData.ports.length * 140}px`
-            }}>
-              {formData.ports.map((port, portIndex) => {
-                const portOption = portOptions.find(opt => opt.value === port.port);
-                // 提取英文全称（去掉中文部分）
-                const portName = portOption ? 
-                  portOption.label.split(' ').slice(1).join(' ').replace(/\s*\([^)]*\)/, '') : 
-                  port.port;
-                return (
-                  <div key={port.id} style={{ 
-                    width: '140px',
-                    padding: '12px 8px', 
-                    borderRight: portIndex < formData.ports.length - 1 ? '1px solid #e0e0e0' : 'none',
-                    textAlign: 'center',
-                    flexShrink: 0
-                  }}>
-                    {portName}
-                  </div>
-                );
-              })}
-            </div>
+                }}>
+                  {formData.ports.map((port, portIndex) => {
+                    const portOption = portOptions.find(opt => opt.value === port.port);
+                    // 提取英文全称（去掉中文部分）
+                    const portName = portOption ? 
+                      portOption.label.split(' ').slice(1).join(' ').replace(/\s*\([^)]*\)/, '') : 
+                      port.port;
+                    return (
+                      <div key={port.id} style={{ 
+                        width: '140px',
+                        padding: '12px 8px', 
+                        borderRight: portIndex < formData.ports.length - 1 ? '1px solid #e0e0e0' : 'none',
+                        textAlign: 'center',
+                        flexShrink: 0
+                      }}>
+                        {portName}
+                      </div>
+                    );
+                  })}
+                </div>
 
             {/* 港口列数据容器 - 可滚动 */}
             <div 
@@ -1654,8 +1654,8 @@ const RouteForm: React.FC = () => {
           setSpaceSharingVoyages(existingData.spaceSharingVoyages || []);
         } else {
           if (etd) {
-            const defaultTimes = calculateDefaultTimes(portCode, etd);
-            form.setFieldsValue(defaultTimes);
+          const defaultTimes = calculateDefaultTimes(portCode, etd);
+          form.setFieldsValue(defaultTimes);
           }
           setSpaceSharingVoyages([]);
         }
@@ -1854,7 +1854,7 @@ const RouteForm: React.FC = () => {
               </div>
             )}
           </div>
-
+          
           <div style={{ 
             marginTop: 16, 
             padding: '12px', 

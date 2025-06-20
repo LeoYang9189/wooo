@@ -1103,11 +1103,11 @@ const FclRates: React.FC = () => {
           '不接': 'gray'
         };
         return (
-          <Tooltip content={value} mini>
+        <Tooltip content={value} mini>
             <Tag color={colorMap[value] || 'blue'} size="small">
-              {value}
-            </Tag>
-          </Tooltip>
+            {value}
+          </Tag>
+        </Tooltip>
         );
       },
       sorter: true,
@@ -1845,25 +1845,25 @@ const FclRates: React.FC = () => {
     }
     // 其它Tab保持原有内容
     return (
-              <Table
-          rowKey="key"
-          loading={false}
-          columns={columns}
-          data={data}
-          rowSelection={{
-            selectedRowKeys,
-            onChange: onSelectChange,
+      <Table
+        rowKey="key"
+        loading={false}
+        columns={columns}
+        data={data}
+        rowSelection={{
+          selectedRowKeys,
+          onChange: onSelectChange,
             columnWidth: 60
-          }}
-          pagination={pagination}
+        }}
+        pagination={pagination}
           scroll={{ x: 3200, y: 'calc(100vh - 400px)' }}
-          border={false}
-          className="mt-4 inquiry-table-nowrap"
+        border={false}
+        className="mt-4 inquiry-table-nowrap"
           style={{
             '--table-row-height': '60px'
           } as React.CSSProperties & { [key: string]: string }}
           rowClassName={() => 'table-row-double-height'}
-        />
+      />
     );
   };
 
@@ -2305,13 +2305,13 @@ const FclRates: React.FC = () => {
               >
                 AI识别
               </Button>
-              <div 
-                className="flex items-center text-blue-500 cursor-pointer hover:text-blue-700"
-                onClick={openCustomTableModal}
-              >
-                <IconList className="mr-1" />
-                <span>自定义表格</span>
-              </div>
+            <div 
+              className="flex items-center text-blue-500 cursor-pointer hover:text-blue-700"
+              onClick={openCustomTableModal}
+            >
+              <IconList className="mr-1" />
+              <span>自定义表格</span>
+            </div>
             </Space>
           </div>
           {renderContent()}

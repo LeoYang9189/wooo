@@ -148,7 +148,7 @@ const mockSchedules: RouteSchedule[] = [
     },
     destinationPort: {
       port: 'DEHAM',
-      portName: '汉堡港',
+      portName: '汉堡港', 
       portNameEn: 'Hamburg', 
       eta: '2025-02-18 08:00',
       etd: '2025-02-18 12:00'
@@ -814,12 +814,12 @@ const ScheduleQuery: React.FC = () => {
             <Text style={{ fontSize: 12, color: '#666', marginLeft: 2 }}>天</Text>
           </div>
           <div style={{ marginBottom: 8 }}>
-            <Tag 
-              color={record.serviceType === 'direct' ? 'green' : 'orange'}
-              style={{ fontSize: 12 }}
-            >
-              {record.serviceType === 'direct' ? '直达' : '中转'}
-            </Tag>
+          <Tag 
+            color={record.serviceType === 'direct' ? 'green' : 'orange'}
+            style={{ fontSize: 12 }}
+          >
+            {record.serviceType === 'direct' ? '直达' : '中转'}
+          </Tag>
           </div>
           {record.transitPorts && record.transitPorts.length > 0 && (
             <Tooltip
