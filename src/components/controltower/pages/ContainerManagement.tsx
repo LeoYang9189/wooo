@@ -25,7 +25,7 @@ import {
 
 const { Option } = Select;
 const { Title } = Typography;
-const { TextArea } = Input;
+
 
 // 集装箱数据接口
 interface Container {

@@ -18,7 +18,6 @@ import {
 } from '@arco-design/web-react';
 import {
   IconPlus,
-  IconEdit,
   IconSettings,
   IconMinus,
   IconSearch,
@@ -104,23 +103,7 @@ interface SelectSearchParams {
   country: string;
 }
 
-// 国家选项
-const countryOptions = [
-  { value: 'CN', label: '中国' },
-  { value: 'US', label: '美国' },
-  { value: 'JP', label: '日本' },
-  { value: 'KR', label: '韩国' },
-  { value: 'DE', label: '德国' },
-  { value: 'GB', label: '英国' },
-  { value: 'SG', label: '新加坡' },
-  { value: 'HK', label: '香港' },
-  { value: 'NL', label: '荷兰' },
-  { value: 'DK', label: '丹麦' },
-  { value: 'FR', label: '法国' },
-  { value: 'IT', label: '意大利' },
-  { value: 'CH', label: '瑞士' },
-  { value: 'TW', label: '台湾' },
-];
+
 
 // 船公司库数据
 const shippingCompanyLibrary: ShippingCompanyLibrary[] = [
@@ -306,9 +289,7 @@ const CarrierManagement: React.FC = () => {
   const [filteredAirlineData, setFilteredAirlineData] = useState<AirlineCompany[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [ediModalVisible, setEdiModalVisible] = useState(false);
-  const [editModalVisible, setEditModalVisible] = useState(false);
   const [currentCarrier, setCurrentCarrier] = useState<ShippingCompany | AirlineCompany | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
   const [searchParams, setSearchParams] = useState<SearchParams>({
     keyword: '',
     status: ''
@@ -324,7 +305,6 @@ const CarrierManagement: React.FC = () => {
   const [filteredLibraryData, setFilteredLibraryData] = useState<any[]>([]);
   
   const [form] = Form.useForm();
-  const [editForm] = Form.useForm();
 
   // 初始化示例数据
   useEffect(() => {
@@ -732,34 +712,7 @@ const CarrierManagement: React.FC = () => {
     },
   ];
 
-  // 处理编辑
-  const handleEdit = (record: ShippingCompany) => {
-    setCurrentCarrier(record);
-    setIsEditing(true);
-    editForm.setFieldsValue({
-      companyNameCn: record.companyNameCn,
-      companyNameEn: record.companyNameEn,
-      companyCode: record.companyCode,
-      scacCode: record.scacCode,
-      eoriNumber: record.eoriNumber,
-      nineKCode: record.nineKCode,
-      naccsCode: record.naccsCode
-    });
-    setEditModalVisible(true);
-  };
 
-  // 处理航空公司编辑
-  const handleEditAirline = (record: AirlineCompany) => {
-    setCurrentCarrier(record);
-    setIsEditing(true);
-    editForm.setFieldsValue({
-      companyNameCn: record.companyNameCn,
-      companyNameEn: record.companyNameEn,
-      iataCode: record.iataCode,
-      hawbPrefix: record.hawbPrefix
-    });
-    setEditModalVisible(true);
-  };
 
   // 处理新增 - 打开选择弹窗
   const handleAdd = () => {
@@ -987,67 +940,7 @@ const CarrierManagement: React.FC = () => {
     setEdiModalVisible(true);
   };
 
-  // 保存承运人编辑
-  const handleSaveCarrier = async () => {
-    try {
-      const values = await editForm.validate();
-      
-      if (activeTab === 'shipping') {
-        const carrierData = {
-          ...values,
-          id: isEditing ? currentCarrier?.id : Date.now().toString(),
-          ediCodes: isEditing ? (currentCarrier as ShippingCompany)?.ediCodes || [] : [],
-          status: isEditing ? currentCarrier?.status : 'enabled' as const
-        };
 
-        if (isEditing) {
-          // 更新现有船公司
-          setShippingData(prev => prev.map(company => 
-            company.id === currentCarrier?.id ? { ...company, ...carrierData } : company
-          ));
-          setFilteredShippingData(prev => prev.map(company => 
-            company.id === currentCarrier?.id ? { ...company, ...carrierData } : company
-          ));
-          Message.success('船公司信息已更新');
-        } else {
-          // 新增船公司
-          const newCompany = { ...carrierData, id: Date.now().toString(), ediCodes: [] };
-          setShippingData(prev => [...prev, newCompany]);
-          setFilteredShippingData(prev => [...prev, newCompany]);
-          Message.success('船公司已添加');
-        }
-      } else if (activeTab === 'airline') {
-        const carrierData = {
-          ...values,
-          id: isEditing ? currentCarrier?.id : Date.now().toString(),
-          ediCodes: isEditing ? (currentCarrier as AirlineCompany)?.ediCodes || [] : [],
-          status: isEditing ? currentCarrier?.status : 'enabled' as const
-        };
-
-        if (isEditing) {
-          // 更新现有航空公司
-          setAirlineData(prev => prev.map(company => 
-            company.id === currentCarrier?.id ? { ...company, ...carrierData } : company
-          ));
-          setFilteredAirlineData(prev => prev.map(company => 
-            company.id === currentCarrier?.id ? { ...company, ...carrierData } : company
-          ));
-          Message.success('航空公司信息已更新');
-        } else {
-          // 新增航空公司
-          const newCompany = { ...carrierData, id: Date.now().toString(), ediCodes: [] };
-          setAirlineData(prev => [...prev, newCompany]);
-          setFilteredAirlineData(prev => [...prev, newCompany]);
-          Message.success('航空公司已添加');
-        }
-      }
-
-      setEditModalVisible(false);
-      editForm.resetFields();
-    } catch (error) {
-      console.error('保存失败:', error);
-    }
-  };
 
   // 保存EDI代码
   const handleSaveEdiCodes = async () => {
@@ -1258,111 +1151,7 @@ const CarrierManagement: React.FC = () => {
         </TabPane>
       </Tabs>
 
-      {/* 新增/编辑承运人弹窗 */}
-      <Modal
-        title={
-          activeTab === 'shipping' 
-            ? (isEditing ? '编辑船公司' : '新增船公司')
-            : (isEditing ? '编辑航空公司' : '新增航空公司')
-        }
-        visible={editModalVisible}
-        onOk={handleSaveCarrier}
-        onCancel={() => setEditModalVisible(false)}
-        style={{ width: 800 }}
-      >
-        <Form form={editForm} layout="vertical">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            <Form.Item
-              field="companyNameCn"
-              label={activeTab === 'shipping' ? '船公司名称（中文）' : '航空公司名称（中文）'}
-              rules={[{ required: true, message: '请输入中文名称' }]}
-            >
-              <Input placeholder="请输入中文名称" />
-            </Form.Item>
-            
-            <Form.Item
-              field="companyNameEn"
-              label={activeTab === 'shipping' ? '船公司名称（英文）' : '航空公司名称（英文）'}
-              rules={[{ required: true, message: '请输入英文名称' }]}
-            >
-              <Input placeholder="请输入英文名称" />
-            </Form.Item>
-            
-            {activeTab === 'shipping' ? (
-              <>
-                <Form.Item
-                  field="companyCode"
-                  label="船公司代码"
-                  rules={[{ required: true, message: '请输入船公司代码' }]}
-                >
-                  <Input placeholder="请输入船公司代码" />
-                </Form.Item>
-                
-                <Form.Item
-                  field="scacCode"
-                  label="SCAC CODE"
-                  rules={[{ required: true, message: '请输入SCAC CODE' }]}
-                >
-                  <Input placeholder="请输入SCAC CODE" />
-                </Form.Item>
-                
-                <Form.Item
-                  field="eoriNumber"
-                  label="EORI Number"
-                  rules={[{ required: true, message: '请输入EORI Number' }]}
-                >
-                  <Input placeholder="请输入EORI Number" />
-                </Form.Item>
-                
-                <Form.Item
-                  field="nineKCode"
-                  label="9000 CODE"
-                  rules={[{ required: true, message: '请输入9000 CODE' }]}
-                >
-                  <Input placeholder="请输入9000 CODE" />
-                </Form.Item>
-                
-                <Form.Item
-                  field="naccsCode"
-                  label="NACCS CODE"
-                  rules={[{ required: true, message: '请输入NACCS CODE' }]}
-                >
-                  <Input placeholder="请输入NACCS CODE" />
-                </Form.Item>
-              </>
-            ) : (
-              <>
-                <Form.Item
-                  field="iataCode"
-                  label="IATA CODE"
-                  rules={[{ required: true, message: '请输入IATA CODE' }]}
-                >
-                  <Input placeholder="请输入IATA CODE，如：CA" />
-                </Form.Item>
-                
-                <Form.Item
-                  field="hawbPrefix"
-                  label="主单号前缀"
-                  rules={[
-                    { required: true, message: '请输入主单号前缀' },
-                    { 
-                      validator: (value, callback) => {
-                        if (value && !/^\d{3}$/.test(value)) {
-                          callback('主单号前缀必须为3位数字');
-                        } else {
-                          callback();
-                        }
-                      }
-                    }
-                  ]}
-                >
-                  <Input placeholder="请输入3位数字，如：999" maxLength={3} />
-                </Form.Item>
-              </>
-            )}
-          </div>
-        </Form>
-      </Modal>
+
 
       {/* EDI代码设置弹窗 */}
       <Modal
