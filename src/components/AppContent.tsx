@@ -17,6 +17,8 @@ const CookieSettings = lazy(() => import('./pages/CookieSettings'));
 const FMCQualification = lazy(() => import('./pages/FMCQualification'));
 const SuperFreight = lazy(() => import('./pages/SuperFreight'));
 const Portal = lazy(() => import('./portalhome/Portal'));
+const NewsListPage = lazy(() => import('./portalhome/NewsListPage'));
+const NewsDetailPage = lazy(() => import('./portalhome/NewsDetailPage'));
 const AuthPageWrapper = lazy(() => import('./portalhome/AuthPageWrapper'));
 const StaffAuthPageWrapper = lazy(() => import('./portalhome/StaffAuthPageWrapper'));
 const SSOAuthPageWrapper = lazy(() => import('./portalhome/SSOAuthPageWrapper'));
@@ -58,6 +60,8 @@ const AppContent = ({}: AppContentProps) => {
         <Route path="/fmc-qualification" element={<FMCQualification />} />
         <Route path="/super-freight" element={<SuperFreight />} />
         <Route path="/portal" element={<Portal />} />
+        <Route path="/portal/news" element={<NewsListPage />} />
+        <Route path="/portal/news/:id" element={<NewsDetailPage />} />
         <Route path="/portal/auth" element={<AuthPageWrapper />} />
         <Route path="/staff/auth" element={<StaffAuthPageWrapper />} />
         <Route path="/sso/auth/:provider" element={<SSOAuthPageWrapper />} />
