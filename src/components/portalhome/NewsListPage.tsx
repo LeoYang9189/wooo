@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input, Select, Pagination } from '@arco-design/web-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faCalendarAlt, faEye, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faCalendarAlt, faEye } from '@fortawesome/free-solid-svg-icons';
 import PortalHeader from './PortalHeader';
 import PortalFooter from './PortalFooter';
 import { UserProvider } from './UserContext';
@@ -35,7 +35,7 @@ const NewsListPage: React.FC = () => {
       content: '详细内容...',
       date: '2025-01-15',
       category: '行业动态',
-      image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: 'https://images.unsplash.com/photo-1566576721346-d4a3b4eaeb55?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
       views: 1250,
       isHot: true,
       author: '李明'
@@ -47,7 +47,7 @@ const NewsListPage: React.FC = () => {
       content: '详细内容...',
       date: '2025-01-12',
       category: '政策解读',
-      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: 'https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
       views: 980,
       author: '王芳'
     },
@@ -58,7 +58,7 @@ const NewsListPage: React.FC = () => {
       content: '详细内容...',
       date: '2025-01-10',
       category: '国际贸易',
-      image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: 'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
       views: 1560,
       isHot: true,
       author: '张伟'
@@ -70,7 +70,7 @@ const NewsListPage: React.FC = () => {
       content: '详细内容...',
       date: '2025-01-08',
       category: '技术创新',
-      image: 'https://images.unsplash.com/photo-1605902711834-8b11c3e3ef2e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
       views: 875,
       author: '陈晓'
     },
@@ -81,7 +81,7 @@ const NewsListPage: React.FC = () => {
       content: '详细内容...',
       date: '2025-01-05',
       category: '政策解读',
-      image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: 'https://images.unsplash.com/photo-1553413077-190dd305871c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
       views: 1320,
       author: '刘洋'
     },
@@ -92,7 +92,7 @@ const NewsListPage: React.FC = () => {
       content: '详细内容...',
       date: '2025-01-03',
       category: '市场分析',
-      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
       views: 720,
       author: '赵敏'
     },
@@ -103,7 +103,7 @@ const NewsListPage: React.FC = () => {
       content: '详细内容...',
       date: '2025-01-01',
       category: '技术创新',
-      image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: 'https://images.unsplash.com/photo-1587440871875-191322ee64b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
       views: 1100,
       author: '孙强'
     },
@@ -114,7 +114,7 @@ const NewsListPage: React.FC = () => {
       content: '详细内容...',
       date: '2024-12-28',
       category: '技术创新',
-      image: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: 'https://images.unsplash.com/photo-1520637836862-4d197d17c983?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
       views: 890,
       author: '周丽'
     }
@@ -139,141 +139,110 @@ const NewsListPage: React.FC = () => {
     navigate(`/portal/news/${newsId}`);
   };
 
-  const handleBackHome = () => {
-    navigate('/portal');
-  };
-
   return (
     <UserProvider>
       <div className="min-h-screen bg-gray-50">
         <PortalHeader />
         
-        {/* 页面头部 */}
-        <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-600 text-white py-16">
-        <div className="container mx-auto px-4">
-          <button 
-            onClick={handleBackHome}
-            className="inline-flex items-center text-white/80 hover:text-white mb-6 transition-colors duration-300"
-          >
-            <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
-            返回首页
-          </button>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">资讯中心</h1>
-          <p className="text-xl text-white/90 max-w-2xl">
-            深入了解国际物流行业动态，把握市场发展趋势
-          </p>
-        </div>
-      </div>
-
-      {/* 搜索和筛选区域 */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <Input
-                placeholder="搜索文章标题或内容..."
-                value={searchKeyword}
-                onChange={setSearchKeyword}
-                prefix={<FontAwesomeIcon icon={faSearch} className="text-gray-400" />}
-                size="large"
-                className="rounded-lg"
-              />
-            </div>
-            <div className="md:w-48">
-              <Select
-                placeholder="选择分类"
-                value={selectedCategory}
-                onChange={setSelectedCategory}
-                size="large"
-                className="w-full rounded-lg"
-                options={categories.map(cat => ({ label: cat, value: cat }))}
-              />
+        {/* 搜索和筛选区域 */}
+        <div className="container mx-auto px-4 py-8">
+          <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1">
+                <Input
+                  placeholder="搜索文章标题或内容..."
+                  value={searchKeyword}
+                  onChange={setSearchKeyword}
+                  prefix={<FontAwesomeIcon icon={faSearch} className="text-gray-400" />}
+                  size="large"
+                  className="rounded-lg"
+                />
+              </div>
+              <div className="md:w-48">
+                <Select
+                  placeholder="选择分类"
+                  value={selectedCategory}
+                  onChange={setSelectedCategory}
+                  size="large"
+                  className="w-full rounded-lg"
+                  options={categories.map(cat => ({ label: cat, value: cat }))}
+                />
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* 文章列表 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {currentNews.map((news) => (
-            <article
-              key={news.id}
-              onClick={() => handleNewsClick(news.id)}
-              className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer overflow-hidden"
-            >
-              {/* 文章图片 */}
-              <div className="relative overflow-hidden">
-                <img
-                  src={news.image}
-                  alt={news.title}
-                  className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute top-3 left-3 flex space-x-2">
-                  <span className="px-3 py-1 bg-blue-600 text-white text-xs font-medium rounded-full">
-                    {news.category}
-                  </span>
-                  {news.isHot && (
-                    <span className="px-3 py-1 bg-red-500 text-white text-xs font-medium rounded-full animate-pulse">
-                      热门
-                    </span>
-                  )}
+          {/* 文章列表 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {currentNews.map((news) => (
+              <article
+                key={news.id}
+                onClick={() => handleNewsClick(news.id)}
+                className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer overflow-hidden"
+              >
+                {/* 文章图片 */}
+                <div className="relative overflow-hidden">
+                  <img
+                    src={news.image}
+                    alt={news.title}
+                    className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </div>
 
-              {/* 文章内容 */}
-              <div className="p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors duration-300 line-clamp-2">
-                  {news.title}
-                </h2>
-                <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">
-                  {news.summary}
-                </p>
-                
-                {/* 文章元信息 */}
-                <div className="flex items-center justify-between text-xs text-gray-500">
-                  <div className="flex items-center space-x-4">
-                    <span className="flex items-center">
-                      <FontAwesomeIcon icon={faCalendarAlt} className="mr-1" />
-                      {news.date}
-                    </span>
-                    <span className="flex items-center">
-                      <FontAwesomeIcon icon={faEye} className="mr-1" />
-                      {news.views}
+                {/* 文章内容 */}
+                <div className="p-6">
+                  <h2 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors duration-300 line-clamp-2">
+                    {news.title}
+                  </h2>
+                  <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">
+                    {news.summary}
+                  </p>
+                  
+                  {/* 文章元信息 */}
+                  <div className="flex items-center justify-between text-xs text-gray-500">
+                    <div className="flex items-center space-x-4">
+                      <span className="flex items-center">
+                        <FontAwesomeIcon icon={faCalendarAlt} className="mr-1" />
+                        {news.date}
+                      </span>
+                      <span className="flex items-center">
+                        <FontAwesomeIcon icon={faEye} className="mr-1" />
+                        {news.views}
+                      </span>
+                    </div>
+                    <span className="text-gray-600 font-medium">
+                      作者：{news.author}
                     </span>
                   </div>
-                  <span className="text-gray-600 font-medium">
-                    作者：{news.author}
-                  </span>
                 </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            ))}
+          </div>
+
+          {/* 分页 */}
+          {totalPages > 1 && (
+            <div className="flex justify-center">
+              <Pagination
+                current={currentPage}
+                total={filteredNews.length}
+                pageSize={pageSize}
+                onChange={setCurrentPage}
+                showTotal
+                showJumper
+                className="custom-pagination"
+              />
+            </div>
+          )}
+
+          {/* 空状态 */}
+          {currentNews.length === 0 && (
+            <div className="text-center py-16">
+              <div className="text-gray-400 text-6xl mb-4">📰</div>
+              <h3 className="text-xl font-semibold text-gray-600 mb-2">暂无相关文章</h3>
+              <p className="text-gray-500">请尝试调整搜索条件或选择其他分类</p>
+            </div>
+          )}
         </div>
-
-        {/* 分页 */}
-        {totalPages > 1 && (
-          <div className="flex justify-center">
-            <Pagination
-              current={currentPage}
-              total={filteredNews.length}
-              pageSize={pageSize}
-              onChange={setCurrentPage}
-              showTotal
-              showJumper
-              className="custom-pagination"
-            />
-          </div>
-        )}
-
-        {/* 空状态 */}
-        {currentNews.length === 0 && (
-          <div className="text-center py-16">
-            <div className="text-gray-400 text-6xl mb-4">📰</div>
-            <h3 className="text-xl font-semibold text-gray-600 mb-2">暂无相关文章</h3>
-            <p className="text-gray-500">请尝试调整搜索条件或选择其他分类</p>
-          </div>
-        )}
-      </div>
 
         <PortalFooter />
       </div>

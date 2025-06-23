@@ -56,9 +56,9 @@ const PortalHeader: React.FC = () => {
   const navItems = [
     { label: '首页', href: '/portal' },
     { label: '控制塔', href: '/controltower-client' },
-    { label: '业务介绍', href: '#services' },
+    { label: '业务介绍', href: '/portal/business-services' },
     { label: '资讯中心', href: '/portal/news' },
-    { label: '关于我们', href: '#about' },
+    { label: '关于我们', href: '/portal/about-us' },
   ];
 
   return (

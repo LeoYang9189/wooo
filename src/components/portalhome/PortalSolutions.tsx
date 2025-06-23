@@ -98,6 +98,10 @@ const PortalSolutions: React.FC = () => {
     navigate('/portal/auth');
   };
 
+  const handleServiceDetailClick = () => {
+    navigate('/portal/business-services');
+  };
+
   const currentService = services[currentSlide];
 
   return (
@@ -206,7 +210,7 @@ const PortalSolutions: React.FC = () => {
                 
                 {/* 行动按钮 */}
                 <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                  <button className={`px-8 py-4 bg-gradient-to-r ${currentService.color} text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1`}>
+                  <button className={`px-8 py-4 bg-gradient-to-r ${currentService.color} text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1`} onClick={handleServiceDetailClick}>
                     了解详情
                   </button>
                   <button className="px-8 py-4 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-200 hover:border-gray-300 transition-all duration-300">

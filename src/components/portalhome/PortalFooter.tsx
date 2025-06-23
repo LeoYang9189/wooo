@@ -70,9 +70,9 @@ const PortalFooter = () => {
                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-50">
                      <div className="text-center">
                        <img 
-                         src="/qrcodes/wechat-qr.svg" 
+                         src="/WX20250623-164557@2x.png" 
                          alt="微信二维码" 
-                         className="w-32 h-32 mx-auto"
+                         className="w-32 h-32 mx-auto object-contain rounded-lg"
                        />
                        <p className="text-xs text-gray-600 mt-3">扫码关注微信公众号</p>
                      </div>
@@ -94,11 +94,11 @@ const PortalFooter = () => {
                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-50">
                      <div className="text-center">
                        <img 
-                         src="/qrcodes/douyin-qr.svg" 
-                         alt="抖音二维码" 
-                         className="w-32 h-32 mx-auto"
+                         src="/WX20250623-164557@2x.png" 
+                         alt="微信二维码" 
+                         className="w-32 h-32 mx-auto object-contain rounded-lg"
                        />
-                       <p className="text-xs text-gray-600 mt-3">扫码关注抖音账号</p>
+                       <p className="text-xs text-gray-600 mt-3">扫码关注微信公众号</p>
                      </div>
                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-white"></div>
                    </div>
@@ -118,11 +118,11 @@ const PortalFooter = () => {
                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-50">
                      <div className="text-center">
                        <img 
-                         src="/qrcodes/xiaohongshu-qr.svg" 
-                         alt="小红书二维码" 
-                         className="w-32 h-32 mx-auto"
+                         src="/WX20250623-164557@2x.png" 
+                         alt="微信二维码" 
+                         className="w-32 h-32 mx-auto object-contain rounded-lg"
                        />
-                       <p className="text-xs text-gray-600 mt-3">扫码关注小红书账号</p>
+                       <p className="text-xs text-gray-600 mt-3">扫码关注微信公众号</p>
                      </div>
                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-white"></div>
                    </div>

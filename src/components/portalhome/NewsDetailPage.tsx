@@ -55,7 +55,7 @@ const NewsDetailPage: React.FC = () => {
       `,
       date: '2025-01-15',
       category: '行业动态',
-      image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+      image: 'https://images.unsplash.com/photo-1566576721346-d4a3b4eaeb55?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
       views: 1250,
       isHot: true,
       author: '李明'
@@ -84,22 +84,33 @@ const NewsDetailPage: React.FC = () => {
   };
 
   const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: currentNews.title,
-        text: currentNews.summary,
-        url: window.location.href,
-      });
-    } else {
-      // 复制到剪贴板
-      navigator.clipboard.writeText(window.location.href);
-      alert('链接已复制到剪贴板');
-    }
+    // 直接复制文章链接
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      alert('文章链接已复制到剪贴板！');
+    }).catch(() => {
+      // 降级处理
+      const textArea = document.createElement('textarea');
+      textArea.value = window.location.href;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      alert('文章链接已复制到剪贴板！');
+    });
   };
 
   const handleBookmark = () => {
-    // 模拟收藏功能
-    alert('文章已收藏');
+    // 尝试添加到浏览器书签
+    if ('sidebar' in window && 'addPanel' in (window as any).sidebar) {
+      // Firefox
+      (window as any).sidebar.addPanel(currentNews.title, window.location.href, '');
+    } else if ((window as any).external && 'AddFavorite' in (window as any).external) {
+      // Internet Explorer
+      (window as any).external.AddFavorite(window.location.href, currentNews.title);
+    } else {
+      // 其他浏览器提示用户手动添加
+      alert('请使用 Ctrl+D (Windows) 或 Cmd+D (Mac) 添加书签');
+    }
   };
 
   // 推荐文章（简单实现）
@@ -117,23 +128,11 @@ const NewsDetailPage: React.FC = () => {
         <div className="container mx-auto px-4 py-8">
           <button 
             onClick={handleBack}
-            className="inline-flex items-center text-gray-600 hover:text-blue-600 mb-6 transition-colors duration-300"
+            className="inline-flex items-center text-gray-600 hover:text-blue-600 mb-8 transition-colors duration-300"
           >
             <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
             返回资讯列表
           </button>
-          
-          {/* 分类标签 */}
-          <div className="flex items-center space-x-4 mb-4">
-            <span className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-full">
-              {currentNews.category}
-            </span>
-            {currentNews.isHot && (
-              <span className="px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-full animate-pulse">
-                热门文章
-              </span>
-            )}
-          </div>
           
           {/* 文章标题 */}
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">
@@ -157,7 +156,7 @@ const NewsDetailPage: React.FC = () => {
           </div>
           
           {/* 操作按钮 */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-6">
             <Button 
               type="outline" 
               icon={<FontAwesomeIcon icon={faShare} />}
@@ -178,7 +177,7 @@ const NewsDetailPage: React.FC = () => {
 
       {/* 文章内容 */}
       <div className="container mx-auto px-4 py-12">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
             {/* 主要内容 */}
             <div className="lg:col-span-3">
@@ -210,7 +209,7 @@ const NewsDetailPage: React.FC = () => {
                       <div className="text-sm text-gray-500">
                         最后更新：{currentNews.date}
                       </div>
-                      <div className="flex items-center space-x-4">
+                      <div className="flex items-center gap-6">
                         <Button 
                           type="primary" 
                           icon={<FontAwesomeIcon icon={faShare} />}
@@ -263,15 +262,15 @@ const NewsDetailPage: React.FC = () => {
               <div className="bg-gradient-to-br from-blue-600 to-purple-600 text-white rounded-2xl p-6">
                 <h3 className="text-lg font-bold mb-4">联系我们</h3>
                 <p className="text-blue-100 text-sm mb-4">
-                  想了解更多物流行业资讯？欢迎关注我们的官方账号
+                  扫码关注我们的微信公众号，获取最新物流资讯
                 </p>
-                <Button 
-                  type="primary" 
-                  className="w-full bg-white text-blue-600 border-0 hover:bg-blue-50"
-                  onClick={() => navigate('/portal/auth')}
-                >
-                  立即体验
-                </Button>
+                <div className="flex justify-center">
+                  <img 
+                    src="/WX20250623-164557@2x.png" 
+                    alt="微信公众号二维码" 
+                    className="w-32 h-32 rounded-lg bg-white p-2"
+                  />
+                </div>
               </div>
             </div>
           </div>

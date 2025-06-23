@@ -19,6 +19,8 @@ const SuperFreight = lazy(() => import('./pages/SuperFreight'));
 const Portal = lazy(() => import('./portalhome/Portal'));
 const NewsListPage = lazy(() => import('./portalhome/NewsListPage'));
 const NewsDetailPage = lazy(() => import('./portalhome/NewsDetailPage'));
+const BusinessServicesPage = lazy(() => import('./portalhome/BusinessServicesPage'));
+const AboutUsPage = lazy(() => import('./portalhome/AboutUsPage'));
 const AuthPageWrapper = lazy(() => import('./portalhome/AuthPageWrapper'));
 const StaffAuthPageWrapper = lazy(() => import('./portalhome/StaffAuthPageWrapper'));
 const SSOAuthPageWrapper = lazy(() => import('./portalhome/SSOAuthPageWrapper'));
@@ -62,6 +64,8 @@ const AppContent = ({}: AppContentProps) => {
         <Route path="/portal" element={<Portal />} />
         <Route path="/portal/news" element={<NewsListPage />} />
         <Route path="/portal/news/:id" element={<NewsDetailPage />} />
+        <Route path="/portal/business-services" element={<BusinessServicesPage />} />
+        <Route path="/portal/about-us" element={<AboutUsPage />} />
         <Route path="/portal/auth" element={<AuthPageWrapper />} />
         <Route path="/staff/auth" element={<StaffAuthPageWrapper />} />
         <Route path="/sso/auth/:provider" element={<SSOAuthPageWrapper />} />

@@ -27,7 +27,7 @@ const NewsCenter: React.FC = () => {
       summary: '随着人工智能、大数据等技术的广泛应用，国际物流行业正迎来数字化转型的新机遇...',
       date: '2025-01-15',
       category: '行业动态',
-      image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: 'https://images.unsplash.com/photo-1566576721346-d4a3b4eaeb55?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
       views: 1250,
       isHot: true
     },
@@ -37,7 +37,7 @@ const NewsCenter: React.FC = () => {
       summary: '环保意识的提升推动物流企业积极采用清洁能源运输，减少碳排放成为行业共识...',
       date: '2025-01-12',
       category: '政策解读',
-      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: 'https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
       views: 980,
     },
     {
@@ -46,7 +46,7 @@ const NewsCenter: React.FC = () => {
       summary: '2024年中欧班列开行数量创历史新高，运输时效和服务质量显著改善...',
       date: '2025-01-10',
       category: '国际贸易',
-      image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: 'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
       views: 1560,
       isHot: true
     },
@@ -56,7 +56,7 @@ const NewsCenter: React.FC = () => {
       summary: '全球主要港口加快自动化改造步伐，无人驾驶集装箱卡车和智能装卸设备大规模应用...',
       date: '2025-01-08',
       category: '技术创新',
-      image: 'https://images.unsplash.com/photo-1605902711834-8b11c3e3ef2e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
       views: 875,
     },
     {
@@ -65,7 +65,7 @@ const NewsCenter: React.FC = () => {
       summary: '海关总署发布新政策，简化跨境电商清关流程，提升物流时效性...',
       date: '2025-01-05',
       category: '政策解读',
-      image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: 'https://images.unsplash.com/photo-1553413077-190dd305871c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
       views: 1320,
     },
     {
@@ -74,7 +74,7 @@ const NewsCenter: React.FC = () => {
       summary: '随着消费升级和食品安全要求提高，冷链物流基础设施建设投入持续加大...',
       date: '2025-01-03',
       category: '市场分析',
-      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
       views: 720,
     }
   ];
@@ -167,16 +167,6 @@ const NewsCenter: React.FC = () => {
                       alt={news.title}
                       className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
                     />
-                    <div className="absolute top-3 left-3 flex space-x-2">
-                      <span className="px-3 py-1 bg-blue-600 text-white text-xs font-medium rounded-full">
-                        {news.category}
-                      </span>
-                      {news.isHot && (
-                        <span className="px-3 py-1 bg-red-500 text-white text-xs font-medium rounded-full animate-pulse">
-                          热门
-                        </span>
-                      )}
-                    </div>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </div>
 
