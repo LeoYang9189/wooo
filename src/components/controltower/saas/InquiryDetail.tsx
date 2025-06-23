@@ -12,7 +12,8 @@ import {
   InputNumber,
   Select,
   Input,
-  Message
+  Message,
+  Grid
 } from '@arco-design/web-react';
 import { IconArrowLeft, IconDownload, IconCopy, IconPrinter } from '@arco-design/web-react/icon';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -20,6 +21,7 @@ import ControlTowerSaasLayout from "./ControlTowerSaasLayout";
 import './CreateFclInquiry.css';
 
 const { Title } = Typography;
+const { Row, Col } = Grid;
 
 // 定义类型接口
 interface ContainerInfo {
@@ -652,61 +654,85 @@ ${type === 'air' ? '航空公司' : '船公司'}：${inquiryDetail.shipCompany}
 
           {/* 导出运价弹窗 */}
           <Modal
-            title="导出报价"
+            title="导出运价"
             visible={exportModalVisible}
             onCancel={() => setExportModalVisible(false)}
             footer={null}
             style={{ width: 600 }}
           >
-            <div className="space-y-4">
+            <div className="space-y-6">
+              {/* 箱型箱量选择 */}
               <div>
-                <div className="text-sm font-medium text-gray-700 mb-2">选择箱型箱量：</div>
-                {containerSelections.map((selection) => (
-                  <div key={selection.id} className="flex items-center gap-4 mb-3">
-                    <Select
-                      style={{ width: 120 }}
-                      value={selection.type}
-                      onChange={(value) => updateContainerSelection(selection.id, 'type', value)}
-                    >
-                      {getAvailableContainerTypes().map(type => (
-                        <Select.Option key={type.value} value={type.value}>{type.label}</Select.Option>
-                      ))}
-                    </Select>
-                    <InputNumber
-                      style={{ width: 100 }}
-                      min={0}
-                      value={selection.count}
-                      onChange={(value) => updateContainerSelection(selection.id, 'count', value || 0)}
-                    />
-                    <span className="text-sm text-gray-500">个</span>
-                    {containerSelections.length > 1 && (
-                      <Button 
-                        size="mini" 
-                        type="text" 
-                        status="danger"
-                        onClick={() => removeContainerSelection(selection.id)}
-                      >
-                        删除
-                      </Button>
-                    )}
-                  </div>
-                ))}
-                <Button 
-                  type="text" 
-                  size="mini" 
-                  onClick={addContainerSelection}
-                  className="text-blue-600"
-                >
-                  + 添加箱型
-                </Button>
+                <div className="flex justify-between items-center mb-4">
+                  <h4 className="text-lg font-medium">选择箱型箱量</h4>
+                  <Button 
+                    type="primary" 
+                    size="small"
+                    onClick={addContainerSelection}
+                  >
+                    + 添加箱型
+                  </Button>
+                </div>
+                
+                <div className="space-y-3">
+                  {containerSelections.map((selection) => (
+                    <Row key={selection.id} gutter={16} align="center">
+                      <Col span={8}>
+                        <Select
+                          placeholder="选择箱型"
+                          value={selection.type}
+                          onChange={(value) => updateContainerSelection(selection.id, 'type', value)}
+                          style={{ width: '100%' }}
+                        >
+                          {getAvailableContainerTypes().map(option => (
+                            <Select.Option key={option.value} value={option.value}>
+                              {option.label}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </Col>
+                      <Col span={8}>
+                        <InputNumber
+                          min={1}
+                          max={999}
+                          value={selection.count}
+                          onChange={(value) => updateContainerSelection(selection.id, 'count', value || 1)}
+                          style={{ width: '100%' }}
+                          placeholder="数量"
+                        />
+                      </Col>
+                      <Col span={8}>
+                        <Button
+                          type="text"
+                          status="danger"
+                          disabled={containerSelections.length === 1}
+                          onClick={() => removeContainerSelection(selection.id)}
+                        >
+                          删除
+                        </Button>
+                      </Col>
+                    </Row>
+                  ))}
+                </div>
               </div>
-              
-              <div className="flex gap-4 pt-4 border-t">
-                <Button type="outline" onClick={generateQuotationText} icon={<IconCopy />}>
-                  快捷报价
+
+              {/* 操作按钮 */}
+              <div className="flex justify-center gap-4">
+                <Button
+                  type="primary"
+                  icon={<IconCopy />}
+                  onClick={generateQuotationText}
+                  size="large"
+                >
+                  复制快捷报价文本
                 </Button>
-                <Button type="primary" onClick={generatePDF} icon={<IconPrinter />}>
-                  PDF 报价单
+                <Button
+                  type="primary"
+                  icon={<IconPrinter />}
+                  onClick={generatePDF}
+                  size="large"
+                >
+                  打印报价单文件
                 </Button>
               </div>
             </div>
@@ -718,133 +744,325 @@ ${type === 'air' ? '航空公司' : '船公司'}：${inquiryDetail.shipCompany}
             visible={copyTextModalVisible}
             onCancel={() => setCopyTextModalVisible(false)}
             footer={
-              <div className="flex justify-end gap-2">
-                <Button onClick={() => setCopyTextModalVisible(false)}>关闭</Button>
-                <Button type="primary" onClick={copyToClipboard} icon={<IconCopy />}>
-                  复制到剪贴板
+              <div className="flex justify-end space-x-2">
+                <Button onClick={() => setCopyTextModalVisible(false)}>
+                  关闭
+                </Button>
+                <Button type="primary" icon={<IconCopy />} onClick={copyToClipboard}>
+                  复制文本
                 </Button>
               </div>
             }
-            style={{ width: 600 }}
+            style={{ width: 700 }}
           >
-            <Input.TextArea
-              value={quotationText}
-              readOnly
-              autoSize={{ minRows: 15, maxRows: 20 }}
-              className="font-mono text-sm"
-            />
+            <div className="space-y-4">
+              <p className="text-sm text-gray-600">
+                以下是根据您选择的箱型箱量生成的报价文本，您可以复制后发送给客户：
+              </p>
+              <Input.TextArea
+                value={quotationText}
+                readOnly
+                rows={15}
+                style={{ fontFamily: 'monospace' }}
+              />
+            </div>
           </Modal>
 
           {/* PDF预览弹窗 */}
           <Modal
-            title="PDF 报价单预览"
+            title="报价单预览"
             visible={pdfPreviewVisible}
             onCancel={() => setPdfPreviewVisible(false)}
             footer={
-              <div className="flex justify-end gap-2">
-                <Button onClick={() => setPdfPreviewVisible(false)}>关闭</Button>
+              <div className="flex justify-end space-x-2">
+                <Button onClick={() => setPdfPreviewVisible(false)}>
+                  关闭
+                </Button>
                 <Button type="primary" icon={<IconDownload />}>
-                  下载 PDF
+                  下载PDF
                 </Button>
               </div>
             }
-            style={{ width: 800, top: 20 }}
+            style={{ width: 900, top: 20 }}
           >
-            <div className="pdf-preview bg-white p-6 border border-gray-200 rounded-lg max-h-96 overflow-y-auto">
-              <div className="text-center mb-6">
-                <h2 className="text-xl font-bold text-gray-800">询价报价单</h2>
-                <div className="text-sm text-gray-600 mt-2">询价编号：{inquiryDetail?.inquiryNo}</div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
-                <div>
-                  <div className="font-medium text-gray-700 mb-1">基本信息</div>
-                  <div>询价类型：{type?.toUpperCase()}</div>
-                  <div>询价人：{inquiryDetail?.inquirer}</div>
-                  <div>航线：{inquiryDetail?.departurePort} → {inquiryDetail?.dischargePort}</div>
-                  <div>{type === 'air' ? '航空公司' : '船公司'}：{inquiryDetail?.shipCompany}</div>
+            <div className="space-y-4" style={{ height: '600px', overflow: 'auto' }}>
+              {/* PDF预览内容 */}
+              <div className="bg-white p-8 shadow-sm border" style={{ fontFamily: 'SimSun, serif' }}>
+                <div className="text-center mb-8">
+                  <h1 className="text-2xl font-bold mb-2">询价报价单</h1>
+                  <p className="text-gray-600">Quotation for Inquiry</p>
                 </div>
-                <div>
-                  <div className="font-medium text-gray-700 mb-1">货物信息</div>
-                  {type === 'fcl' ? (
-                    <div>箱型箱量：{inquiryDetail?.containerInfo?.map(item => `${item.count}*${item.type}`).join('+')}</div>
-                  ) : (
-                    <>
-                      <div>重量：{inquiryDetail?.weight} KGS</div>
-                      <div>体积：{inquiryDetail?.volume} CBM</div>
-                    </>
-                  )}
-                  <div>货好时间：{inquiryDetail?.cargoReadyTime}</div>
-                  <div>委托单位：{inquiryDetail?.clientName}</div>
-                </div>
-              </div>
 
-              {/* 显示选中的箱型数量 */}
-              <div className="mb-4">
-                <div className="font-medium text-gray-700 mb-2">选择箱型箱量</div>
-                <div className="text-sm">
-                  {containerSelections
-                    .filter(item => item.count > 0)
-                    .map(item => `${item.count} × ${item.type.toUpperCase()}`)
-                    .join('，')
-                  }
+                {/* 基本信息 */}
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-3 pb-2 border-b">基本信息</h3>
+                  <Row gutter={[16, 8]}>
+                    <Col span={8}>询价编号：{inquiryDetail?.inquiryNo}</Col>
+                    <Col span={8}>询价类型：{type?.toUpperCase()}</Col>
+                    <Col span={8}>询价人：{inquiryDetail?.inquirer}</Col>
+                    <Col span={8}>起运港：{inquiryDetail?.departurePort}</Col>
+                    <Col span={8}>目的港：{inquiryDetail?.dischargePort}</Col>
+                    <Col span={8}>{type === 'air' ? '航空公司' : '船公司'}：{inquiryDetail?.shipCompany}</Col>
+                  </Row>
                 </div>
-              </div>
 
-              {/* 综合报价明细 */}
-              <div className="mb-6">
-                <div className="bg-blue-50 px-3 py-2 rounded-lg border-l-4 border-blue-500 mb-3">
-                  <h4 className="font-bold text-blue-800 text-sm">综合报价明细</h4>
+                {/* 箱型箱量 */}
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-3 pb-2 border-b">箱型箱量</h3>
+                  <div className="grid grid-cols-3 gap-4">
+                    {containerSelections
+                      .filter(selection => selection.count > 0)
+                      .map(selection => (
+                        <div key={selection.id} className="border p-3 text-center">
+                          <div className="font-medium">{selection.type.toUpperCase()}</div>
+                          <div className="text-xl font-bold text-blue-600">{selection.count} 箱</div>
+                        </div>
+                      ))}
+                  </div>
                 </div>
-                <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-                  <table className="w-full text-xs">
-                    <thead className="bg-blue-500 text-white">
-                      <tr>
-                        <th className="px-3 py-2 text-left font-bold">费用类型</th>
-                        <th className="px-3 py-2 text-center font-bold">运价编号</th>
-                        <th className="px-3 py-2 text-center font-bold">费用</th>
-                        <th className="px-3 py-2 text-center font-bold">币种</th>
-                        <th className="px-3 py-2 text-right font-bold">备注</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {selectedMainlineRate && inquiryDetail?.mainlineRates.find(r => r.id === selectedMainlineRate) && (
-                        <tr className="bg-blue-25">
-                          <td className="px-3 py-2 font-medium">干线费用</td>
-                          <td className="px-3 py-2 text-center">{inquiryDetail.mainlineRates.find(r => r.id === selectedMainlineRate)?.certNo}</td>
-                          <td className="px-3 py-2 text-center">{inquiryDetail.mainlineRates.find(r => r.id === selectedMainlineRate)?.price}</td>
-                          <td className="px-3 py-2 text-center">{inquiryDetail.mainlineRates.find(r => r.id === selectedMainlineRate)?.currency}</td>
-                          <td className="px-3 py-2 text-right">{inquiryDetail.mainlineRates.find(r => r.id === selectedMainlineRate)?.shipCompany}</td>
-                        </tr>
-                      )}
-                      {selectedPrecarriageRate && inquiryDetail?.precarriageRates.find(r => r.id === selectedPrecarriageRate) && (
-                        <tr className="bg-green-25">
-                          <td className="px-3 py-2 font-medium">港前费用</td>
-                          <td className="px-3 py-2 text-center">{inquiryDetail.precarriageRates.find(r => r.id === selectedPrecarriageRate)?.certNo}</td>
-                          <td className="px-3 py-2 text-center">{inquiryDetail.precarriageRates.find(r => r.id === selectedPrecarriageRate)?.price}</td>
-                          <td className="px-3 py-2 text-center">{inquiryDetail.precarriageRates.find(r => r.id === selectedPrecarriageRate)?.currency}</td>
-                          <td className="px-3 py-2 text-right">{inquiryDetail.precarriageRates.find(r => r.id === selectedPrecarriageRate)?.vendor}</td>
-                        </tr>
-                      )}
-                      {selectedOncarriageRate && inquiryDetail?.oncarriageRates.find(r => r.id === selectedOncarriageRate) && (
-                        <tr className="bg-orange-25">
-                          <td className="px-3 py-2 font-medium">尾程费用</td>
-                          <td className="px-3 py-2 text-center">{inquiryDetail.oncarriageRates.find(r => r.id === selectedOncarriageRate)?.certNo}</td>
-                          <td className="px-3 py-2 text-center">{inquiryDetail.oncarriageRates.find(r => r.id === selectedOncarriageRate)?.price}</td>
-                          <td className="px-3 py-2 text-center">{inquiryDetail.oncarriageRates.find(r => r.id === selectedOncarriageRate)?.currency}</td>
-                          <td className="px-3 py-2 text-right">{inquiryDetail.oncarriageRates.find(r => r.id === selectedOncarriageRate)?.agentName}</td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
 
-              <div className="mt-6 text-xs text-gray-500 border-t pt-4">
-                <div>备注：{inquiryDetail?.remark}</div>
-                <div className="mt-2">
-                  <div>※ 以上价格仅供参考，实际价格以正式合同为准</div>
-                  <div>※ 如有任何疑问，请联系我们的客服团队</div>
+                {/* 干线费用明细 */}
+                {selectedMainlineRate && inquiryDetail?.mainlineRates.find(r => r.id === selectedMainlineRate) && (
+                  <div className="mb-6">
+                    <div className="bg-blue-50 px-4 py-2 mb-3 rounded">
+                      <h3 className="text-lg font-semibold text-blue-800">干线费用明细</h3>
+                    </div>
+                    <table className="w-full border-collapse border border-gray-300 shadow-sm">
+                      <thead>
+                        <tr className="bg-blue-100">
+                          <th className="border border-gray-300 p-3 text-left font-semibold">费用项目</th>
+                          <th className="border border-gray-300 p-3 text-center font-semibold">币种</th>
+                          {containerSelections
+                            .filter(selection => selection.count > 0)
+                            .map(selection => (
+                              <th key={selection.id} className="border border-gray-300 p-3 text-center font-semibold">
+                                {selection.type.toUpperCase()} × {selection.count}
+                              </th>
+                            ))}
+                          <th className="border border-gray-300 p-3 text-center font-semibold bg-blue-200">小计</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="bg-white">
+                          <td className="border border-gray-300 p-3 font-medium">干线运输费</td>
+                          <td className="border border-gray-300 p-3 text-center">{inquiryDetail.mainlineRates.find(r => r.id === selectedMainlineRate)?.currency}</td>
+                          {containerSelections
+                            .filter(selection => selection.count > 0)
+                            .map(selection => {
+                              const mainlineRate = inquiryDetail.mainlineRates.find(r => r.id === selectedMainlineRate);
+                              const unitPrice = type === 'fcl' ? mainlineRate?.[selection.type as keyof MainlineRate] as string || '0' : mainlineRate?.price || '0';
+                              const totalPrice = parseInt(unitPrice) * selection.count;
+                              return (
+                                <td key={selection.id} className="border border-gray-300 p-3 text-center">
+                                  <div>
+                                    <div className="text-sm text-gray-600">{mainlineRate?.currency} {unitPrice} × {selection.count}</div>
+                                    <div className="font-medium">{mainlineRate?.currency} {totalPrice}</div>
+                                  </div>
+                                </td>
+                              );
+                            })}
+                          <td className="border border-gray-300 p-3 text-center font-bold text-blue-700 bg-blue-50">
+                            {inquiryDetail.mainlineRates.find(r => r.id === selectedMainlineRate)?.currency} {containerSelections
+                              .filter(selection => selection.count > 0)
+                              .reduce((sum, selection) => {
+                                const mainlineRate = inquiryDetail.mainlineRates.find(r => r.id === selectedMainlineRate);
+                                const unitPrice = type === 'fcl' ? mainlineRate?.[selection.type as keyof MainlineRate] as string || '0' : mainlineRate?.price || '0';
+                                return sum + (parseInt(unitPrice) * selection.count);
+                              }, 0)}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {/* 港前费用明细 */}
+                {selectedPrecarriageRate && inquiryDetail?.precarriageRates.find(r => r.id === selectedPrecarriageRate) && (
+                  <div className="mb-6">
+                    <div className="bg-green-50 px-4 py-2 mb-3 rounded">
+                      <h3 className="text-lg font-semibold text-green-800">港前费用明细</h3>
+                    </div>
+                    <table className="w-full border-collapse border border-gray-300 shadow-sm">
+                      <thead>
+                        <tr className="bg-green-100">
+                          <th className="border border-gray-300 p-3 text-left font-semibold">费用项目</th>
+                          <th className="border border-gray-300 p-3 text-center font-semibold">币种</th>
+                          {containerSelections
+                            .filter(selection => selection.count > 0)
+                            .map(selection => (
+                              <th key={selection.id} className="border border-gray-300 p-3 text-center font-semibold">
+                                {selection.type.toUpperCase()} × {selection.count}
+                              </th>
+                            ))}
+                          <th className="border border-gray-300 p-3 text-center font-semibold bg-green-200">小计</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="bg-white">
+                          <td className="border border-gray-300 p-3 font-medium">港前运输费</td>
+                          <td className="border border-gray-300 p-3 text-center">{inquiryDetail.precarriageRates.find(r => r.id === selectedPrecarriageRate)?.currency}</td>
+                          {containerSelections
+                            .filter(selection => selection.count > 0)
+                            .map(selection => {
+                              const precarriageRate = inquiryDetail.precarriageRates.find(r => r.id === selectedPrecarriageRate);
+                              const unitPrice = type === 'fcl' ? precarriageRate?.[selection.type as keyof PrecarriageRate] as string || '0' : precarriageRate?.price || '0';
+                              const totalPrice = parseInt(unitPrice) * selection.count;
+                              return (
+                                <td key={selection.id} className="border border-gray-300 p-3 text-center">
+                                  <div>
+                                    <div className="text-sm text-gray-600">{precarriageRate?.currency} {unitPrice} × {selection.count}</div>
+                                    <div className="font-medium">{precarriageRate?.currency} {totalPrice}</div>
+                                  </div>
+                                </td>
+                              );
+                            })}
+                          <td className="border border-gray-300 p-3 text-center font-bold text-green-700 bg-green-50">
+                            {inquiryDetail.precarriageRates.find(r => r.id === selectedPrecarriageRate)?.currency} {containerSelections
+                              .filter(selection => selection.count > 0)
+                              .reduce((sum, selection) => {
+                                const precarriageRate = inquiryDetail.precarriageRates.find(r => r.id === selectedPrecarriageRate);
+                                const unitPrice = type === 'fcl' ? precarriageRate?.[selection.type as keyof PrecarriageRate] as string || '0' : precarriageRate?.price || '0';
+                                return sum + (parseInt(unitPrice) * selection.count);
+                              }, 0)}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {/* 尾程费用明细 */}
+                {selectedOncarriageRate && inquiryDetail?.oncarriageRates.find(r => r.id === selectedOncarriageRate) && (
+                  <div className="mb-6">
+                    <div className="bg-orange-50 px-4 py-2 mb-3 rounded">
+                      <h3 className="text-lg font-semibold text-orange-800">尾程费用明细</h3>
+                    </div>
+                    <table className="w-full border-collapse border border-gray-300 shadow-sm">
+                      <thead>
+                        <tr className="bg-orange-100">
+                          <th className="border border-gray-300 p-3 text-left font-semibold">费用项目</th>
+                          <th className="border border-gray-300 p-3 text-center font-semibold">币种</th>
+                          <th className="border border-gray-300 p-3 text-center font-semibold">单价</th>
+                          <th className="border border-gray-300 p-3 text-center font-semibold">数量</th>
+                          <th className="border border-gray-300 p-3 text-center font-semibold bg-orange-200">小计</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="bg-white">
+                          <td className="border border-gray-300 p-3 font-medium">尾程配送费</td>
+                          <td className="border border-gray-300 p-3 text-center">{inquiryDetail.oncarriageRates.find(r => r.id === selectedOncarriageRate)?.currency}</td>
+                          <td className="border border-gray-300 p-3 text-center">{inquiryDetail.oncarriageRates.find(r => r.id === selectedOncarriageRate)?.price}</td>
+                          <td className="border border-gray-300 p-3 text-center">
+                            {containerSelections.filter(selection => selection.count > 0).reduce((sum, selection) => sum + selection.count, 0)} 箱
+                          </td>
+                          <td className="border border-gray-300 p-3 text-center font-bold text-orange-700 bg-orange-50">
+                            {inquiryDetail.oncarriageRates.find(r => r.id === selectedOncarriageRate)?.currency} {
+                              parseInt(inquiryDetail.oncarriageRates.find(r => r.id === selectedOncarriageRate)?.price || '0') * 
+                              containerSelections.filter(selection => selection.count > 0).reduce((sum, selection) => sum + selection.count, 0)
+                            }
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {/* 费用汇总 */}
+                <div className="mb-6">
+                  <div className="bg-gray-100 px-4 py-2 mb-3 rounded">
+                    <h3 className="text-lg font-semibold text-gray-800">费用汇总</h3>
+                  </div>
+                  <div className="bg-gray-50 p-4 rounded border">
+                    <Row gutter={[16, 8]}>
+                      {selectedMainlineRate && (
+                        <Col span={8}>
+                          <div className="text-lg">
+                            <span className="text-gray-600">干线费用：</span>
+                            <span className="font-bold text-blue-700">
+                              {inquiryDetail?.mainlineRates.find(r => r.id === selectedMainlineRate)?.currency} {containerSelections
+                                .filter(selection => selection.count > 0)
+                                .reduce((sum, selection) => {
+                                  const mainlineRate = inquiryDetail?.mainlineRates.find(r => r.id === selectedMainlineRate);
+                                  const unitPrice = type === 'fcl' ? mainlineRate?.[selection.type as keyof MainlineRate] as string || '0' : mainlineRate?.price || '0';
+                                  return sum + (parseInt(unitPrice) * selection.count);
+                                }, 0)}
+                            </span>
+                          </div>
+                        </Col>
+                      )}
+                      {selectedPrecarriageRate && (
+                        <Col span={8}>
+                          <div className="text-lg">
+                            <span className="text-gray-600">港前费用：</span>
+                            <span className="font-bold text-green-700">
+                              {inquiryDetail?.precarriageRates.find(r => r.id === selectedPrecarriageRate)?.currency} {containerSelections
+                                .filter(selection => selection.count > 0)
+                                .reduce((sum, selection) => {
+                                  const precarriageRate = inquiryDetail?.precarriageRates.find(r => r.id === selectedPrecarriageRate);
+                                  const unitPrice = type === 'fcl' ? precarriageRate?.[selection.type as keyof PrecarriageRate] as string || '0' : precarriageRate?.price || '0';
+                                  return sum + (parseInt(unitPrice) * selection.count);
+                                }, 0)}
+                            </span>
+                          </div>
+                        </Col>
+                      )}
+                      {selectedOncarriageRate && (
+                        <Col span={8}>
+                          <div className="text-lg">
+                            <span className="text-gray-600">尾程费用：</span>
+                            <span className="font-bold text-orange-700">
+                              {inquiryDetail?.oncarriageRates.find(r => r.id === selectedOncarriageRate)?.currency} {
+                                parseInt(inquiryDetail?.oncarriageRates.find(r => r.id === selectedOncarriageRate)?.price || '0') * 
+                                containerSelections.filter(selection => selection.count > 0).reduce((sum, selection) => sum + selection.count, 0)
+                              }
+                            </span>
+                          </div>
+                        </Col>
+                      )}
+                    </Row>
+                  </div>
+                </div>
+
+                {/* 其他信息 */}
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-3 pb-2 border-b">其他信息</h3>
+                  <Row gutter={[16, 8]}>
+                    <Col span={12}>货好时间：{inquiryDetail?.cargoReadyTime}</Col>
+                    <Col span={12}>委托单位：{inquiryDetail?.clientName}</Col>
+                    {type === 'fcl' ? (
+                      <Col span={24}>箱型箱量：{inquiryDetail?.containerInfo?.map(item => `${item.count}*${item.type}`).join('+')}</Col>
+                    ) : (
+                      <>
+                        <Col span={12}>重量：{inquiryDetail?.weight} KGS</Col>
+                        <Col span={12}>体积：{inquiryDetail?.volume} CBM</Col>
+                      </>
+                    )}
+                  </Row>
+                </div>
+
+                {/* 备注 */}
+                {inquiryDetail?.remark && (
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold mb-3 pb-2 border-b">备注</h3>
+                    <p className="text-gray-700">{inquiryDetail.remark}</p>
+                  </div>
+                )}
+
+                {/* 免责声明 */}
+                <div className="mt-8 p-4 bg-gray-50 border-l-4 border-yellow-400">
+                  <p className="text-sm text-gray-600 mb-2">
+                    <strong>重要声明：</strong>
+                  </p>
+                  <ul className="text-sm text-gray-600 space-y-1">
+                    <li>• 以上价格仅供参考，实际价格以正式合同为准</li>
+                    <li>• 价格有效期以报价单中标注的日期为准</li>
+                    <li>• 如有任何疑问，请联系我们的客服团队</li>
+                  </ul>
+                </div>
+
+                {/* 页脚 */}
+                <div className="mt-8 text-center text-sm text-gray-500">
+                  <p>报价单生成时间：{new Date().toLocaleString()}</p>
                 </div>
               </div>
             </div>
