@@ -17,7 +17,8 @@ import {
   Modal,
   Upload,
   Cascader,
-  Image
+  Image,
+  Spin
 } from '@arco-design/web-react';
 import { 
   IconArrowLeft,
@@ -337,6 +338,8 @@ const CompanyForm: React.FC = () => {
   // 营业执照状态
   const [businessLicenseModalVisible, setBusinessLicenseModalVisible] = useState(false);
   const [businessLicenseUploadVisible, setBusinessLicenseUploadVisible] = useState(false);
+  const [aiRecognizing, setAiRecognizing] = useState(false);
+  const [recognitionSuccess, setRecognitionSuccess] = useState(false);
 
   // 第三方系统数据
   const [] = useState<ThirdPartySystem[]>([
@@ -684,13 +687,41 @@ const CompanyForm: React.FC = () => {
   };
 
   const handleBusinessLicenseUpload = (file: File) => {
-    // 模拟文件上传
-    const formData = form.getFieldsValue();
-    const newFile = `/uploads/business-license-${formData.businessLicense || file.name}.jpg`;
-    form.setFieldValue('businessLicenseFile', newFile);
-    form.setFieldValue('businessLicenseUploadTime', new Date().toLocaleString('zh-CN'));
-    setBusinessLicenseUploadVisible(false);
-    Message.success('营业执照上传成功');
+    // 开始AI识别流程
+    setAiRecognizing(true);
+    setRecognitionSuccess(false);
+    
+    // 模拟AI识别过程，3秒后完成
+    setTimeout(() => {
+      setAiRecognizing(false);
+      setRecognitionSuccess(true);
+      
+      // 模拟识别结果，自动填充表单
+      const formData = form.getFieldsValue();
+      const newFile = `/uploads/business-license-${formData.businessLicense || file.name}.jpg`;
+      form.setFieldValue('businessLicenseFile', newFile);
+      form.setFieldValue('businessLicenseUploadTime', new Date().toLocaleString('zh-CN'));
+      
+      // 模拟AI识别出的企业信息
+      if (!formData.name) {
+        form.setFieldValue('name', '货拉拉物流科技有限公司');
+      }
+      if (!formData.englishName) {
+        form.setFieldValue('englishName', 'Huolala Logistics Technology Co., Ltd.');
+      }
+      if (!formData.businessLicense) {
+        form.setFieldValue('businessLicense', '91110000123456789X');
+      }
+      
+      Message.success('AI识别成功，已自动填充企业信息');
+      
+      // 2秒后关闭弹窗
+      setTimeout(() => {
+        setBusinessLicenseUploadVisible(false);
+        setRecognitionSuccess(false);
+      }, 2000);
+    }, 3000);
+    
     return false; // 阻止默认上传行为
   };
 
@@ -857,15 +888,14 @@ const CompanyForm: React.FC = () => {
                 </div>
               </div>
             ) : (
-              <Upload
-                accept="image/*"
-                beforeUpload={handleBusinessLicenseUpload}
-                showUploadList={false}
+              <Button 
+                type="outline" 
+                icon={<IconUpload />}
+                onClick={() => setBusinessLicenseUploadVisible(true)}
+                style={{ width: '120px' }}
               >
-                <Button type="outline" icon={<IconUpload />}>
-                  上传营业执照
-                </Button>
-              </Upload>
+                上传执照
+              </Button>
             )}
           </div>
         </Form.Item>
@@ -929,12 +959,53 @@ const CompanyForm: React.FC = () => {
         style={{ width: '600px' }}
       >
         <div style={{ textAlign: 'center', padding: '20px' }}>
-          <Image
-            src={form.getFieldValue('businessLicenseFile')}
-            alt="营业执照"
-            style={{ maxWidth: '100%', maxHeight: '400px' }}
-            preview={false}
-          />
+          {form.getFieldValue('businessLicenseFile') ? (
+            <Image
+              src={form.getFieldValue('businessLicenseFile')}
+              alt="营业执照"
+              style={{ maxWidth: '100%', maxHeight: '400px' }}
+              preview={false}
+            />
+          ) : (
+            /* 占位图 */
+            <div style={{
+              width: '100%',
+              height: '300px',
+              backgroundColor: '#F7F8FA',
+              border: '2px dashed #C9CDD4',
+              borderRadius: '12px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '16px'
+            }}>
+              <div style={{
+                width: '80px',
+                height: '80px',
+                backgroundColor: '#E5E6EB',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <IconFile style={{ fontSize: '32px', color: '#86909C' }} />
+              </div>
+              <div style={{
+                fontSize: '16px',
+                color: '#86909C',
+                fontWeight: '500'
+              }}>
+                暂无营业执照
+              </div>
+              <div style={{
+                fontSize: '14px',
+                color: '#C9CDD4'
+              }}>
+                请先上传营业执照文件
+              </div>
+            </div>
+          )}
         </div>
       </Modal>
 
@@ -987,65 +1058,142 @@ const CompanyForm: React.FC = () => {
           </div>
 
           {/* 上传区域 */}
-          <Upload
-            accept="image/*,.pdf"
-            beforeUpload={handleBusinessLicenseUpload}
-            showUploadList={false}
-            drag
-          >
+          {aiRecognizing ? (
+            /* AI识别中状态 */
             <div style={{ 
               padding: '48px 24px',
-              border: '2px dashed #C9CDD4',
+              border: '2px solid #165DFF',
               borderRadius: '12px',
-              backgroundColor: '#FBFCFD',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = '#165DFF';
-              e.currentTarget.style.backgroundColor = '#F2F3FF';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = '#C9CDD4';
-              e.currentTarget.style.backgroundColor = '#FBFCFD';
-            }}
-            >
-              {/* 上传图标 */}
-              <div style={{ 
-                width: '80px', 
-                height: '80px', 
-                margin: '0 auto 16px',
-                background: 'linear-gradient(135deg, #165DFF 0%, #246FFF 100%)',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 8px 24px rgba(22, 93, 255, 0.2)'
-              }}>
-                <IconUpload style={{ fontSize: '32px', color: '#FFFFFF' }} />
-              </div>
-              
-              {/* 主要文字 */}
+              backgroundColor: '#F2F3FF',
+              textAlign: 'center'
+            }}>
+              <Spin size={60} />
               <div style={{ 
                 fontSize: '18px', 
                 fontWeight: '600',
-                color: '#1D2129',
+                color: '#165DFF',
+                marginTop: '24px',
                 marginBottom: '8px'
               }}>
-                点击选择文件或拖拽到此处
+                AI识别中...
               </div>
-              
-              {/* 副文字 */}
               <div style={{ 
                 fontSize: '14px', 
                 color: '#86909C',
                 lineHeight: '1.5'
               }}>
-                <div>将营业执照文件拖拽到此区域</div>
-                <div>或点击选择文件上传</div>
+                正在智能识别营业执照信息，请稍候
               </div>
             </div>
-          </Upload>
+          ) : recognitionSuccess ? (
+            /* 识别成功状态 */
+            <div style={{ 
+              padding: '48px 24px',
+              border: '2px solid #00B42A',
+              borderRadius: '12px',
+              backgroundColor: '#F6FFED',
+              textAlign: 'center'
+            }}>
+              <div style={{ 
+                width: '80px', 
+                height: '80px', 
+                margin: '0 auto 16px',
+                background: 'linear-gradient(135deg, #00B42A 0%, #23C343 100%)',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 8px 24px rgba(0, 180, 42, 0.2)'
+              }}>
+                <div style={{ 
+                  fontSize: '32px', 
+                  color: '#FFFFFF',
+                  fontWeight: 'bold'
+                }}>
+                  ✓
+                </div>
+              </div>
+              
+              <div style={{ 
+                fontSize: '18px', 
+                fontWeight: '600',
+                color: '#00B42A',
+                marginBottom: '8px'
+              }}>
+                识别成功！
+              </div>
+              
+              <div style={{ 
+                fontSize: '14px', 
+                color: '#86909C',
+                lineHeight: '1.5'
+              }}>
+                <div>已成功识别营业执照信息</div>
+                <div>企业信息已自动填充到表单中</div>
+              </div>
+            </div>
+          ) : (
+            /* 正常上传状态 */
+            <Upload
+              accept="image/*,.pdf"
+              beforeUpload={handleBusinessLicenseUpload}
+              showUploadList={false}
+              drag
+            >
+              <div style={{ 
+                padding: '48px 24px',
+                border: '2px dashed #C9CDD4',
+                borderRadius: '12px',
+                backgroundColor: '#FBFCFD',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = '#165DFF';
+                e.currentTarget.style.backgroundColor = '#F2F3FF';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = '#C9CDD4';
+                e.currentTarget.style.backgroundColor = '#FBFCFD';
+              }}
+              >
+                {/* 上传图标 */}
+                <div style={{ 
+                  width: '80px', 
+                  height: '80px', 
+                  margin: '0 auto 16px',
+                  background: 'linear-gradient(135deg, #165DFF 0%, #246FFF 100%)',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 8px 24px rgba(22, 93, 255, 0.2)'
+                }}>
+                  <IconUpload style={{ fontSize: '32px', color: '#FFFFFF' }} />
+                </div>
+                
+                {/* 主要文字 */}
+                <div style={{ 
+                  fontSize: '18px', 
+                  fontWeight: '600',
+                  color: '#1D2129',
+                  marginBottom: '8px'
+                }}>
+                  点击选择文件或拖拽到此处
+                </div>
+                
+                {/* 副文字 */}
+                <div style={{ 
+                  fontSize: '14px', 
+                  color: '#86909C',
+                  lineHeight: '1.5'
+                }}>
+                  <div>将营业执照文件拖拽到此区域</div>
+                  <div>或点击选择文件上传，AI将自动识别企业信息</div>
+                </div>
+              </div>
+            </Upload>
+          )}
 
           {/* 底部按钮 */}
           <div style={{ 
@@ -1056,25 +1204,32 @@ const CompanyForm: React.FC = () => {
           }}>
             <Button 
               size="large"
-              onClick={() => setBusinessLicenseUploadVisible(false)}
+              onClick={() => {
+                setBusinessLicenseUploadVisible(false);
+                setAiRecognizing(false);
+                setRecognitionSuccess(false);
+              }}
               style={{ minWidth: '100px' }}
+              disabled={aiRecognizing}
             >
-              取消
+              {recognitionSuccess ? '关闭' : '取消'}
             </Button>
-            <Upload
-              accept="image/*,.pdf"
-              beforeUpload={handleBusinessLicenseUpload}
-              showUploadList={false}
-            >
-              <Button 
-                type="primary" 
-                size="large"
-                icon={<IconUpload />}
-                style={{ minWidth: '120px' }}
+            {!aiRecognizing && !recognitionSuccess && (
+              <Upload
+                accept="image/*,.pdf"
+                beforeUpload={handleBusinessLicenseUpload}
+                showUploadList={false}
               >
-                选择文件
-              </Button>
-            </Upload>
+                <Button 
+                  type="primary" 
+                  size="large"
+                  icon={<IconUpload />}
+                  style={{ minWidth: '120px' }}
+                >
+                  选择文件
+                </Button>
+              </Upload>
+            )}
           </div>
         </div>
       </Modal>

@@ -16,10 +16,8 @@ import {
 } from '@arco-design/web-react';
 import {
   IconPlus,
-  IconEdit,
   IconSearch,
-  IconRefresh,
-  IconEye
+  IconRefresh
 } from '@arco-design/web-react/icon';
 
 const { Title } = Typography;
@@ -44,19 +42,76 @@ interface SearchParams {
   status: string;
 }
 
+// 币种数据库
+const CURRENCY_DATABASE: Currency[] = [
+  // 主要货币
+  { id: 'cur_1', code: 'USD', nameEn: 'United States Dollar', nameCn: '美元', symbol: '$', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  { id: 'cur_2', code: 'EUR', nameEn: 'Euro', nameCn: '欧元', symbol: '€', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  { id: 'cur_3', code: 'CNY', nameEn: 'Chinese Yuan', nameCn: '人民币', symbol: '¥', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  { id: 'cur_4', code: 'JPY', nameEn: 'Japanese Yen', nameCn: '日元', symbol: '¥', currencyDecimals: 0, exchangeRateDecimals: 8, roundingRule: 'round_up', status: 'enabled' },
+  { id: 'cur_5', code: 'GBP', nameEn: 'British Pound', nameCn: '英镑', symbol: '£', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  
+  // 亚洲货币
+  { id: 'cur_6', code: 'HKD', nameEn: 'Hong Kong Dollar', nameCn: '港币', symbol: 'HK$', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  { id: 'cur_7', code: 'KRW', nameEn: 'South Korean Won', nameCn: '韩元', symbol: '₩', currencyDecimals: 0, exchangeRateDecimals: 8, roundingRule: 'round_down', status: 'enabled' },
+  { id: 'cur_8', code: 'SGD', nameEn: 'Singapore Dollar', nameCn: '新加坡元', symbol: 'S$', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  { id: 'cur_9', code: 'TWD', nameEn: 'Taiwan Dollar', nameCn: '新台币', symbol: 'NT$', currencyDecimals: 0, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  { id: 'cur_10', code: 'THB', nameEn: 'Thai Baht', nameCn: '泰铢', symbol: '฿', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  { id: 'cur_11', code: 'MYR', nameEn: 'Malaysian Ringgit', nameCn: '马来西亚林吉特', symbol: 'RM', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  { id: 'cur_12', code: 'INR', nameEn: 'Indian Rupee', nameCn: '印度卢比', symbol: '₹', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  { id: 'cur_13', code: 'IDR', nameEn: 'Indonesian Rupiah', nameCn: '印尼盾', symbol: 'Rp', currencyDecimals: 0, exchangeRateDecimals: 8, roundingRule: 'round_up', status: 'enabled' },
+  { id: 'cur_14', code: 'PHP', nameEn: 'Philippine Peso', nameCn: '菲律宾比索', symbol: '₱', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  { id: 'cur_15', code: 'VND', nameEn: 'Vietnamese Dong', nameCn: '越南盾', symbol: '₫', currencyDecimals: 0, exchangeRateDecimals: 8, roundingRule: 'round_up', status: 'enabled' },
+  
+  // 欧洲货币
+  { id: 'cur_16', code: 'CHF', nameEn: 'Swiss Franc', nameCn: '瑞士法郎', symbol: 'CHF', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  { id: 'cur_17', code: 'SEK', nameEn: 'Swedish Krona', nameCn: '瑞典克朗', symbol: 'kr', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  { id: 'cur_18', code: 'NOK', nameEn: 'Norwegian Krone', nameCn: '挪威克朗', symbol: 'kr', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  { id: 'cur_19', code: 'DKK', nameEn: 'Danish Krone', nameCn: '丹麦克朗', symbol: 'kr', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  { id: 'cur_20', code: 'PLN', nameEn: 'Polish Zloty', nameCn: '波兰兹罗提', symbol: 'zł', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  { id: 'cur_21', code: 'RUB', nameEn: 'Russian Ruble', nameCn: '俄罗斯卢布', symbol: '₽', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  { id: 'cur_22', code: 'TRY', nameEn: 'Turkish Lira', nameCn: '土耳其里拉', symbol: '₺', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  
+  // 美洲货币
+  { id: 'cur_23', code: 'CAD', nameEn: 'Canadian Dollar', nameCn: '加拿大元', symbol: 'C$', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  { id: 'cur_24', code: 'MXN', nameEn: 'Mexican Peso', nameCn: '墨西哥比索', symbol: 'Mex$', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  { id: 'cur_25', code: 'BRL', nameEn: 'Brazilian Real', nameCn: '巴西雷亚尔', symbol: 'R$', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  { id: 'cur_26', code: 'ARS', nameEn: 'Argentine Peso', nameCn: '阿根廷比索', symbol: '$', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  { id: 'cur_27', code: 'CLP', nameEn: 'Chilean Peso', nameCn: '智利比索', symbol: '$', currencyDecimals: 0, exchangeRateDecimals: 8, roundingRule: 'round_up', status: 'enabled' },
+  
+  // 大洋洲货币
+  { id: 'cur_28', code: 'AUD', nameEn: 'Australian Dollar', nameCn: '澳大利亚元', symbol: 'A$', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  { id: 'cur_29', code: 'NZD', nameEn: 'New Zealand Dollar', nameCn: '新西兰元', symbol: 'NZ$', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  
+  // 非洲和中东货币
+  { id: 'cur_30', code: 'ZAR', nameEn: 'South African Rand', nameCn: '南非兰特', symbol: 'R', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  { id: 'cur_31', code: 'AED', nameEn: 'UAE Dirham', nameCn: '阿联酋迪拉姆', symbol: 'د.إ', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  { id: 'cur_32', code: 'SAR', nameEn: 'Saudi Riyal', nameCn: '沙特里亚尔', symbol: '﷼', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' },
+  { id: 'cur_33', code: 'ILS', nameEn: 'Israeli Shekel', nameCn: '以色列谢克尔', symbol: '₪', currencyDecimals: 2, exchangeRateDecimals: 6, roundingRule: 'round_half', status: 'enabled' }
+];
+
+// 添加全局样式，强制表头不换行
+const tableHeaderStyle = `
+  .arco-table-th {
+    white-space: nowrap !important;
+  }
+`;
+
 const CurrencyManagement: React.FC = () => {
   const [currencyData, setCurrencyData] = useState<Currency[]>([]);
   const [filteredData, setFilteredData] = useState<Currency[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
-  const [editModalVisible, setEditModalVisible] = useState(false);
-  const [detailModalVisible, setDetailModalVisible] = useState(false);
-  const [currentCurrency, setCurrentCurrency] = useState<Currency | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const [selectModalVisible, setSelectModalVisible] = useState(false);
+  const [selectableCurrencies, setSelectableCurrencies] = useState<Currency[]>([]);
+  const [selectedCurrencies, setSelectedCurrencies] = useState<string[]>([]);
   const [searchParams, setSearchParams] = useState<SearchParams>({
     keyword: '',
     status: ''
   });
-  const [editForm] = Form.useForm();
+  const [selectSearchParams, setSelectSearchParams] = useState<SearchParams>({
+    keyword: '',
+    status: ''
+  });
 
   // 初始化示例数据
   useEffect(() => {
@@ -153,160 +208,58 @@ const CurrencyManagement: React.FC = () => {
     setFilteredData(currencyData);
   };
 
-  // 表格列定义
-  const columns = [
-    {
-      title: (
-        <Checkbox
-          indeterminate={selectedRowKeys.length > 0 && selectedRowKeys.length < filteredData.length}
-          checked={selectedRowKeys.length === filteredData.length && filteredData.length > 0}
-          onChange={(checked) => {
-            if (checked) {
-              setSelectedRowKeys(filteredData.map(item => item.id));
-            } else {
-              setSelectedRowKeys([]);
-            }
-          }}
-        />
-      ),
-      dataIndex: 'checkbox',
-      width: 60,
-      render: (_: unknown, record: Currency) => (
-        <Checkbox
-          checked={selectedRowKeys.includes(record.id)}
-          onChange={(checked) => {
-            if (checked) {
-              setSelectedRowKeys([...selectedRowKeys, record.id]);
-            } else {
-              setSelectedRowKeys(selectedRowKeys.filter(key => key !== record.id));
-            }
-          }}
-        />
-      ),
-    },
-    {
-      title: '币种代码',
-      dataIndex: 'code',
-      width: 120,
-    },
-    {
-      title: '名称（英文）',
-      dataIndex: 'nameEn',
-      width: 200,
-    },
-    {
-      title: '名称（中文）',
-      dataIndex: 'nameCn',
-      width: 150,
-    },
-    {
-      title: '符号',
-      dataIndex: 'symbol',
-      width: 100,
-    },
-    {
-      title: '币种小数位数',
-      dataIndex: 'currencyDecimals',
-      width: 120,
-      render: (decimals: number) => `${decimals}位`,
-    },
-    {
-      title: '汇率小数位数',
-      dataIndex: 'exchangeRateDecimals',
-      width: 120,
-      render: (decimals: number) => `${decimals}位`,
-    },
-    {
-      title: '进位规则',
-      dataIndex: 'roundingRule',
-      width: 120,
-      render: (rule: string) => {
-        const ruleMap = {
-          'round_up': '进位',
-          'round_down': '舍位',
-          'round_half': '四舍五入'
-        };
-        return ruleMap[rule as keyof typeof ruleMap] || rule;
-      },
-    },
-    {
-      title: '状态',
-      dataIndex: 'status',
-      width: 100,
-      render: (status: string) => (
-        <Tag color={status === 'enabled' ? 'green' : 'red'}>
-          {status === 'enabled' ? '启用' : '禁用'}
-        </Tag>
-      ),
-    },
-    {
-      title: '操作',
-      dataIndex: 'action',
-      width: 200,
-      fixed: 'right' as const,
-      render: (_: unknown, record: Currency) => (
-        <Space>
-          <Button
-            type="text"
-            size="small"
-            icon={<IconEye />}
-            onClick={() => handleDetail(record)}
-          >
-            详情
-          </Button>
-          <Button
-            type="text"
-            size="small"
-            icon={<IconEdit />}
-            onClick={() => handleEdit(record)}
-          >
-            编辑
-          </Button>
-          <Popconfirm
-            title={`确定要${record.status === 'enabled' ? '禁用' : '启用'}此币种吗？`}
-            onOk={() => handleToggleStatus(record.id, record.status)}
-          >
-            <Button 
-              type="text" 
-              size="small" 
-              status={record.status === 'enabled' ? 'warning' : 'success'}
-            >
-              {record.status === 'enabled' ? '禁用' : '启用'}
-            </Button>
-          </Popconfirm>
-        </Space>
-      ),
-    },
-  ];
-
-  // 处理详情
-  const handleDetail = (record: Currency) => {
-    setCurrentCurrency(record);
-    setDetailModalVisible(true);
-  };
-
-  // 处理编辑
-  const handleEdit = (record: Currency) => {
-    setCurrentCurrency(record);
-    setIsEditing(true);
-    editForm.setFieldsValue({
-      code: record.code,
-      nameEn: record.nameEn,
-      nameCn: record.nameCn,
-      symbol: record.symbol,
-      currencyDecimals: record.currencyDecimals,
-      exchangeRateDecimals: record.exchangeRateDecimals,
-      roundingRule: record.roundingRule
-    });
-    setEditModalVisible(true);
-  };
-
-  // 处理新增
+  // 处理新增（改为选择模式）
   const handleAdd = () => {
-    setCurrentCurrency(null);
-    setIsEditing(false);
-    editForm.resetFields();
-    setEditModalVisible(true);
+    // 获取已存在的币种代码列表
+    const existingCodes = currencyData.map(item => item.code);
+    
+    // 过滤出未添加的币种
+    const available = CURRENCY_DATABASE.filter(currency => 
+      !existingCodes.includes(currency.code)
+    );
+    
+    setSelectableCurrencies(available);
+    setSelectedCurrencies([]);
+    setSelectSearchParams({ keyword: '', status: '' });
+    setSelectModalVisible(true);
+  };
+
+  // 处理选择币种
+  const handleSelectCurrencies = () => {
+    if (selectedCurrencies.length === 0) {
+      Message.warning('请选择至少一种币种');
+      return;
+    }
+
+    const newCurrencies = CURRENCY_DATABASE
+      .filter(currency => selectedCurrencies.includes(currency.id))
+      .map(currency => ({
+        ...currency,
+        id: Date.now().toString() + '_' + currency.id,
+        status: 'enabled' as const
+      }));
+
+    setCurrencyData(prev => [...prev, ...newCurrencies]);
+    setFilteredData([...currencyData, ...newCurrencies]);
+    
+    setSelectModalVisible(false);
+    Message.success(`已添加 ${newCurrencies.length} 种币种`);
+  };
+
+  // 筛选可选择的币种
+  const filterSelectableCurrencies = () => {
+    let filtered = [...selectableCurrencies];
+    
+    if (selectSearchParams.keyword) {
+      filtered = filtered.filter(item => 
+        item.code.toLowerCase().includes(selectSearchParams.keyword.toLowerCase()) ||
+        item.nameEn.toLowerCase().includes(selectSearchParams.keyword.toLowerCase()) ||
+        item.nameCn.includes(selectSearchParams.keyword) ||
+        item.symbol.includes(selectSearchParams.keyword)
+      );
+    }
+
+    return filtered;
   };
 
   // 处理状态切换
@@ -357,270 +310,314 @@ const CurrencyManagement: React.FC = () => {
     Message.success(`已禁用 ${selectedRowKeys.length} 个币种`);
   };
 
-  // 保存币种编辑
-  const handleSaveCurrency = async () => {
-    try {
-      const values = await editForm.validate();
-      
-      const currencyItem = {
-        ...values,
-        id: isEditing ? currentCurrency?.id : Date.now().toString(),
-        currencyDecimals: parseInt(values.currencyDecimals) || 2,
-        exchangeRateDecimals: parseInt(values.exchangeRateDecimals) || 6,
-        roundingRule: values.roundingRule || 'round_half',
-        status: isEditing ? currentCurrency?.status : 'enabled' as const
-      };
+  // 表格列定义
+  const columns = [
+    {
+      title: (
+        <Checkbox
+          indeterminate={selectedRowKeys.length > 0 && selectedRowKeys.length < filteredData.length}
+          checked={selectedRowKeys.length === filteredData.length && filteredData.length > 0}
+          onChange={(checked) => {
+            if (checked) {
+              setSelectedRowKeys(filteredData.map(item => item.id));
+            } else {
+              setSelectedRowKeys([]);
+            }
+          }}
+        />
+      ),
+      dataIndex: 'checkbox',
+      width: 60,
+      render: (_: unknown, record: Currency) => (
+        <Checkbox
+          checked={selectedRowKeys.includes(record.id)}
+          onChange={(checked) => {
+            if (checked) {
+              setSelectedRowKeys([...selectedRowKeys, record.id]);
+            } else {
+              setSelectedRowKeys(selectedRowKeys.filter(key => key !== record.id));
+            }
+          }}
+        />
+      ),
+    },
+    {
+      title: '币种代码',
+      dataIndex: 'code',
+      width: 120,
+      sorter: (a: Currency, b: Currency) => a.code.localeCompare(b.code),
+      headerStyle: { whiteSpace: 'nowrap' }
+    },
+    {
+      title: '名称（英文）',
+      dataIndex: 'nameEn',
+      width: 200,
+      sorter: (a: Currency, b: Currency) => a.nameEn.localeCompare(b.nameEn),
+      headerStyle: { whiteSpace: 'nowrap' }
+    },
+    {
+      title: '名称（中文）',
+      dataIndex: 'nameCn',
+      width: 150,
+      sorter: (a: Currency, b: Currency) => a.nameCn.localeCompare(b.nameCn, 'zh-CN'),
+      headerStyle: { whiteSpace: 'nowrap' }
+    },
+    {
+      title: '符号',
+      dataIndex: 'symbol',
+      width: 80,
+      sorter: (a: Currency, b: Currency) => a.symbol.localeCompare(b.symbol),
+      headerStyle: { whiteSpace: 'nowrap' }
+    },
+    {
+      title: '币种小数位数',
+      dataIndex: 'currencyDecimals',
+      width: 120,
+      sorter: (a: Currency, b: Currency) => a.currencyDecimals - b.currencyDecimals,
+      headerStyle: { whiteSpace: 'nowrap' },
+      render: (decimals: number) => `${decimals}位`,
+    },
+    {
+      title: '汇率小数位数',
+      dataIndex: 'exchangeRateDecimals',
+      width: 120,
+      sorter: (a: Currency, b: Currency) => a.exchangeRateDecimals - b.exchangeRateDecimals,
+      headerStyle: { whiteSpace: 'nowrap' },
+      render: (decimals: number) => `${decimals}位`,
+    },
+    {
+      title: '进位规则',
+      dataIndex: 'roundingRule',
+      width: 120,
+      sorter: (a: Currency, b: Currency) => a.roundingRule.localeCompare(b.roundingRule),
+      headerStyle: { whiteSpace: 'nowrap' },
+      render: (rule: string) => {
+        const ruleMap = {
+          'round_up': '进位',
+          'round_down': '舍位',
+          'round_half': '四舍五入'
+        };
+        return ruleMap[rule as keyof typeof ruleMap] || rule;
+      },
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
+      width: 100,
+      sorter: (a: Currency, b: Currency) => a.status.localeCompare(b.status),
+      headerStyle: { whiteSpace: 'nowrap' },
+      render: (status: string) => (
+        <Tag color={status === 'enabled' ? 'green' : 'red'}>
+          {status === 'enabled' ? '启用' : '禁用'}
+        </Tag>
+      ),
+    },
+    {
+      title: '操作',
+      dataIndex: 'action',
+      width: 120,
+      fixed: 'right' as const,
+      headerStyle: { whiteSpace: 'nowrap' },
+      render: (_: unknown, record: Currency) => (
+        <Space>
+          <Popconfirm
+            title={`确定要${record.status === 'enabled' ? '禁用' : '启用'}此币种吗？`}
+            onOk={() => handleToggleStatus(record.id, record.status)}
+          >
+            <Button 
+              type="text" 
+              size="small" 
+              status={record.status === 'enabled' ? 'warning' : 'success'}
+            >
+              {record.status === 'enabled' ? '禁用' : '启用'}
+            </Button>
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ];
 
-      if (isEditing) {
-        // 更新现有币种
-        setCurrencyData(prev => prev.map(currency => 
-          currency.id === currentCurrency?.id ? { ...currency, ...currencyItem } : currency
-        ));
-        setFilteredData(prev => prev.map(currency => 
-          currency.id === currentCurrency?.id ? { ...currency, ...currencyItem } : currency
-        ));
-        Message.success('币种信息已更新');
-      } else {
-        // 新增币种
-        const newCurrency = { ...currencyItem, id: Date.now().toString() };
-        setCurrencyData(prev => [...prev, newCurrency]);
-        setFilteredData(prev => [...prev, newCurrency]);
-        Message.success('币种已添加');
-      }
-
-      setEditModalVisible(false);
-      editForm.resetFields();
-    } catch (error) {
-      console.error('保存失败:', error);
+  // 选择弹窗的表格列配置
+  const selectColumns = [
+    {
+      title: (
+        <Checkbox
+          indeterminate={selectedCurrencies.length > 0 && selectedCurrencies.length < filterSelectableCurrencies().length}
+          checked={selectedCurrencies.length === filterSelectableCurrencies().length && filterSelectableCurrencies().length > 0}
+          onChange={(checked) => {
+            if (checked) {
+              setSelectedCurrencies(filterSelectableCurrencies().map(item => item.id));
+            } else {
+              setSelectedCurrencies([]);
+            }
+          }}
+        />
+      ),
+      dataIndex: 'checkbox',
+      width: 60,
+      render: (_: unknown, record: Currency) => (
+        <Checkbox
+          checked={selectedCurrencies.includes(record.id)}
+          onChange={(checked) => {
+            if (checked) {
+              setSelectedCurrencies([...selectedCurrencies, record.id]);
+            } else {
+              setSelectedCurrencies(selectedCurrencies.filter(id => id !== record.id));
+            }
+          }}
+        />
+      ),
+    },
+    {
+      title: '币种代码',
+      dataIndex: 'code',
+      width: 100,
+      sorter: (a: Currency, b: Currency) => a.code.localeCompare(b.code),
+      headerStyle: { whiteSpace: 'nowrap' }
+    },
+    {
+      title: '名称（英文）',
+      dataIndex: 'nameEn',
+      width: 180,
+      sorter: (a: Currency, b: Currency) => a.nameEn.localeCompare(b.nameEn),
+      headerStyle: { whiteSpace: 'nowrap' }
+    },
+    {
+      title: '名称（中文）',
+      dataIndex: 'nameCn',
+      width: 120,
+      sorter: (a: Currency, b: Currency) => a.nameCn.localeCompare(b.nameCn, 'zh-CN'),
+      headerStyle: { whiteSpace: 'nowrap' }
+    },
+    {
+      title: '符号',
+      dataIndex: 'symbol',
+      width: 80,
+      sorter: (a: Currency, b: Currency) => a.symbol.localeCompare(b.symbol),
+      headerStyle: { whiteSpace: 'nowrap' }
     }
-  };
+  ];
 
   return (
-    <Card>
-      <div style={{ marginBottom: '20px' }}>
-        <Title heading={4} style={{ margin: 0 }}>币种管理</Title>
-      </div>
-
-      {/* 搜索筛选区域 */}
-      <Card style={{ marginBottom: '16px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: '16px', alignItems: 'flex-end' }}>
-          <div>
-            <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>关键词搜索</div>
-            <Input
-              placeholder="币种代码、名称、符号"
-              value={searchParams.keyword}
-              onChange={(value) => setSearchParams(prev => ({ ...prev, keyword: value }))}
-            />
-          </div>
-          <div>
-            <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>状态</div>
-            <Select
-              placeholder="选择状态"
-              value={searchParams.status}
-              onChange={(value) => setSearchParams(prev => ({ ...prev, status: value }))}
-              allowClear
-            >
-              <Option value="enabled">启用</Option>
-              <Option value="disabled">禁用</Option>
-            </Select>
-          </div>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <Button type="primary" icon={<IconSearch />} onClick={handleSearch}>
-              搜索
-            </Button>
-            <Button icon={<IconRefresh />} onClick={handleReset}>
-              重置
-            </Button>
-          </div>
+    <>
+      <style>{tableHeaderStyle}</style>
+      <Card>
+        <div style={{ marginBottom: '20px' }}>
+          <Title heading={4} style={{ margin: 0 }}>币种管理</Title>
         </div>
-      </Card>
 
-      {/* 操作按钮区域 */}
-      <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <Button type="primary" icon={<IconPlus />} onClick={handleAdd}>
-              新增币种
-            </Button>
-          </div>
-          {selectedRowKeys.length > 0 && (
-            <div style={{ 
-              display: 'flex', 
-              gap: '8px', 
-              paddingLeft: '12px', 
-              borderLeft: '1px solid #e5e6e7',
-              marginLeft: '4px'
-            }}>
-              <Button type="outline" onClick={handleBatchEnable}>
-                批量启用 ({selectedRowKeys.length})
+        {/* 搜索筛选区域 */}
+        <Card style={{ marginBottom: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: '16px', alignItems: 'flex-end' }}>
+            <div>
+              <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>关键词搜索</div>
+              <Input
+                placeholder="币种代码、名称、符号"
+                value={searchParams.keyword}
+                onChange={(value) => setSearchParams(prev => ({ ...prev, keyword: value }))}
+              />
+            </div>
+            <div>
+              <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>状态</div>
+              <Select
+                placeholder="选择状态"
+                value={searchParams.status}
+                onChange={(value) => setSearchParams(prev => ({ ...prev, status: value }))}
+                allowClear
+              >
+                <Option value="enabled">启用</Option>
+                <Option value="disabled">禁用</Option>
+              </Select>
+            </div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <Button type="primary" icon={<IconSearch />} onClick={handleSearch}>
+                搜索
               </Button>
-              <Button type="outline" status="warning" onClick={handleBatchDisable}>
-                批量禁用 ({selectedRowKeys.length})
+              <Button icon={<IconRefresh />} onClick={handleReset}>
+                重置
               </Button>
             </div>
-          )}
+          </div>
+        </Card>
+
+        {/* 操作按钮区域 */}
+        <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <Button type="primary" icon={<IconPlus />} onClick={handleAdd}>
+                新增币种
+              </Button>
+            </div>
+            {selectedRowKeys.length > 0 && (
+              <div style={{ 
+                display: 'flex', 
+                gap: '8px', 
+                paddingLeft: '12px', 
+                borderLeft: '1px solid #e5e6e7',
+                marginLeft: '4px'
+              }}>
+                <Button type="outline" onClick={handleBatchEnable}>
+                  批量启用 ({selectedRowKeys.length})
+                </Button>
+                <Button type="outline" status="warning" onClick={handleBatchDisable}>
+                  批量禁用 ({selectedRowKeys.length})
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
 
-      <Table
-        columns={columns}
-        data={filteredData}
-        rowKey="id"
-        scroll={{ x: 1400 }}
-        pagination={{
-          pageSize: 10,
-          showTotal: true,
-          showJumper: true,
-          sizeCanChange: true,
-        }}
-      />
+        <Table
+          columns={columns}
+          data={filteredData}
+          rowKey="id"
+          scroll={{ x: 1250 }}
+          pagination={{
+            pageSize: 10,
+            showTotal: true,
+            showJumper: true,
+            sizeCanChange: true,
+          }}
+        />
 
-      {/* 详情弹窗 */}
-      <Modal
-        title="币种详情"
-        visible={detailModalVisible}
-        onCancel={() => setDetailModalVisible(false)}
-        footer={
-          <Button onClick={() => setDetailModalVisible(false)}>
-            关闭
-          </Button>
-        }
-        style={{ width: 500 }}
-      >
-        {currentCurrency && (
-          <div style={{ display: 'grid', gridTemplateColumns: '140px 1fr', gap: '12px 16px', alignItems: 'center' }}>
-            <span style={{ fontWeight: 500 }}>币种代码：</span>
-            <span>{currentCurrency.code}</span>
-            
-            <span style={{ fontWeight: 500 }}>名称（英文）：</span>
-            <span>{currentCurrency.nameEn}</span>
-            
-            <span style={{ fontWeight: 500 }}>名称（中文）：</span>
-            <span>{currentCurrency.nameCn}</span>
-            
-            <span style={{ fontWeight: 500 }}>符号：</span>
-            <span>{currentCurrency.symbol}</span>
-            
-            <span style={{ fontWeight: 500 }}>币种小数位数：</span>
-            <span>{currentCurrency.currencyDecimals}位</span>
-            
-            <span style={{ fontWeight: 500 }}>汇率小数位数：</span>
-            <span>{currentCurrency.exchangeRateDecimals}位</span>
-            
-            <span style={{ fontWeight: 500 }}>进位规则：</span>
-            <span>
-              {currentCurrency.roundingRule === 'round_up' && '进位'}
-              {currentCurrency.roundingRule === 'round_down' && '舍位'}
-              {currentCurrency.roundingRule === 'round_half' && '四舍五入'}
-            </span>
-            
-            <span style={{ fontWeight: 500 }}>状态：</span>
-            <Tag color={currentCurrency.status === 'enabled' ? 'green' : 'red'}>
-              {currentCurrency.status === 'enabled' ? '启用' : '禁用'}
-            </Tag>
-          </div>
-        )}
-      </Modal>
+        {/* 选择币种弹窗 */}
+        <Modal
+          title="选择币种"
+          visible={selectModalVisible}
+          onOk={handleSelectCurrencies}
+          onCancel={() => setSelectModalVisible(false)}
+          style={{ width: 700 }}
+          okText="确定"
+          cancelText="取消"
+        >
+          {/* 搜索筛选区域 */}
+          <Card style={{ marginBottom: '16px' }}>
+            <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-end' }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>关键词搜索</div>
+                <Input
+                  placeholder="币种代码、名称、符号"
+                  value={selectSearchParams.keyword}
+                  onChange={(value) => setSelectSearchParams(prev => ({ ...prev, keyword: value }))}
+                />
+              </div>
+            </div>
+          </Card>
 
-      {/* 新增/编辑币种弹窗 */}
-      <Modal
-        title={isEditing ? '编辑币种' : '新增币种'}
-        visible={editModalVisible}
-        onOk={handleSaveCurrency}
-        onCancel={() => setEditModalVisible(false)}
-        style={{ width: 600 }}
-      >
-        <Form form={editForm} layout="vertical">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            <Form.Item
-              field="code"
-              label="币种代码"
-              rules={[
-                { required: true, message: '请输入币种代码' },
-                { 
-                  validator: (value, callback) => {
-                    if (value && !/^[A-Z]{3}$/.test(value)) {
-                      callback('币种代码必须为3位大写字母');
-                    } else {
-                      callback();
-                    }
-                  }
-                }
-              ]}
-            >
-              <Input placeholder="请输入3位代码，如：USD" maxLength={3} style={{ textTransform: 'uppercase' }} />
-            </Form.Item>
-            
-            <Form.Item
-              field="symbol"
-              label="符号"
-              rules={[{ required: true, message: '请输入符号' }]}
-            >
-              <Input placeholder="请输入符号，如：$" />
-            </Form.Item>
-            
-            <Form.Item
-              field="nameEn"
-              label="名称（英文）"
-              rules={[{ required: true, message: '请输入英文名称' }]}
-            >
-              <Input placeholder="请输入英文名称，如：US Dollar" />
-            </Form.Item>
-            
-            <Form.Item
-              field="nameCn"
-              label="名称（中文）"
-              rules={[{ required: true, message: '请输入中文名称' }]}
-            >
-              <Input placeholder="请输入中文名称，如：美元" />
-            </Form.Item>
-            
-            <Form.Item
-              field="currencyDecimals"
-              label="币种小数位数"
-              rules={[{ required: true, message: '请选择币种小数位数' }]}
-              initialValue={2}
-            >
-              <Select placeholder="请选择币种小数位数">
-                <Option value={0}>0位</Option>
-                <Option value={1}>1位</Option>
-                <Option value={2}>2位</Option>
-              </Select>
-            </Form.Item>
-            
-            <Form.Item
-              field="exchangeRateDecimals"
-              label="汇率小数位数"
-              rules={[{ required: true, message: '请选择汇率小数位数' }]}
-              initialValue={6}
-            >
-              <Select placeholder="请选择汇率小数位数">
-                <Option value={2}>2位</Option>
-                <Option value={3}>3位</Option>
-                <Option value={4}>4位</Option>
-                <Option value={5}>5位</Option>
-                <Option value={6}>6位</Option>
-                <Option value={7}>7位</Option>
-                <Option value={8}>8位</Option>
-              </Select>
-            </Form.Item>
-            
-            <Form.Item
-              field="roundingRule"
-              label="进位规则"
-              rules={[{ required: true, message: '请选择进位规则' }]}
-              initialValue="round_half"
-            >
-              <Select placeholder="请选择进位规则">
-                <Option value="round_up">进位</Option>
-                <Option value="round_down">舍位</Option>
-                <Option value="round_half">四舍五入</Option>
-              </Select>
-            </Form.Item>
-          </div>
-        </Form>
-      </Modal>
-    </Card>
+          <Table
+            columns={selectColumns}
+            data={filterSelectableCurrencies()}
+            rowKey="id"
+            scroll={{ x: 540 }}
+            pagination={{
+              pageSize: 10,
+              showTotal: true,
+            }}
+            style={{ marginTop: '16px' }}
+          />
+        </Modal>
+      </Card>
+    </>
   );
 };
 

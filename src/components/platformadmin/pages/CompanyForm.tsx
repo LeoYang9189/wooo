@@ -1196,15 +1196,14 @@ const CompanyForm: React.FC = () => {
                 </div>
               </div>
             ) : (
-              <Upload
-                accept="image/*"
-                beforeUpload={handleBusinessLicenseUpload}
-                showUploadList={false}
+              <Button 
+                type="outline" 
+                icon={<IconUpload />}
+                onClick={() => setBusinessLicenseUploadVisible(true)}
+                style={{ width: '120px' }}
               >
-                <Button type="outline" icon={<IconUpload />}>
-                  上传营业执照
-                </Button>
-              </Upload>
+                上传执照
+              </Button>
             )}
           </div>
         </Form.Item>
@@ -1552,7 +1551,7 @@ const CompanyForm: React.FC = () => {
               style={{ minWidth: '100px' }}
               disabled={aiRecognizing}
             >
-              取消
+              {recognitionSuccess ? '关闭' : '取消'}
             </Button>
             {!aiRecognizing && !recognitionSuccess && (
               <Upload

@@ -15,7 +15,8 @@ import {
   Message,
   Popconfirm,
   Typography,
-  Switch
+  Switch,
+  Descriptions
 } from '@arco-design/web-react';
 import {
   IconPlus,
@@ -159,6 +160,28 @@ const PortManagement: React.FC = () => {
     isBasePort: '',
     status: ''
   });
+  
+  // 新增海港搜索选择相关状态
+  const [addPortModalVisible, setAddPortModalVisible] = useState(false);
+  const [portLibraryData, setPortLibraryData] = useState<SeaPort[]>([]);
+  const [filteredPortLibrary, setFilteredPortLibrary] = useState<SeaPort[]>([]);
+  const [selectedPortIds, setSelectedPortIds] = useState<string[]>([]);
+  const [addSearchParams, setAddSearchParams] = useState({
+    keyword: '',
+    country: '',
+    isBasePort: ''
+  });
+  
+  // 新增空港搜索选择相关状态
+  const [addAirportModalVisible, setAddAirportModalVisible] = useState(false);
+  const [airportLibraryData, setAirportLibraryData] = useState<Airport[]>([]);
+  const [filteredAirportLibrary, setFilteredAirportLibrary] = useState<Airport[]>([]);
+  const [selectedAirportIds, setSelectedAirportIds] = useState<string[]>([]);
+  const [addAirportSearchParams, setAddAirportSearchParams] = useState({
+    keyword: '',
+    country: ''
+  });
+  
   const [form] = Form.useForm();
   const [editForm] = Form.useForm();
 
@@ -219,8 +242,150 @@ const PortManagement: React.FC = () => {
         relatedTerminals: ['long_beach', 'san_pedro']
       }
     ];
-      setSeaPortData(mockData);
-      setFilteredData(mockData);
+    setSeaPortData(mockData);
+    setFilteredData(mockData);
+
+    // 初始化港口库数据（包含更多港口供选择）
+    const portLibraryMockData: SeaPort[] = [
+      ...mockData, // 包含当前已有的港口
+      {
+        id: 'lib1',
+        portNameEn: 'Shenzhen Port',
+        portNameCn: '深圳港',
+        unLocation: 'CNSZX',
+        country: 'CN',
+        isBasePort: true,
+        relatedRoutes: ['asia_europe', 'intra_asia'],
+        ediCodes: [],
+        amsPortCode: '2729',
+        status: 'enabled' as const,
+        longitude: '114.0579',
+        latitude: '22.5431',
+        relatedTerminals: ['yantian', 'shekou']
+      },
+      {
+        id: 'lib2',
+        portNameEn: 'Guangzhou Port',
+        portNameCn: '广州港',
+        unLocation: 'CNGZH',
+        country: 'CN',
+        isBasePort: false,
+        relatedRoutes: ['intra_asia'],
+        ediCodes: [],
+        amsPortCode: '2730',
+        status: 'enabled' as const,
+        longitude: '113.2644',
+        latitude: '23.1291',
+        relatedTerminals: ['nansha']
+      },
+      {
+        id: 'lib3',
+        portNameEn: 'Hong Kong Port',
+        portNameCn: '香港港',
+        unLocation: 'HKHKG',
+        country: 'HK',
+        isBasePort: true,
+        relatedRoutes: ['asia_europe', 'trans_pacific', 'intra_asia'],
+        ediCodes: [],
+        amsPortCode: '2731',
+        status: 'enabled' as const,
+        longitude: '114.1694',
+        latitude: '22.3193',
+        relatedTerminals: ['kwai_tsing']
+      },
+      {
+        id: 'lib4',
+        portNameEn: 'Singapore Port',
+        portNameCn: '新加坡港',
+        unLocation: 'SGSIN',
+        country: 'SG',
+        isBasePort: true,
+        relatedRoutes: ['asia_europe', 'intra_asia'],
+        ediCodes: [],
+        amsPortCode: '2732',
+        status: 'enabled' as const,
+        longitude: '103.8198',
+        latitude: '1.3521',
+        relatedTerminals: ['psa']
+      },
+      {
+        id: 'lib5',
+        portNameEn: 'Hamburg Port',
+        portNameCn: '汉堡港',
+        unLocation: 'DEHAM',
+        country: 'DE',
+        isBasePort: true,
+        relatedRoutes: ['asia_europe'],
+        ediCodes: [],
+        amsPortCode: '2733',
+        status: 'enabled' as const,
+        longitude: '9.9937',
+        latitude: '53.5511',
+        relatedTerminals: ['eurogate']
+      },
+      {
+        id: 'lib6',
+        portNameEn: 'Rotterdam Port',
+        portNameCn: '鹿特丹港',
+        unLocation: 'NLRTM',
+        country: 'NL',
+        isBasePort: true,
+        relatedRoutes: ['asia_europe'],
+        ediCodes: [],
+        amsPortCode: '2734',
+        status: 'enabled' as const,
+        longitude: '4.4777',
+        latitude: '51.9244',
+        relatedTerminals: ['maasvlakte']
+      },
+      {
+        id: 'lib7',
+        portNameEn: 'Long Beach Port',
+        portNameCn: '长滩港',
+        unLocation: 'USLGB',
+        country: 'US',
+        isBasePort: false,
+        relatedRoutes: ['trans_pacific'],
+        ediCodes: [],
+        amsPortCode: '2735',
+        status: 'enabled' as const,
+        longitude: '-118.2164',
+        latitude: '33.7701',
+        relatedTerminals: ['long_beach']
+      },
+      {
+        id: 'lib8',
+        portNameEn: 'Yokohama Port',
+        portNameCn: '横滨港',
+        unLocation: 'JPYOK',
+        country: 'JP',
+        isBasePort: true,
+        relatedRoutes: ['trans_pacific', 'intra_asia'],
+        ediCodes: [],
+        amsPortCode: '2736',
+        status: 'enabled' as const,
+        longitude: '139.6380',
+        latitude: '35.4437',
+        relatedTerminals: ['honmoku']
+      },
+      {
+        id: 'lib9',
+        portNameEn: 'Busan Port',
+        portNameCn: '釜山港',
+        unLocation: 'KRPUS',
+        country: 'KR',
+        isBasePort: true,
+        relatedRoutes: ['trans_pacific', 'intra_asia'],
+        ediCodes: [],
+        amsPortCode: '2737',
+        status: 'enabled' as const,
+        longitude: '129.0756',
+        latitude: '35.1796',
+        relatedTerminals: ['pnit']
+      }
+    ];
+    setPortLibraryData(portLibraryMockData);
+    setFilteredPortLibrary(portLibraryMockData);
 
       // 空港示例数据
       const mockAirportData: Airport[] = [
@@ -274,6 +439,143 @@ const PortManagement: React.FC = () => {
       ];
       setAirportData(mockAirportData);
       setFilteredAirportData(mockAirportData);
+
+      // 初始化空港库数据（包含更多机场供选择）
+      const airportLibraryMockData: Airport[] = [
+        ...mockAirportData, // 包含当前已有的机场
+        {
+          id: 'air1',
+          portNameEn: 'Shanghai Hongqiao International Airport',
+          portNameCn: '上海虹桥国际机场',
+          iataCode: 'SHA',
+          country: 'CN',
+          relatedRoutes: ['intra_asia'],
+          ediCodes: [],
+          amsPortCode: '5004',
+          status: 'enabled' as const,
+          longitude: '121.3364',
+          latitude: '31.1979'
+        },
+        {
+          id: 'air2',
+          portNameEn: 'Guangzhou Baiyun International Airport',
+          portNameCn: '广州白云国际机场',
+          iataCode: 'CAN',
+          country: 'CN',
+          relatedRoutes: ['asia_europe', 'intra_asia'],
+          ediCodes: [],
+          amsPortCode: '5005',
+          status: 'enabled' as const,
+          longitude: '113.2986',
+          latitude: '23.3924'
+        },
+        {
+          id: 'air3',
+          portNameEn: 'Shenzhen Bao\'an International Airport',
+          portNameCn: '深圳宝安国际机场',
+          iataCode: 'SZX',
+          country: 'CN',
+          relatedRoutes: ['intra_asia'],
+          ediCodes: [],
+          amsPortCode: '5006',
+          status: 'enabled' as const,
+          longitude: '113.8106',
+          latitude: '22.6393'
+        },
+        {
+          id: 'air4',
+          portNameEn: 'Hong Kong International Airport',
+          portNameCn: '香港国际机场',
+          iataCode: 'HKG',
+          country: 'HK',
+          relatedRoutes: ['asia_europe', 'trans_pacific', 'intra_asia'],
+          ediCodes: [],
+          amsPortCode: '5007',
+          status: 'enabled' as const,
+          longitude: '113.9148',
+          latitude: '22.3080'
+        },
+        {
+          id: 'air5',
+          portNameEn: 'Singapore Changi Airport',
+          portNameCn: '新加坡樟宜机场',
+          iataCode: 'SIN',
+          country: 'SG',
+          relatedRoutes: ['asia_europe', 'intra_asia'],
+          ediCodes: [],
+          amsPortCode: '5008',
+          status: 'enabled' as const,
+          longitude: '103.9915',
+          latitude: '1.3644'
+        },
+        {
+          id: 'air6',
+          portNameEn: 'Tokyo Narita International Airport',
+          portNameCn: '东京成田国际机场',
+          iataCode: 'NRT',
+          country: 'JP',
+          relatedRoutes: ['trans_pacific', 'intra_asia'],
+          ediCodes: [],
+          amsPortCode: '5009',
+          status: 'enabled' as const,
+          longitude: '140.3929',
+          latitude: '35.7647'
+        },
+        {
+          id: 'air7',
+          portNameEn: 'Seoul Incheon International Airport',
+          portNameCn: '首尔仁川国际机场',
+          iataCode: 'ICN',
+          country: 'KR',
+          relatedRoutes: ['trans_pacific', 'intra_asia'],
+          ediCodes: [],
+          amsPortCode: '5010',
+          status: 'enabled' as const,
+          longitude: '126.4505',
+          latitude: '37.4602'
+        },
+        {
+          id: 'air8',
+          portNameEn: 'Frankfurt Airport',
+          portNameCn: '法兰克福机场',
+          iataCode: 'FRA',
+          country: 'DE',
+          relatedRoutes: ['asia_europe'],
+          ediCodes: [],
+          amsPortCode: '5011',
+          status: 'enabled' as const,
+          longitude: '8.5622',
+          latitude: '50.0379'
+        },
+        {
+          id: 'air9',
+          portNameEn: 'Amsterdam Airport Schiphol',
+          portNameCn: '阿姆斯特丹史基浦机场',
+          iataCode: 'AMS',
+          country: 'NL',
+          relatedRoutes: ['asia_europe'],
+          ediCodes: [],
+          amsPortCode: '5012',
+          status: 'enabled' as const,
+          longitude: '4.7683',
+          latitude: '52.3105'
+        },
+        {
+          id: 'air10',
+          portNameEn: 'John F. Kennedy International Airport',
+          portNameCn: '肯尼迪国际机场',
+          iataCode: 'JFK',
+          country: 'US',
+          relatedRoutes: ['trans_pacific'],
+          ediCodes: [],
+          amsPortCode: '5013',
+          status: 'enabled' as const,
+          longitude: '-73.7781',
+          latitude: '40.6413'
+        }
+      ];
+      setAirportLibraryData(airportLibraryMockData);
+      setFilteredAirportLibrary(airportLibraryMockData);
     }, []);
 
     // 搜索筛选功能
@@ -367,6 +669,7 @@ const PortManagement: React.FC = () => {
         ),
       dataIndex: 'checkbox',
       width: 60,
+      headerStyle: { whiteSpace: 'nowrap' },
       render: (_: any, record: SeaPort) => (
         <Checkbox
           checked={selectedRowKeys.includes(record.id)}
@@ -383,22 +686,34 @@ const PortManagement: React.FC = () => {
     {
       title: '港口全称（英文）',
       dataIndex: 'portNameEn',
-      width: 200,
+      width: 260,
+      sorter: (a: SeaPort, b: SeaPort) => a.portNameEn.localeCompare(b.portNameEn),
+      headerStyle: { whiteSpace: 'nowrap' },
     },
     {
       title: '港口全称（中文）',
       dataIndex: 'portNameCn',
-      width: 150,
+      width: 180,
+      sorter: (a: SeaPort, b: SeaPort) => a.portNameCn.localeCompare(b.portNameCn),
+      headerStyle: { whiteSpace: 'nowrap' },
     },
     {
       title: 'UN Location',
       dataIndex: 'unLocation',
-      width: 120,
+      width: 140,
+      sorter: (a: SeaPort, b: SeaPort) => a.unLocation.localeCompare(b.unLocation),
+      headerStyle: { whiteSpace: 'nowrap' },
     },
     {
       title: '国家（地区）',
       dataIndex: 'country',
-      width: 120,
+      width: 140,
+      sorter: (a: SeaPort, b: SeaPort) => {
+        const countryA = countryOptions.find(option => option.value === a.country)?.label || a.country;
+        const countryB = countryOptions.find(option => option.value === b.country)?.label || b.country;
+        return countryA.localeCompare(countryB);
+      },
+      headerStyle: { whiteSpace: 'nowrap' },
       render: (country: string) => {
         const countryOption = countryOptions.find(option => option.value === country);
         return countryOption ? countryOption.label : country;
@@ -407,7 +722,9 @@ const PortManagement: React.FC = () => {
     {
       title: '是否基港',
       dataIndex: 'isBasePort',
-      width: 100,
+      width: 120,
+      sorter: (a: SeaPort, b: SeaPort) => Number(a.isBasePort) - Number(b.isBasePort),
+      headerStyle: { whiteSpace: 'nowrap' },
       render: (isBasePort: boolean) => (
         <Tag color={isBasePort ? 'green' : 'gray'}>
           {isBasePort ? '是' : '否'}
@@ -417,7 +734,8 @@ const PortManagement: React.FC = () => {
     {
       title: '关联航线',
       dataIndex: 'relatedRoutes',
-      width: 200,
+      width: 240,
+      headerStyle: { whiteSpace: 'nowrap' },
       render: (routes: string[]) => (
         <Space wrap>
           {routes.map((route, index) => {
@@ -434,7 +752,8 @@ const PortManagement: React.FC = () => {
     {
       title: 'EDI代码',
       dataIndex: 'ediCodes',
-      width: 150,
+      width: 120,
+      headerStyle: { whiteSpace: 'nowrap' },
       render: (ediCodes: EDICode[]) => (
         <Tooltip
           content={
@@ -456,22 +775,29 @@ const PortManagement: React.FC = () => {
           {
         title: 'AMS港口代码',
         dataIndex: 'amsPortCode',
-        width: 130,
+        width: 150,
+        sorter: (a: SeaPort, b: SeaPort) => a.amsPortCode.localeCompare(b.amsPortCode),
+        headerStyle: { whiteSpace: 'nowrap' },
       },
       {
         title: '经度',
         dataIndex: 'longitude',
-        width: 120,
+        width: 100,
+        sorter: (a: SeaPort, b: SeaPort) => parseFloat(a.longitude) - parseFloat(b.longitude),
+        headerStyle: { whiteSpace: 'nowrap' },
       },
       {
         title: '纬度',
         dataIndex: 'latitude',
-        width: 120,
+        width: 100,
+        sorter: (a: SeaPort, b: SeaPort) => parseFloat(a.latitude) - parseFloat(b.latitude),
+        headerStyle: { whiteSpace: 'nowrap' },
       },
       {
         title: '关联码头',
         dataIndex: 'relatedTerminals',
-        width: 150,
+        width: 120,
+        headerStyle: { whiteSpace: 'nowrap' },
         render: (terminals: string[]) => (
           <Tooltip
             content={
@@ -497,6 +823,8 @@ const PortManagement: React.FC = () => {
         title: '状态',
         dataIndex: 'status',
         width: 100,
+        sorter: (a: SeaPort, b: SeaPort) => a.status.localeCompare(b.status),
+        headerStyle: { whiteSpace: 'nowrap' },
         render: (status: string) => (
           <Tag color={status === 'enabled' ? 'green' : 'red'}>
             {status === 'enabled' ? '启用' : '禁用'}
@@ -506,8 +834,9 @@ const PortManagement: React.FC = () => {
     {
       title: '操作',
       dataIndex: 'action',
-      width: 200,
+      width: 240,
       fixed: 'right' as const,
+      headerStyle: { whiteSpace: 'nowrap' },
       render: (_: any, record: SeaPort) => (
         <Space>
           <Button
@@ -561,6 +890,7 @@ const PortManagement: React.FC = () => {
       ),
     dataIndex: 'checkbox',
     width: 60,
+    headerStyle: { whiteSpace: 'nowrap' },
     render: (_: any, record: Airport) => (
       <Checkbox
         checked={selectedRowKeys.includes(record.id)}
@@ -577,22 +907,34 @@ const PortManagement: React.FC = () => {
   {
     title: '机场全称（英文）',
     dataIndex: 'portNameEn',
-    width: 200,
+    width: 280,
+    sorter: (a: Airport, b: Airport) => a.portNameEn.localeCompare(b.portNameEn),
+    headerStyle: { whiteSpace: 'nowrap' },
   },
   {
     title: '机场全称（中文）',
     dataIndex: 'portNameCn',
-    width: 150,
+    width: 200,
+    sorter: (a: Airport, b: Airport) => a.portNameCn.localeCompare(b.portNameCn),
+    headerStyle: { whiteSpace: 'nowrap' },
   },
   {
     title: 'IATA代码',
     dataIndex: 'iataCode',
     width: 120,
+    sorter: (a: Airport, b: Airport) => a.iataCode.localeCompare(b.iataCode),
+    headerStyle: { whiteSpace: 'nowrap' },
   },
   {
     title: '国家（地区）',
     dataIndex: 'country',
-    width: 120,
+    width: 140,
+    sorter: (a: Airport, b: Airport) => {
+      const countryA = countryOptions.find(option => option.value === a.country)?.label || a.country;
+      const countryB = countryOptions.find(option => option.value === b.country)?.label || b.country;
+      return countryA.localeCompare(countryB);
+    },
+    headerStyle: { whiteSpace: 'nowrap' },
     render: (country: string) => {
       const countryOption = countryOptions.find(option => option.value === country);
       return countryOption ? countryOption.label : country;
@@ -601,7 +943,8 @@ const PortManagement: React.FC = () => {
   {
     title: '关联航线',
     dataIndex: 'relatedRoutes',
-    width: 200,
+    width: 240,
+    headerStyle: { whiteSpace: 'nowrap' },
     render: (routes: string[]) => (
       <Space wrap>
         {routes.map((route, index) => {
@@ -618,7 +961,8 @@ const PortManagement: React.FC = () => {
   {
     title: 'EDI代码',
     dataIndex: 'ediCodes',
-    width: 150,
+    width: 120,
+    headerStyle: { whiteSpace: 'nowrap' },
     render: (ediCodes: EDICode[]) => (
       <Tooltip
         content={
@@ -640,22 +984,30 @@ const PortManagement: React.FC = () => {
         {
       title: 'AMS港口代码',
       dataIndex: 'amsPortCode',
-      width: 130,
+      width: 150,
+      sorter: (a: Airport, b: Airport) => a.amsPortCode.localeCompare(b.amsPortCode),
+      headerStyle: { whiteSpace: 'nowrap' },
     },
     {
       title: '经度',
       dataIndex: 'longitude',
-      width: 120,
+      width: 100,
+      sorter: (a: Airport, b: Airport) => parseFloat(a.longitude) - parseFloat(b.longitude),
+      headerStyle: { whiteSpace: 'nowrap' },
     },
     {
       title: '纬度',
       dataIndex: 'latitude',
-      width: 120,
+      width: 100,
+      sorter: (a: Airport, b: Airport) => parseFloat(a.latitude) - parseFloat(b.latitude),
+      headerStyle: { whiteSpace: 'nowrap' },
     },
     {
       title: '状态',
       dataIndex: 'status',
       width: 100,
+      sorter: (a: Airport, b: Airport) => a.status.localeCompare(b.status),
+      headerStyle: { whiteSpace: 'nowrap' },
       render: (status: string) => (
         <Tag color={status === 'enabled' ? 'green' : 'red'}>
           {status === 'enabled' ? '启用' : '禁用'}
@@ -665,8 +1017,9 @@ const PortManagement: React.FC = () => {
   {
     title: '操作',
     dataIndex: 'action',
-    width: 200,
+    width: 240,
     fixed: 'right' as const,
+    headerStyle: { whiteSpace: 'nowrap' },
     render: (_: any, record: Airport) => (
       <Space>
         <Button
@@ -721,12 +1074,29 @@ const PortManagement: React.FC = () => {
     setEditModalVisible(true);
   };
 
-  // 处理新增
+  // 处理新增（海港和空港都使用搜索选择模式）
   const handleAdd = () => {
-    setCurrentPort(null);
-    setIsEditing(false);
-    editForm.resetFields();
-    setEditModalVisible(true);
+    if (activeTab === 'seaport') {
+      // 海港：打开搜索选择弹窗
+      setSelectedPortIds([]);
+      setAddSearchParams({ keyword: '', country: '', isBasePort: '' });
+      // 过滤掉已经存在的港口
+      const availablePorts = portLibraryData.filter(port => 
+        !seaPortData.some(existingPort => existingPort.id === port.id)
+      );
+      setFilteredPortLibrary(availablePorts);
+      setAddPortModalVisible(true);
+    } else if (activeTab === 'airport') {
+      // 空港：打开搜索选择弹窗
+      setSelectedAirportIds([]);
+      setAddAirportSearchParams({ keyword: '', country: '' });
+      // 过滤掉已经存在的机场
+      const availableAirports = airportLibraryData.filter(airport => 
+        !airportData.some(existingAirport => existingAirport.id === airport.id)
+      );
+      setFilteredAirportLibrary(availableAirports);
+      setAddAirportModalVisible(true);
+    }
   };
 
   // 处理状态切换
@@ -812,51 +1182,62 @@ const PortManagement: React.FC = () => {
       const values = await editForm.validate();
       
       if (activeTab === 'seaport') {
-        const portData = {
-          ...values,
-          relatedRoutes: values.relatedRoutes || [],
-          relatedTerminals: values.relatedTerminals || [],
-          id: isEditing ? currentPort?.id : Date.now().toString(),
-          ediCodes: isEditing ? currentPort?.ediCodes || [] : [],
-          status: isEditing ? currentPort?.status : 'enabled' as const
-        };
-
         if (isEditing) {
-          // 更新现有港口
+          // 海港编辑时只更新可编辑字段（关联航线和关联码头）
+          const updatedPortData: SeaPort = {
+            ...(currentPort as SeaPort),
+            relatedRoutes: values.relatedRoutes || [],
+            relatedTerminals: values.relatedTerminals || []
+          };
+
           setSeaPortData(prev => prev.map(port => 
-            port.id === currentPort?.id ? { ...port, ...portData } : port
+            port.id === currentPort?.id ? updatedPortData : port
           ));
           setFilteredData(prev => prev.map(port => 
-            port.id === currentPort?.id ? { ...port, ...portData } : port
+            port.id === currentPort?.id ? updatedPortData : port
           ));
           Message.success('港口信息已更新');
         } else {
-          // 新增港口
+          // 新增港口时使用所有字段
+          const portData = {
+            ...values,
+            relatedRoutes: values.relatedRoutes || [],
+            relatedTerminals: values.relatedTerminals || [],
+            id: Date.now().toString(),
+            ediCodes: [],
+            status: 'enabled' as const
+          };
+
           const newPort = { ...portData, id: Date.now().toString(), ediCodes: [] };
           setSeaPortData(prev => [...prev, newPort]);
           setFilteredData(prev => [...prev, newPort]);
           Message.success('港口已添加');
         }
       } else if (activeTab === 'airport') {
-        const airportData = {
-          ...values,
-          relatedRoutes: values.relatedRoutes || [],
-          id: isEditing ? currentPort?.id : Date.now().toString(),
-          ediCodes: isEditing ? currentPort?.ediCodes || [] : [],
-          status: isEditing ? currentPort?.status : 'enabled' as const
-        };
-
         if (isEditing) {
-          // 更新现有机场
+          // 空港编辑时只更新可编辑字段（关联航线）
+          const updatedAirportData: Airport = {
+            ...(currentPort as Airport),
+            relatedRoutes: values.relatedRoutes || []
+          };
+
           setAirportData(prev => prev.map(airport => 
-            airport.id === currentPort?.id ? { ...airport, ...airportData } : airport
+            airport.id === currentPort?.id ? updatedAirportData : airport
           ));
           setFilteredAirportData(prev => prev.map(airport => 
-            airport.id === currentPort?.id ? { ...airport, ...airportData } : airport
+            airport.id === currentPort?.id ? updatedAirportData : airport
           ));
           Message.success('机场信息已更新');
         } else {
-          // 新增机场
+          // 新增机场时使用所有字段
+          const airportData = {
+            ...values,
+            relatedRoutes: values.relatedRoutes || [],
+            id: Date.now().toString(),
+            ediCodes: [],
+            status: 'enabled' as const
+          };
+
           const newAirport = { ...airportData, id: Date.now().toString(), ediCodes: [] };
           setAirportData(prev => [...prev, newAirport]);
           setFilteredAirportData(prev => [...prev, newAirport]);
@@ -947,8 +1328,133 @@ const PortManagement: React.FC = () => {
     setEdiModalVisible(true);
   };
 
+  // 搜索选择弹窗相关功能
+  // 处理港口库搜索
+  const handlePortLibrarySearch = () => {
+    let filtered = portLibraryData.filter(port => 
+      !seaPortData.some(existingPort => existingPort.id === port.id)
+    );
+
+    // 关键词搜索
+    if (addSearchParams.keyword) {
+      filtered = filtered.filter(port => 
+        port.portNameEn.toLowerCase().includes(addSearchParams.keyword.toLowerCase()) ||
+        port.portNameCn.includes(addSearchParams.keyword) ||
+        port.unLocation.toLowerCase().includes(addSearchParams.keyword.toLowerCase())
+      );
+    }
+
+    // 国家筛选
+    if (addSearchParams.country) {
+      filtered = filtered.filter(port => port.country === addSearchParams.country);
+    }
+
+    // 基港筛选
+    if (addSearchParams.isBasePort) {
+      filtered = filtered.filter(port => 
+        port.isBasePort === (addSearchParams.isBasePort === 'true')
+      );
+    }
+
+    setFilteredPortLibrary(filtered);
+  };
+
+  // 重置港口库搜索
+  const handlePortLibraryReset = () => {
+    setAddSearchParams({ keyword: '', country: '', isBasePort: '' });
+    const availablePorts = portLibraryData.filter(port => 
+      !seaPortData.some(existingPort => existingPort.id === port.id)
+    );
+    setFilteredPortLibrary(availablePorts);
+  };
+
+  // 确认添加选中的港口
+  const handleConfirmAddPorts = () => {
+    if (selectedPortIds.length === 0) {
+      Message.warning('请选择要添加的港口');
+      return;
+    }
+
+    const portsToAdd = portLibraryData.filter(port => selectedPortIds.includes(port.id));
+    
+    // 添加到海港数据中
+    setSeaPortData(prev => [...prev, ...portsToAdd]);
+    setFilteredData(prev => [...prev, ...portsToAdd]);
+    
+    setAddPortModalVisible(false);
+    setSelectedPortIds([]);
+    Message.success(`成功添加 ${portsToAdd.length} 个海港`);
+  };
+
+  // 空港搜索选择弹窗相关功能
+  // 处理机场库搜索
+  const handleAirportLibrarySearch = () => {
+    let filtered = airportLibraryData.filter(airport => 
+      !airportData.some(existingAirport => existingAirport.id === airport.id)
+    );
+
+    // 关键词搜索
+    if (addAirportSearchParams.keyword) {
+      filtered = filtered.filter(airport => 
+        airport.portNameEn.toLowerCase().includes(addAirportSearchParams.keyword.toLowerCase()) ||
+        airport.portNameCn.includes(addAirportSearchParams.keyword) ||
+        airport.iataCode.toLowerCase().includes(addAirportSearchParams.keyword.toLowerCase())
+      );
+    }
+
+    // 国家筛选
+    if (addAirportSearchParams.country) {
+      filtered = filtered.filter(airport => airport.country === addAirportSearchParams.country);
+    }
+
+    setFilteredAirportLibrary(filtered);
+  };
+
+  // 重置机场库搜索
+  const handleAirportLibraryReset = () => {
+    setAddAirportSearchParams({ keyword: '', country: '' });
+    const availableAirports = airportLibraryData.filter(airport => 
+      !airportData.some(existingAirport => existingAirport.id === airport.id)
+    );
+    setFilteredAirportLibrary(availableAirports);
+  };
+
+  // 确认添加选中的机场
+  const handleConfirmAddAirports = () => {
+    if (selectedAirportIds.length === 0) {
+      Message.warning('请选择要添加的机场');
+      return;
+    }
+
+    const airportsToAdd = airportLibraryData.filter(airport => selectedAirportIds.includes(airport.id));
+    
+    // 添加到空港数据中
+    setAirportData(prev => [...prev, ...airportsToAdd]);
+    setFilteredAirportData(prev => [...prev, ...airportsToAdd]);
+    
+    setAddAirportModalVisible(false);
+    setSelectedAirportIds([]);
+    Message.success(`成功添加 ${airportsToAdd.length} 个空港`);
+  };
+
   return (
     <Card>
+      {/* 强制表头不换行样式 */}
+      <style>{`
+        .arco-table-th {
+          white-space: nowrap !important;
+        }
+        .arco-table-th .arco-table-th-item {
+          white-space: nowrap !important;
+        }
+        .arco-table-th .arco-table-cell-text {
+          white-space: nowrap !important;
+        }
+        .arco-table-th .arco-table-cell {
+          white-space: nowrap !important;
+        }
+      `}</style>
+      
       <div style={{ marginBottom: '20px' }}>
         <Title heading={4} style={{ margin: 0 }}>港口管理</Title>
       </div>
@@ -1048,7 +1554,7 @@ const PortManagement: React.FC = () => {
             columns={seaPortColumns}
             data={filteredData}
             rowKey="id"
-            scroll={{ x: 1940 }}
+            scroll={{ x: 2140 }}
             pagination={{
               pageSize: 10,
               showTotal: true,
@@ -1137,7 +1643,7 @@ const PortManagement: React.FC = () => {
             columns={airportColumns}
             data={filteredAirportData}
             rowKey="id"
-            scroll={{ x: 1600 }}
+            scroll={{ x: 1750 }}
             pagination={{
               pageSize: 10,
               showTotal: true,
@@ -1172,121 +1678,289 @@ const PortManagement: React.FC = () => {
         onCancel={() => setEditModalVisible(false)}
         style={{ width: 800 }}
       >
-        <Form form={editForm} layout="vertical">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            <Form.Item
-              field="portNameEn"
-              label={activeTab === 'seaport' ? '港口全称（英文）' : '机场全称（英文）'}
-              rules={[{ required: true, message: activeTab === 'seaport' ? '请输入港口英文名称' : '请输入机场英文名称' }]}
-            >
-              <Input placeholder={activeTab === 'seaport' ? '请输入港口英文名称' : '请输入机场英文名称'} />
-            </Form.Item>
-            
-            <Form.Item
-              field="portNameCn"
-              label={activeTab === 'seaport' ? '港口全称（中文）' : '机场全称（中文）'}
-              rules={[{ required: true, message: activeTab === 'seaport' ? '请输入港口中文名称' : '请输入机场中文名称' }]}
-            >
-              <Input placeholder={activeTab === 'seaport' ? '请输入港口中文名称' : '请输入机场中文名称'} />
-            </Form.Item>
-            
-            {activeTab === 'seaport' ? (
-              <Form.Item
-                field="unLocation"
-                label="UN Location"
-                rules={[{ required: true, message: '请输入UN Location' }]}
-              >
-                <Input placeholder="请输入UN Location代码" />
-              </Form.Item>
-            ) : (
-              <Form.Item
-                field="iataCode"
-                label="IATA代码"
-                rules={[{ required: true, message: '请输入IATA代码' }]}
-              >
-                <Input placeholder="请输入IATA代码，如：PVG" />
-              </Form.Item>
-            )}
-            
-            <Form.Item
-              field="country"
-              label="国家（地区）"
-              rules={[{ required: true, message: '请选择国家' }]}
-            >
-              <Select placeholder="请选择国家">
-                {countryOptions.map(option => (
-                  <Option key={option.value} value={option.value}>{option.label}</Option>
-                ))}
-              </Select>
-            </Form.Item>
-            
-            <Form.Item
-              field="amsPortCode"
-              label="AMS港口代码"
-              rules={[{ required: true, message: '请输入AMS港口代码' }]}
-            >
-              <Input placeholder="请输入AMS港口代码" />
-            </Form.Item>
-            
-            <Form.Item
-              field="longitude"
-              label="经度"
-              rules={[{ required: true, message: '请输入经度' }]}
-            >
-              <Input placeholder="请输入经度，如：121.4737" />
-            </Form.Item>
-            
-            <Form.Item
-              field="latitude"
-              label="纬度"
-              rules={[{ required: true, message: '请输入纬度' }]}
-            >
-              <Input placeholder="请输入纬度，如：31.2304" />
-            </Form.Item>
-          </div>
-          
-          <Form.Item
-            field="relatedRoutes"
-            label="关联航线"
-          >
-            <Select
-              placeholder="请选择关联航线"
-              mode="multiple"
-              allowClear
-            >
-              {routeOptions.map(option => (
-                <Option key={option.value} value={option.value}>{option.label}</Option>
-              ))}
-            </Select>
-          </Form.Item>
-          
-          {activeTab === 'seaport' && (
-            <>
-              <Form.Item
-                field="relatedTerminals"
-                label="关联码头"
-              >
-                <Select
-                  placeholder="请选择关联码头"
-                  mode="multiple"
-                  allowClear
+        {/* 海港编辑时使用只读 + 可编辑混合模式 */}
+        {activeTab === 'seaport' && isEditing ? (
+          <div>
+            {/* 基本信息展示（只读） */}
+            <div style={{ marginBottom: '24px' }}>
+              <Typography.Title heading={6} style={{ marginBottom: '16px', color: '#1D2129' }}>
+                基本信息
+              </Typography.Title>
+              <Descriptions 
+                column={2} 
+                labelStyle={{ fontWeight: 'bold', color: '#4E5969' }}
+                valueStyle={{ color: '#1D2129' }}
+                data={[
+                  {
+                    label: '港口全称（英文）',
+                    value: currentPort?.portNameEn || '-'
+                  },
+                  {
+                    label: '港口全称（中文）',
+                    value: currentPort?.portNameCn || '-'
+                  },
+                  {
+                    label: 'UN Location',
+                    value: (currentPort as SeaPort)?.unLocation || '-'
+                  },
+                  {
+                    label: '国家（地区）',
+                    value: (() => {
+                      const countryOption = countryOptions.find(option => option.value === currentPort?.country);
+                      return countryOption ? countryOption.label : currentPort?.country || '-';
+                    })()
+                  },
+                  {
+                    label: 'AMS港口代码',
+                    value: (currentPort as SeaPort)?.amsPortCode || '-'
+                  },
+                  {
+                    label: '经度',
+                    value: currentPort?.longitude || '-'
+                  },
+                  {
+                    label: '纬度',
+                    value: currentPort?.latitude || '-'
+                  },
+                  {
+                    label: '是否基港',
+                    value: (
+                      <Tag color={(currentPort as SeaPort)?.isBasePort ? 'green' : 'gray'}>
+                        {(currentPort as SeaPort)?.isBasePort ? '是' : '否'}
+                      </Tag>
+                    )
+                  }
+                ]}
+              />
+            </div>
+
+            {/* 可编辑字段 */}
+            <div style={{ marginBottom: '16px' }}>
+              <Typography.Title heading={6} style={{ marginBottom: '16px', color: '#1D2129' }}>
+                可编辑信息
+              </Typography.Title>
+              <Form form={editForm} layout="vertical">
+                <Form.Item
+                  field="relatedRoutes"
+                  label="关联航线"
                 >
-                  {terminalOptions.map(option => (
+                  <Select
+                    placeholder="请选择关联航线"
+                    mode="multiple"
+                    allowClear
+                  >
+                    {routeOptions.map(option => (
+                      <Option key={option.value} value={option.value}>{option.label}</Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+                
+                <Form.Item
+                  field="relatedTerminals"
+                  label="关联码头"
+                >
+                  <Select
+                    placeholder="请选择关联码头"
+                    mode="multiple"
+                    allowClear
+                  >
+                    {terminalOptions.map(option => (
+                      <Option key={option.value} value={option.value}>{option.label}</Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Form>
+            </div>
+          </div>
+        ) : activeTab === 'airport' && isEditing ? (
+          /* 空港编辑时使用只读 + 可编辑混合模式 */
+          <div>
+            {/* 基本信息展示（只读） */}
+            <div style={{ marginBottom: '24px' }}>
+              <Typography.Title heading={6} style={{ marginBottom: '16px', color: '#1D2129' }}>
+                基本信息
+              </Typography.Title>
+              <Descriptions 
+                column={2} 
+                labelStyle={{ fontWeight: 'bold', color: '#4E5969' }}
+                valueStyle={{ color: '#1D2129' }}
+                data={[
+                  {
+                    label: '机场全称（英文）',
+                    value: currentPort?.portNameEn || '-'
+                  },
+                  {
+                    label: '机场全称（中文）',
+                    value: currentPort?.portNameCn || '-'
+                  },
+                  {
+                    label: 'IATA代码',
+                    value: (currentPort as Airport)?.iataCode || '-'
+                  },
+                  {
+                    label: '国家（地区）',
+                    value: (() => {
+                      const countryOption = countryOptions.find(option => option.value === currentPort?.country);
+                      return countryOption ? countryOption.label : currentPort?.country || '-';
+                    })()
+                  },
+                  {
+                    label: 'AMS港口代码',
+                    value: (currentPort as Airport)?.amsPortCode || '-'
+                  },
+                  {
+                    label: '经度',
+                    value: currentPort?.longitude || '-'
+                  },
+                  {
+                    label: '纬度',
+                    value: currentPort?.latitude || '-'
+                  }
+                ]}
+              />
+            </div>
+
+            {/* 可编辑字段 */}
+            <div style={{ marginBottom: '16px' }}>
+              <Typography.Title heading={6} style={{ marginBottom: '16px', color: '#1D2129' }}>
+                可编辑信息
+              </Typography.Title>
+              <Form form={editForm} layout="vertical">
+                <Form.Item
+                  field="relatedRoutes"
+                  label="关联航线"
+                >
+                  <Select
+                    placeholder="请选择关联航线"
+                    mode="multiple"
+                    allowClear
+                  >
+                    {routeOptions.map(option => (
+                      <Option key={option.value} value={option.value}>{option.label}</Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Form>
+            </div>
+          </div>
+        ) : (
+          /* 新增时使用原来的表单模式 */
+          <Form form={editForm} layout="vertical">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <Form.Item
+                field="portNameEn"
+                label={activeTab === 'seaport' ? '港口全称（英文）' : '机场全称（英文）'}
+                rules={[{ required: true, message: activeTab === 'seaport' ? '请输入港口英文名称' : '请输入机场英文名称' }]}
+              >
+                <Input placeholder={activeTab === 'seaport' ? '请输入港口英文名称' : '请输入机场英文名称'} />
+              </Form.Item>
+              
+              <Form.Item
+                field="portNameCn"
+                label={activeTab === 'seaport' ? '港口全称（中文）' : '机场全称（中文）'}
+                rules={[{ required: true, message: activeTab === 'seaport' ? '请输入港口中文名称' : '请输入机场中文名称' }]}
+              >
+                <Input placeholder={activeTab === 'seaport' ? '请输入港口中文名称' : '请输入机场中文名称'} />
+              </Form.Item>
+              
+              {activeTab === 'seaport' ? (
+                <Form.Item
+                  field="unLocation"
+                  label="UN Location"
+                  rules={[{ required: true, message: '请输入UN Location' }]}
+                >
+                  <Input placeholder="请输入UN Location代码" />
+                </Form.Item>
+              ) : (
+                <Form.Item
+                  field="iataCode"
+                  label="IATA代码"
+                  rules={[{ required: true, message: '请输入IATA代码' }]}
+                >
+                  <Input placeholder="请输入IATA代码，如：PVG" />
+                </Form.Item>
+              )}
+              
+              <Form.Item
+                field="country"
+                label="国家（地区）"
+                rules={[{ required: true, message: '请选择国家' }]}
+              >
+                <Select placeholder="请选择国家">
+                  {countryOptions.map(option => (
                     <Option key={option.value} value={option.value}>{option.label}</Option>
                   ))}
                 </Select>
               </Form.Item>
               
               <Form.Item
-                field="isBasePort"
-                label="是否基港"
-                triggerPropName="checked"
+                field="amsPortCode"
+                label="AMS港口代码"
+                rules={[{ required: true, message: '请输入AMS港口代码' }]}
               >
-                <Switch />
+                <Input placeholder="请输入AMS港口代码" />
               </Form.Item>
-            </>
-          )}
-        </Form>
+              
+              <Form.Item
+                field="longitude"
+                label="经度"
+                rules={[{ required: true, message: '请输入经度' }]}
+              >
+                <Input placeholder="请输入经度，如：121.4737" />
+              </Form.Item>
+              
+              <Form.Item
+                field="latitude"
+                label="纬度"
+                rules={[{ required: true, message: '请输入纬度' }]}
+              >
+                <Input placeholder="请输入纬度，如：31.2304" />
+              </Form.Item>
+            </div>
+            
+            <Form.Item
+              field="relatedRoutes"
+              label="关联航线"
+            >
+              <Select
+                placeholder="请选择关联航线"
+                mode="multiple"
+                allowClear
+              >
+                {routeOptions.map(option => (
+                  <Option key={option.value} value={option.value}>{option.label}</Option>
+                ))}
+              </Select>
+            </Form.Item>
+            
+            {activeTab === 'seaport' && (
+              <>
+                <Form.Item
+                  field="relatedTerminals"
+                  label="关联码头"
+                >
+                  <Select
+                    placeholder="请选择关联码头"
+                    mode="multiple"
+                    allowClear
+                  >
+                    {terminalOptions.map(option => (
+                      <Option key={option.value} value={option.value}>{option.label}</Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+                
+                <Form.Item
+                  field="isBasePort"
+                  label="是否基港"
+                  triggerPropName="checked"
+                >
+                  <Switch />
+                </Form.Item>
+              </>
+            )}
+          </Form>
+        )}
       </Modal>
 
       {/* EDI代码设置弹窗 */}
@@ -1357,6 +2031,285 @@ const PortManagement: React.FC = () => {
           </Form.List>
         </Form>
       </Modal>
+
+      {/* 新增海港搜索选择弹窗 */}
+      <Modal
+        title="新增海港"
+        visible={addPortModalVisible}
+        onOk={handleConfirmAddPorts}
+        onCancel={() => setAddPortModalVisible(false)}
+        style={{ width: 1000 }}
+        okText="确认增加"
+        cancelText="取消"
+      >
+        {/* 搜索筛选区域 */}
+        <Card style={{ marginBottom: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr auto', gap: '16px', alignItems: 'flex-end' }}>
+            <div>
+              <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>关键词搜索</div>
+              <Input
+                placeholder="港口名称、UN Location"
+                value={addSearchParams.keyword}
+                onChange={(value) => setAddSearchParams(prev => ({ ...prev, keyword: value }))}
+              />
+            </div>
+            <div>
+              <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>国家地区</div>
+              <Select
+                placeholder="选择国家"
+                value={addSearchParams.country}
+                onChange={(value) => setAddSearchParams(prev => ({ ...prev, country: value }))}
+                allowClear
+              >
+                {countryOptions.map(option => (
+                  <Option key={option.value} value={option.value}>{option.label}</Option>
+                ))}
+              </Select>
+            </div>
+            <div>
+              <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>是否基港</div>
+              <Select
+                placeholder="选择"
+                value={addSearchParams.isBasePort}
+                onChange={(value) => setAddSearchParams(prev => ({ ...prev, isBasePort: value }))}
+                allowClear
+              >
+                <Option value="true">是</Option>
+                <Option value="false">否</Option>
+              </Select>
+            </div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <Button type="primary" icon={<IconSearch />} onClick={handlePortLibrarySearch}>
+                搜索
+              </Button>
+              <Button icon={<IconRefresh />} onClick={handlePortLibraryReset}>
+                重置
+              </Button>
+            </div>
+          </div>
+        </Card>
+
+        {/* 港口选择表格 */}
+        <div style={{ marginBottom: '16px' }}>
+          <div style={{ fontSize: '14px', color: '#666', marginBottom: '8px' }}>
+            已选择 {selectedPortIds.length} 个港口，共 {filteredPortLibrary.length} 个可选港口
+          </div>
+        </div>
+        
+        <Table
+          rowKey="id"
+          data={filteredPortLibrary}
+          pagination={{
+            pageSize: 8,
+            showTotal: true,
+            showJumper: true,
+            sizeCanChange: false,
+          }}
+          scroll={{ x: 800, y: 400 }}
+          columns={[
+            {
+              title: (
+                <Checkbox
+                  indeterminate={selectedPortIds.length > 0 && selectedPortIds.length < filteredPortLibrary.length}
+                  checked={selectedPortIds.length === filteredPortLibrary.length && filteredPortLibrary.length > 0}
+                  onChange={(checked) => {
+                    if (checked) {
+                      setSelectedPortIds(filteredPortLibrary.map(item => item.id));
+                    } else {
+                      setSelectedPortIds([]);
+                    }
+                  }}
+                />
+              ),
+              dataIndex: 'checkbox',
+              width: 60,
+              render: (_: any, record: SeaPort) => (
+                <Checkbox
+                  checked={selectedPortIds.includes(record.id)}
+                  onChange={(checked) => {
+                    if (checked) {
+                      setSelectedPortIds([...selectedPortIds, record.id]);
+                    } else {
+                      setSelectedPortIds(selectedPortIds.filter(id => id !== record.id));
+                    }
+                  }}
+                />
+              ),
+            },
+            {
+              title: '港口全称（英文）',
+              dataIndex: 'portNameEn',
+              width: 200,
+            },
+            {
+              title: '港口全称（中文）',
+              dataIndex: 'portNameCn',
+              width: 150,
+            },
+            {
+              title: 'UN Location',
+              dataIndex: 'unLocation',
+              width: 120,
+            },
+            {
+              title: '国家（地区）',
+              dataIndex: 'country',
+              width: 120,
+              render: (country: string) => {
+                const countryOption = countryOptions.find(option => option.value === country);
+                return countryOption ? countryOption.label : country;
+              }
+            },
+            {
+              title: '是否基港',
+              dataIndex: 'isBasePort',
+              width: 100,
+              render: (isBasePort: boolean) => (
+                <Tag color={isBasePort ? 'green' : 'gray'}>
+                  {isBasePort ? '是' : '否'}
+                </Tag>
+              ),
+            },
+          ]}
+                 />
+       </Modal>
+
+       {/* 新增空港搜索选择弹窗 */}
+       <Modal
+         title="新增空港"
+         visible={addAirportModalVisible}
+         onOk={handleConfirmAddAirports}
+         onCancel={() => setAddAirportModalVisible(false)}
+         style={{ width: 1000 }}
+         okText="确认增加"
+         cancelText="取消"
+       >
+         {/* 搜索筛选区域 */}
+         <Card style={{ marginBottom: '16px' }}>
+           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: '16px', alignItems: 'flex-end' }}>
+             <div>
+               <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>关键词搜索</div>
+               <Input
+                 placeholder="机场名称、IATA代码"
+                 value={addAirportSearchParams.keyword}
+                 onChange={(value) => setAddAirportSearchParams(prev => ({ ...prev, keyword: value }))}
+               />
+             </div>
+             <div>
+               <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>国家地区</div>
+               <Select
+                 placeholder="选择国家"
+                 value={addAirportSearchParams.country}
+                 onChange={(value) => setAddAirportSearchParams(prev => ({ ...prev, country: value }))}
+                 allowClear
+               >
+                 {countryOptions.map(option => (
+                   <Option key={option.value} value={option.value}>{option.label}</Option>
+                 ))}
+               </Select>
+             </div>
+             <div style={{ display: 'flex', gap: '8px' }}>
+               <Button type="primary" icon={<IconSearch />} onClick={handleAirportLibrarySearch}>
+                 搜索
+               </Button>
+               <Button icon={<IconRefresh />} onClick={handleAirportLibraryReset}>
+                 重置
+               </Button>
+             </div>
+           </div>
+         </Card>
+
+         {/* 机场选择表格 */}
+         <div style={{ marginBottom: '16px' }}>
+           <div style={{ fontSize: '14px', color: '#666', marginBottom: '8px' }}>
+             已选择 {selectedAirportIds.length} 个机场，共 {filteredAirportLibrary.length} 个可选机场
+           </div>
+         </div>
+         
+         <Table
+           rowKey="id"
+           data={filteredAirportLibrary}
+           pagination={{
+             pageSize: 8,
+             showTotal: true,
+             showJumper: true,
+             sizeCanChange: false,
+           }}
+           scroll={{ x: 800, y: 400 }}
+           columns={[
+             {
+               title: (
+                 <Checkbox
+                   indeterminate={selectedAirportIds.length > 0 && selectedAirportIds.length < filteredAirportLibrary.length}
+                   checked={selectedAirportIds.length === filteredAirportLibrary.length && filteredAirportLibrary.length > 0}
+                   onChange={(checked) => {
+                     if (checked) {
+                       setSelectedAirportIds(filteredAirportLibrary.map(item => item.id));
+                     } else {
+                       setSelectedAirportIds([]);
+                     }
+                   }}
+                 />
+               ),
+               dataIndex: 'checkbox',
+               width: 60,
+               render: (_: any, record: Airport) => (
+                 <Checkbox
+                   checked={selectedAirportIds.includes(record.id)}
+                   onChange={(checked) => {
+                     if (checked) {
+                       setSelectedAirportIds([...selectedAirportIds, record.id]);
+                     } else {
+                       setSelectedAirportIds(selectedAirportIds.filter(id => id !== record.id));
+                     }
+                   }}
+                 />
+               ),
+             },
+             {
+               title: '机场全称（英文）',
+               dataIndex: 'portNameEn',
+               width: 200,
+             },
+             {
+               title: '机场全称（中文）',
+               dataIndex: 'portNameCn',
+               width: 150,
+             },
+             {
+               title: 'IATA代码',
+               dataIndex: 'iataCode',
+               width: 120,
+             },
+             {
+               title: '国家（地区）',
+               dataIndex: 'country',
+               width: 120,
+               render: (country: string) => {
+                 const countryOption = countryOptions.find(option => option.value === country);
+                 return countryOption ? countryOption.label : country;
+               }
+             },
+             {
+               title: '关联航线',
+               dataIndex: 'relatedRoutes',
+               width: 200,
+               render: (routes: string[]) => (
+                 <Space wrap>
+                   {routes.map((route, index) => {
+                     const routeOption = routeOptions.find(option => option.value === route);
+                     return (
+                       <Tag key={index} color="blue">
+                         {routeOption ? routeOption.label : route}
+                       </Tag>
+                     );
+                   })}
+                 </Space>
+               ),
+             },
+           ]}
+         />
+       </Modal>
     </Card>
   );
 };

@@ -16,7 +16,6 @@ import {
 } from '@arco-design/web-react';
 import {
   IconPlus,
-  IconEdit,
   IconSearch,
   IconRefresh
 } from '@arco-design/web-react/icon';
@@ -55,19 +54,96 @@ interface SearchParams {
   status: string;
 }
 
+// 船舶代理数据库
+const SHIP_AGENT_DATABASE: ShipAgent[] = [
+  // 青岛港代理
+  { id: 'agent_1', agentName: '青岛中远海代', ediCode: '', agentPort: '青岛', shortNameEn: 'QDCOSCON', status: 'enabled' },
+  { id: 'agent_2', agentName: '青岛中联运通', ediCode: '', agentPort: '青岛', shortNameEn: 'QDUNITRANS', status: 'enabled' },
+  { id: 'agent_3', agentName: '青岛中和海德', ediCode: '', agentPort: '青岛', shortNameEn: 'QDZHSD', status: 'enabled' },
+  { id: 'agent_4', agentName: '青岛振华货代', ediCode: '', agentPort: '青岛', shortNameEn: 'QDCIMC', status: 'enabled' },
+  { id: 'agent_5', agentName: '中创物流', ediCode: '', agentPort: '青岛', shortNameEn: 'QDCML', status: 'enabled' },
+  { id: 'agent_6', agentName: '中外运敦代', ediCode: '', agentPort: '青岛', shortNameEn: 'QDSINOAGENT', status: 'enabled' },
+  { id: 'agent_7', agentName: '青港货运', ediCode: '', agentPort: '青岛', shortNameEn: 'QDPORT', status: 'enabled' },
+  { id: 'agent_8', agentName: '青岛东方海外', ediCode: '', agentPort: '青岛', shortNameEn: 'QDOOCL', status: 'enabled' },
+  { id: 'agent_9', agentName: '青岛联合', ediCode: '', agentPort: '青岛', shortNameEn: 'QDUNISCO', status: 'enabled' },
+  { id: 'agent_10', agentName: '青岛华港', ediCode: '', agentPort: '青岛', shortNameEn: 'QDCHINAPORT', status: 'enabled' },
+  { id: 'agent_11', agentName: '青岛海丰', ediCode: '', agentPort: '青岛', shortNameEn: 'QDSITC', status: 'enabled' },
+  { id: 'agent_12', agentName: '青岛外代', ediCode: '', agentPort: '青岛', shortNameEn: 'QDPENOVICO', status: 'enabled' },
+  
+  // 上海港代理
+  { id: 'agent_13', agentName: '上海中远海', ediCode: '', agentPort: '上海', shortNameEn: 'SHCOSCON', status: 'enabled' },
+  { id: 'agent_14', agentName: '上海联东', ediCode: '717883154', agentPort: '上海', shortNameEn: 'SHLINDO', status: 'enabled' },
+  { id: 'agent_15', agentName: '上海东方海外', ediCode: 'OOCL', agentPort: '上海', shortNameEn: 'SHOOCL', status: 'enabled' },
+  { id: 'agent_16', agentName: '上海锦江', ediCode: '', agentPort: '上海', shortNameEn: 'SHJI', status: 'enabled' },
+  { id: 'agent_17', agentName: '上海振华', ediCode: '', agentPort: '上海', shortNameEn: 'SHCIMC', status: 'enabled' },
+  { id: 'agent_18', agentName: '上海中联', ediCode: 'MA1G5D/T4', agentPort: '上海', shortNameEn: 'SHUNITRANS', status: 'enabled' },
+  { id: 'agent_19', agentName: '上海鹏海', ediCode: '717859429', agentPort: '上海', shortNameEn: 'SHPH', status: 'enabled' },
+  { id: 'agent_20', agentName: '上海嘉华', ediCode: '71785140-0', agentPort: '上海', shortNameEn: 'SHWALLEM', status: 'enabled' },
+  { id: 'agent_21', agentName: '上海民生', ediCode: '132230158', agentPort: '上海', shortNameEn: 'SHMS', status: 'enabled' },
+  { id: 'agent_22', agentName: '上海外代', ediCode: 'PENAVICO', agentPort: '上海', shortNameEn: 'SHPENAVICO', status: 'enabled' },
+  { id: 'agent_23', agentName: '上海中外运', ediCode: 'SINOTRANS', agentPort: '上海', shortNameEn: 'SHSINOTRANS', status: 'enabled' },
+  
+  // 宁波港代理
+  { id: 'agent_24', agentName: '宁波中远海代', ediCode: '', agentPort: '宁波', shortNameEn: 'NBCOSCON', status: 'enabled' },
+  { id: 'agent_25', agentName: '宁波外代', ediCode: '', agentPort: '宁波', shortNameEn: 'NBPENAVICO', status: 'enabled' },
+  { id: 'agent_26', agentName: '宁波东方海外', ediCode: '', agentPort: '宁波', shortNameEn: 'NBOOCL', status: 'enabled' },
+  { id: 'agent_27', agentName: '宁波中联', ediCode: '', agentPort: '宁波', shortNameEn: 'NBUNITRANS', status: 'enabled' },
+  { id: 'agent_28', agentName: '宁波港信通', ediCode: '', agentPort: '宁波', shortNameEn: 'NBPORTNET', status: 'enabled' },
+  
+  // 深圳港代理
+  { id: 'agent_29', agentName: '深圳中远海代', ediCode: '', agentPort: '深圳', shortNameEn: 'SZCOSCON', status: 'enabled' },
+  { id: 'agent_30', agentName: '深圳外代', ediCode: '', agentPort: '深圳', shortNameEn: 'SZPENAVICO', status: 'enabled' },
+  { id: 'agent_31', agentName: '深圳东方海外', ediCode: '', agentPort: '深圳', shortNameEn: 'SZOOCL', status: 'enabled' },
+  { id: 'agent_32', agentName: '深圳安通捷', ediCode: '', agentPort: '深圳', shortNameEn: 'SZATJ', status: 'enabled' },
+  { id: 'agent_33', agentName: '深圳海丰', ediCode: '', agentPort: '深圳', shortNameEn: 'SZSITC', status: 'enabled' },
+  
+  // 广州港代理
+  { id: 'agent_34', agentName: '广州中远海代', ediCode: '', agentPort: '广州', shortNameEn: 'GZCOSCON', status: 'enabled' },
+  { id: 'agent_35', agentName: '广州外代', ediCode: '', agentPort: '广州', shortNameEn: 'GZPENAVICO', status: 'enabled' },
+  { id: 'agent_36', agentName: '广州东方海外', ediCode: '', agentPort: '广州', shortNameEn: 'GZOOCL', status: 'enabled' },
+  { id: 'agent_37', agentName: '广州港代', ediCode: '', agentPort: '广州', shortNameEn: 'GZPORT', status: 'enabled' },
+  
+  // 天津港代理
+  { id: 'agent_38', agentName: '天津中远海代', ediCode: '', agentPort: '天津', shortNameEn: 'TJCOSCON', status: 'enabled' },
+  { id: 'agent_39', agentName: '天津外代', ediCode: '', agentPort: '天津', shortNameEn: 'TJPENAVICO', status: 'enabled' },
+  { id: 'agent_40', agentName: '天津东方海外', ediCode: '', agentPort: '天津', shortNameEn: 'TJOOCL', status: 'enabled' },
+  { id: 'agent_41', agentName: '天津港代', ediCode: '', agentPort: '天津', shortNameEn: 'TJPORT', status: 'enabled' },
+  
+  // 大连港代理
+  { id: 'agent_42', agentName: '大连中远海代', ediCode: '', agentPort: '大连', shortNameEn: 'DLCOSCON', status: 'enabled' },
+  { id: 'agent_43', agentName: '大连外代', ediCode: '', agentPort: '大连', shortNameEn: 'DLPENAVICO', status: 'enabled' },
+  { id: 'agent_44', agentName: '大连港代', ediCode: '', agentPort: '大连', shortNameEn: 'DLPORT', status: 'enabled' },
+  
+  // 厦门港代理
+  { id: 'agent_45', agentName: '厦门中远海代', ediCode: '', agentPort: '厦门', shortNameEn: 'XMCOSCON', status: 'enabled' },
+  { id: 'agent_46', agentName: '厦门外代', ediCode: '', agentPort: '厦门', shortNameEn: 'XMPENAVICO', status: 'enabled' },
+  { id: 'agent_47', agentName: '厦门海天', ediCode: '', agentPort: '厦门', shortNameEn: 'XMHT', status: 'enabled' }
+];
+
+// 添加全局样式，强制表头不换行
+const tableHeaderStyle = `
+  .arco-table-th {
+    white-space: nowrap !important;
+  }
+`;
+
 const ShipAgentManagement: React.FC = () => {
   const [shipAgents, setShipAgents] = useState<ShipAgent[]>([]);
   const [filteredData, setFilteredData] = useState<ShipAgent[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
-  const [editModalVisible, setEditModalVisible] = useState(false);
-  const [currentAgent, setCurrentAgent] = useState<ShipAgent | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const [selectModalVisible, setSelectModalVisible] = useState(false);
+  const [selectableAgents, setSelectableAgents] = useState<ShipAgent[]>([]);
+  const [selectedAgents, setSelectedAgents] = useState<string[]>([]);
   const [searchParams, setSearchParams] = useState<SearchParams>({
     keyword: '',
     agentPort: '',
     status: ''
   });
-  const [editForm] = Form.useForm();
+  const [selectSearchParams, setSelectSearchParams] = useState<SearchParams>({
+    keyword: '',
+    agentPort: '',
+    status: ''
+  });
 
   // 初始化示例数据
   useEffect(() => {
@@ -289,25 +365,62 @@ const ShipAgentManagement: React.FC = () => {
     setFilteredData(shipAgents);
   };
 
-  // 处理编辑
-  const handleEdit = (record: ShipAgent) => {
-    setCurrentAgent(record);
-    setIsEditing(true);
-    editForm.setFieldsValue({
-      agentName: record.agentName,
-      ediCode: record.ediCode,
-      agentPort: record.agentPort,
-      shortNameEn: record.shortNameEn
-    });
-    setEditModalVisible(true);
+  // 处理新增（改为选择模式）
+  const handleAdd = () => {
+    // 获取已存在的代理名称列表
+    const existingAgentNames = shipAgents.map(item => item.agentName);
+    
+    // 过滤出未添加的船舶代理
+    const available = SHIP_AGENT_DATABASE.filter(agent => 
+      !existingAgentNames.includes(agent.agentName)
+    );
+    
+    setSelectableAgents(available);
+    setSelectedAgents([]);
+    setSelectSearchParams({ keyword: '', agentPort: '', status: '' });
+    setSelectModalVisible(true);
   };
 
-  // 处理新增
-  const handleAdd = () => {
-    setCurrentAgent(null);
-    setIsEditing(false);
-    editForm.resetFields();
-    setEditModalVisible(true);
+  // 处理选择船舶代理
+  const handleSelectAgents = () => {
+    if (selectedAgents.length === 0) {
+      Message.warning('请选择至少一个船舶代理');
+      return;
+    }
+
+    const newAgents = SHIP_AGENT_DATABASE
+      .filter(agent => selectedAgents.includes(agent.id))
+      .map(agent => ({
+        ...agent,
+        id: Date.now().toString() + '_' + agent.id,
+        status: 'enabled' as const
+      }));
+
+    setShipAgents(prev => [...prev, ...newAgents]);
+    filterData([...shipAgents, ...newAgents]);
+    
+    setSelectModalVisible(false);
+    Message.success(`已添加 ${newAgents.length} 个船舶代理`);
+  };
+
+  // 筛选可选择的船舶代理
+  const filterSelectableAgents = () => {
+    let filtered = [...selectableAgents];
+    
+    if (selectSearchParams.keyword) {
+      filtered = filtered.filter(item => 
+        item.agentName.toLowerCase().includes(selectSearchParams.keyword.toLowerCase()) ||
+        item.ediCode.toLowerCase().includes(selectSearchParams.keyword.toLowerCase()) ||
+        item.shortNameEn.toLowerCase().includes(selectSearchParams.keyword.toLowerCase()) ||
+        item.agentPort.toLowerCase().includes(selectSearchParams.keyword.toLowerCase())
+      );
+    }
+
+    if (selectSearchParams.agentPort) {
+      filtered = filtered.filter(item => item.agentPort === selectSearchParams.agentPort);
+    }
+
+    return filtered;
   };
 
   // 处理状态切换
@@ -352,38 +465,6 @@ const ShipAgentManagement: React.FC = () => {
     Message.success(`已禁用 ${selectedRowKeys.length} 个船舶代理`);
   };
 
-  // 保存船舶代理编辑
-  const handleSaveAgent = async () => {
-    try {
-      const values = await editForm.validate();
-      
-      const agentItem = {
-        ...values,
-        id: isEditing ? currentAgent?.id : Date.now().toString(),
-        status: isEditing ? currentAgent?.status : 'enabled' as const
-      };
-
-      if (isEditing) {
-        // 更新现有船舶代理
-        setShipAgents(prev => prev.map(item => 
-          item.id === currentAgent?.id ? { ...item, ...agentItem } : item
-        ));
-        Message.success('船舶代理信息已更新');
-      } else {
-        // 新增船舶代理
-        const newAgent = { ...agentItem, id: Date.now().toString() } as ShipAgent;
-        setShipAgents(prev => [...prev, newAgent]);
-        Message.success('船舶代理已添加');
-      }
-
-      setEditModalVisible(false);
-      editForm.resetFields();
-      filterData();
-    } catch (error) {
-      console.error('保存失败:', error);
-    }
-  };
-
   // 表格列配置
   const columns = [
     {
@@ -418,27 +499,37 @@ const ShipAgentManagement: React.FC = () => {
     {
       title: '船舶代理名称',
       dataIndex: 'agentName',
-      width: 200
+      width: 200,
+      sorter: (a: ShipAgent, b: ShipAgent) => a.agentName.localeCompare(b.agentName, 'zh-CN'),
+      headerStyle: { whiteSpace: 'nowrap' }
     },
     {
       title: 'EDI代码',
       dataIndex: 'ediCode',
-      width: 150
+      width: 150,
+      sorter: (a: ShipAgent, b: ShipAgent) => a.ediCode.localeCompare(b.ediCode),
+      headerStyle: { whiteSpace: 'nowrap' }
     },
     {
       title: '船舶代理港口',
       dataIndex: 'agentPort',
-      width: 150
+      width: 150,
+      sorter: (a: ShipAgent, b: ShipAgent) => a.agentPort.localeCompare(b.agentPort, 'zh-CN'),
+      headerStyle: { whiteSpace: 'nowrap' }
     },
     {
       title: '简称(英文)',
       dataIndex: 'shortNameEn',
-      width: 200
+      width: 200,
+      sorter: (a: ShipAgent, b: ShipAgent) => a.shortNameEn.localeCompare(b.shortNameEn),
+      headerStyle: { whiteSpace: 'nowrap' }
     },
     {
       title: '状态',
       dataIndex: 'status',
       width: 100,
+      sorter: (a: ShipAgent, b: ShipAgent) => a.status.localeCompare(b.status),
+      headerStyle: { whiteSpace: 'nowrap' },
       render: (_: unknown, record: ShipAgent) => (
         <Tag color={record.status === 'enabled' ? 'green' : 'red'}>
           {record.status === 'enabled' ? '启用' : '禁用'}
@@ -448,18 +539,11 @@ const ShipAgentManagement: React.FC = () => {
     {
       title: '操作',
       dataIndex: 'action',
-      width: 180,
+      width: 120,
       fixed: 'right' as const,
+      headerStyle: { whiteSpace: 'nowrap' },
       render: (_: unknown, record: ShipAgent) => (
         <Space>
-          <Button
-            type="text"
-            size="small"
-            icon={<IconEdit />}
-            onClick={() => handleEdit(record)}
-          >
-            编辑
-          </Button>
           <Popconfirm
             title={`确定要${record.status === 'enabled' ? '禁用' : '启用'}此船舶代理吗？`}
             onOk={() => handleToggleStatus(record.id, record.status)}
@@ -477,147 +561,213 @@ const ShipAgentManagement: React.FC = () => {
     }
   ];
 
+  // 选择弹窗的表格列配置
+  const selectColumns = [
+    {
+      title: (
+        <Checkbox
+          indeterminate={selectedAgents.length > 0 && selectedAgents.length < filterSelectableAgents().length}
+          checked={selectedAgents.length === filterSelectableAgents().length && filterSelectableAgents().length > 0}
+          onChange={(checked) => {
+            if (checked) {
+              setSelectedAgents(filterSelectableAgents().map(item => item.id));
+            } else {
+              setSelectedAgents([]);
+            }
+          }}
+        />
+      ),
+      dataIndex: 'checkbox',
+      width: 60,
+      render: (_: unknown, record: ShipAgent) => (
+        <Checkbox
+          checked={selectedAgents.includes(record.id)}
+          onChange={(checked) => {
+            if (checked) {
+              setSelectedAgents([...selectedAgents, record.id]);
+            } else {
+              setSelectedAgents(selectedAgents.filter(id => id !== record.id));
+            }
+          }}
+        />
+      ),
+    },
+    {
+      title: '船舶代理名称',
+      dataIndex: 'agentName',
+      width: 200,
+      sorter: (a: ShipAgent, b: ShipAgent) => a.agentName.localeCompare(b.agentName, 'zh-CN'),
+      headerStyle: { whiteSpace: 'nowrap' }
+    },
+    {
+      title: 'EDI代码',
+      dataIndex: 'ediCode',
+      width: 150,
+      sorter: (a: ShipAgent, b: ShipAgent) => a.ediCode.localeCompare(b.ediCode),
+      headerStyle: { whiteSpace: 'nowrap' }
+    },
+    {
+      title: '港口',
+      dataIndex: 'agentPort',
+      width: 100,
+      sorter: (a: ShipAgent, b: ShipAgent) => a.agentPort.localeCompare(b.agentPort, 'zh-CN'),
+      headerStyle: { whiteSpace: 'nowrap' }
+    },
+    {
+      title: '简称(英文)',
+      dataIndex: 'shortNameEn',
+      width: 150,
+      sorter: (a: ShipAgent, b: ShipAgent) => a.shortNameEn.localeCompare(b.shortNameEn),
+      headerStyle: { whiteSpace: 'nowrap' }
+    }
+  ];
+
   return (
-    <Card>
-      <div style={{ marginBottom: '20px' }}>
-        <Title heading={4} style={{ margin: 0 }}>船舶代理</Title>
-      </div>
-
-      {/* 搜索筛选区域 */}
-      <Card style={{ marginBottom: '16px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr auto', gap: '16px', alignItems: 'flex-end' }}>
-          <div>
-            <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>关键词搜索</div>
-            <Input
-              placeholder="代理名称、EDI代码、港口、简称"
-              value={searchParams.keyword}
-              onChange={(value) => setSearchParams(prev => ({ ...prev, keyword: value }))}
-            />
-          </div>
-          <div>
-            <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>港口</div>
-            <Select
-              placeholder="选择港口"
-              value={searchParams.agentPort}
-              onChange={(value) => setSearchParams(prev => ({ ...prev, agentPort: value }))}
-              allowClear
-            >
-              {portOptions.map(option => (
-                <Option key={option.value} value={option.value}>{option.label}</Option>
-              ))}
-            </Select>
-          </div>
-          <div>
-            <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>状态</div>
-            <Select
-              placeholder="选择状态"
-              value={searchParams.status}
-              onChange={(value) => setSearchParams(prev => ({ ...prev, status: value }))}
-              allowClear
-            >
-              <Option value="enabled">启用</Option>
-              <Option value="disabled">禁用</Option>
-            </Select>
-          </div>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <Button type="primary" icon={<IconSearch />} onClick={handleSearch}>
-              搜索
-            </Button>
-            <Button icon={<IconRefresh />} onClick={handleReset}>
-              重置
-            </Button>
-          </div>
+    <>
+      <style>{tableHeaderStyle}</style>
+      <Card>
+        <div style={{ marginBottom: '20px' }}>
+          <Title heading={4} style={{ margin: 0 }}>船舶代理</Title>
         </div>
-      </Card>
 
-      {/* 操作按钮区域 */}
-      <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <Button type="primary" icon={<IconPlus />} onClick={handleAdd}>
-              新增船舶代理
-            </Button>
-          </div>
-          {selectedRowKeys.length > 0 && (
-            <div style={{ 
-              display: 'flex', 
-              gap: '8px', 
-              paddingLeft: '12px', 
-              borderLeft: '1px solid #e5e6e7',
-              marginLeft: '4px'
-            }}>
-              <Button type="outline" onClick={handleBatchEnable}>
-                批量启用 ({selectedRowKeys.length})
-              </Button>
-              <Button type="outline" status="warning" onClick={handleBatchDisable}>
-                批量禁用 ({selectedRowKeys.length})
-              </Button>
+        {/* 搜索筛选区域 */}
+        <Card style={{ marginBottom: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr auto', gap: '16px', alignItems: 'flex-end' }}>
+            <div>
+              <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>关键词搜索</div>
+              <Input
+                placeholder="代理名称、EDI代码、港口、简称"
+                value={searchParams.keyword}
+                onChange={(value) => setSearchParams(prev => ({ ...prev, keyword: value }))}
+              />
             </div>
-          )}
-        </div>
-      </div>
-
-      <Table
-        columns={columns}
-        data={filteredData}
-        rowKey="id"
-        scroll={{ x: 1000 }}
-        pagination={{
-          pageSize: 10,
-          showTotal: true,
-          showJumper: true,
-          sizeCanChange: true,
-        }}
-      />
-
-      {/* 新增/编辑船舶代理弹窗 */}
-      <Modal
-        title={isEditing ? '编辑船舶代理' : '新增船舶代理'}
-        visible={editModalVisible}
-        onOk={handleSaveAgent}
-        onCancel={() => setEditModalVisible(false)}
-        style={{ width: 600 }}
-      >
-        <Form form={editForm} layout="vertical">
-          <Form.Item
-            field="agentName"
-            label="船舶代理名称"
-            rules={[{ required: true, message: '请输入船舶代理名称' }]}
-          >
-            <Input placeholder="例如：青岛中远海代" />
-          </Form.Item>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            <Form.Item
-              field="ediCode"
-              label="EDI代码"
-            >
-              <Input placeholder="例如：717883154" />
-            </Form.Item>
-            
-            <Form.Item
-              field="agentPort"
-              label="船舶代理港口"
-              rules={[{ required: true, message: '请选择港口' }]}
-            >
-              <Select placeholder="请选择港口">
+            <div>
+              <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>港口</div>
+              <Select
+                placeholder="选择港口"
+                value={searchParams.agentPort}
+                onChange={(value) => setSearchParams(prev => ({ ...prev, agentPort: value }))}
+                allowClear
+              >
                 {portOptions.map(option => (
                   <Option key={option.value} value={option.value}>{option.label}</Option>
                 ))}
               </Select>
-            </Form.Item>
+            </div>
+            <div>
+              <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>状态</div>
+              <Select
+                placeholder="选择状态"
+                value={searchParams.status}
+                onChange={(value) => setSearchParams(prev => ({ ...prev, status: value }))}
+                allowClear
+              >
+                <Option value="enabled">启用</Option>
+                <Option value="disabled">禁用</Option>
+              </Select>
+            </div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <Button type="primary" icon={<IconSearch />} onClick={handleSearch}>
+                搜索
+              </Button>
+              <Button icon={<IconRefresh />} onClick={handleReset}>
+                重置
+              </Button>
+            </div>
           </div>
-          
-          <Form.Item
-            field="shortNameEn"
-            label="简称(英文)"
-            rules={[{ required: true, message: '请输入英文简称' }]}
-          >
-            <Input placeholder="例如：QDCOSCON" />
-          </Form.Item>
-        </Form>
-      </Modal>
-    </Card>
+        </Card>
+
+        {/* 操作按钮区域 */}
+        <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <Button type="primary" icon={<IconPlus />} onClick={handleAdd}>
+                新增船舶代理
+              </Button>
+            </div>
+            {selectedRowKeys.length > 0 && (
+              <div style={{ 
+                display: 'flex', 
+                gap: '8px', 
+                paddingLeft: '12px', 
+                borderLeft: '1px solid #e5e6e7',
+                marginLeft: '4px'
+              }}>
+                <Button type="outline" onClick={handleBatchEnable}>
+                  批量启用 ({selectedRowKeys.length})
+                </Button>
+                <Button type="outline" status="warning" onClick={handleBatchDisable}>
+                  批量禁用 ({selectedRowKeys.length})
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <Table
+          columns={columns}
+          data={filteredData}
+          rowKey="id"
+          scroll={{ x: 980 }}
+          pagination={{
+            pageSize: 10,
+            showTotal: true,
+            showJumper: true,
+            sizeCanChange: true,
+          }}
+        />
+
+        {/* 选择船舶代理弹窗 */}
+        <Modal
+          title="选择船舶代理"
+          visible={selectModalVisible}
+          onOk={handleSelectAgents}
+          onCancel={() => setSelectModalVisible(false)}
+          style={{ width: 800 }}
+          okText="确定"
+          cancelText="取消"
+        >
+          {/* 搜索筛选区域 */}
+          <Card style={{ marginBottom: '16px' }}>
+            <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-end' }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>关键词搜索</div>
+                <Input
+                  placeholder="代理名称、EDI代码、港口、简称"
+                  value={selectSearchParams.keyword}
+                  onChange={(value) => setSelectSearchParams(prev => ({ ...prev, keyword: value }))}
+                />
+              </div>
+              <div style={{ width: '150px' }}>
+                <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>港口</div>
+                <Select
+                  placeholder="选择港口"
+                  value={selectSearchParams.agentPort}
+                  onChange={(value) => setSelectSearchParams(prev => ({ ...prev, agentPort: value }))}
+                  allowClear
+                >
+                  {portOptions.map(option => (
+                    <Option key={option.value} value={option.value}>{option.label}</Option>
+                  ))}
+                </Select>
+              </div>
+            </div>
+          </Card>
+
+          <Table
+            columns={selectColumns}
+            data={filterSelectableAgents()}
+            rowKey="id"
+            scroll={{ x: 760 }}
+            pagination={{
+              pageSize: 10,
+              showTotal: true,
+            }}
+            style={{ marginTop: '16px' }}
+          />
+        </Modal>
+      </Card>
+    </>
   );
 };
 

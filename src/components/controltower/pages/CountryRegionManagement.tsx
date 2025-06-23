@@ -7,7 +7,6 @@ import {
   Tag,
   Checkbox,
   Modal,
-  Form,
   Input,
   Select,
   Message,
@@ -16,7 +15,6 @@ import {
 } from '@arco-design/web-react';
 import {
   IconPlus,
-  IconEdit,
   IconSearch,
   IconRefresh
 } from '@arco-design/web-react/icon';
@@ -57,15 +55,19 @@ const CountryRegionManagement: React.FC = () => {
   const [countryData, setCountryData] = useState<CountryRegion[]>([]);
   const [filteredData, setFilteredData] = useState<CountryRegion[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
-  const [editModalVisible, setEditModalVisible] = useState(false);
-  const [currentCountry, setCurrentCountry] = useState<CountryRegion | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const [addCountryModalVisible, setAddCountryModalVisible] = useState(false);
+  const [countryLibraryData, setCountryLibraryData] = useState<CountryRegion[]>([]);
+  const [filteredCountryLibrary, setFilteredCountryLibrary] = useState<CountryRegion[]>([]);
+  const [selectedCountryIds, setSelectedCountryIds] = useState<string[]>([]);
+  const [addSearchParams, setAddSearchParams] = useState({
+    keyword: '',
+    continent: ''
+  });
   const [searchParams, setSearchParams] = useState<SearchParams>({
     keyword: '',
     continent: '',
     status: ''
   });
-  const [editForm] = Form.useForm();
 
   // 初始化示例数据
   useEffect(() => {
@@ -119,6 +121,50 @@ const CountryRegionManagement: React.FC = () => {
 
     setCountryData(mockData);
     setFilteredData(mockData);
+
+    // 创建国家库数据
+    const countryLibraryMockData: CountryRegion[] = [
+      // 亚洲国家
+      { id: 'lib1', nameEn: 'South Korea', nameCn: '韩国', code: 'KR', continent: 'Asia', areaCode: '+82', status: 'enabled' },
+      { id: 'lib2', nameEn: 'Singapore', nameCn: '新加坡', code: 'SG', continent: 'Asia', areaCode: '+65', status: 'enabled' },
+      { id: 'lib3', nameEn: 'Thailand', nameCn: '泰国', code: 'TH', continent: 'Asia', areaCode: '+66', status: 'enabled' },
+      { id: 'lib4', nameEn: 'Malaysia', nameCn: '马来西亚', code: 'MY', continent: 'Asia', areaCode: '+60', status: 'enabled' },
+      { id: 'lib5', nameEn: 'India', nameCn: '印度', code: 'IN', continent: 'Asia', areaCode: '+91', status: 'enabled' },
+      { id: 'lib6', nameEn: 'Indonesia', nameCn: '印度尼西亚', code: 'ID', continent: 'Asia', areaCode: '+62', status: 'enabled' },
+      { id: 'lib7', nameEn: 'Philippines', nameCn: '菲律宾', code: 'PH', continent: 'Asia', areaCode: '+63', status: 'enabled' },
+      { id: 'lib8', nameEn: 'Vietnam', nameCn: '越南', code: 'VN', continent: 'Asia', areaCode: '+84', status: 'enabled' },
+
+      // 欧洲国家
+      { id: 'lib9', nameEn: 'France', nameCn: '法国', code: 'FR', continent: 'Europe', areaCode: '+33', status: 'enabled' },
+      { id: 'lib10', nameEn: 'Italy', nameCn: '意大利', code: 'IT', continent: 'Europe', areaCode: '+39', status: 'enabled' },
+      { id: 'lib11', nameEn: 'Spain', nameCn: '西班牙', code: 'ES', continent: 'Europe', areaCode: '+34', status: 'enabled' },
+      { id: 'lib12', nameEn: 'Netherlands', nameCn: '荷兰', code: 'NL', continent: 'Europe', areaCode: '+31', status: 'enabled' },
+      { id: 'lib13', nameEn: 'Belgium', nameCn: '比利时', code: 'BE', continent: 'Europe', areaCode: '+32', status: 'enabled' },
+      { id: 'lib14', nameEn: 'Sweden', nameCn: '瑞典', code: 'SE', continent: 'Europe', areaCode: '+46', status: 'enabled' },
+      { id: 'lib15', nameEn: 'Norway', nameCn: '挪威', code: 'NO', continent: 'Europe', areaCode: '+47', status: 'enabled' },
+      { id: 'lib16', nameEn: 'Denmark', nameCn: '丹麦', code: 'DK', continent: 'Europe', areaCode: '+45', status: 'enabled' },
+
+      // 北美洲国家
+      { id: 'lib17', nameEn: 'Canada', nameCn: '加拿大', code: 'CA', continent: 'North America', areaCode: '+1', status: 'enabled' },
+      { id: 'lib18', nameEn: 'Mexico', nameCn: '墨西哥', code: 'MX', continent: 'North America', areaCode: '+52', status: 'enabled' },
+
+      // 南美洲国家
+      { id: 'lib19', nameEn: 'Brazil', nameCn: '巴西', code: 'BR', continent: 'South America', areaCode: '+55', status: 'enabled' },
+      { id: 'lib20', nameEn: 'Argentina', nameCn: '阿根廷', code: 'AR', continent: 'South America', areaCode: '+54', status: 'enabled' },
+      { id: 'lib21', nameEn: 'Chile', nameCn: '智利', code: 'CL', continent: 'South America', areaCode: '+56', status: 'enabled' },
+
+      // 非洲国家
+      { id: 'lib22', nameEn: 'South Africa', nameCn: '南非', code: 'ZA', continent: 'Africa', areaCode: '+27', status: 'enabled' },
+      { id: 'lib23', nameEn: 'Egypt', nameCn: '埃及', code: 'EG', continent: 'Africa', areaCode: '+20', status: 'enabled' },
+      { id: 'lib24', nameEn: 'Nigeria', nameCn: '尼日利亚', code: 'NG', continent: 'Africa', areaCode: '+234', status: 'enabled' },
+
+      // 大洋洲国家
+      { id: 'lib25', nameEn: 'Australia', nameCn: '澳大利亚', code: 'AU', continent: 'Oceania', areaCode: '+61', status: 'enabled' },
+      { id: 'lib26', nameEn: 'New Zealand', nameCn: '新西兰', code: 'NZ', continent: 'Oceania', areaCode: '+64', status: 'enabled' }
+    ];
+
+    setCountryLibraryData(countryLibraryMockData);
+    setFilteredCountryLibrary(countryLibraryMockData);
   }, []);
 
   // 搜索筛选功能
@@ -175,6 +221,7 @@ const CountryRegionManagement: React.FC = () => {
       ),
       dataIndex: 'checkbox',
       width: 60,
+      headerStyle: { whiteSpace: 'nowrap' },
       render: (_: unknown, record: CountryRegion) => (
         <Checkbox
           checked={selectedRowKeys.includes(record.id)}
@@ -192,21 +239,33 @@ const CountryRegionManagement: React.FC = () => {
       title: '英文名',
       dataIndex: 'nameEn',
       width: 200,
+      sorter: (a: CountryRegion, b: CountryRegion) => a.nameEn.localeCompare(b.nameEn),
+      headerStyle: { whiteSpace: 'nowrap' },
     },
     {
       title: '中文名',
       dataIndex: 'nameCn',
       width: 150,
+      sorter: (a: CountryRegion, b: CountryRegion) => a.nameCn.localeCompare(b.nameCn),
+      headerStyle: { whiteSpace: 'nowrap' },
     },
     {
       title: '代码',
       dataIndex: 'code',
       width: 100,
+      sorter: (a: CountryRegion, b: CountryRegion) => a.code.localeCompare(b.code),
+      headerStyle: { whiteSpace: 'nowrap' },
     },
     {
       title: '大洲',
       dataIndex: 'continent',
       width: 120,
+      sorter: (a: CountryRegion, b: CountryRegion) => {
+        const continentA = continentOptions.find(option => option.value === a.continent)?.label || a.continent;
+        const continentB = continentOptions.find(option => option.value === b.continent)?.label || b.continent;
+        return continentA.localeCompare(continentB);
+      },
+      headerStyle: { whiteSpace: 'nowrap' },
       render: (continent: string) => {
         const continentOption = continentOptions.find(option => option.value === continent);
         return continentOption ? continentOption.label : continent;
@@ -216,11 +275,15 @@ const CountryRegionManagement: React.FC = () => {
       title: '区号',
       dataIndex: 'areaCode',
       width: 100,
+      sorter: (a: CountryRegion, b: CountryRegion) => a.areaCode.localeCompare(b.areaCode),
+      headerStyle: { whiteSpace: 'nowrap' },
     },
     {
       title: '状态',
       dataIndex: 'status',
       width: 100,
+      sorter: (a: CountryRegion, b: CountryRegion) => a.status.localeCompare(b.status),
+      headerStyle: { whiteSpace: 'nowrap' },
       render: (status: string) => (
         <Tag color={status === 'enabled' ? 'green' : 'red'}>
           {status === 'enabled' ? '启用' : '禁用'}
@@ -230,55 +293,104 @@ const CountryRegionManagement: React.FC = () => {
     {
       title: '操作',
       dataIndex: 'action',
-      width: 150,
+      width: 120,
       fixed: 'right' as const,
+      headerStyle: { whiteSpace: 'nowrap' },
       render: (_: unknown, record: CountryRegion) => (
-        <Space>
-          <Button
-            type="text"
-            size="small"
-            icon={<IconEdit />}
-            onClick={() => handleEdit(record)}
+        <Popconfirm
+          title={`确定要${record.status === 'enabled' ? '禁用' : '启用'}此国家（地区）吗？`}
+          onOk={() => handleToggleStatus(record.id, record.status)}
+        >
+          <Button 
+            type="text" 
+            size="small" 
+            status={record.status === 'enabled' ? 'warning' : 'success'}
           >
-            编辑
+            {record.status === 'enabled' ? '禁用' : '启用'}
           </Button>
-          <Popconfirm
-            title={`确定要${record.status === 'enabled' ? '禁用' : '启用'}此国家（地区）吗？`}
-            onOk={() => handleToggleStatus(record.id, record.status)}
-          >
-            <Button 
-              type="text" 
-              size="small" 
-              status={record.status === 'enabled' ? 'warning' : 'success'}
-            >
-              {record.status === 'enabled' ? '禁用' : '启用'}
-            </Button>
-          </Popconfirm>
-        </Space>
+        </Popconfirm>
       ),
     },
   ];
 
-  // 处理编辑
-  const handleEdit = (record: CountryRegion) => {
-    setCurrentCountry(record);
-    setIsEditing(true);
-    editForm.setFieldsValue({
-      nameEn: record.nameEn,
-      nameCn: record.nameCn,
-      code: record.code,
-      continent: record.continent,
-      areaCode: record.areaCode
-    });
-    setEditModalVisible(true);
-  };
+  // 国家库搜索列定义
+  const countryLibraryColumns = [
+    {
+      title: (
+        <Checkbox
+          indeterminate={selectedCountryIds.length > 0 && selectedCountryIds.length < filteredCountryLibrary.length}
+          checked={selectedCountryIds.length === filteredCountryLibrary.length && filteredCountryLibrary.length > 0}
+          onChange={(checked) => {
+            if (checked) {
+              setSelectedCountryIds(filteredCountryLibrary.map(item => item.id));
+            } else {
+              setSelectedCountryIds([]);
+            }
+          }}
+        />
+      ),
+      dataIndex: 'checkbox',
+      width: 60,
+      headerStyle: { whiteSpace: 'nowrap' },
+      render: (_: unknown, record: CountryRegion) => (
+        <Checkbox
+          checked={selectedCountryIds.includes(record.id)}
+          onChange={(checked) => {
+            if (checked) {
+              setSelectedCountryIds([...selectedCountryIds, record.id]);
+            } else {
+              setSelectedCountryIds(selectedCountryIds.filter(id => id !== record.id));
+            }
+          }}
+        />
+      ),
+    },
+    {
+      title: '英文名',
+      dataIndex: 'nameEn',
+      width: 200,
+      headerStyle: { whiteSpace: 'nowrap' },
+    },
+    {
+      title: '中文名',
+      dataIndex: 'nameCn',
+      width: 150,
+      headerStyle: { whiteSpace: 'nowrap' },
+    },
+    {
+      title: '代码',
+      dataIndex: 'code',
+      width: 100,
+      headerStyle: { whiteSpace: 'nowrap' },
+    },
+    {
+      title: '大洲',
+      dataIndex: 'continent',
+      width: 120,
+      headerStyle: { whiteSpace: 'nowrap' },
+      render: (continent: string) => {
+        const continentOption = continentOptions.find(option => option.value === continent);
+        return continentOption ? continentOption.label : continent;
+      }
+    },
+    {
+      title: '区号',
+      dataIndex: 'areaCode',
+      width: 100,
+      headerStyle: { whiteSpace: 'nowrap' },
+    }
+  ];
 
-  // 处理新增
+  // 处理新增（改为选择模式）
   const handleAdd = () => {
-    setCurrentCountry(null);
-    setIsEditing(false);
-    editForm.resetFields();
-    setEditModalVisible(true);
+    setSelectedCountryIds([]);
+    setAddSearchParams({ keyword: '', continent: '' });
+    // 过滤掉已经存在的国家
+    const availableCountries = countryLibraryData.filter(country => 
+      !countryData.some(existingCountry => existingCountry.code === country.code)
+    );
+    setFilteredCountryLibrary(availableCountries);
+    setAddCountryModalVisible(true);
   };
 
   // 处理状态切换
@@ -329,43 +441,78 @@ const CountryRegionManagement: React.FC = () => {
     Message.success(`已禁用 ${selectedRowKeys.length} 个国家（地区）`);
   };
 
-  // 保存国家（地区）编辑
-  const handleSaveCountry = async () => {
-    try {
-      const values = await editForm.validate();
-      
-      const countryDataItem = {
-        ...values,
-        id: isEditing ? currentCountry?.id : Date.now().toString(),
-        status: isEditing ? currentCountry?.status : 'enabled' as const
-      };
+  // 国家库搜索功能
+  const handleCountryLibrarySearch = () => {
+    let filtered = countryLibraryData.filter(country => 
+      !countryData.some(existingCountry => existingCountry.code === country.code)
+    );
 
-      if (isEditing) {
-        // 更新现有国家（地区）
-        setCountryData(prev => prev.map(country => 
-          country.id === currentCountry?.id ? { ...country, ...countryDataItem } : country
-        ));
-        setFilteredData(prev => prev.map(country => 
-          country.id === currentCountry?.id ? { ...country, ...countryDataItem } : country
-        ));
-        Message.success('国家（地区）信息已更新');
-      } else {
-        // 新增国家（地区）
-        const newCountry = { ...countryDataItem, id: Date.now().toString() };
-        setCountryData(prev => [...prev, newCountry]);
-        setFilteredData(prev => [...prev, newCountry]);
-        Message.success('国家（地区）已添加');
-      }
-
-      setEditModalVisible(false);
-      editForm.resetFields();
-    } catch (error) {
-      console.error('保存失败:', error);
+    // 关键词搜索
+    if (addSearchParams.keyword) {
+      filtered = filtered.filter(country => 
+        country.nameEn.toLowerCase().includes(addSearchParams.keyword.toLowerCase()) ||
+        country.nameCn.includes(addSearchParams.keyword) ||
+        country.code.toLowerCase().includes(addSearchParams.keyword.toLowerCase())
+      );
     }
+
+    // 大洲筛选
+    if (addSearchParams.continent) {
+      filtered = filtered.filter(country => country.continent === addSearchParams.continent);
+    }
+
+    setFilteredCountryLibrary(filtered);
+  };
+
+  // 重置国家库搜索
+  const handleCountryLibraryReset = () => {
+    setAddSearchParams({ keyword: '', continent: '' });
+    const availableCountries = countryLibraryData.filter(country => 
+      !countryData.some(existingCountry => existingCountry.code === country.code)
+    );
+    setFilteredCountryLibrary(availableCountries);
+  };
+
+  // 确认添加选中的国家
+  const handleConfirmAddCountries = () => {
+    if (selectedCountryIds.length === 0) {
+      Message.warning('请选择要添加的国家（地区）');
+      return;
+    }
+
+    const countriesToAdd = filteredCountryLibrary.filter(country => 
+      selectedCountryIds.includes(country.id)
+    ).map(country => ({
+      ...country,
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+      status: 'enabled' as const
+    }));
+
+    setCountryData(prev => [...prev, ...countriesToAdd]);
+    setFilteredData(prev => [...prev, ...countriesToAdd]);
+    setAddCountryModalVisible(false);
+    setSelectedCountryIds([]);
+    Message.success(`成功添加 ${countriesToAdd.length} 个国家（地区）`);
   };
 
   return (
     <Card>
+      {/* 强制表头不换行样式 */}
+      <style>{`
+        .arco-table-th {
+          white-space: nowrap !important;
+        }
+        .arco-table-th .arco-table-th-item {
+          white-space: nowrap !important;
+        }
+        .arco-table-th .arco-table-cell-text {
+          white-space: nowrap !important;
+        }
+        .arco-table-th .arco-table-cell {
+          white-space: nowrap !important;
+        }
+      `}</style>
+
       <div style={{ marginBottom: '20px' }}>
         <Title heading={4} style={{ margin: 0 }}>国家（地区）管理</Title>
       </div>
@@ -457,83 +604,67 @@ const CountryRegionManagement: React.FC = () => {
         }}
       />
 
-      {/* 新增/编辑国家（地区）弹窗 */}
+      {/* 新增国家选择弹窗 */}
       <Modal
-        title={isEditing ? '编辑国家（地区）' : '新增国家（地区）'}
-        visible={editModalVisible}
-        onOk={handleSaveCountry}
-        onCancel={() => setEditModalVisible(false)}
-        style={{ width: 600 }}
+        title="选择国家（地区）"
+        visible={addCountryModalVisible}
+        onOk={handleConfirmAddCountries}
+        onCancel={() => setAddCountryModalVisible(false)}
+        style={{ width: 900 }}
+        okText={`确认添加 (${selectedCountryIds.length})`}
+        okButtonProps={{ disabled: selectedCountryIds.length === 0 }}
       >
-        <Form form={editForm} layout="vertical">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            <Form.Item
-              field="nameEn"
-              label="英文名"
-              rules={[{ required: true, message: '请输入英文名' }]}
-            >
-              <Input placeholder="请输入英文名，如：China" />
-            </Form.Item>
-            
-            <Form.Item
-              field="nameCn"
-              label="中文名"
-              rules={[{ required: true, message: '请输入中文名' }]}
-            >
-              <Input placeholder="请输入中文名，如：中国" />
-            </Form.Item>
-            
-            <Form.Item
-              field="code"
-              label="代码"
-              rules={[
-                { required: true, message: '请输入代码' },
-                { 
-                  validator: (value, callback) => {
-                    if (value && !/^[A-Z]{2}$/.test(value)) {
-                      callback('代码必须为2位大写字母');
-                    } else {
-                      callback();
-                    }
-                  }
-                }
-              ]}
-            >
-              <Input placeholder="请输入2位代码，如：CN" maxLength={2} style={{ textTransform: 'uppercase' }} />
-            </Form.Item>
-            
-            <Form.Item
-              field="continent"
-              label="大洲"
-              rules={[{ required: true, message: '请选择大洲' }]}
-            >
-              <Select placeholder="请选择大洲">
+        {/* 国家库搜索区域 */}
+        <Card style={{ marginBottom: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: '16px', alignItems: 'flex-end' }}>
+            <div>
+              <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>关键词搜索</div>
+              <Input
+                placeholder="国家名称、代码"
+                value={addSearchParams.keyword}
+                onChange={(value) => setAddSearchParams(prev => ({ ...prev, keyword: value }))}
+              />
+            </div>
+            <div>
+              <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>大洲</div>
+              <Select
+                placeholder="选择大洲"
+                value={addSearchParams.continent}
+                onChange={(value) => setAddSearchParams(prev => ({ ...prev, continent: value }))}
+                allowClear
+              >
                 {continentOptions.map(option => (
                   <Option key={option.value} value={option.value}>{option.label}</Option>
                 ))}
               </Select>
-            </Form.Item>
-            
-            <Form.Item
-              field="areaCode"
-              label="区号"
-              rules={[
-                { required: true, message: '请输入区号' },
-                { 
-                  validator: (value, callback) => {
-                    if (value && !/^\+\d{1,4}$/.test(value)) {
-                      callback('区号格式不正确，如：+86');
-                    } else {
-                      callback();
-                    }
-                  }
-                }
-              ]}
-            >
-              <Input placeholder="请输入区号，如：+86" />
-            </Form.Item>
+            </div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <Button type="primary" icon={<IconSearch />} onClick={handleCountryLibrarySearch}>
+                搜索
+              </Button>
+              <Button icon={<IconRefresh />} onClick={handleCountryLibraryReset}>
+                重置
+              </Button>
+            </div>
           </div>
-        </Form>
+        </Card>
+
+        <div style={{ marginBottom: '12px', fontSize: '14px', color: '#666' }}>
+          已选择 {selectedCountryIds.length} 个国家（地区），共 {filteredCountryLibrary.length} 个可选
+        </div>
+
+        <Table
+          columns={countryLibraryColumns}
+          data={filteredCountryLibrary}
+          rowKey="id"
+          scroll={{ x: 750, y: 400 }}
+          pagination={{
+            pageSize: 8,
+            showTotal: true,
+            showJumper: true,
+            simple: true,
+          }}
+        />
       </Modal>
     </Card>
   );

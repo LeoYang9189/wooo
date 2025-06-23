@@ -12,11 +12,11 @@ import {
   Select,
   Message,
   Popconfirm,
-  Typography
+  Typography,
+  Checkbox
 } from '@arco-design/web-react';
 import {
   IconPlus,
-  IconEdit,
   IconSettings,
   IconMinus,
   IconSearch,
@@ -63,15 +63,19 @@ const ContainerManagement: React.FC = () => {
   const [filteredData, setFilteredData] = useState<Container[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [currentContainer, setCurrentContainer] = useState<Container | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [addContainerModalVisible, setAddContainerModalVisible] = useState(false);
+  const [containerLibraryData, setContainerLibraryData] = useState<Container[]>([]);
+  const [filteredContainerLibrary, setFilteredContainerLibrary] = useState<Container[]>([]);
+  const [selectedContainerIds, setSelectedContainerIds] = useState<string[]>([]);
+  const [addSearchParams, setAddSearchParams] = useState({
+    keyword: ''
+  });
   const [ediModalVisible, setEdiModalVisible] = useState(false);
   const [searchParams, setSearchParams] = useState<SearchParams>({
     keyword: '',
     status: ''
   });
 
-  const [editForm] = Form.useForm();
   const [form] = Form.useForm();
 
   // 初始化示例数据
@@ -134,6 +138,93 @@ const ContainerManagement: React.FC = () => {
 
     setData(mockData);
     filterData(mockData);
+
+    // 创建集装箱库数据
+    const containerLibraryMockData: Container[] = [
+      {
+        id: 'lib1',
+        containerType: '20OT',
+        isoCode: '22U1',
+        description: '20英尺开顶集装箱',
+        ediCodes: [],
+        status: 'enabled' as const
+      },
+      {
+        id: 'lib2',
+        containerType: '40OT',
+        isoCode: '42U1',
+        description: '40英尺开顶集装箱',
+        ediCodes: [],
+        status: 'enabled' as const
+      },
+      {
+        id: 'lib3',
+        containerType: '20FR',
+        isoCode: '22P1',
+        description: '20英尺平板集装箱',
+        ediCodes: [],
+        status: 'enabled' as const
+      },
+      {
+        id: 'lib4',
+        containerType: '40FR',
+        isoCode: '42P1',
+        description: '40英尺平板集装箱',
+        ediCodes: [],
+        status: 'enabled' as const
+      },
+      {
+        id: 'lib5',
+        containerType: '45HC',
+        isoCode: '45G1',
+        description: '45英尺高箱',
+        ediCodes: [],
+        status: 'enabled' as const
+      },
+      {
+        id: 'lib6',
+        containerType: '20TK',
+        isoCode: '22T1',
+        description: '20英尺罐式集装箱',
+        ediCodes: [],
+        status: 'enabled' as const
+      },
+      {
+        id: 'lib7',
+        containerType: '40TK',
+        isoCode: '42T1',
+        description: '40英尺罐式集装箱',
+        ediCodes: [],
+        status: 'enabled' as const
+      },
+      {
+        id: 'lib8',
+        containerType: '20VH',
+        isoCode: '25G1',
+        description: '20英尺通风集装箱',
+        ediCodes: [],
+        status: 'enabled' as const
+      },
+      {
+        id: 'lib9',
+        containerType: '40VH',
+        isoCode: '45G1',
+        description: '40英尺通风集装箱',
+        ediCodes: [],
+        status: 'enabled' as const
+      },
+      {
+        id: 'lib10',
+        containerType: '20BU',
+        isoCode: '22B1',
+        description: '20英尺散装集装箱',
+        ediCodes: [],
+        status: 'enabled' as const
+      }
+    ];
+
+    setContainerLibraryData(containerLibraryMockData);
+    setFilteredContainerLibrary(containerLibraryMockData);
   }, []);
 
   // 筛选数据
@@ -177,34 +268,62 @@ const ContainerManagement: React.FC = () => {
 
   const columns = [
     {
-      title: '序号',
-      dataIndex: 'index',
-      width: 80,
-      render: (_: unknown, __: unknown, index: number) => index + 1,
+      title: (
+        <Checkbox
+          indeterminate={selectedRowKeys.length > 0 && selectedRowKeys.length < filteredData.length}
+          checked={selectedRowKeys.length === filteredData.length && filteredData.length > 0}
+          onChange={(checked) => {
+            if (checked) {
+              setSelectedRowKeys(filteredData.map(item => item.id));
+            } else {
+              setSelectedRowKeys([]);
+            }
+          }}
+        />
+      ),
+      dataIndex: 'checkbox',
+      width: 60,
+      headerStyle: { whiteSpace: 'nowrap' },
+      render: (_: unknown, record: Container) => (
+        <Checkbox
+          checked={selectedRowKeys.includes(record.id)}
+          onChange={(checked) => {
+            if (checked) {
+              setSelectedRowKeys([...selectedRowKeys, record.id]);
+            } else {
+              setSelectedRowKeys(selectedRowKeys.filter(key => key !== record.id));
+            }
+          }}
+        />
+      ),
     },
     {
       title: '箱型',
       dataIndex: 'containerType',
       width: 120,
-      sorter: true,
+      sorter: (a: Container, b: Container) => a.containerType.localeCompare(b.containerType),
+      headerStyle: { whiteSpace: 'nowrap' },
     },
     {
       title: 'ISO代码',
       dataIndex: 'isoCode',
       width: 120,
-      sorter: true,
+      sorter: (a: Container, b: Container) => a.isoCode.localeCompare(b.isoCode),
+      headerStyle: { whiteSpace: 'nowrap' },
     },
     {
       title: '描述',
       dataIndex: 'description',
       width: 200,
-      sorter: true,
+      sorter: (a: Container, b: Container) => a.description.localeCompare(b.description),
+      headerStyle: { whiteSpace: 'nowrap' },
     },
     {
       title: 'EDI代码',
       dataIndex: 'ediCodes',
       width: 150,
-      sorter: true,
+      sorter: (a: Container, b: Container) => a.ediCodes.length - b.ediCodes.length,
+      headerStyle: { whiteSpace: 'nowrap' },
       render: (ediCodes: EDICode[]) => (
         <Tooltip
           content={
@@ -227,7 +346,8 @@ const ContainerManagement: React.FC = () => {
       title: '状态',
       dataIndex: 'status',
       width: 100,
-      sorter: true,
+      sorter: (a: Container, b: Container) => a.status.localeCompare(b.status),
+      headerStyle: { whiteSpace: 'nowrap' },
       render: (status: string) => (
         <Tag color={status === 'enabled' ? 'green' : 'red'}>
           {status === 'enabled' ? '启用' : '禁用'}
@@ -237,18 +357,11 @@ const ContainerManagement: React.FC = () => {
     {
       title: '操作',
       dataIndex: 'action',
-      width: 220,
+      width: 200,
       fixed: 'right' as const,
+      headerStyle: { whiteSpace: 'nowrap' },
       render: (_: unknown, record: Container) => (
         <Space>
-          <Button
-            type="text"
-            size="small"
-            icon={<IconEdit />}
-            onClick={() => handleEdit(record)}
-          >
-            编辑
-          </Button>
           <Popconfirm
             title={`确定要${record.status === 'enabled' ? '禁用' : '启用'}此集装箱类型吗？`}
             onOk={() => handleToggleStatus(record.id, record.status)}
@@ -274,24 +387,16 @@ const ContainerManagement: React.FC = () => {
     },
   ];
 
-  // 处理编辑
-  const handleEdit = (record: Container) => {
-    setCurrentContainer(record);
-    setIsEditing(true);
-    editForm.setFieldsValue({
-      containerType: record.containerType,
-      isoCode: record.isoCode,
-      description: record.description
-    });
-    setEditModalVisible(true);
-  };
-
-  // 处理新增
+  // 处理新增（改为选择模式）
   const handleAdd = () => {
-    setCurrentContainer(null);
-    setIsEditing(false);
-    editForm.resetFields();
-    setEditModalVisible(true);
+    setSelectedContainerIds([]);
+    setAddSearchParams({ keyword: '' });
+    // 过滤掉已经存在的集装箱
+    const availableContainers = containerLibraryData.filter(container => 
+      !data.some(existingContainer => existingContainer.containerType === container.containerType)
+    );
+    setFilteredContainerLibrary(availableContainers);
+    setAddContainerModalVisible(true);
   };
 
   // 处理状态切换
@@ -342,6 +447,108 @@ const ContainerManagement: React.FC = () => {
     Message.success(`已禁用 ${selectedRowKeys.length} 个集装箱类型`);
   };
 
+  // 集装箱库搜索列定义
+  const containerLibraryColumns = [
+    {
+      title: (
+        <Checkbox
+          indeterminate={selectedContainerIds.length > 0 && selectedContainerIds.length < filteredContainerLibrary.length}
+          checked={selectedContainerIds.length === filteredContainerLibrary.length && filteredContainerLibrary.length > 0}
+          onChange={(checked) => {
+            if (checked) {
+              setSelectedContainerIds(filteredContainerLibrary.map(item => item.id));
+            } else {
+              setSelectedContainerIds([]);
+            }
+          }}
+        />
+      ),
+      dataIndex: 'checkbox',
+      width: 60,
+      headerStyle: { whiteSpace: 'nowrap' },
+      render: (_: unknown, record: Container) => (
+        <Checkbox
+          checked={selectedContainerIds.includes(record.id)}
+          onChange={(checked) => {
+            if (checked) {
+              setSelectedContainerIds([...selectedContainerIds, record.id]);
+            } else {
+              setSelectedContainerIds(selectedContainerIds.filter(id => id !== record.id));
+            }
+          }}
+        />
+      ),
+    },
+    {
+      title: '箱型',
+      dataIndex: 'containerType',
+      width: 120,
+      headerStyle: { whiteSpace: 'nowrap' },
+    },
+    {
+      title: 'ISO代码',
+      dataIndex: 'isoCode',
+      width: 120,
+      headerStyle: { whiteSpace: 'nowrap' },
+    },
+    {
+      title: '描述',
+      dataIndex: 'description',
+      width: 300,
+      headerStyle: { whiteSpace: 'nowrap' },
+    }
+  ];
+
+  // 集装箱库搜索功能
+  const handleContainerLibrarySearch = () => {
+    let filtered = containerLibraryData.filter(container => 
+      !data.some(existingContainer => existingContainer.containerType === container.containerType)
+    );
+
+    // 关键词搜索
+    if (addSearchParams.keyword) {
+      filtered = filtered.filter(container => 
+        container.containerType.toLowerCase().includes(addSearchParams.keyword.toLowerCase()) ||
+        container.isoCode.toLowerCase().includes(addSearchParams.keyword.toLowerCase()) ||
+        container.description.toLowerCase().includes(addSearchParams.keyword.toLowerCase())
+      );
+    }
+
+    setFilteredContainerLibrary(filtered);
+  };
+
+  // 重置集装箱库搜索
+  const handleContainerLibraryReset = () => {
+    setAddSearchParams({ keyword: '' });
+    const availableContainers = containerLibraryData.filter(container => 
+      !data.some(existingContainer => existingContainer.containerType === container.containerType)
+    );
+    setFilteredContainerLibrary(availableContainers);
+  };
+
+  // 确认添加选中的集装箱
+  const handleConfirmAddContainers = () => {
+    if (selectedContainerIds.length === 0) {
+      Message.warning('请选择要添加的集装箱类型');
+      return;
+    }
+
+    const containersToAdd = filteredContainerLibrary.filter(container => 
+      selectedContainerIds.includes(container.id)
+    ).map(container => ({
+      ...container,
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+      status: 'enabled' as const,
+      ediCodes: []
+    }));
+
+    setData(prev => [...prev, ...containersToAdd]);
+    setFilteredData(prev => [...prev, ...containersToAdd]);
+    setAddContainerModalVisible(false);
+    setSelectedContainerIds([]);
+    Message.success(`成功添加 ${containersToAdd.length} 个集装箱类型`);
+  };
+
   // 处理EDI代码设置
   const handleEdiCodeSetting = (record: Container) => {
     setCurrentContainer(record);
@@ -351,41 +558,7 @@ const ContainerManagement: React.FC = () => {
     setEdiModalVisible(true);
   };
 
-  // 保存集装箱编辑
-  const handleSaveContainer = async () => {
-    try {
-      const values = await editForm.validate();
-      
-      const containerData = {
-        ...values,
-        id: isEditing ? currentContainer?.id : Date.now().toString(),
-        ediCodes: isEditing ? currentContainer?.ediCodes || [] : [],
-        status: isEditing ? currentContainer?.status : 'enabled' as const
-      };
 
-      if (isEditing) {
-        // 更新现有集装箱
-        setData(prev => prev.map(container => 
-          container.id === currentContainer?.id ? { ...container, ...containerData } : container
-        ));
-        setFilteredData(prev => prev.map(container => 
-          container.id === currentContainer?.id ? { ...container, ...containerData } : container
-        ));
-        Message.success('集装箱类型信息已更新');
-      } else {
-        // 新增集装箱
-        const newContainer = { ...containerData, id: Date.now().toString(), ediCodes: [] };
-        setData(prev => [...prev, newContainer]);
-        setFilteredData(prev => [...prev, newContainer]);
-        Message.success('集装箱类型已添加');
-      }
-
-      setEditModalVisible(false);
-      editForm.resetFields();
-    } catch (error) {
-      console.error('保存失败:', error);
-    }
-  };
 
   // 保存EDI代码
   const handleSaveEdiCodes = async () => {
@@ -410,6 +583,22 @@ const ContainerManagement: React.FC = () => {
 
   return (
     <Card>
+      {/* 强制表头不换行样式 */}
+      <style>{`
+        .arco-table-th {
+          white-space: nowrap !important;
+        }
+        .arco-table-th .arco-table-th-item {
+          white-space: nowrap !important;
+        }
+        .arco-table-th .arco-table-cell-text {
+          white-space: nowrap !important;
+        }
+        .arco-table-th .arco-table-cell {
+          white-space: nowrap !important;
+        }
+      `}</style>
+
       <div style={{ marginBottom: '20px' }}>
         <Title heading={4} style={{ margin: 0 }}>集装箱管理</Title>
       </div>
@@ -478,58 +667,63 @@ const ContainerManagement: React.FC = () => {
         columns={columns}
         data={filteredData}
         rowKey="id"
-        scroll={{ x: 1200 }}
+        scroll={{ x: 1000 }}
         pagination={{
           pageSize: 10,
           showTotal: true,
           showJumper: true,
           sizeCanChange: true,
         }}
-        rowSelection={{
-          selectedRowKeys,
-          onChange: (selectedKeys) => setSelectedRowKeys(selectedKeys as string[]),
-          type: 'checkbox',
-        }}
       />
 
-      {/* 新增/编辑集装箱弹窗 */}
+      {/* 新增集装箱选择弹窗 */}
       <Modal
-        title={isEditing ? '编辑集装箱类型' : '新增集装箱类型'}
-        visible={editModalVisible}
-        onOk={handleSaveContainer}
-        onCancel={() => setEditModalVisible(false)}
-        style={{ width: 600 }}
+        title="选择集装箱类型"
+        visible={addContainerModalVisible}
+        onOk={handleConfirmAddContainers}
+        onCancel={() => setAddContainerModalVisible(false)}
+        style={{ width: 800 }}
+        okText={`确认添加 (${selectedContainerIds.length})`}
+        okButtonProps={{ disabled: selectedContainerIds.length === 0 }}
       >
-        <Form form={editForm} layout="vertical">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            <Form.Item
-              field="containerType"
-              label="箱型"
-              rules={[{ required: true, message: '请输入箱型' }]}
-            >
-              <Input placeholder="请输入箱型，如：20GP" />
-            </Form.Item>
-            
-            <Form.Item
-              field="isoCode"
-              label="ISO代码"
-              rules={[{ required: true, message: '请输入ISO代码' }]}
-            >
-              <Input placeholder="请输入ISO代码，如：22G1" />
-            </Form.Item>
+        {/* 集装箱库搜索区域 */}
+        <Card style={{ marginBottom: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '16px', alignItems: 'flex-end' }}>
+            <div>
+              <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>关键词搜索</div>
+              <Input
+                placeholder="箱型、ISO代码、描述"
+                value={addSearchParams.keyword}
+                onChange={(value) => setAddSearchParams(prev => ({ ...prev, keyword: value }))}
+              />
+            </div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <Button type="primary" icon={<IconSearch />} onClick={handleContainerLibrarySearch}>
+                搜索
+              </Button>
+              <Button icon={<IconRefresh />} onClick={handleContainerLibraryReset}>
+                重置
+              </Button>
+            </div>
           </div>
-          
-          <Form.Item
-            field="description"
-            label="描述"
-            rules={[{ required: true, message: '请输入描述' }]}
-          >
-            <TextArea 
-              placeholder="请输入集装箱类型描述" 
-              autoSize={{ minRows: 3, maxRows: 5 }} 
-            />
-          </Form.Item>
-        </Form>
+        </Card>
+
+        <div style={{ marginBottom: '12px', fontSize: '14px', color: '#666' }}>
+          已选择 {selectedContainerIds.length} 个集装箱类型，共 {filteredContainerLibrary.length} 个可选
+        </div>
+
+        <Table
+          columns={containerLibraryColumns}
+          data={filteredContainerLibrary}
+          rowKey="id"
+          scroll={{ x: 650, y: 400 }}
+          pagination={{
+            pageSize: 8,
+            showTotal: true,
+            showJumper: true,
+            simple: true,
+          }}
+        />
       </Modal>
 
       {/* EDI代码设置弹窗 */}

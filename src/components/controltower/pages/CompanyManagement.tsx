@@ -117,6 +117,7 @@ if (typeof document !== 'undefined') {
 
 interface CompanyData {
   id: string;
+  companyCode?: string; // 企业编码，8位随机字母数字组合，待审核和审核拒绝的没有企业编码
   name: string;
   englishName: string;
   contactPerson: string;
@@ -148,6 +149,7 @@ const CompanyManagement: React.FC = () => {
   const [companyData, setCompanyData] = useState<CompanyData[]>([
     {
       id: '1',
+      companyCode: 'HLL8K9M2', // 8位随机字母数字组合
       name: '货拉拉物流科技有限公司',
       englishName: 'Huolala Logistics Technology Co., Ltd.',
       contactPerson: '张经理',
@@ -164,6 +166,7 @@ const CompanyManagement: React.FC = () => {
     },
     {
       id: '2',
+      companyCode: 'SF7X4N6Y', // 8位随机字母数字组合
       name: '顺丰速运集团',
       englishName: 'SF Express Group',
       contactPerson: '李总监',
@@ -212,6 +215,7 @@ const CompanyManagement: React.FC = () => {
       },
       {
         id: '5',
+        companyCode: 'ST3M8P9Q', // 8位随机字母数字组合
         name: '申通快递有限公司',
         englishName: 'STO Express Co., Ltd.',
         contactPerson: '陈经理',
@@ -478,6 +482,32 @@ const CompanyManagement: React.FC = () => {
           data={filteredData}
           columns={[
             {
+              title: '企业编码',
+              dataIndex: 'companyCode',
+              key: 'companyCode',
+              width: 120,
+              sorter: true,
+              render: (companyCode) => (
+                companyCode ? (
+                  <Text 
+                    copyable={{ text: companyCode }} 
+                    style={{ 
+                      fontSize: '13px', 
+                      fontFamily: 'monospace',
+                      fontWeight: 'bold',
+                      color: '#165DFF'
+                    }}
+                  >
+                    {companyCode}
+                  </Text>
+                ) : (
+                  <Text type="secondary" style={{ fontSize: '12px' }}>
+                    待审核
+                  </Text>
+                )
+              )
+            },
+            {
               title: '企业信息',
               dataIndex: 'name',
               key: 'name',
@@ -715,6 +745,22 @@ const CompanyManagement: React.FC = () => {
             column={2} 
             labelStyle={{ fontWeight: 'bold' }}
             data={[
+              ...(currentCompany.companyCode ? [{
+                label: '企业编码',
+                value: (
+                  <Text 
+                    copyable={{ text: currentCompany.companyCode }} 
+                    style={{ 
+                      fontSize: '14px', 
+                      fontFamily: 'monospace',
+                      fontWeight: 'bold',
+                      color: '#165DFF'
+                    }}
+                  >
+                    {currentCompany.companyCode}
+                  </Text>
+                )
+              }] : []),
               {
                 label: '企业名称',
                 value: currentCompany.name
@@ -741,12 +787,6 @@ const CompanyManagement: React.FC = () => {
                   <Text copyable={{ text: currentCompany.email }}>
                     {currentCompany.email}
                   </Text>
-                )
-              },
-              {
-                label: '行业类型',
-                value: (
-                  <Tag color="arcoblue">{currentCompany.industry}</Tag>
                 )
               },
               {

@@ -69,11 +69,234 @@ const platformOptions = [
   { value: 'CargoSmart', label: 'CargoSmart' }
 ];
 
+// 船公司库数据
+interface ShippingCompanyLibrary {
+  id: string;
+  companyNameCn: string;
+  companyNameEn: string;
+  companyCode: string;
+  scacCode: string;
+  eoriNumber: string;
+  nineKCode: string;
+  naccsCode: string;
+  country: string;
+}
+
+// 航空公司库数据
+interface AirlineCompanyLibrary {
+  id: string;
+  companyNameCn: string;
+  companyNameEn: string;
+  iataCode: string;
+  hawbPrefix: string;
+  country: string;
+}
+
 // 搜索筛选参数
 interface SearchParams {
   keyword: string;
   status: string;
 }
+
+// 选择弹窗搜索参数
+interface SelectSearchParams {
+  keyword: string;
+  country: string;
+}
+
+// 国家选项
+const countryOptions = [
+  { value: 'CN', label: '中国' },
+  { value: 'US', label: '美国' },
+  { value: 'JP', label: '日本' },
+  { value: 'KR', label: '韩国' },
+  { value: 'DE', label: '德国' },
+  { value: 'GB', label: '英国' },
+  { value: 'SG', label: '新加坡' },
+  { value: 'HK', label: '香港' },
+  { value: 'NL', label: '荷兰' },
+  { value: 'DK', label: '丹麦' },
+  { value: 'FR', label: '法国' },
+  { value: 'IT', label: '意大利' },
+  { value: 'CH', label: '瑞士' },
+  { value: 'TW', label: '台湾' },
+];
+
+// 船公司库数据
+const shippingCompanyLibrary: ShippingCompanyLibrary[] = [
+  {
+    id: 'lib_shipping_1',
+    companyNameCn: '中远海运集装箱运输',
+    companyNameEn: 'COSCO SHIPPING Container Lines',
+    companyCode: 'CSCL',
+    scacCode: 'COSU',
+    eoriNumber: 'GB123456789000',
+    nineKCode: '9000001',
+    naccsCode: 'COSCO',
+    country: 'CN'
+  },
+  {
+    id: 'lib_shipping_2',
+    companyNameCn: '马士基航运',
+    companyNameEn: 'Maersk Line',
+    companyCode: 'MAERSK',
+    scacCode: 'MAEU',
+    eoriNumber: 'DK987654321000',
+    nineKCode: '9000002',
+    naccsCode: 'MAERSK',
+    country: 'DK'
+  },
+  {
+    id: 'lib_shipping_3',
+    companyNameCn: '地中海航运公司',
+    companyNameEn: 'Mediterranean Shipping Company',
+    companyCode: 'MSC',
+    scacCode: 'MSCU',
+    eoriNumber: 'CH456789123000',
+    nineKCode: '9000003',
+    naccsCode: 'MSC',
+    country: 'CH'
+  },
+  {
+    id: 'lib_shipping_4',
+    companyNameCn: 'CMA CGM',
+    companyNameEn: 'CMA CGM',
+    companyCode: 'CMACGM',
+    scacCode: 'CMDU',
+    eoriNumber: 'FR789123456000',
+    nineKCode: '9000004',
+    naccsCode: 'CMACGM',
+    country: 'FR'
+  },
+  {
+    id: 'lib_shipping_5',
+    companyNameCn: '赫伯罗特',
+    companyNameEn: 'Hapag-Lloyd',
+    companyCode: 'HAPAG',
+    scacCode: 'HLCU',
+    eoriNumber: 'DE321654987000',
+    nineKCode: '9000005',
+    naccsCode: 'HAPAG',
+    country: 'DE'
+  },
+  {
+    id: 'lib_shipping_6',
+    companyNameCn: '长荣海运',
+    companyNameEn: 'Evergreen Line',
+    companyCode: 'EVERGREEN',
+    scacCode: 'EGLV',
+    eoriNumber: 'TW654987321000',
+    nineKCode: '9000006',
+    naccsCode: 'EVERGREEN',
+    country: 'TW'
+  },
+  {
+    id: 'lib_shipping_7',
+    companyNameCn: '阳明海运',
+    companyNameEn: 'Yang Ming Marine Transport',
+    companyCode: 'YANGMING',
+    scacCode: 'YMLU',
+    eoriNumber: 'TW987321654000',
+    nineKCode: '9000007',
+    naccsCode: 'YANGMING',
+    country: 'TW'
+  },
+  {
+    id: 'lib_shipping_8',
+    companyNameCn: '现代商船',
+    companyNameEn: 'Hyundai Merchant Marine',
+    companyCode: 'HMM',
+    scacCode: 'HDMU',
+    eoriNumber: 'KR147258369000',
+    nineKCode: '9000008',
+    naccsCode: 'HMM',
+    country: 'KR'
+  }
+];
+
+// 航空公司库数据
+const airlineCompanyLibrary: AirlineCompanyLibrary[] = [
+  {
+    id: 'lib_airline_1',
+    companyNameCn: '中国国际航空股份有限公司',
+    companyNameEn: 'Air China Limited',
+    iataCode: 'CA',
+    hawbPrefix: '999',
+    country: 'CN'
+  },
+  {
+    id: 'lib_airline_2',
+    companyNameCn: '中国东方航空股份有限公司',
+    companyNameEn: 'China Eastern Airlines',
+    iataCode: 'MU',
+    hawbPrefix: '781',
+    country: 'CN'
+  },
+  {
+    id: 'lib_airline_3',
+    companyNameCn: '中国南方航空股份有限公司',
+    companyNameEn: 'China Southern Airlines',
+    iataCode: 'CZ',
+    hawbPrefix: '784',
+    country: 'CN'
+  },
+  {
+    id: 'lib_airline_4',
+    companyNameCn: '汉莎航空公司',
+    companyNameEn: 'Deutsche Lufthansa AG',
+    iataCode: 'LH',
+    hawbPrefix: '020',
+    country: 'DE'
+  },
+  {
+    id: 'lib_airline_5',
+    companyNameCn: '大韩航空',
+    companyNameEn: 'Korean Air',
+    iataCode: 'KE',
+    hawbPrefix: '180',
+    country: 'KR'
+  },
+  {
+    id: 'lib_airline_6',
+    companyNameCn: '新加坡航空公司',
+    companyNameEn: 'Singapore Airlines',
+    iataCode: 'SQ',
+    hawbPrefix: '618',
+    country: 'SG'
+  },
+  {
+    id: 'lib_airline_7',
+    companyNameCn: '阿联酋航空公司',
+    companyNameEn: 'Emirates',
+    iataCode: 'EK',
+    hawbPrefix: '176',
+    country: 'AE'
+  },
+  {
+    id: 'lib_airline_8',
+    companyNameCn: '国泰航空有限公司',
+    companyNameEn: 'Cathay Pacific Airways Limited',
+    iataCode: 'CX',
+    hawbPrefix: '160',
+    country: 'HK'
+  },
+  {
+    id: 'lib_airline_9',
+    companyNameCn: '全日本空输株式会社',
+    companyNameEn: 'All Nippon Airways',
+    iataCode: 'NH',
+    hawbPrefix: '205',
+    country: 'JP'
+  },
+  {
+    id: 'lib_airline_10',
+    companyNameCn: '日本航空株式会社',
+    companyNameEn: 'Japan Airlines',
+    iataCode: 'JL',
+    hawbPrefix: '131',
+    country: 'JP'
+  }
+];
 
 const CarrierManagement: React.FC = () => {
   const [activeTab, setActiveTab] = useState('shipping');
@@ -90,6 +313,16 @@ const CarrierManagement: React.FC = () => {
     keyword: '',
     status: ''
   });
+  
+  // 新增选择弹窗相关状态
+  const [selectModalVisible, setSelectModalVisible] = useState(false);
+  const [selectSearchParams, setSelectSearchParams] = useState<SelectSearchParams>({
+    keyword: '',
+    country: ''
+  });
+  const [selectedCarrierKeys, setSelectedCarrierKeys] = useState<string[]>([]);
+  const [filteredLibraryData, setFilteredLibraryData] = useState<any[]>([]);
+  
   const [form] = Form.useForm();
   const [editForm] = Form.useForm();
 
@@ -246,6 +479,7 @@ const CarrierManagement: React.FC = () => {
       ),
       dataIndex: 'checkbox',
       width: 60,
+      headerStyle: { whiteSpace: 'nowrap' },
       render: (_: unknown, record: ShippingCompany) => (
         <Checkbox
           checked={selectedRowKeys.includes(record.id)}
@@ -262,50 +496,58 @@ const CarrierManagement: React.FC = () => {
     {
       title: '船公司名称（中文）',
       dataIndex: 'companyNameCn',
-      width: 150,
+      width: 180,
       sorter: true,
+      headerStyle: { whiteSpace: 'nowrap' },
     },
     {
       title: '船公司名称（英文）',
       dataIndex: 'companyNameEn',
-      width: 200,
+      width: 260,
       sorter: true,
+      headerStyle: { whiteSpace: 'nowrap' },
     },
     {
       title: '船公司代码',
       dataIndex: 'companyCode',
-      width: 120,
+      width: 140,
       sorter: true,
+      headerStyle: { whiteSpace: 'nowrap' },
     },
     {
       title: 'SCAC CODE',
       dataIndex: 'scacCode',
-      width: 120,
+      width: 140,
       sorter: true,
+      headerStyle: { whiteSpace: 'nowrap' },
     },
     {
       title: 'EORI Number',
       dataIndex: 'eoriNumber',
-      width: 150,
+      width: 160,
       sorter: true,
+      headerStyle: { whiteSpace: 'nowrap' },
     },
     {
       title: '9000 CODE',
       dataIndex: 'nineKCode',
-      width: 120,
+      width: 140,
       sorter: true,
+      headerStyle: { whiteSpace: 'nowrap' },
     },
     {
       title: 'NACCS CODE',
       dataIndex: 'naccsCode',
-      width: 120,
+      width: 140,
       sorter: true,
+      headerStyle: { whiteSpace: 'nowrap' },
     },
     {
       title: 'EDI代码',
       dataIndex: 'ediCodes',
-      width: 150,
+      width: 120,
       sorter: true,
+      headerStyle: { whiteSpace: 'nowrap' },
       render: (ediCodes: EDICode[]) => (
         <Tooltip
           content={
@@ -329,6 +571,7 @@ const CarrierManagement: React.FC = () => {
       dataIndex: 'status',
       width: 100,
       sorter: true,
+      headerStyle: { whiteSpace: 'nowrap' },
       render: (status: string) => (
         <Tag color={status === 'enabled' ? 'green' : 'red'}>
           {status === 'enabled' ? '启用' : '禁用'}
@@ -338,18 +581,11 @@ const CarrierManagement: React.FC = () => {
     {
       title: '操作',
       dataIndex: 'action',
-      width: 220,
+      width: 200,
       fixed: 'right' as const,
+      headerStyle: { whiteSpace: 'nowrap' },
       render: (_: unknown, record: ShippingCompany) => (
         <Space>
-          <Button
-            type="text"
-            size="small"
-            icon={<IconEdit />}
-            onClick={() => handleEdit(record)}
-          >
-            编辑
-          </Button>
           <Popconfirm
             title={`确定要${record.status === 'enabled' ? '禁用' : '启用'}此船公司吗？`}
             onOk={() => handleToggleStatus(record.id, record.status)}
@@ -467,18 +703,10 @@ const CarrierManagement: React.FC = () => {
     {
       title: '操作',
       dataIndex: 'action',
-      width: 220,
+      width: 180,
       fixed: 'right' as const,
       render: (_: unknown, record: AirlineCompany) => (
         <Space>
-          <Button
-            type="text"
-            size="small"
-            icon={<IconEdit />}
-            onClick={() => handleEditAirline(record)}
-          >
-            编辑
-          </Button>
           <Popconfirm
             title={`确定要${record.status === 'enabled' ? '禁用' : '启用'}此航空公司吗？`}
             onOk={() => handleToggleAirlineStatus(record.id, record.status)}
@@ -533,12 +761,134 @@ const CarrierManagement: React.FC = () => {
     setEditModalVisible(true);
   };
 
-  // 处理新增
+  // 处理新增 - 打开选择弹窗
   const handleAdd = () => {
-    setCurrentCarrier(null);
-    setIsEditing(false);
-    editForm.resetFields();
-    setEditModalVisible(true);
+    setSelectModalVisible(true);
+    setSelectedCarrierKeys([]);
+    setSelectSearchParams({ keyword: '', country: '' });
+    
+    // 初始化筛选数据
+    if (activeTab === 'shipping') {
+      // 过滤掉已存在的船公司
+      const existingCodes = shippingData.map(item => item.companyCode);
+      const availableData = shippingCompanyLibrary.filter(item => 
+        !existingCodes.includes(item.companyCode)
+      );
+      setFilteredLibraryData(availableData);
+    } else if (activeTab === 'airline') {
+      // 过滤掉已存在的航空公司
+      const existingCodes = airlineData.map(item => item.iataCode);
+      const availableData = airlineCompanyLibrary.filter(item => 
+        !existingCodes.includes(item.iataCode)
+      );
+      setFilteredLibraryData(availableData);
+    }
+  };
+
+  // 选择弹窗搜索功能
+  const handleSelectSearch = () => {
+    let sourceData: any[];
+    if (activeTab === 'shipping') {
+      const existingCodes = shippingData.map(item => item.companyCode);
+      sourceData = shippingCompanyLibrary.filter(item => 
+        !existingCodes.includes(item.companyCode)
+      );
+    } else {
+      const existingCodes = airlineData.map(item => item.iataCode);
+      sourceData = airlineCompanyLibrary.filter(item => 
+        !existingCodes.includes(item.iataCode)
+      );
+    }
+
+    let filtered = sourceData;
+
+    // 关键词搜索
+    if (selectSearchParams.keyword) {
+      filtered = filtered.filter(item => 
+        item.companyNameCn.includes(selectSearchParams.keyword) ||
+        item.companyNameEn.toLowerCase().includes(selectSearchParams.keyword.toLowerCase()) ||
+        (activeTab === 'shipping' 
+          ? (item as ShippingCompanyLibrary).companyCode.toLowerCase().includes(selectSearchParams.keyword.toLowerCase()) ||
+            (item as ShippingCompanyLibrary).scacCode.toLowerCase().includes(selectSearchParams.keyword.toLowerCase())
+          : (item as AirlineCompanyLibrary).iataCode.toLowerCase().includes(selectSearchParams.keyword.toLowerCase())
+        )
+      );
+    }
+
+
+
+    setFilteredLibraryData(filtered);
+  };
+
+  // 重置选择搜索
+  const handleSelectReset = () => {
+    setSelectSearchParams({ keyword: '', country: '' });
+    if (activeTab === 'shipping') {
+      const existingCodes = shippingData.map(item => item.companyCode);
+      const availableData = shippingCompanyLibrary.filter(item => 
+        !existingCodes.includes(item.companyCode)
+      );
+      setFilteredLibraryData(availableData);
+    } else {
+      const existingCodes = airlineData.map(item => item.iataCode);
+      const availableData = airlineCompanyLibrary.filter(item => 
+        !existingCodes.includes(item.iataCode)
+      );
+      setFilteredLibraryData(availableData);
+    }
+  };
+
+  // 确认选择添加
+  const handleConfirmSelection = () => {
+    if (selectedCarrierKeys.length === 0) {
+      Message.warning(`请选择要添加的${activeTab === 'shipping' ? '船公司' : '航空公司'}`);
+      return;
+    }
+
+    const selectedItems = filteredLibraryData.filter(item => 
+      selectedCarrierKeys.includes(item.id)
+    );
+
+    if (activeTab === 'shipping') {
+      const newShippingCompanies: ShippingCompany[] = selectedItems.map((item) => {
+        const shippingItem = item as ShippingCompanyLibrary;
+        return {
+          id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+          companyNameCn: shippingItem.companyNameCn,
+          companyNameEn: shippingItem.companyNameEn,
+          companyCode: shippingItem.companyCode,
+          scacCode: shippingItem.scacCode,
+          eoriNumber: shippingItem.eoriNumber,
+          nineKCode: shippingItem.nineKCode,
+          naccsCode: shippingItem.naccsCode,
+          ediCodes: [],
+          status: 'enabled' as const
+        };
+      });
+
+      setShippingData(prev => [...prev, ...newShippingCompanies]);
+      setFilteredShippingData(prev => [...prev, ...newShippingCompanies]);
+    } else if (activeTab === 'airline') {
+      const newAirlineCompanies: AirlineCompany[] = selectedItems.map((item) => {
+        const airlineItem = item as AirlineCompanyLibrary;
+        return {
+          id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+          companyNameCn: airlineItem.companyNameCn,
+          companyNameEn: airlineItem.companyNameEn,
+          iataCode: airlineItem.iataCode,
+          hawbPrefix: airlineItem.hawbPrefix,
+          ediCodes: [],
+          status: 'enabled' as const
+        };
+      });
+
+      setAirlineData(prev => [...prev, ...newAirlineCompanies]);
+      setFilteredAirlineData(prev => [...prev, ...newAirlineCompanies]);
+    }
+
+    setSelectModalVisible(false);
+    setSelectedCarrierKeys([]);
+    Message.success(`已成功添加 ${selectedItems.length} 个${activeTab === 'shipping' ? '船公司' : '航空公司'}`);
   };
 
   // 处理状态切换
@@ -731,6 +1081,22 @@ const CarrierManagement: React.FC = () => {
 
   return (
     <Card>
+      {/* 强制表头不换行样式 */}
+      <style>{`
+        .arco-table-th {
+          white-space: nowrap !important;
+        }
+        .arco-table-th .arco-table-th-item {
+          white-space: nowrap !important;
+        }
+        .arco-table-th .arco-table-cell-text {
+          white-space: nowrap !important;
+        }
+        .arco-table-th .arco-table-cell {
+          white-space: nowrap !important;
+        }
+      `}</style>
+      
       <div style={{ marginBottom: '20px' }}>
         <Title heading={4} style={{ margin: 0 }}>承运人管理</Title>
       </div>
@@ -805,7 +1171,7 @@ const CarrierManagement: React.FC = () => {
             columns={shippingColumns}
             data={filteredShippingData}
             rowKey="id"
-            scroll={{ x: 1600 }}
+            scroll={{ x: 1640 }}
             pagination={{
               pageSize: 10,
               showTotal: true,
@@ -881,7 +1247,7 @@ const CarrierManagement: React.FC = () => {
             columns={airlineColumns}
             data={filteredAirlineData}
             rowKey="id"
-            scroll={{ x: 1600 }}
+            scroll={{ x: 1560 }}
             pagination={{
               pageSize: 10,
               showTotal: true,
@@ -1053,6 +1419,181 @@ const CarrierManagement: React.FC = () => {
             </Form.List>
           </Form.Item>
         </Form>
+      </Modal>
+
+      {/* 选择承运人弹窗 */}
+      <Modal
+        title={`选择${activeTab === 'shipping' ? '船公司' : '航空公司'}`}
+        visible={selectModalVisible}
+        onOk={handleConfirmSelection}
+        onCancel={() => setSelectModalVisible(false)}
+        style={{ width: 1000 }}
+        okText={`确认添加 (${selectedCarrierKeys.length})`}
+        cancelText="取消"
+      >
+        {/* 搜索筛选区域 */}
+        <Card style={{ marginBottom: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '16px', alignItems: 'flex-end' }}>
+            <div>
+              <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>关键词搜索</div>
+              <Input
+                placeholder={
+                  activeTab === 'shipping' 
+                    ? '公司名称、公司代码、SCAC CODE' 
+                    : '公司名称、IATA CODE'
+                }
+                value={selectSearchParams.keyword}
+                onChange={(value) => setSelectSearchParams(prev => ({ ...prev, keyword: value }))}
+              />
+            </div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <Button type="primary" icon={<IconSearch />} onClick={handleSelectSearch}>
+                搜索
+              </Button>
+              <Button icon={<IconRefresh />} onClick={handleSelectReset}>
+                重置
+              </Button>
+            </div>
+          </div>
+        </Card>
+
+        {/* 选择表格 */}
+        <div style={{ marginBottom: '16px' }}>
+          <div style={{ marginBottom: '8px', color: '#666' }}>
+            可选{activeTab === 'shipping' ? '船公司' : '航空公司'} ({filteredLibraryData.length})
+            {selectedCarrierKeys.length > 0 && (
+              <span style={{ color: '#1890ff', marginLeft: '8px' }}>
+                已选择 {selectedCarrierKeys.length} 个
+              </span>
+            )}
+          </div>
+        </div>
+
+        <Table
+          columns={
+            (activeTab === 'shipping' 
+              ? [
+                  {
+                    title: (
+                      <Checkbox
+                        indeterminate={selectedCarrierKeys.length > 0 && selectedCarrierKeys.length < filteredLibraryData.length}
+                        checked={selectedCarrierKeys.length === filteredLibraryData.length && filteredLibraryData.length > 0}
+                        onChange={(checked) => {
+                          if (checked) {
+                            setSelectedCarrierKeys(filteredLibraryData.map(item => item.id));
+                          } else {
+                            setSelectedCarrierKeys([]);
+                          }
+                        }}
+                      />
+                    ),
+                    dataIndex: 'checkbox',
+                    width: 60,
+                    render: (_: any, record: ShippingCompanyLibrary) => (
+                      <Checkbox
+                        checked={selectedCarrierKeys.includes(record.id)}
+                        onChange={(checked) => {
+                          if (checked) {
+                            setSelectedCarrierKeys([...selectedCarrierKeys, record.id]);
+                          } else {
+                            setSelectedCarrierKeys(selectedCarrierKeys.filter(key => key !== record.id));
+                          }
+                        }}
+                      />
+                    ),
+                  },
+                  {
+                    title: '船公司名称（中文）',
+                    dataIndex: 'companyNameCn',
+                    width: 180,
+                    headerStyle: { whiteSpace: 'nowrap' },
+                  },
+                  {
+                    title: '船公司名称（英文）',
+                    dataIndex: 'companyNameEn',
+                    width: 240,
+                    headerStyle: { whiteSpace: 'nowrap' },
+                  },
+                  {
+                    title: '船公司代码',
+                    dataIndex: 'companyCode',
+                    width: 120,
+                    headerStyle: { whiteSpace: 'nowrap' },
+                  },
+                  {
+                    title: 'SCAC CODE',
+                    dataIndex: 'scacCode',
+                    width: 120,
+                    headerStyle: { whiteSpace: 'nowrap' },
+                  }
+                ]
+              : [
+                  {
+                    title: (
+                      <Checkbox
+                        indeterminate={selectedCarrierKeys.length > 0 && selectedCarrierKeys.length < filteredLibraryData.length}
+                        checked={selectedCarrierKeys.length === filteredLibraryData.length && filteredLibraryData.length > 0}
+                        onChange={(checked) => {
+                          if (checked) {
+                            setSelectedCarrierKeys(filteredLibraryData.map(item => item.id));
+                          } else {
+                            setSelectedCarrierKeys([]);
+                          }
+                        }}
+                      />
+                    ),
+                    dataIndex: 'checkbox',
+                    width: 60,
+                    render: (_: any, record: AirlineCompanyLibrary) => (
+                      <Checkbox
+                        checked={selectedCarrierKeys.includes(record.id)}
+                        onChange={(checked) => {
+                          if (checked) {
+                            setSelectedCarrierKeys([...selectedCarrierKeys, record.id]);
+                          } else {
+                            setSelectedCarrierKeys(selectedCarrierKeys.filter(key => key !== record.id));
+                          }
+                        }}
+                      />
+                    ),
+                  },
+                  {
+                    title: '航空公司名称（中文）',
+                    dataIndex: 'companyNameCn',
+                    width: 180,
+                    headerStyle: { whiteSpace: 'nowrap' },
+                  },
+                  {
+                    title: '航空公司名称（英文）',
+                    dataIndex: 'companyNameEn',
+                    width: 280,
+                    headerStyle: { whiteSpace: 'nowrap' },
+                  },
+                  {
+                    title: 'IATA CODE',
+                    dataIndex: 'iataCode',
+                    width: 120,
+                    headerStyle: { whiteSpace: 'nowrap' },
+                  },
+                  {
+                    title: '主单号前缀',
+                    dataIndex: 'hawbPrefix',
+                    width: 120,
+                    headerStyle: { whiteSpace: 'nowrap' },
+                  }
+                ]
+            ) as any
+          }
+          data={filteredLibraryData}
+          rowKey="id"
+          scroll={{ x: activeTab === 'shipping' ? 760 : 720 }}
+          pagination={{
+            pageSize: 8,
+            showTotal: true,
+            showJumper: true,
+            sizeCanChange: true,
+          }}
+        />
       </Modal>
     </Card>
   );

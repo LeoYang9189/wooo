@@ -55,6 +55,143 @@ interface SearchParams {
   parentId?: string;
 }
 
+// 行政区划数据库
+const ADMINISTRATIVE_DIVISION_DATABASE = {
+  provinces: [
+    { id: 'db_p_1', name: '北京市', code: '110000', status: 'enabled' },
+    { id: 'db_p_2', name: '天津市', code: '120000', status: 'enabled' },
+    { id: 'db_p_3', name: '河北省', code: '130000', status: 'enabled' },
+    { id: 'db_p_4', name: '山西省', code: '140000', status: 'enabled' },
+    { id: 'db_p_5', name: '内蒙古自治区', code: '150000', status: 'enabled' },
+    { id: 'db_p_6', name: '辽宁省', code: '210000', status: 'enabled' },
+    { id: 'db_p_7', name: '吉林省', code: '220000', status: 'enabled' },
+    { id: 'db_p_8', name: '黑龙江省', code: '230000', status: 'enabled' },
+    { id: 'db_p_9', name: '上海市', code: '310000', status: 'enabled' },
+    { id: 'db_p_10', name: '江苏省', code: '320000', status: 'enabled' },
+    { id: 'db_p_11', name: '浙江省', code: '330000', status: 'enabled' },
+    { id: 'db_p_12', name: '安徽省', code: '340000', status: 'enabled' },
+    { id: 'db_p_13', name: '福建省', code: '350000', status: 'enabled' },
+    { id: 'db_p_14', name: '江西省', code: '360000', status: 'enabled' },
+    { id: 'db_p_15', name: '山东省', code: '370000', status: 'enabled' },
+    { id: 'db_p_16', name: '河南省', code: '410000', status: 'enabled' },
+    { id: 'db_p_17', name: '湖北省', code: '420000', status: 'enabled' },
+    { id: 'db_p_18', name: '湖南省', code: '430000', status: 'enabled' },
+    { id: 'db_p_19', name: '广东省', code: '440000', status: 'enabled' },
+    { id: 'db_p_20', name: '广西壮族自治区', code: '450000', status: 'enabled' },
+    { id: 'db_p_21', name: '海南省', code: '460000', status: 'enabled' },
+    { id: 'db_p_22', name: '重庆市', code: '500000', status: 'enabled' },
+    { id: 'db_p_23', name: '四川省', code: '510000', status: 'enabled' },
+    { id: 'db_p_24', name: '贵州省', code: '520000', status: 'enabled' },
+    { id: 'db_p_25', name: '云南省', code: '530000', status: 'enabled' },
+    { id: 'db_p_26', name: '西藏自治区', code: '540000', status: 'enabled' },
+    { id: 'db_p_27', name: '陕西省', code: '610000', status: 'enabled' },
+    { id: 'db_p_28', name: '甘肃省', code: '620000', status: 'enabled' },
+    { id: 'db_p_29', name: '青海省', code: '630000', status: 'enabled' },
+    { id: 'db_p_30', name: '宁夏回族自治区', code: '640000', status: 'enabled' },
+    { id: 'db_p_31', name: '新疆维吾尔自治区', code: '650000', status: 'enabled' },
+    { id: 'db_p_32', name: '台湾省', code: '710000', status: 'enabled' },
+    { id: 'db_p_33', name: '香港特别行政区', code: '810000', status: 'enabled' },
+    { id: 'db_p_34', name: '澳门特别行政区', code: '820000', status: 'enabled' }
+  ],
+  cities: [
+    // 广东省城市
+    { id: 'db_c_1', name: '广州市', code: '440100', provinceId: 'db_p_19', provinceName: '广东省', status: 'enabled' },
+    { id: 'db_c_2', name: '韶关市', code: '440200', provinceId: 'db_p_19', provinceName: '广东省', status: 'enabled' },
+    { id: 'db_c_3', name: '深圳市', code: '440300', provinceId: 'db_p_19', provinceName: '广东省', status: 'enabled' },
+    { id: 'db_c_4', name: '珠海市', code: '440400', provinceId: 'db_p_19', provinceName: '广东省', status: 'enabled' },
+    { id: 'db_c_5', name: '汕头市', code: '440500', provinceId: 'db_p_19', provinceName: '广东省', status: 'enabled' },
+    { id: 'db_c_6', name: '佛山市', code: '440600', provinceId: 'db_p_19', provinceName: '广东省', status: 'enabled' },
+    { id: 'db_c_7', name: '江门市', code: '440700', provinceId: 'db_p_19', provinceName: '广东省', status: 'enabled' },
+    { id: 'db_c_8', name: '湛江市', code: '440800', provinceId: 'db_p_19', provinceName: '广东省', status: 'enabled' },
+    { id: 'db_c_9', name: '茂名市', code: '440900', provinceId: 'db_p_19', provinceName: '广东省', status: 'enabled' },
+    { id: 'db_c_10', name: '肇庆市', code: '441200', provinceId: 'db_p_19', provinceName: '广东省', status: 'enabled' },
+    { id: 'db_c_11', name: '惠州市', code: '441300', provinceId: 'db_p_19', provinceName: '广东省', status: 'enabled' },
+    { id: 'db_c_12', name: '梅州市', code: '441400', provinceId: 'db_p_19', provinceName: '广东省', status: 'enabled' },
+    { id: 'db_c_13', name: '汕尾市', code: '441500', provinceId: 'db_p_19', provinceName: '广东省', status: 'enabled' },
+    { id: 'db_c_14', name: '河源市', code: '441600', provinceId: 'db_p_19', provinceName: '广东省', status: 'enabled' },
+    { id: 'db_c_15', name: '阳江市', code: '441700', provinceId: 'db_p_19', provinceName: '广东省', status: 'enabled' },
+    { id: 'db_c_16', name: '清远市', code: '441800', provinceId: 'db_p_19', provinceName: '广东省', status: 'enabled' },
+    { id: 'db_c_17', name: '东莞市', code: '441900', provinceId: 'db_p_19', provinceName: '广东省', status: 'enabled' },
+    { id: 'db_c_18', name: '中山市', code: '442000', provinceId: 'db_p_19', provinceName: '广东省', status: 'enabled' },
+    { id: 'db_c_19', name: '潮州市', code: '445100', provinceId: 'db_p_19', provinceName: '广东省', status: 'enabled' },
+    { id: 'db_c_20', name: '揭阳市', code: '445200', provinceId: 'db_p_19', provinceName: '广东省', status: 'enabled' },
+    { id: 'db_c_21', name: '云浮市', code: '445300', provinceId: 'db_p_19', provinceName: '广东省', status: 'enabled' },
+    
+    // 浙江省城市
+    { id: 'db_c_22', name: '杭州市', code: '330100', provinceId: 'db_p_11', provinceName: '浙江省', status: 'enabled' },
+    { id: 'db_c_23', name: '宁波市', code: '330200', provinceId: 'db_p_11', provinceName: '浙江省', status: 'enabled' },
+    { id: 'db_c_24', name: '温州市', code: '330300', provinceId: 'db_p_11', provinceName: '浙江省', status: 'enabled' },
+    { id: 'db_c_25', name: '嘉兴市', code: '330400', provinceId: 'db_p_11', provinceName: '浙江省', status: 'enabled' },
+    { id: 'db_c_26', name: '湖州市', code: '330500', provinceId: 'db_p_11', provinceName: '浙江省', status: 'enabled' },
+    { id: 'db_c_27', name: '绍兴市', code: '330600', provinceId: 'db_p_11', provinceName: '浙江省', status: 'enabled' },
+    { id: 'db_c_28', name: '金华市', code: '330700', provinceId: 'db_p_11', provinceName: '浙江省', status: 'enabled' },
+    { id: 'db_c_29', name: '衢州市', code: '330800', provinceId: 'db_p_11', provinceName: '浙江省', status: 'enabled' },
+    { id: 'db_c_30', name: '舟山市', code: '330900', provinceId: 'db_p_11', provinceName: '浙江省', status: 'enabled' },
+    { id: 'db_c_31', name: '台州市', code: '331000', provinceId: 'db_p_11', provinceName: '浙江省', status: 'enabled' },
+    { id: 'db_c_32', name: '丽水市', code: '331100', provinceId: 'db_p_11', provinceName: '浙江省', status: 'enabled' },
+    
+    // 江苏省城市
+    { id: 'db_c_33', name: '南京市', code: '320100', provinceId: 'db_p_10', provinceName: '江苏省', status: 'enabled' },
+    { id: 'db_c_34', name: '无锡市', code: '320200', provinceId: 'db_p_10', provinceName: '江苏省', status: 'enabled' },
+    { id: 'db_c_35', name: '徐州市', code: '320300', provinceId: 'db_p_10', provinceName: '江苏省', status: 'enabled' },
+    { id: 'db_c_36', name: '常州市', code: '320400', provinceId: 'db_p_10', provinceName: '江苏省', status: 'enabled' },
+    { id: 'db_c_37', name: '苏州市', code: '320500', provinceId: 'db_p_10', provinceName: '江苏省', status: 'enabled' },
+    { id: 'db_c_38', name: '南通市', code: '320600', provinceId: 'db_p_10', provinceName: '江苏省', status: 'enabled' },
+    { id: 'db_c_39', name: '连云港市', code: '320700', provinceId: 'db_p_10', provinceName: '江苏省', status: 'enabled' },
+    { id: 'db_c_40', name: '淮安市', code: '320800', provinceId: 'db_p_10', provinceName: '江苏省', status: 'enabled' },
+    { id: 'db_c_41', name: '盐城市', code: '320900', provinceId: 'db_p_10', provinceName: '江苏省', status: 'enabled' },
+    { id: 'db_c_42', name: '扬州市', code: '321000', provinceId: 'db_p_10', provinceName: '江苏省', status: 'enabled' },
+    { id: 'db_c_43', name: '镇江市', code: '321100', provinceId: 'db_p_10', provinceName: '江苏省', status: 'enabled' },
+    { id: 'db_c_44', name: '泰州市', code: '321200', provinceId: 'db_p_10', provinceName: '江苏省', status: 'enabled' },
+    { id: 'db_c_45', name: '宿迁市', code: '321300', provinceId: 'db_p_10', provinceName: '江苏省', status: 'enabled' }
+  ],
+  districts: [
+    // 深圳市区县
+    { id: 'db_d_1', name: '罗湖区', code: '440303', provinceId: 'db_p_19', provinceName: '广东省', cityId: 'db_c_3', cityName: '深圳市', status: 'enabled' },
+    { id: 'db_d_2', name: '福田区', code: '440304', provinceId: 'db_p_19', provinceName: '广东省', cityId: 'db_c_3', cityName: '深圳市', status: 'enabled' },
+    { id: 'db_d_3', name: '南山区', code: '440305', provinceId: 'db_p_19', provinceName: '广东省', cityId: 'db_c_3', cityName: '深圳市', status: 'enabled' },
+    { id: 'db_d_4', name: '宝安区', code: '440306', provinceId: 'db_p_19', provinceName: '广东省', cityId: 'db_c_3', cityName: '深圳市', status: 'enabled' },
+    { id: 'db_d_5', name: '龙岗区', code: '440307', provinceId: 'db_p_19', provinceName: '广东省', cityId: 'db_c_3', cityName: '深圳市', status: 'enabled' },
+    { id: 'db_d_6', name: '盐田区', code: '440308', provinceId: 'db_p_19', provinceName: '广东省', cityId: 'db_c_3', cityName: '深圳市', status: 'enabled' },
+    { id: 'db_d_7', name: '龙华区', code: '440309', provinceId: 'db_p_19', provinceName: '广东省', cityId: 'db_c_3', cityName: '深圳市', status: 'enabled' },
+    { id: 'db_d_8', name: '坪山区', code: '440310', provinceId: 'db_p_19', provinceName: '广东省', cityId: 'db_c_3', cityName: '深圳市', status: 'enabled' },
+    { id: 'db_d_9', name: '光明区', code: '440311', provinceId: 'db_p_19', provinceName: '广东省', cityId: 'db_c_3', cityName: '深圳市', status: 'enabled' },
+    { id: 'db_d_10', name: '大鹏新区', code: '440312', provinceId: 'db_p_19', provinceName: '广东省', cityId: 'db_c_3', cityName: '深圳市', status: 'enabled' },
+    
+    // 广州市区县
+    { id: 'db_d_11', name: '荔湾区', code: '440103', provinceId: 'db_p_19', provinceName: '广东省', cityId: 'db_c_1', cityName: '广州市', status: 'enabled' },
+    { id: 'db_d_12', name: '越秀区', code: '440104', provinceId: 'db_p_19', provinceName: '广东省', cityId: 'db_c_1', cityName: '广州市', status: 'enabled' },
+    { id: 'db_d_13', name: '海珠区', code: '440105', provinceId: 'db_p_19', provinceName: '广东省', cityId: 'db_c_1', cityName: '广州市', status: 'enabled' },
+    { id: 'db_d_14', name: '天河区', code: '440106', provinceId: 'db_p_19', provinceName: '广东省', cityId: 'db_c_1', cityName: '广州市', status: 'enabled' },
+    { id: 'db_d_15', name: '白云区', code: '440111', provinceId: 'db_p_19', provinceName: '广东省', cityId: 'db_c_1', cityName: '广州市', status: 'enabled' },
+    { id: 'db_d_16', name: '黄埔区', code: '440112', provinceId: 'db_p_19', provinceName: '广东省', cityId: 'db_c_1', cityName: '广州市', status: 'enabled' },
+    { id: 'db_d_17', name: '番禺区', code: '440113', provinceId: 'db_p_19', provinceName: '广东省', cityId: 'db_c_1', cityName: '广州市', status: 'enabled' },
+    { id: 'db_d_18', name: '花都区', code: '440114', provinceId: 'db_p_19', provinceName: '广东省', cityId: 'db_c_1', cityName: '广州市', status: 'enabled' },
+    { id: 'db_d_19', name: '南沙区', code: '440115', provinceId: 'db_p_19', provinceName: '广东省', cityId: 'db_c_1', cityName: '广州市', status: 'enabled' },
+    { id: 'db_d_20', name: '从化区', code: '440117', provinceId: 'db_p_19', provinceName: '广东省', cityId: 'db_c_1', cityName: '广州市', status: 'enabled' },
+    { id: 'db_d_21', name: '增城区', code: '440118', provinceId: 'db_p_19', provinceName: '广东省', cityId: 'db_c_1', cityName: '广州市', status: 'enabled' },
+    
+    // 杭州市区县
+    { id: 'db_d_22', name: '上城区', code: '330102', provinceId: 'db_p_11', provinceName: '浙江省', cityId: 'db_c_22', cityName: '杭州市', status: 'enabled' },
+    { id: 'db_d_23', name: '拱墅区', code: '330105', provinceId: 'db_p_11', provinceName: '浙江省', cityId: 'db_c_22', cityName: '杭州市', status: 'enabled' },
+    { id: 'db_d_24', name: '西湖区', code: '330106', provinceId: 'db_p_11', provinceName: '浙江省', cityId: 'db_c_22', cityName: '杭州市', status: 'enabled' },
+    { id: 'db_d_25', name: '滨江区', code: '330108', provinceId: 'db_p_11', provinceName: '浙江省', cityId: 'db_c_22', cityName: '杭州市', status: 'enabled' },
+    { id: 'db_d_26', name: '萧山区', code: '330109', provinceId: 'db_p_11', provinceName: '浙江省', cityId: 'db_c_22', cityName: '杭州市', status: 'enabled' },
+    { id: 'db_d_27', name: '余杭区', code: '330110', provinceId: 'db_p_11', provinceName: '浙江省', cityId: 'db_c_22', cityName: '杭州市', status: 'enabled' },
+    { id: 'db_d_28', name: '富阳区', code: '330111', provinceId: 'db_p_11', provinceName: '浙江省', cityId: 'db_c_22', cityName: '杭州市', status: 'enabled' },
+    { id: 'db_d_29', name: '临安区', code: '330112', provinceId: 'db_p_11', provinceName: '浙江省', cityId: 'db_c_22', cityName: '杭州市', status: 'enabled' },
+    { id: 'db_d_30', name: '临平区', code: '330113', provinceId: 'db_p_11', provinceName: '浙江省', cityId: 'db_c_22', cityName: '杭州市', status: 'enabled' },
+    { id: 'db_d_31', name: '钱塘区', code: '330114', provinceId: 'db_p_11', provinceName: '浙江省', cityId: 'db_c_22', cityName: '杭州市', status: 'enabled' }
+  ]
+};
+
+// 添加全局样式，强制表头不换行
+const tableHeaderStyle = `
+  .arco-table-th {
+    white-space: nowrap !important;
+  }
+`;
+
 // Tab配置
 const tabConfig = [
   { key: 'province', title: '省', level: 'province' as DivisionLevel },
@@ -70,9 +207,17 @@ const ChinaAdministrativeDivision: React.FC = () => {
   const [filteredData, setFilteredData] = useState<AdministrativeDivision[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [editModalVisible, setEditModalVisible] = useState(false);
+  const [selectModalVisible, setSelectModalVisible] = useState(false);
+  const [selectableDivisions, setSelectableDivisions] = useState<any[]>([]);
+  const [selectedDivisions, setSelectedDivisions] = useState<string[]>([]);
   const [currentDivision, setCurrentDivision] = useState<AdministrativeDivision | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [searchParams, setSearchParams] = useState<SearchParams>({
+    keyword: '',
+    status: '',
+    parentId: ''
+  });
+  const [selectSearchParams, setSelectSearchParams] = useState<SearchParams>({
     keyword: '',
     status: '',
     parentId: ''
@@ -519,18 +664,20 @@ const ChinaAdministrativeDivision: React.FC = () => {
     {
       title: '操作',
       dataIndex: 'action',
-      width: 180,
+      width: level === 'street' || level === 'village' ? 180 : 120,
       fixed: 'right' as const,
       render: (_: unknown, record: AdministrativeDivision) => (
         <Space>
-          <Button
-            type="text"
-            size="small"
-            icon={<IconEdit />}
-            onClick={() => handleEdit(record)}
-          >
-            编辑
-          </Button>
+          {(level === 'street' || level === 'village') && (
+            <Button
+              type="text"
+              size="small"
+              icon={<IconEdit />}
+              onClick={() => handleEdit(record)}
+            >
+              编辑
+            </Button>
+          )}
           <Popconfirm
             title={`确定要${record.status === 'enabled' ? '禁用' : '启用'}此行政区划吗？`}
             onOk={() => handleToggleStatus(record.id, record.status)}
@@ -594,14 +741,125 @@ const ChinaAdministrativeDivision: React.FC = () => {
 
   // 处理新增
   const handleAdd = () => {
-    setCurrentDivision(null);
-    setIsEditing(false);
-    setSelectedProvince('');
-    setSelectedCity('');
-    setSelectedDistrict('');
-    setSelectedStreet('');
-    editForm.resetFields();
-    setEditModalVisible(true);
+    const currentLevel = activeTab as DivisionLevel;
+    
+    // 对于省、市、区县使用选择模式
+    if (currentLevel === 'province' || currentLevel === 'city' || currentLevel === 'district') {
+      handleSelectMode();
+    } else {
+      // 对于街道和村居委会使用传统的新增弹窗
+      setCurrentDivision(null);
+      setIsEditing(false);
+      setSelectedProvince('');
+      setSelectedCity('');
+      setSelectedDistrict('');
+      setSelectedStreet('');
+      editForm.resetFields();
+      setEditModalVisible(true);
+    }
+  };
+
+  // 处理选择模式
+  const handleSelectMode = () => {
+    const currentLevel = activeTab as DivisionLevel;
+    const existingNames = divisionData
+      .filter(item => item.level === currentLevel)
+      .map(item => item.name);
+    
+    let availableOptions: any[] = [];
+    
+    if (currentLevel === 'province') {
+      availableOptions = ADMINISTRATIVE_DIVISION_DATABASE.provinces.filter(
+        province => !existingNames.includes(province.name)
+      );
+    } else if (currentLevel === 'city') {
+      availableOptions = ADMINISTRATIVE_DIVISION_DATABASE.cities.filter(
+        city => !existingNames.includes(city.name)
+      );
+    } else if (currentLevel === 'district') {
+      availableOptions = ADMINISTRATIVE_DIVISION_DATABASE.districts.filter(
+        district => !existingNames.includes(district.name)
+      );
+    }
+    
+    setSelectableDivisions(availableOptions);
+    setSelectedDivisions([]);
+    setSelectSearchParams({ keyword: '', status: '', parentId: '' });
+    setSelectModalVisible(true);
+  };
+
+  // 处理选择确认
+  const handleSelectConfirm = () => {
+    if (selectedDivisions.length === 0) {
+      Message.warning('请选择至少一个行政区划');
+      return;
+    }
+
+    const currentLevel = activeTab as DivisionLevel;
+    const newDivisions = selectableDivisions
+      .filter(item => selectedDivisions.includes(item.id))
+      .map(item => {
+        const newItem: AdministrativeDivision = {
+          id: Date.now().toString() + '_' + item.id,
+          name: item.name,
+          code: item.code,
+          level: currentLevel,
+          status: 'enabled'
+        };
+
+        // 添加层级关系信息
+        if (currentLevel === 'city') {
+          newItem.parentId = item.provinceId;
+          newItem.parentName = item.provinceName;
+          newItem.provinceId = item.provinceId;
+          newItem.provinceName = item.provinceName;
+        } else if (currentLevel === 'district') {
+          newItem.parentId = item.cityId;
+          newItem.parentName = item.cityName;
+          newItem.provinceId = item.provinceId;
+          newItem.provinceName = item.provinceName;
+          newItem.cityId = item.cityId;
+          newItem.cityName = item.cityName;
+        }
+
+        return newItem;
+      });
+
+    setDivisionData(prev => [...prev, ...newDivisions]);
+    filterDataByLevel(activeTab, [...divisionData, ...newDivisions]);
+    
+    setSelectModalVisible(false);
+    Message.success(`已添加 ${newDivisions.length} 个${getCurrentTabConfig()?.title}`);
+  };
+
+  // 筛选可选择的行政区划
+  const filterSelectableDivisions = () => {
+    let filtered = [...selectableDivisions];
+    
+    if (selectSearchParams.keyword) {
+      filtered = filtered.filter(item => 
+        item.name.includes(selectSearchParams.keyword) ||
+        item.code.includes(selectSearchParams.keyword) ||
+        (item.provinceName && item.provinceName.includes(selectSearchParams.keyword)) ||
+        (item.cityName && item.cityName.includes(selectSearchParams.keyword))
+      );
+    }
+
+    if (selectSearchParams.status) {
+      filtered = filtered.filter(item => item.status === selectSearchParams.status);
+    }
+
+    // 如果是市级，可以按省筛选
+    if (activeTab === 'city' && selectSearchParams.parentId) {
+      filtered = filtered.filter(item => item.provinceId === selectSearchParams.parentId);
+    }
+    
+    // 如果是区县级，可以按市筛选  
+    if (activeTab === 'district' && selectSearchParams.parentId) {
+      filtered = filtered.filter(item => item.cityId === selectSearchParams.parentId);
+    }
+
+    return filtered;
   };
 
   // 处理状态切换
@@ -750,7 +1008,9 @@ const ChinaAdministrativeDivision: React.FC = () => {
   const currentTab = getCurrentTabConfig();
 
   return (
-    <Card>
+    <>
+      <style>{tableHeaderStyle}</style>
+      <Card>
       <div style={{ marginBottom: '20px' }}>
         <Title heading={4} style={{ margin: 0 }}>中国行政区划</Title>
       </div>
@@ -871,7 +1131,7 @@ const ChinaAdministrativeDivision: React.FC = () => {
           <Form.Item
             field="code"
             label="编码"
-            rules={[{ required: true, message: '请输入编码' }]}
+            rules={activeTab === 'street' || activeTab === 'village' ? [] : [{ required: true, message: '请输入编码' }]}
           >
             <Input placeholder="请输入行政区划编码" />
           </Form.Item>
@@ -1111,7 +1371,125 @@ const ChinaAdministrativeDivision: React.FC = () => {
           )}
         </Form>
       </Modal>
+
+      {/* 选择行政区划弹窗 */}
+      <Modal
+        title={`选择${getCurrentTabConfig()?.title}`}
+        visible={selectModalVisible}
+        onOk={handleSelectConfirm}
+        onCancel={() => setSelectModalVisible(false)}
+        style={{ width: 800 }}
+        okText="确定"
+        cancelText="取消"
+      >
+        {/* 搜索筛选区域 */}
+        <Card style={{ marginBottom: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: '16px', alignItems: 'flex-end' }}>
+            <div>
+              <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>关键词搜索</div>
+              <Input
+                placeholder="名称、编码"
+                value={selectSearchParams.keyword}
+                onChange={(value) => setSelectSearchParams(prev => ({ ...prev, keyword: value }))}
+              />
+            </div>
+            {(activeTab === 'city' || activeTab === 'district') && (
+              <div>
+                <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>
+                  {activeTab === 'city' ? '所属省份' : '所属城市'}
+                </div>
+                <Select
+                  placeholder={`选择${activeTab === 'city' ? '省份' : '城市'}`}
+                  value={selectSearchParams.parentId}
+                  onChange={(value) => setSelectSearchParams(prev => ({ ...prev, parentId: value }))}
+                  allowClear
+                >
+                  {activeTab === 'city' 
+                    ? getProvinceOptions().map(option => (
+                        <Option key={option.value} value={option.value}>{option.label}</Option>
+                      ))
+                    : divisionData
+                        .filter(item => item.level === 'city' && item.status === 'enabled')
+                        .map(item => ({ value: item.id, label: item.name }))
+                        .map(option => (
+                          <Option key={option.value} value={option.value}>{option.label}</Option>
+                        ))
+                  }
+                </Select>
+              </div>
+            )}
+            <div />
+          </div>
+        </Card>
+
+        <Table
+          columns={[
+            {
+              title: (
+                <Checkbox
+                  indeterminate={selectedDivisions.length > 0 && selectedDivisions.length < filterSelectableDivisions().length}
+                  checked={selectedDivisions.length === filterSelectableDivisions().length && filterSelectableDivisions().length > 0}
+                  onChange={(checked) => {
+                    if (checked) {
+                      setSelectedDivisions(filterSelectableDivisions().map(item => item.id));
+                    } else {
+                      setSelectedDivisions([]);
+                    }
+                  }}
+                />
+              ),
+              dataIndex: 'checkbox',
+              width: 60,
+              render: (_: unknown, record: any) => (
+                <Checkbox
+                  checked={selectedDivisions.includes(record.id)}
+                  onChange={(checked) => {
+                    if (checked) {
+                      setSelectedDivisions([...selectedDivisions, record.id]);
+                    } else {
+                      setSelectedDivisions(selectedDivisions.filter(id => id !== record.id));
+                    }
+                  }}
+                />
+              ),
+            },
+            {
+              title: '名称',
+              dataIndex: 'name',
+              width: 200,
+            },
+            {
+              title: '编码',
+              dataIndex: 'code',
+              width: 150,
+            },
+            ...(activeTab === 'city' ? [{
+              title: '所属省份',
+              dataIndex: 'provinceName',
+              width: 200,
+            }] : []),
+            ...(activeTab === 'district' ? [{
+              title: '所属省份',
+              dataIndex: 'provinceName',
+              width: 150,
+            }, {
+              title: '所属城市',
+              dataIndex: 'cityName',
+              width: 150,
+            }] : [])
+          ]}
+          data={filterSelectableDivisions()}
+          rowKey="id"
+          scroll={{ x: activeTab === 'district' ? 750 : activeTab === 'city' ? 600 : 450 }}
+          pagination={{
+            pageSize: 10,
+            showTotal: true,
+          }}
+          style={{ marginTop: '16px' }}
+        />
+             </Modal>
     </Card>
+    </>
   );
 };
 

@@ -12,11 +12,11 @@ import {
   Select,
   Message,
   Popconfirm,
-  Typography
+  Typography,
+  Checkbox
 } from '@arco-design/web-react';
 import {
   IconPlus,
-  IconEdit,
   IconSettings,
   IconMinus,
   IconSearch,
@@ -63,15 +63,19 @@ const PackageUnitManagement: React.FC = () => {
   const [filteredData, setFilteredData] = useState<PackageUnit[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [currentPackageUnit, setCurrentPackageUnit] = useState<PackageUnit | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [addPackageModalVisible, setAddPackageModalVisible] = useState(false);
+  const [packageLibraryData, setPackageLibraryData] = useState<PackageUnit[]>([]);
+  const [filteredPackageLibrary, setFilteredPackageLibrary] = useState<PackageUnit[]>([]);
+  const [selectedPackageIds, setSelectedPackageIds] = useState<string[]>([]);
+  const [addSearchParams, setAddSearchParams] = useState({
+    keyword: ''
+  });
   const [ediModalVisible, setEdiModalVisible] = useState(false);
   const [searchParams, setSearchParams] = useState<SearchParams>({
     keyword: '',
     status: ''
   });
 
-  const [editForm] = Form.useForm();
   const [form] = Form.useForm();
 
   // 初始化示例数据
@@ -161,6 +165,103 @@ const PackageUnitManagement: React.FC = () => {
 
     setData(mockData);
     filterData(mockData);
+
+    // 创建包装单位库数据
+    const packageLibraryMockData: PackageUnit[] = [
+      {
+        id: 'lib1',
+        packageCode2: 'PC',
+        packageCode4: 'PC01',
+        packageNameCn: '件',
+        packageNameEn: 'Piece',
+        ediCodes: [],
+        status: 'enabled' as const
+      },
+      {
+        id: 'lib2',
+        packageCode2: 'PK',
+        packageCode4: 'PK01',
+        packageNameCn: '包',
+        packageNameEn: 'Package',
+        ediCodes: [],
+        status: 'enabled' as const
+      },
+      {
+        id: 'lib3',
+        packageCode2: 'BT',
+        packageCode4: 'BT01',
+        packageNameCn: '瓶',
+        packageNameEn: 'Bottle',
+        ediCodes: [],
+        status: 'enabled' as const
+      },
+      {
+        id: 'lib4',
+        packageCode2: 'CN',
+        packageCode4: 'CN01',
+        packageNameCn: '罐',
+        packageNameEn: 'Can',
+        ediCodes: [],
+        status: 'enabled' as const
+      },
+      {
+        id: 'lib5',
+        packageCode2: 'TB',
+        packageCode4: 'TB01',
+        packageNameCn: '管',
+        packageNameEn: 'Tube',
+        ediCodes: [],
+        status: 'enabled' as const
+      },
+      {
+        id: 'lib6',
+        packageCode2: 'BD',
+        packageCode4: 'BD01',
+        packageNameCn: '束',
+        packageNameEn: 'Bundle',
+        ediCodes: [],
+        status: 'enabled' as const
+      },
+      {
+        id: 'lib7',
+        packageCode2: 'CT',
+        packageCode4: 'CT02',
+        packageNameCn: '桶',
+        packageNameEn: 'Container',
+        ediCodes: [],
+        status: 'enabled' as const
+      },
+      {
+        id: 'lib8',
+        packageCode2: 'ST',
+        packageCode4: 'ST01',
+        packageNameCn: '套',
+        packageNameEn: 'Set',
+        ediCodes: [],
+        status: 'enabled' as const
+      },
+      {
+        id: 'lib9',
+        packageCode2: 'PR',
+        packageCode4: 'PR01',
+        packageNameCn: '双',
+        packageNameEn: 'Pair',
+        ediCodes: [],
+        status: 'enabled' as const
+      },
+      {
+        id: 'lib10',
+        packageCode2: 'BL',
+        packageCode4: 'BL01',
+        packageNameCn: '捆',
+        packageNameEn: 'Bale',
+        ediCodes: [],
+        status: 'enabled' as const
+      }
+    ];
+
+    setPackageLibraryData(packageLibraryMockData);
+    setFilteredPackageLibrary(packageLibraryMockData);
   }, []);
 
   // 筛选数据
@@ -205,31 +306,69 @@ const PackageUnitManagement: React.FC = () => {
 
   const columns = [
     {
+      title: (
+        <Checkbox
+          indeterminate={selectedRowKeys.length > 0 && selectedRowKeys.length < filteredData.length}
+          checked={selectedRowKeys.length === filteredData.length && filteredData.length > 0}
+          onChange={(checked) => {
+            if (checked) {
+              setSelectedRowKeys(filteredData.map(item => item.id));
+            } else {
+              setSelectedRowKeys([]);
+            }
+          }}
+        />
+      ),
+      dataIndex: 'checkbox',
+      width: 60,
+      headerStyle: { whiteSpace: 'nowrap' },
+      render: (_: unknown, record: PackageUnit) => (
+        <Checkbox
+          checked={selectedRowKeys.includes(record.id)}
+          onChange={(checked) => {
+            if (checked) {
+              setSelectedRowKeys([...selectedRowKeys, record.id]);
+            } else {
+              setSelectedRowKeys(selectedRowKeys.filter(key => key !== record.id));
+            }
+          }}
+        />
+      ),
+    },
+    {
       title: '包装代码（2位）',
       dataIndex: 'packageCode2',
       width: 130,
       sorter: (a: PackageUnit, b: PackageUnit) => a.packageCode2.localeCompare(b.packageCode2),
+      headerStyle: { whiteSpace: 'nowrap' },
     },
     {
       title: '包装代码（4位）',
       dataIndex: 'packageCode4',
       width: 130,
       sorter: (a: PackageUnit, b: PackageUnit) => a.packageCode4.localeCompare(b.packageCode4),
+      headerStyle: { whiteSpace: 'nowrap' },
     },
     {
       title: '包装名称（中文）',
       dataIndex: 'packageNameCn',
       width: 150,
+      sorter: (a: PackageUnit, b: PackageUnit) => a.packageNameCn.localeCompare(b.packageNameCn),
+      headerStyle: { whiteSpace: 'nowrap' },
     },
     {
       title: '包装名称（英文）',
       dataIndex: 'packageNameEn',
       width: 150,
+      sorter: (a: PackageUnit, b: PackageUnit) => a.packageNameEn.localeCompare(b.packageNameEn),
+      headerStyle: { whiteSpace: 'nowrap' },
     },
     {
       title: 'EDI代码',
       dataIndex: 'ediCodes',
       width: 150,
+      sorter: (a: PackageUnit, b: PackageUnit) => a.ediCodes.length - b.ediCodes.length,
+      headerStyle: { whiteSpace: 'nowrap' },
       render: (ediCodes: EDICode[]) => (
         <Tooltip
           content={
@@ -252,6 +391,8 @@ const PackageUnitManagement: React.FC = () => {
       title: '状态',
       dataIndex: 'status',
       width: 100,
+      sorter: (a: PackageUnit, b: PackageUnit) => a.status.localeCompare(b.status),
+      headerStyle: { whiteSpace: 'nowrap' },
       render: (status: string) => (
         <Tag color={status === 'enabled' ? 'green' : 'red'}>
           {status === 'enabled' ? '启用' : '禁用'}
@@ -261,18 +402,11 @@ const PackageUnitManagement: React.FC = () => {
     {
       title: '操作',
       dataIndex: 'action',
-      width: 220,
+      width: 200,
       fixed: 'right' as const,
+      headerStyle: { whiteSpace: 'nowrap' },
       render: (_: unknown, record: PackageUnit) => (
         <Space>
-          <Button
-            type="text"
-            size="small"
-            icon={<IconEdit />}
-            onClick={() => handleEdit(record)}
-          >
-            编辑
-          </Button>
           <Popconfirm
             title={`确定要${record.status === 'enabled' ? '禁用' : '启用'}此包装单位吗？`}
             onOk={() => handleToggleStatus(record.id, record.status)}
@@ -298,25 +432,16 @@ const PackageUnitManagement: React.FC = () => {
     },
   ];
 
-  // 处理编辑
-  const handleEdit = (record: PackageUnit) => {
-    setCurrentPackageUnit(record);
-    setIsEditing(true);
-    editForm.setFieldsValue({
-      packageCode2: record.packageCode2,
-      packageCode4: record.packageCode4,
-      packageNameCn: record.packageNameCn,
-      packageNameEn: record.packageNameEn
-    });
-    setEditModalVisible(true);
-  };
-
-  // 处理新增
+  // 处理新增（改为选择模式）
   const handleAdd = () => {
-    setCurrentPackageUnit(null);
-    setIsEditing(false);
-    editForm.resetFields();
-    setEditModalVisible(true);
+    setSelectedPackageIds([]);
+    setAddSearchParams({ keyword: '' });
+    // 过滤掉已经存在的包装单位
+    const availablePackages = packageLibraryData.filter(packageUnit => 
+      !data.some(existingPackage => existingPackage.packageCode2 === packageUnit.packageCode2)
+    );
+    setFilteredPackageLibrary(availablePackages);
+    setAddPackageModalVisible(true);
   };
 
   // 处理状态切换
@@ -367,6 +492,115 @@ const PackageUnitManagement: React.FC = () => {
     Message.success(`已禁用 ${selectedRowKeys.length} 个包装单位`);
   };
 
+  // 包装单位库搜索列定义
+  const packageLibraryColumns = [
+    {
+      title: (
+        <Checkbox
+          indeterminate={selectedPackageIds.length > 0 && selectedPackageIds.length < filteredPackageLibrary.length}
+          checked={selectedPackageIds.length === filteredPackageLibrary.length && filteredPackageLibrary.length > 0}
+          onChange={(checked) => {
+            if (checked) {
+              setSelectedPackageIds(filteredPackageLibrary.map(item => item.id));
+            } else {
+              setSelectedPackageIds([]);
+            }
+          }}
+        />
+      ),
+      dataIndex: 'checkbox',
+      width: 60,
+      headerStyle: { whiteSpace: 'nowrap' },
+      render: (_: unknown, record: PackageUnit) => (
+        <Checkbox
+          checked={selectedPackageIds.includes(record.id)}
+          onChange={(checked) => {
+            if (checked) {
+              setSelectedPackageIds([...selectedPackageIds, record.id]);
+            } else {
+              setSelectedPackageIds(selectedPackageIds.filter(id => id !== record.id));
+            }
+          }}
+        />
+      ),
+    },
+    {
+      title: '包装代码（2位）',
+      dataIndex: 'packageCode2',
+      width: 130,
+      headerStyle: { whiteSpace: 'nowrap' },
+    },
+    {
+      title: '包装代码（4位）',
+      dataIndex: 'packageCode4',
+      width: 130,
+      headerStyle: { whiteSpace: 'nowrap' },
+    },
+    {
+      title: '包装名称（中文）',
+      dataIndex: 'packageNameCn',
+      width: 150,
+      headerStyle: { whiteSpace: 'nowrap' },
+    },
+    {
+      title: '包装名称（英文）',
+      dataIndex: 'packageNameEn',
+      width: 150,
+      headerStyle: { whiteSpace: 'nowrap' },
+    }
+  ];
+
+  // 包装单位库搜索功能
+  const handlePackageLibrarySearch = () => {
+    let filtered = packageLibraryData.filter(packageUnit => 
+      !data.some(existingPackage => existingPackage.packageCode2 === packageUnit.packageCode2)
+    );
+
+    // 关键词搜索
+    if (addSearchParams.keyword) {
+      filtered = filtered.filter(packageUnit => 
+        packageUnit.packageCode2.toLowerCase().includes(addSearchParams.keyword.toLowerCase()) ||
+        packageUnit.packageCode4.toLowerCase().includes(addSearchParams.keyword.toLowerCase()) ||
+        packageUnit.packageNameCn.includes(addSearchParams.keyword) ||
+        packageUnit.packageNameEn.toLowerCase().includes(addSearchParams.keyword.toLowerCase())
+      );
+    }
+
+    setFilteredPackageLibrary(filtered);
+  };
+
+  // 重置包装单位库搜索
+  const handlePackageLibraryReset = () => {
+    setAddSearchParams({ keyword: '' });
+    const availablePackages = packageLibraryData.filter(packageUnit => 
+      !data.some(existingPackage => existingPackage.packageCode2 === packageUnit.packageCode2)
+    );
+    setFilteredPackageLibrary(availablePackages);
+  };
+
+  // 确认添加选中的包装单位
+  const handleConfirmAddPackages = () => {
+    if (selectedPackageIds.length === 0) {
+      Message.warning('请选择要添加的包装单位');
+      return;
+    }
+
+    const packagesToAdd = filteredPackageLibrary.filter(packageUnit => 
+      selectedPackageIds.includes(packageUnit.id)
+    ).map(packageUnit => ({
+      ...packageUnit,
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+      status: 'enabled' as const,
+      ediCodes: []
+    }));
+
+    setData(prev => [...prev, ...packagesToAdd]);
+    setFilteredData(prev => [...prev, ...packagesToAdd]);
+    setAddPackageModalVisible(false);
+    setSelectedPackageIds([]);
+    Message.success(`成功添加 ${packagesToAdd.length} 个包装单位`);
+  };
+
   // 处理EDI代码设置
   const handleEdiCodeSetting = (record: PackageUnit) => {
     setCurrentPackageUnit(record);
@@ -376,41 +610,7 @@ const PackageUnitManagement: React.FC = () => {
     setEdiModalVisible(true);
   };
 
-  // 保存包装单位编辑
-  const handleSavePackageUnit = async () => {
-    try {
-      const values = await editForm.validate();
-      
-      const packageUnitData = {
-        ...values,
-        id: isEditing ? currentPackageUnit?.id : Date.now().toString(),
-        ediCodes: isEditing ? currentPackageUnit?.ediCodes || [] : [],
-        status: isEditing ? currentPackageUnit?.status : 'enabled' as const
-      };
 
-      if (isEditing) {
-        // 更新现有包装单位
-        setData(prev => prev.map(packageUnit => 
-          packageUnit.id === currentPackageUnit?.id ? { ...packageUnit, ...packageUnitData } : packageUnit
-        ));
-        setFilteredData(prev => prev.map(packageUnit => 
-          packageUnit.id === currentPackageUnit?.id ? { ...packageUnit, ...packageUnitData } : packageUnit
-        ));
-        Message.success('包装单位信息已更新');
-      } else {
-        // 新增包装单位
-        const newPackageUnit = { ...packageUnitData, id: Date.now().toString(), ediCodes: [] };
-        setData(prev => [...prev, newPackageUnit]);
-        setFilteredData(prev => [...prev, newPackageUnit]);
-        Message.success('包装单位已添加');
-      }
-
-      setEditModalVisible(false);
-      editForm.resetFields();
-    } catch (error) {
-      console.error('保存失败:', error);
-    }
-  };
 
   // 保存EDI代码
   const handleSaveEdiCodes = async () => {
@@ -435,6 +635,22 @@ const PackageUnitManagement: React.FC = () => {
 
   return (
     <Card>
+      {/* 强制表头不换行样式 */}
+      <style>{`
+        .arco-table-th {
+          white-space: nowrap !important;
+        }
+        .arco-table-th .arco-table-th-item {
+          white-space: nowrap !important;
+        }
+        .arco-table-th .arco-table-cell-text {
+          white-space: nowrap !important;
+        }
+        .arco-table-th .arco-table-cell {
+          white-space: nowrap !important;
+        }
+      `}</style>
+
       <div style={{ marginBottom: '20px' }}>
         <Title heading={4} style={{ margin: 0 }}>包装单位管理</Title>
       </div>
@@ -504,87 +720,63 @@ const PackageUnitManagement: React.FC = () => {
         columns={columns}
         data={filteredData}
         rowKey="id"
-        scroll={{ x: 1300 }}
+        scroll={{ x: 1200 }}
         pagination={{
           pageSize: 10,
           showTotal: true,
           showJumper: true,
           sizeCanChange: true,
         }}
-        rowSelection={{
-          selectedRowKeys,
-          onChange: (selectedKeys) => setSelectedRowKeys(selectedKeys as string[]),
-          type: 'checkbox',
-        }}
       />
 
-      {/* 新增/编辑包装单位弹窗 */}
+      {/* 新增包装单位选择弹窗 */}
       <Modal
-        title={isEditing ? '编辑包装单位' : '新增包装单位'}
-        visible={editModalVisible}
-        onOk={handleSavePackageUnit}
-        onCancel={() => setEditModalVisible(false)}
-        style={{ width: 600 }}
+        title="选择包装单位"
+        visible={addPackageModalVisible}
+        onOk={handleConfirmAddPackages}
+        onCancel={() => setAddPackageModalVisible(false)}
+        style={{ width: 800 }}
+        okText={`确认添加 (${selectedPackageIds.length})`}
+        okButtonProps={{ disabled: selectedPackageIds.length === 0 }}
       >
-        <Form form={editForm} layout="vertical">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            <Form.Item
-              field="packageCode2"
-              label="包装代码（2位）"
-              rules={[
-                { required: true, message: '请输入包装代码（2位）' },
-                { 
-                  validator: (value, callback) => {
-                    if (value && value.length !== 2) {
-                      callback('包装代码必须为2位字符');
-                    } else {
-                      callback();
-                    }
-                  }
-                }
-              ]}
-            >
-              <Input placeholder="请输入2位包装代码，如：CT" maxLength={2} />
-            </Form.Item>
-            
-            <Form.Item
-              field="packageCode4"
-              label="包装代码（4位）"
-              rules={[
-                { required: true, message: '请输入包装代码（4位）' },
-                { 
-                  validator: (value, callback) => {
-                    if (value && value.length !== 4) {
-                      callback('包装代码必须为4位字符');
-                    } else {
-                      callback();
-                    }
-                  }
-                }
-              ]}
-            >
-              <Input placeholder="请输入4位包装代码，如：CT01" maxLength={4} />
-            </Form.Item>
+        {/* 包装单位库搜索区域 */}
+        <Card style={{ marginBottom: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '16px', alignItems: 'flex-end' }}>
+            <div>
+              <div style={{ marginBottom: '4px', fontSize: '14px', color: '#666' }}>关键词搜索</div>
+              <Input
+                placeholder="包装代码、包装名称"
+                value={addSearchParams.keyword}
+                onChange={(value) => setAddSearchParams(prev => ({ ...prev, keyword: value }))}
+              />
+            </div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <Button type="primary" icon={<IconSearch />} onClick={handlePackageLibrarySearch}>
+                搜索
+              </Button>
+              <Button icon={<IconRefresh />} onClick={handlePackageLibraryReset}>
+                重置
+              </Button>
+            </div>
           </div>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            <Form.Item
-              field="packageNameCn"
-              label="包装名称（中文）"
-              rules={[{ required: true, message: '请输入中文包装名称' }]}
-            >
-              <Input placeholder="请输入中文包装名称，如：纸箱" />
-            </Form.Item>
-            
-            <Form.Item
-              field="packageNameEn"
-              label="包装名称（英文）"
-              rules={[{ required: true, message: '请输入英文包装名称' }]}
-            >
-              <Input placeholder="请输入英文包装名称，如：Carton" />
-            </Form.Item>
-          </div>
-        </Form>
+        </Card>
+
+        <div style={{ marginBottom: '12px', fontSize: '14px', color: '#666' }}>
+          已选择 {selectedPackageIds.length} 个包装单位，共 {filteredPackageLibrary.length} 个可选
+        </div>
+
+        <Table
+          columns={packageLibraryColumns}
+          data={filteredPackageLibrary}
+          rowKey="id"
+          scroll={{ x: 700, y: 400 }}
+          pagination={{
+            pageSize: 8,
+            showTotal: true,
+            showJumper: true,
+            simple: true,
+          }}
+        />
       </Modal>
 
       {/* EDI代码设置弹窗 */}
