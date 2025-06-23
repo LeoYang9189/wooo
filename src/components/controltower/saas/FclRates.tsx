@@ -409,18 +409,6 @@ const getFilterFieldsByTab = (activeTab: string): FilterFieldConfig[] => {
           label: '修改日期',
           type: 'dateRange',
           placeholder: '请选择修改日期范围'
-        },
-        {
-          key: 'approver',
-          label: '审核人',
-          type: 'text',
-          placeholder: '请输入审核人'
-        },
-        {
-          key: 'approvalDate',
-          label: '审核日期',
-          type: 'dateRange',
-          placeholder: '请选择审核日期范围'
         }
       ];
     case 'precarriage':
@@ -489,6 +477,54 @@ const getFilterFieldsByTab = (activeTab: string): FilterFieldConfig[] => {
             { label: '下架', value: '下架' }
           ],
           placeholder: '请选择状态'
+        },
+        {
+          key: 'entryPerson',
+          label: '创建人',
+          type: 'text',
+          placeholder: '请输入创建人'
+        },
+        {
+          key: 'createDate',
+          label: '创建日期',
+          type: 'dateRange',
+          placeholder: '请选择创建日期范围'
+        },
+        {
+          key: 'rateModifier',
+          label: '修改人',
+          type: 'text',
+          placeholder: '请输入修改人'
+        },
+        {
+          key: 'modifyDate',
+          label: '修改日期',
+          type: 'dateRange',
+          placeholder: '请选择修改日期范围'
+        },
+        {
+          key: 'entryPerson',
+          label: '创建人',
+          type: 'text',
+          placeholder: '请输入创建人'
+        },
+        {
+          key: 'createDate',
+          label: '创建日期',
+          type: 'dateRange',
+          placeholder: '请选择创建日期范围'
+        },
+        {
+          key: 'rateModifier',
+          label: '修改人',
+          type: 'text',
+          placeholder: '请输入修改人'
+        },
+        {
+          key: 'modifyDate',
+          label: '修改日期',
+          type: 'dateRange',
+          placeholder: '请选择修改日期范围'
         }
       ];
     case 'oncarriage':
@@ -597,8 +633,6 @@ interface DataItem {
   createDate: string; // 创建日期
   rateModifier: string; // 运价修改人
   modifyDate: string; // 修改日期
-  approver: string; // 审核人
-  approvalDate: string; // 审核日期
   rateType: string; // 运价类型
   vesselName: string; // 船名
   voyageNo: string; // 航次
@@ -758,9 +792,7 @@ const FclRates: React.FC = () => {
     entryPerson: false,
     createDate: false,
     rateModifier: false,
-    modifyDate: false,
-    approver: false,
-    approvalDate: false
+    modifyDate: false
   });
   const [columnOrder, setColumnOrder] = useState([
     'routeCode', 'rateType', 'departurePort', 'dischargePort', 'transitPort',
@@ -768,8 +800,7 @@ const FclRates: React.FC = () => {
     '20gp', '40gp', '40hc', '20nor', '40nor', '45hc', '20hc', '20tk', '40tk', '20ot', '40ot', '20fr', '40fr',
     'vesselSchedule', 'voyage', 'freeContainerDays', 'freeStorageDays', 'chargeSpecialNote', 'nac',
     'overweightNote', 'notes', 'validPeriod', 'etd', 'eta', 'vesselName', 'voyageNo',
-    'entryPerson', 'createDate', 'rateModifier', 'modifyDate', 
-    'approver', 'approvalDate'
+          'entryPerson', 'createDate', 'rateModifier', 'modifyDate'
   ]);
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const [dragOverItem, setDragOverItem] = useState<string | null>(null);
@@ -982,9 +1013,7 @@ const FclRates: React.FC = () => {
       entryPerson: false,
       createDate: false,
       rateModifier: false,
-      modifyDate: false,
-      approver: false,
-      approvalDate: false
+      modifyDate: false
     });
   };
 
@@ -1397,22 +1426,6 @@ const FclRates: React.FC = () => {
       resizable: true,
     },
     {
-      title: '审核人',
-      dataIndex: 'approver',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '审核日期',
-      dataIndex: 'approvalDate',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
       title: '操作',
       dataIndex: 'actions',
       width: 200,
@@ -1445,8 +1458,8 @@ const FclRates: React.FC = () => {
                 )}
               </Menu>
             }
-            position="bl"
-            getPopupContainer={(node) => node.parentElement || document.body}
+            position="bottom"
+            trigger="click"
           >
             <Button type="text" size="small">
               更多
@@ -1526,8 +1539,6 @@ const FclRates: React.FC = () => {
       createDate: '2024-05-15',
       rateModifier: '李四',
       modifyDate: '2024-05-16',
-      approver: '王五',
-      approvalDate: '2024-05-17',
       rateType: ['合约价', 'SPOT电商'][Math.floor(Math.random() * 2)],
       vesselName: Math.random() > 0.3 ? vesselNames[Math.floor(Math.random() * vesselNames.length)] : '',
       voyageNo: Math.random() > 0.3 ? `25${10 + Math.floor(Math.random() * 9)}S` : '',
@@ -1739,9 +1750,7 @@ const FclRates: React.FC = () => {
       entryPerson: '创建人',
       createDate: '创建日期',
       rateModifier: '运价修改人',
-      modifyDate: '修改日期',
-      approver: '审核人',
-      approvalDate: '审核日期'
+      modifyDate: '修改日期'
     };
     return columnLabels[columnKey] || columnKey;
   };
@@ -1761,16 +1770,81 @@ const FclRates: React.FC = () => {
     { title: '40NOR', dataIndex: '40nor', width: 100 },
     { title: '45HC', dataIndex: '45hc', width: 100 },
     { title: '有效期', dataIndex: 'validDateRange', width: 180 },
-    { title: '状态', dataIndex: 'status', width: 100 },
+    { 
+      title: '状态', 
+      dataIndex: 'status', 
+      width: 100,
+      render: (value: string) => {
+        const colorMap: Record<string, string> = {
+          '正常': 'green',
+          '过期': 'red',
+          '下架': 'gray'
+        };
+        return (
+          <Tooltip content={value} mini>
+            <Tag color={colorMap[value] || 'blue'} size="small">
+              {value}
+            </Tag>
+          </Tooltip>
+        );
+      }
+    },
+    { title: '创建人', dataIndex: 'entryPerson', width: 120 },
+    { title: '创建日期', dataIndex: 'createDate', width: 120 },
+    { title: '修改人', dataIndex: 'rateModifier', width: 120 },
+    { title: '修改日期', dataIndex: 'modifyDate', width: 120 },
     { title: '备注', dataIndex: 'remark', width: 150 },
+    {
+      title: '操作',
+      dataIndex: 'actions',
+      width: 200,
+      fixed: 'right' as const,
+      render: (_: unknown, record: any) => (
+        <Space>
+          <Button type="text" size="small" onClick={() => handleViewDetail(record.key)}>
+            详情
+          </Button>
+          <Button type="text" size="small" onClick={() => handleEdit(record.key)}>
+            编辑
+          </Button>
+          <Dropdown
+            droplist={
+              <Menu>
+                <Menu.Item 
+                  key="toggle-status"
+                  onClick={() => handleToggleStatus(record.key, record.status)}
+                >
+                  {record.status === '正常' ? '下架' : '上架'}
+                </Menu.Item>
+                {(record.status === '过期' || record.status === '下架') && (
+                  <Menu.Item 
+                    key="delete"
+                    onClick={() => handleDelete(record.key)}
+                    style={{ color: 'red' }}
+                  >
+                    删除
+                  </Menu.Item>
+                )}
+              </Menu>
+            }
+            position="bottom"
+            trigger="click"
+          >
+            <Button type="text" size="small">
+              更多
+            </Button>
+          </Dropdown>
+        </Space>
+      ),
+    }
   ];
   const precarriageData = [
-    { key: '1', code: 'PCR2024050001', rateType: '直拖', sublineType: null, origin: '浙江省杭州市萧山区', destination: 'CNSHA | SHANGHAI', terminal: '洋山', vendor: '安吉物流', '20gp': 800, '40gp': 1200, '40hc': 1300, '40nor': 1250, '45hc': 1500, validDateRange: '2024-05-01 至 2024-12-31', status: '正常', remark: '' },
-    { key: '2', code: 'PCR2024050002', rateType: '支线', sublineType: '湖州海铁', origin: '浙江省湖州市吴兴区', destination: 'CNNGB | NINGBO', terminal: '北仑', vendor: '中远海运', '20gp': 400, '40gp': 700, '40hc': 750, '40nor': 720, '45hc': 850, validDateRange: '2024-05-15 至 2024-11-30', status: '正常', remark: '' },
-    { key: '3', code: 'PCR2024050003', rateType: '直拖', sublineType: null, origin: '江苏省苏州市工业园区', destination: 'CNSHA | SHANGHAI', terminal: '外高桥', vendor: '德邦物流', '20gp': 850, '40gp': 1250, '40hc': 1350, '40nor': 1300, '45hc': 1550, validDateRange: '2024-04-01 至 2024-12-15', status: '正常', remark: '需提前24小时预约' },
-    { key: '4', code: 'PCR2024040001', rateType: '直拖', sublineType: null, origin: '上海市嘉定区', destination: 'CNSHA | SHANGHAI', terminal: '洋山', vendor: '顺丰物流', '20gp': 750, '40gp': 1150, '40hc': 1250, '40nor': 1200, '45hc': 1450, validDateRange: '2024-03-01 至 2024-05-31', status: '过期', remark: '' },
-    { key: '5', code: 'PCR2024050004', rateType: '支线', sublineType: '乍浦支线', origin: '浙江省嘉兴市平湖市', destination: 'CNSHA | SHANGHAI', terminal: '洋山', vendor: '海得航运', '20gp': 450, '40gp': 750, '40hc': 800, '40nor': 780, '45hc': 920, validDateRange: '2024-05-01 至 2024-10-31', status: '正常', remark: '周一、周四发船' },
-    { key: '6', code: 'PCR2024030001', rateType: '支线', sublineType: '海宁支线', origin: '浙江省嘉兴市海宁市', destination: 'CNNGB | NINGBO', terminal: '北仑', vendor: '浙江海洋航运', '20gp': 500, '40gp': 800, '40hc': 850, '40nor': 830, '45hc': 950, validDateRange: '2024-03-15 至 2024-04-30', status: '下架', remark: '已停运' },
+    { key: '1', code: 'PCR2024050001', rateType: '直拖', sublineType: null, origin: '浙江省杭州市萧山区', destination: 'CNSHA | SHANGHAI', terminal: '洋山', vendor: '安吉物流', '20gp': 800, '40gp': 1200, '40hc': 1300, '40nor': 1250, '45hc': 1500, validDateRange: '2024-05-01 至 2024-12-31', status: '正常', entryPerson: '张三', createDate: '2024-05-15', rateModifier: '李四', modifyDate: '2024-05-16', remark: '' },
+    { key: '2', code: 'PCR2024050002', rateType: '支线', sublineType: '湖州海铁', origin: '浙江省湖州市吴兴区', destination: 'CNNGB | NINGBO', terminal: '北仑', vendor: '中远海运', '20gp': 400, '40gp': 700, '40hc': 750, '40nor': 720, '45hc': 850, validDateRange: '2024-05-15 至 2024-11-30', status: '正常', entryPerson: '王五', createDate: '2024-05-16', rateModifier: '赵六', modifyDate: '2024-05-17', remark: '' },
+    { key: '3', code: 'PCR2024050003', rateType: '直拖', sublineType: null, origin: '江苏省苏州市工业园区', destination: 'CNSHA | SHANGHAI', terminal: '外高桥', vendor: '德邦物流', '20gp': 850, '40gp': 1250, '40hc': 1350, '40nor': 1300, '45hc': 1550, validDateRange: '2024-04-01 至 2024-12-15', status: '正常', entryPerson: '钱七', createDate: '2024-04-01', rateModifier: '孙八', modifyDate: '2024-04-02', remark: '需提前24小时预约' },
+    { key: '4', code: 'PCR2024040001', rateType: '直拖', sublineType: null, origin: '上海市嘉定区', destination: 'CNSHA | SHANGHAI', terminal: '洋山', vendor: '顺丰物流', '20gp': 750, '40gp': 1150, '40hc': 1250, '40nor': 1200, '45hc': 1450, validDateRange: '2024-03-01 至 2024-05-31', status: '过期', entryPerson: '周九', createDate: '2024-03-01', rateModifier: '吴十', modifyDate: '2024-03-02', remark: '' },
+    { key: '5', code: 'PCR2024050004', rateType: '支线', sublineType: '乍浦支线', origin: '浙江省嘉兴市平湖市', destination: 'CNSHA | SHANGHAI', terminal: '洋山', vendor: '海得航运', '20gp': 450, '40gp': 750, '40hc': 800, '40nor': 780, '45hc': 920, validDateRange: '2024-05-01 至 2024-10-31', status: '正常', entryPerson: '郑一', createDate: '2024-05-01', rateModifier: '何二', modifyDate: '2024-05-02', remark: '周一、周四发船' },
+    { key: '6', code: 'PCR2024030001', rateType: '支线', sublineType: '海宁支线', origin: '浙江省嘉兴市海宁市', destination: 'CNNGB | NINGBO', terminal: '北仑', vendor: '浙江海洋航运', '20gp': 500, '40gp': 800, '40hc': 850, '40nor': 830, '45hc': 950, validDateRange: '2024-03-15 至 2024-04-30', status: '下架', entryPerson: '冯三', createDate: '2024-03-15', rateModifier: '陈四', modifyDate: '2024-03-16', remark: '已停运' },
   ];
   // ====== 尾程运价 columns & data ======
   const oncarriageColumns = [
@@ -1787,14 +1861,79 @@ const FclRates: React.FC = () => {
     { title: '40NOR', dataIndex: '40nor', width: 100 },
     { title: '45HC', dataIndex: '45hc', width: 100 },
     { title: '有效期', dataIndex: 'validDateRange', width: 180 },
-    { title: '状态', dataIndex: 'status', width: 100 },
+    { 
+      title: '状态', 
+      dataIndex: 'status', 
+      width: 100,
+      render: (value: string) => {
+        const colorMap: Record<string, string> = {
+          '正常': 'green',
+          '过期': 'red',
+          '下架': 'gray'
+        };
+        return (
+          <Tooltip content={value} mini>
+            <Tag color={colorMap[value] || 'blue'} size="small">
+              {value}
+            </Tag>
+          </Tooltip>
+        );
+      }
+    },
+    { title: '创建人', dataIndex: 'entryPerson', width: 120 },
+    { title: '创建日期', dataIndex: 'createDate', width: 120 },
+    { title: '修改人', dataIndex: 'rateModifier', width: 120 },
+    { title: '修改日期', dataIndex: 'modifyDate', width: 120 },
     { title: '备注', dataIndex: 'remark', width: 150 },
+    {
+      title: '操作',
+      dataIndex: 'actions',
+      width: 200,
+      fixed: 'right' as const,
+      render: (_: unknown, record: any) => (
+        <Space>
+          <Button type="text" size="small" onClick={() => handleViewDetail(record.key)}>
+            详情
+          </Button>
+          <Button type="text" size="small" onClick={() => handleEdit(record.key)}>
+            编辑
+          </Button>
+          <Dropdown
+            droplist={
+              <Menu>
+                <Menu.Item 
+                  key="toggle-status"
+                  onClick={() => handleToggleStatus(record.key, record.status)}
+                >
+                  {record.status === '正常' ? '下架' : '上架'}
+                </Menu.Item>
+                {(record.status === '过期' || record.status === '下架') && (
+                  <Menu.Item 
+                    key="delete"
+                    onClick={() => handleDelete(record.key)}
+                    style={{ color: 'red' }}
+                  >
+                    删除
+                  </Menu.Item>
+                )}
+              </Menu>
+            }
+            position="bottom"
+            trigger="click"
+          >
+            <Button type="text" size="small">
+              更多
+            </Button>
+          </Dropdown>
+        </Space>
+      ),
+    }
   ];
   const oncarriageData = [
-    { key: '1', code: 'LMR2024050001', origin: 'USLAX | LOS ANGELES', addressType: '第三方地址', zipCode: '92101', address: 'San Diego, CA', warehouseCode: null, agentName: 'XPO TRUCK LLC', validDateRange: '2024-05-01 至 2024-12-31', remark: '', status: '正常', '20gp': 1200, '40gp': 1800, '40hc': 1900, '45hc': 2200, '40nor': 2000 },
-    { key: '2', code: 'LMR2024050002', origin: 'USNYC | NEW YORK', addressType: '亚马逊仓库', zipCode: '', address: '', warehouseCode: 'ONT8', agentName: 'DRAYEASY INC', validDateRange: '2024-05-15 至 2024-11-30', remark: '', status: '正常', '20gp': 980, '40gp': 1650, '40hc': 1750, '45hc': 2050, '40nor': 1800 },
-    { key: '3', code: 'LMR2024050003', origin: 'DEHAM | HAMBURG', addressType: '易仓', zipCode: '', address: '', warehouseCode: 'LAX203', agentName: 'AMERICAN FREIGHT SOLUTIONS', validDateRange: '2024-04-01 至 2024-12-15', remark: '需提前24小时预约', status: '正常', '20gp': 1300, '40gp': 1950, '40hc': 2050, '45hc': 2400, '40nor': 2100 },
-    { key: '4', code: 'LMR2024040001', origin: 'NLRTM | ROTTERDAM', addressType: '第三方地址', zipCode: '96001', address: 'Redding, CA', warehouseCode: null, agentName: 'WEST COAST CARRIERS LLC', validDateRange: '2024-03-01 至 2024-05-31', remark: '', status: '过期', '20gp': 1100, '40gp': 1700, '40hc': 1800, '45hc': 2150, '40nor': 1950 },
+    { key: '1', code: 'LMR2024050001', origin: 'USLAX | LOS ANGELES', addressType: '第三方地址', zipCode: '92101', address: 'San Diego, CA', warehouseCode: null, agentName: 'XPO TRUCK LLC', validDateRange: '2024-05-01 至 2024-12-31', status: '正常', entryPerson: '张三', createDate: '2024-05-01', rateModifier: '李四', modifyDate: '2024-05-02', remark: '', '20gp': 1200, '40gp': 1800, '40hc': 1900, '45hc': 2200, '40nor': 2000 },
+    { key: '2', code: 'LMR2024050002', origin: 'USNYC | NEW YORK', addressType: '亚马逊仓库', zipCode: '', address: '', warehouseCode: 'ONT8', agentName: 'DRAYEASY INC', validDateRange: '2024-05-15 至 2024-11-30', status: '正常', entryPerson: '王五', createDate: '2024-05-15', rateModifier: '赵六', modifyDate: '2024-05-16', remark: '', '20gp': 980, '40gp': 1650, '40hc': 1750, '45hc': 2050, '40nor': 1800 },
+    { key: '3', code: 'LMR2024050003', origin: 'DEHAM | HAMBURG', addressType: '易仓', zipCode: '', address: '', warehouseCode: 'LAX203', agentName: 'AMERICAN FREIGHT SOLUTIONS', validDateRange: '2024-04-01 至 2024-12-15', status: '正常', entryPerson: '钱七', createDate: '2024-04-01', rateModifier: '孙八', modifyDate: '2024-04-02', remark: '需提前24小时预约', '20gp': 1300, '40gp': 1950, '40hc': 2050, '45hc': 2400, '40nor': 2100 },
+    { key: '4', code: 'LMR2024040001', origin: 'NLRTM | ROTTERDAM', addressType: '第三方地址', zipCode: '96001', address: 'Redding, CA', warehouseCode: null, agentName: 'WEST COAST CARRIERS LLC', validDateRange: '2024-03-01 至 2024-05-31', status: '过期', entryPerson: '周九', createDate: '2024-03-01', rateModifier: '吴十', modifyDate: '2024-03-02', remark: '', '20gp': 1100, '40gp': 1700, '40hc': 1800, '45hc': 2150, '40nor': 1950 },
   ];
 
   // 新增运价按钮点击事件
@@ -1824,7 +1963,7 @@ const FclRates: React.FC = () => {
           columns={precarriageColumns}
           data={precarriageData}
           pagination={pagination}
-          scroll={{ x: 1800 }}
+          scroll={{ x: 2000 }}
           border={false}
           className="mt-4 inquiry-table-nowrap"
         />
@@ -1837,7 +1976,7 @@ const FclRates: React.FC = () => {
           columns={oncarriageColumns}
           data={oncarriageData}
           pagination={pagination}
-          scroll={{ x: 1800 }}
+          scroll={{ x: 2000 }}
           border={false}
           className="mt-4 inquiry-table-nowrap"
         />

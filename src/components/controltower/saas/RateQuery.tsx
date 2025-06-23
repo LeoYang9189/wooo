@@ -337,18 +337,6 @@ const getFilterFieldsByTab = (activeTab: string): FilterFieldConfig[] => {
           label: '修改日期',
           type: 'dateRange',
           placeholder: '请选择修改日期范围'
-        },
-        {
-          key: 'approver',
-          label: '审核人',
-          type: 'text',
-          placeholder: '请输入审核人'
-        },
-        {
-          key: 'approvalDate',
-          label: '审核日期',
-          type: 'dateRange',
-          placeholder: '请选择审核日期范围'
         }
       ];
     case 'precarriage':
@@ -460,18 +448,6 @@ const getFilterFieldsByTab = (activeTab: string): FilterFieldConfig[] => {
           label: '修改日期',
           type: 'dateRange',
           placeholder: '请选择修改日期范围'
-        },
-        {
-          key: 'approver',
-          label: '审核人',
-          type: 'text',
-          placeholder: '请输入审核人'
-        },
-        {
-          key: 'approvalDate',
-          label: '审核日期',
-          type: 'dateRange',
-          placeholder: '请选择审核日期范围'
         }
       ];
     case 'oncarriage':
@@ -597,18 +573,6 @@ const getFilterFieldsByTab = (activeTab: string): FilterFieldConfig[] => {
           label: '修改日期',
           type: 'dateRange',
           placeholder: '请选择修改日期范围'
-        },
-        {
-          key: 'approver',
-          label: '审核人',
-          type: 'text',
-          placeholder: '请输入审核人'
-        },
-        {
-          key: 'approvalDate',
-          label: '审核日期',
-          type: 'dateRange',
-          placeholder: '请选择审核日期范围'
         }
       ];
     default:
@@ -656,8 +620,6 @@ interface DataItem {
   createDate: string; // 创建日期
   rateModifier: string; // 运价修改人
   modifyDate: string; // 修改日期
-  approver: string; // 审核人
-  approvalDate: string; // 审核日期
   rateType: string; // 运价类型
   vesselName: string; // 船名
   voyageNo: string; // 航次
@@ -728,8 +690,6 @@ interface DataItem {
   creationDate: string; // 创建日期（截图中的"创建日期"）
   rateModifyPerson: string; // 运价修改人（截图中的"运价修改人"）
   modificationDate: string; // 修改日期（截图中的"修改日期"）
-  reviewPerson: string; // 审核人（截图中的"审核人"）
-  reviewDate: string; // 审核日期（截图中的"审核日期"）
   targetRegion: string; // 目的区域（截图中的"目的区域"）
   freightRateType: string; // 运价类型（截图中的"运价类型"）
   shipName: string; // 船名（截图中的"船名"）
@@ -807,9 +767,7 @@ const RateQuery: React.FC = () => {
     entryPerson: false,
     createDate: false,
     rateModifier: false,
-    modifyDate: false,
-    approver: false,
-    approvalDate: false
+    modifyDate: false
   });
 
   // 筛选功能状态
@@ -918,9 +876,7 @@ const RateQuery: React.FC = () => {
       entryPerson: false,
       createDate: false,
       rateModifier: false,
-      modifyDate: false,
-      approver: false,
-      approvalDate: false
+      modifyDate: false
     });
   };
 
@@ -1098,8 +1054,7 @@ const RateQuery: React.FC = () => {
       render: (value: string) => {
         const colorMap: Record<string, string> = {
           '正常': 'green',
-          '过期': 'red',
-          '草稿': 'orange'
+          '过期': 'red'
         };
         return (
           <Tooltip content={value} mini>
@@ -1353,22 +1308,6 @@ const RateQuery: React.FC = () => {
       resizable: true,
     },
     {
-      title: '审核人',
-      dataIndex: 'approver',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
-      title: '审核日期',
-      dataIndex: 'approvalDate',
-      width: 120,
-      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
-      sorter: true,
-      resizable: true,
-    },
-    {
       title: '操作',
       dataIndex: 'operations',
       fixed: 'right' as const,
@@ -1420,7 +1359,7 @@ const RateQuery: React.FC = () => {
       spaceStatus: ['畅接', '正常', '单票申请', '爆舱', '不接'][Math.floor(Math.random() * 5)],
       priceStatus: ['价格稳定', '价格上涨', '价格下调'][Math.floor(Math.random() * 3)],
       containerType: ['普通箱', '冷冻箱', '开顶箱'][Math.floor(Math.random() * 3)],
-      rateStatus: isClientAccess ? '正常' : ['正常', '过期', '草稿'][Math.floor(Math.random() * 3)],
+      rateStatus: isClientAccess ? '正常' : ['正常', '过期'][Math.floor(Math.random() * 2)],
       '20gp': random20gp,
       '40gp': random40gp,
       '40hc': random40gp + 50,
@@ -1451,8 +1390,6 @@ const RateQuery: React.FC = () => {
       createDate: '2024-05-15',
       rateModifier: '李四',
       modifyDate: '2024-05-16',
-      approver: '王五',
-      approvalDate: '2024-05-17',
       rateType: ['合约价', 'SPOT电商'][Math.floor(Math.random() * 2)],
       vesselName: Math.random() > 0.3 ? vesselNames[Math.floor(Math.random() * vesselNames.length)] : '',
       voyageNo: Math.random() > 0.3 ? `25${10 + Math.floor(Math.random() * 9)}S` : '',
@@ -1523,8 +1460,6 @@ const RateQuery: React.FC = () => {
       creationDate: '2024-05-15',
       rateModifyPerson: '李四',
       modificationDate: '2024-05-16',
-      reviewPerson: '王五',
-      reviewDate: '2024-05-17',
       targetRegion: '东南亚',
       freightRateType: '整箱运价',
       shipName: 'COSCO SHIPPING UNIVERSE',
@@ -1707,24 +1642,7 @@ const RateQuery: React.FC = () => {
     };
   });
 
-  // 港前运价状态颜色映射
-  const precarriageStatusColorClasses: Record<string, string> = {
-    '正常': 'bg-green-500',
-    '过期': 'bg-gray-500',
-    '下架': 'bg-red-500'
-  };
 
-  // 获取港前运价状态标签
-  const getPrecarriageRateStatusTag = (status: string) => {
-    const colorClass = precarriageStatusColorClasses[status] || 'bg-blue-500';
-    
-    return (
-      <div className="flex items-center">
-        <div className={`w-2 h-2 rounded-full ${colorClass} mr-2`}></div>
-        <span>{status}</span>
-      </div>
-    );
-  };
 
   // 处理查看整箱运价详情
   const handleViewFclRate = (id: string) => {
@@ -1854,7 +1772,20 @@ const RateQuery: React.FC = () => {
       width: 100,
       sorter: true,
       resizable: true,
-      render: (value: string) => <Tooltip content={value} mini>{getPrecarriageRateStatusTag(value)}</Tooltip>
+      render: (value: string) => {
+        const colorMap: Record<string, string> = {
+          '正常': 'green',
+          '过期': 'red',
+          '下架': 'gray'
+        };
+        return (
+          <Tooltip content={value} mini>
+            <Tag color={colorMap[value] || 'blue'} size="small">
+              {value}
+            </Tag>
+          </Tooltip>
+        );
+      }
     },
     {
       title: '备注',
@@ -1863,6 +1794,38 @@ const RateQuery: React.FC = () => {
       sorter: true,
       resizable: true,
       render: (value: string) => <Tooltip content={value} mini><span>{value || '-'}</span></Tooltip>
+    },
+    {
+      title: '创建人',
+      dataIndex: 'entryPerson',
+      width: 120,
+      sorter: true,
+      resizable: true,
+      render: (value: string) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'createDate',
+      width: 120,
+      sorter: true,
+      resizable: true,
+      render: (value: string) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
+    },
+    {
+      title: '修改人',
+      dataIndex: 'rateModifier',
+      width: 120,
+      sorter: true,
+      resizable: true,
+      render: (value: string) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
+    },
+    {
+      title: '修改时间',
+      dataIndex: 'modifyDate',
+      width: 120,
+      sorter: true,
+      resizable: true,
+      render: (value: string) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
     },
     {
       title: '操作',
@@ -1893,6 +1856,10 @@ const RateQuery: React.FC = () => {
     validDateRange: string; // 有效期区间
     status: '正常' | '过期' | '下架'; // 状态
     remark: string; // 备注
+    entryPerson: string; // 创建人
+    createDate: string; // 创建时间
+    rateModifier: string; // 修改人
+    modifyDate: string; // 修改时间
   }
 
   // 港前运价数据
@@ -1914,6 +1881,10 @@ const RateQuery: React.FC = () => {
       validDateRange: '2024-05-01 至 2024-12-31',
       status: '正常',
       remark: '',
+      entryPerson: '张三',
+      createDate: '2024-05-01',
+      rateModifier: '李四',
+      modifyDate: '2024-05-15',
     },
     {
       key: '2',
@@ -1932,6 +1903,10 @@ const RateQuery: React.FC = () => {
       validDateRange: '2024-05-15 至 2024-11-30',
       status: '正常',
       remark: '',
+      entryPerson: '王五',
+      createDate: '2024-05-15',
+      rateModifier: '赵六',
+      modifyDate: '2024-05-20',
     },
     {
       key: '3',
@@ -1950,6 +1925,10 @@ const RateQuery: React.FC = () => {
       validDateRange: '2024-04-01 至 2024-12-15',
       status: '正常',
       remark: '需提前24小时预约',
+      entryPerson: '钱七',
+      createDate: '2024-04-01',
+      rateModifier: '孙八',
+      modifyDate: '2024-04-15',
     },
     {
       key: '4',
@@ -1968,27 +1947,14 @@ const RateQuery: React.FC = () => {
       validDateRange: '2024-03-01 至 2024-05-31',
       status: '过期',
       remark: '',
+      entryPerson: '周九',
+      createDate: '2024-03-01',
+      rateModifier: '吴十',
+      modifyDate: '2024-03-10',
     },
   ];
 
-  // 尾程运价状态颜色映射
-  const lastMileStatusColorClasses: Record<string, string> = {
-    '正常': 'bg-green-500',
-    '过期': 'bg-gray-500',
-    '下架': 'bg-red-500'
-  };
 
-  // 获取尾程运价状态标签
-  const getLastMileRateStatusTag = (status: string) => {
-    const colorClass = lastMileStatusColorClasses[status] || 'bg-blue-500';
-    
-    return (
-      <div className="flex items-center">
-        <div className={`w-2 h-2 rounded-full ${colorClass} mr-2`}></div>
-        <span>{status}</span>
-      </div>
-    );
-  };
 
   // 尾程运价数据接口
   interface OncarriageDataItem {
@@ -2008,6 +1974,10 @@ const RateQuery: React.FC = () => {
     '40hc': number; // 40HC价格
     '45hc': number; // 45HC价格
     '40nor': number; // 40NOR价格
+    entryPerson: string; // 创建人
+    createDate: string; // 创建时间
+    rateModifier: string; // 修改人
+    modifyDate: string; // 修改时间
   }
   
   // 处理查看尾程运价详情
@@ -2137,7 +2107,20 @@ const RateQuery: React.FC = () => {
       width: 100,
       sorter: true,
       resizable: true,
-      render: (value: string) => <Tooltip content={value} mini>{getLastMileRateStatusTag(value)}</Tooltip>
+      render: (value: string) => {
+        const colorMap: Record<string, string> = {
+          '正常': 'green',
+          '过期': 'red',
+          '下架': 'gray'
+        };
+        return (
+          <Tooltip content={value} mini>
+            <Tag color={colorMap[value] || 'blue'} size="small">
+              {value}
+            </Tag>
+          </Tooltip>
+        );
+      }
     },
     {
       title: '备注',
@@ -2146,6 +2129,38 @@ const RateQuery: React.FC = () => {
       sorter: true,
       resizable: true,
       render: (value: string) => <Tooltip content={value} mini><span>{value || '-'}</span></Tooltip>
+    },
+    {
+      title: '创建人',
+      dataIndex: 'entryPerson',
+      width: 120,
+      sorter: true,
+      resizable: true,
+      render: (value: string) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'createDate',
+      width: 120,
+      sorter: true,
+      resizable: true,
+      render: (value: string) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
+    },
+    {
+      title: '修改人',
+      dataIndex: 'rateModifier',
+      width: 120,
+      sorter: true,
+      resizable: true,
+      render: (value: string) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
+    },
+    {
+      title: '修改时间',
+      dataIndex: 'modifyDate',
+      width: 120,
+      sorter: true,
+      resizable: true,
+      render: (value: string) => <Tooltip content={value} mini><span>{value}</span></Tooltip>
     },
     {
       title: '操作',
@@ -2176,7 +2191,11 @@ const RateQuery: React.FC = () => {
       '40gp': 1800,
       '40hc': 1900,
       '45hc': 2200,
-      '40nor': 2000
+      '40nor': 2000,
+      entryPerson: '张三',
+      createDate: '2024-05-01',
+      rateModifier: '李四',
+      modifyDate: '2024-05-15'
     },
     {
       key: '2',
@@ -2194,7 +2213,11 @@ const RateQuery: React.FC = () => {
       '40gp': 1650,
       '40hc': 1750,
       '45hc': 2050,
-      '40nor': 1800
+      '40nor': 1800,
+      entryPerson: '王五',
+      createDate: '2024-05-15',
+      rateModifier: '赵六',
+      modifyDate: '2024-05-20'
     },
     {
       key: '3',
@@ -2212,7 +2235,11 @@ const RateQuery: React.FC = () => {
       '40gp': 1950,
       '40hc': 2050,
       '45hc': 2400,
-      '40nor': 2100
+      '40nor': 2100,
+      entryPerson: '钱七',
+      createDate: '2024-04-01',
+      rateModifier: '孙八',
+      modifyDate: '2024-04-15'
     },
     {
       key: '4',
@@ -2230,7 +2257,11 @@ const RateQuery: React.FC = () => {
       '40gp': 1700,
       '40hc': 1800,
       '45hc': 2150,
-      '40nor': 1950
+      '40nor': 1950,
+      entryPerson: '周九',
+      createDate: '2024-03-01',
+      rateModifier: '吴十',
+      modifyDate: '2024-03-10'
     },
   ];
 
@@ -2391,9 +2422,7 @@ const RateQuery: React.FC = () => {
       entryPerson: '创建人',
       createDate: '创建日期',
       rateModifier: '运价修改人',
-      modifyDate: '修改日期',
-      approver: '审核人',
-      approvalDate: '审核日期'
+      modifyDate: '修改日期'
     };
     return columnLabels[columnKey] || columnKey;
   };
@@ -2764,15 +2793,6 @@ const RateQuery: React.FC = () => {
           <div className="flex justify-between mb-4">
             <Space>
               {(activeTab === 'fcl' || activeTab === 'lcl' || activeTab === 'air') && (
-                <Button 
-                  type="primary" 
-                  icon={<IconSearch />} 
-                  onClick={openCombinationQuery}
-                >
-                  组合方案查询
-                </Button>
-              )}
-              {(activeTab === 'precarriage' || activeTab === 'oncarriage') && (
                 <Button 
                   type="primary" 
                   icon={<IconSearch />} 

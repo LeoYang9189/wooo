@@ -146,7 +146,11 @@ const getFilterFieldsByTab = (activeTab: string): FilterFieldConfig[] => {
     { key: 'remark', label: '备注', type: 'text', placeholder: '请输入备注' },
     { key: 'createdAt', label: '创建时间', type: 'dateRange', placeholder: '请选择创建时间' },
     { key: 'clientType', label: '委托单位', type: 'text', placeholder: '请输入委托单位' },
-    { key: 'clientName', label: '委托单位名称', type: 'text', placeholder: '请输入委托单位名称' }
+    { key: 'clientName', label: '委托单位名称', type: 'text', placeholder: '请输入委托单位名称' },
+    { key: 'entryPerson', label: '创建人', type: 'text', placeholder: '请输入创建人' },
+    { key: 'createDate', label: '创建日期', type: 'dateRange', placeholder: '请选择创建日期范围' },
+    { key: 'rateModifier', label: '修改人', type: 'text', placeholder: '请输入修改人' },
+    { key: 'modifyDate', label: '修改日期', type: 'dateRange', placeholder: '请选择修改日期范围' }
   ];
 
   // 根据不同Tab返回不同字段
@@ -189,6 +193,11 @@ interface QuoteItem {
   createdAt: string;
   clientType: string;
   clientName: string;
+  // 新增字段
+  entryPerson: string; // 创建人
+  createDate: string; // 创建时间
+  rateModifier: string; // 修改人
+  modifyDate: string; // 修改时间
   // FCL特有
   containerInfo?: string;
   // LCL/Air特有
@@ -244,7 +253,11 @@ const QuoteManagement: React.FC = () => {
     clientName: true,
     containerInfo: true,
     weight: true,
-    volume: true
+    volume: true,
+    entryPerson: false,
+    createDate: false,
+    rateModifier: false,
+    modifyDate: false
   });
 
   // 列顺序状态
@@ -253,7 +266,8 @@ const QuoteManagement: React.FC = () => {
     'firstQuoteStatus', 'mainQuoteStatus', 'lastQuoteStatus', 'validityDate',
     'cargoNature', 'shipCompany', 'transitType', 'route', 'departurePort', 
     'dischargePort', 'remark', 'createdAt', 'clientType', 'clientName',
-    'containerInfo', 'weight', 'volume'
+    'containerInfo', 'weight', 'volume', 'entryPerson', 'createDate', 
+    'rateModifier', 'modifyDate'
   ]);
 
   // 拖拽状态
@@ -515,7 +529,11 @@ const QuoteManagement: React.FC = () => {
       clientName: '委托单位名称',
       containerInfo: '箱型信息',
       weight: '重量',
-      volume: '体积'
+      volume: '体积',
+      entryPerson: '创建人',
+      createDate: '创建日期',
+      rateModifier: '修改人',
+      modifyDate: '修改日期'
     };
     return labelMap[columnKey] || columnKey;
   };
@@ -787,13 +805,14 @@ const QuoteManagement: React.FC = () => {
   const getColumns = () => {
     // 基础列（所有类型共有）
     const baseColumns: ColumnItem[] = [
-      { title: '报价编号', dataIndex: 'quoteNo', sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
-      { title: '询价编号', dataIndex: 'inquiryNo', sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
-      { title: '报价来源', dataIndex: 'source', sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
-      { title: '报价人', dataIndex: 'quoter', sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
+      { title: '报价编号', dataIndex: 'quoteNo', width: 140, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '询价编号', dataIndex: 'inquiryNo', width: 140, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '报价来源', dataIndex: 'source', width: 100, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '报价人', dataIndex: 'quoter', width: 100, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
       { 
         title: '报价状态', 
         dataIndex: 'quoteStatus', 
+        width: 100,
         sorter: true, 
         resizable: true, 
         render: (val: string) => {
@@ -818,7 +837,7 @@ const QuoteManagement: React.FC = () => {
             <Tooltip content={val} mini>
               <div className="flex items-center">
                 <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: color, marginRight: 8 }}></div>
-                <span className="arco-ellipsis">{val}</span>
+                <span className="no-ellipsis">{val}</span>
               </div>
             </Tooltip>
           );
@@ -849,7 +868,7 @@ const QuoteManagement: React.FC = () => {
             <Tooltip content={val} mini>
               <div className="flex items-center">
                 <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: color, marginRight: 8 }}></div>
-                <span className="arco-ellipsis">{val}</span>
+                <span className="no-ellipsis">{val}</span>
               </div>
             </Tooltip>
           );
@@ -880,7 +899,7 @@ const QuoteManagement: React.FC = () => {
             <Tooltip content={val} mini>
               <div className="flex items-center">
                 <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: color, marginRight: 8 }}></div>
-                <span className="arco-ellipsis">{val}</span>
+                <span className="no-ellipsis">{val}</span>
               </div>
             </Tooltip>
           );
@@ -911,23 +930,60 @@ const QuoteManagement: React.FC = () => {
             <Tooltip content={val} mini>
               <div className="flex items-center">
                 <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: color, marginRight: 8 }}></div>
-                <span className="arco-ellipsis">{val}</span>
+                <span className="no-ellipsis">{val}</span>
               </div>
             </Tooltip>
           );
         }
       },
-      { title: '有效期', dataIndex: 'validityDate', sorter: true, resizable: true },
-      { title: '货盘性质', dataIndex: 'cargoNature', sorter: true, resizable: true },
-      { title: '船公司', dataIndex: 'shipCompany', sorter: true, resizable: true },
-      { title: '直达/中转', dataIndex: 'transitType', sorter: true, resizable: true },
-      { title: '航线', dataIndex: 'route', sorter: true, resizable: true },
-      { title: '起运港', dataIndex: 'departurePort', sorter: true, resizable: true },
-      { title: '卸货港', dataIndex: 'dischargePort', sorter: true, resizable: true },
-      { title: '备注', dataIndex: 'remark', sorter: true, resizable: true },
-      { title: '创建时间', dataIndex: 'createdAt', sorter: true, resizable: true },
-      { title: '委托单位', dataIndex: 'clientType', sorter: true, resizable: true },
-      { title: '委托单位名称', dataIndex: 'clientName', sorter: true, resizable: true },
+      { title: '有效期', dataIndex: 'validityDate', width: 120, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '货盘性质', dataIndex: 'cargoNature', width: 100, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '船公司', dataIndex: 'shipCompany', width: 160, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '直达/中转', dataIndex: 'transitType', width: 100, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '航线', dataIndex: 'route', width: 150, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '起运港', dataIndex: 'departurePort', width: 160, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '卸货港', dataIndex: 'dischargePort', width: 160, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '备注', dataIndex: 'remark', width: 200, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '创建时间', dataIndex: 'createdAt', width: 140, sorter: true, resizable: true, render: (val: string) => {
+          const [date, time] = val.split(' ');
+          return (
+            <Tooltip content={val} mini>
+              <div className="flex flex-col text-xs leading-tight">
+                <span className="no-ellipsis">{date}</span>
+                <span className="no-ellipsis text-gray-500">{time}</span>
+              </div>
+            </Tooltip>
+          );
+        }
+      },
+      { title: '委托单位', dataIndex: 'clientType', width: 120, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '委托单位名称', dataIndex: 'clientName', width: 160, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '创建人', dataIndex: 'entryPerson', width: 100, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '创建日期', dataIndex: 'createDate', width: 140, sorter: true, resizable: true, render: (val: string) => {
+          const [date, time] = val.split(' ');
+          return (
+            <Tooltip content={val} mini>
+              <div className="flex flex-col text-xs leading-tight">
+                <span className="no-ellipsis">{date}</span>
+                <span className="no-ellipsis text-gray-500">{time}</span>
+              </div>
+            </Tooltip>
+          );
+        }
+      },
+      { title: '修改人', dataIndex: 'rateModifier', width: 100, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '修改日期', dataIndex: 'modifyDate', width: 140, sorter: true, resizable: true, render: (val: string) => {
+          const [date, time] = val.split(' ');
+          return (
+            <Tooltip content={val} mini>
+              <div className="flex flex-col text-xs leading-tight">
+                <span className="no-ellipsis">{date}</span>
+                <span className="no-ellipsis text-gray-500">{time}</span>
+              </div>
+            </Tooltip>
+          );
+        }
+      },
       { 
         title: '操作', 
         width: 160, 
@@ -968,12 +1024,12 @@ const QuoteManagement: React.FC = () => {
     let specificColumns: ColumnItem[] = [];
     if (activeTab === 'fcl') {
       specificColumns = [
-        { title: '箱型箱量', dataIndex: 'containerInfo', sorter: true, resizable: true, width: 120 }
+        { title: '箱型箱量', dataIndex: 'containerInfo', width: 160, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> }
       ];
     } else if (activeTab === 'lcl' || activeTab === 'air') {
       specificColumns = [
-        { title: '重量(KGS)', dataIndex: 'weight', sorter: true, resizable: true, width: 120 },
-        { title: '体积(CBM)', dataIndex: 'volume', sorter: true, resizable: true, width: 120 }
+        { title: '重量(KGS)', dataIndex: 'weight', width: 120, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+        { title: '体积(CBM)', dataIndex: 'volume', width: 120, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> }
       ];
     }
     
@@ -1012,6 +1068,10 @@ const QuoteManagement: React.FC = () => {
       clientType: '直客',
       clientName: '上海贸易有限公司',
       containerInfo: '20GP*2, 40HC*1',
+      entryPerson: '张三',
+      createDate: '2024-05-01 10:30:00',
+      rateModifier: '李四',
+      modifyDate: '2024-05-01 12:30:00',
     },
     {
       quoteNo: 'QT2024050002',
@@ -1035,6 +1095,10 @@ const QuoteManagement: React.FC = () => {
       clientName: '德国物流公司',
       weight: '15.5吨',
       volume: '25.8立方米',
+      entryPerson: '李四',
+      createDate: '2024-05-02 14:20:00',
+      rateModifier: '王五',
+      modifyDate: '2024-05-02 16:20:00',
     },
     {
       quoteNo: 'QT2024050003',
@@ -1057,6 +1121,10 @@ const QuoteManagement: React.FC = () => {
       clientType: '直客',
       clientName: '东京贸易株式会社',
       containerInfo: '40HC*3',
+      entryPerson: '王五',
+      createDate: '2024-05-03 09:15:00',
+      rateModifier: '赵六',
+      modifyDate: '2024-05-03 11:15:00',
     },
     {
       quoteNo: 'QT2024050004',
@@ -1080,6 +1148,10 @@ const QuoteManagement: React.FC = () => {
       clientName: '澳洲物流有限公司',
       weight: '22.3吨',
       volume: '18.5立方米',
+      entryPerson: '赵六',
+      createDate: '2024-05-04 16:45:00',
+      rateModifier: '钱七',
+      modifyDate: '2024-05-04 18:45:00',
     },
   ];
 

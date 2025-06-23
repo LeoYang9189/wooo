@@ -6,13 +6,22 @@ import {
   Button, 
   Space, 
   Table,
-  Descriptions
+  Descriptions,
+  Modal,
+  InputNumber,
+  Select,
+  Grid,
+  Input,
+  Message
 } from '@arco-design/web-react';
-import { IconArrowLeft, IconDownload } from '@arco-design/web-react/icon';
+import { IconArrowLeft, IconDownload, IconCopy, IconPrinter } from '@arco-design/web-react/icon';
 import { useNavigate, useParams } from 'react-router-dom';
 import ControlTowerSaasLayout from './ControlTowerSaasLayout';
 
 const { Title } = Typography;
+const { Row, Col } = Grid;
+const { Option } = Select;
+const { TextArea } = Input;
 
 // 按箱型计费项目接口
 interface ContainerRateItem {
@@ -87,6 +96,17 @@ const ViewFclRate: React.FC = () => {
     '20fr': false,
     '40fr': false
   });
+
+  // 导出运价相关状态
+  const [exportModalVisible, setExportModalVisible] = useState(false);
+  const [containerSelections, setContainerSelections] = useState<Array<{
+    id: number;
+    type: string;
+    count: number;
+  }>>([{ id: 1, type: '20gp', count: 1 }]);
+  const [copyTextModalVisible, setCopyTextModalVisible] = useState(false);
+  const [pdfPreviewVisible, setPdfPreviewVisible] = useState(false);
+  const [quotationText, setQuotationText] = useState('');
 
   // 加载运价数据
   useEffect(() => {
@@ -249,8 +269,133 @@ const ViewFclRate: React.FC = () => {
 
   // 导出运价
   const handleExportRate = () => {
-    console.log('导出运价数据');
-    // TODO: 实现导出功能
+    setExportModalVisible(true);
+  };
+
+  // 生成快捷报价文本
+  const generateQuotationText = () => {
+    const selectedContainers = containerSelections
+      .filter(item => item.count > 0)
+      .map(item => `${item.count}*${item.type.toUpperCase()}`)
+      .join(' + ');
+
+    if (!selectedContainers || containerSelections.length === 0) {
+      Message.warning('请先选择箱型箱量');
+      return;
+    }
+
+    // 计算总价格
+    let totalOceanFreight = 0;
+    let totalSurcharge = 0;
+    let totalOtherFees = 0;
+
+    containerSelections.forEach(selection => {
+      if (selection.count > 0) {
+        // 海运费
+        const oceanFee = containerRateList.find(item => item.feeName === '海运费');
+        if (oceanFee && oceanFee[selection.type as keyof ContainerRateItem]) {
+          totalOceanFreight += parseInt(oceanFee[selection.type as keyof ContainerRateItem] as string || '0') * selection.count;
+        }
+
+        // 附加费
+        containerSurchargeList.forEach(item => {
+          if (item[selection.type as keyof ContainerRateItem]) {
+            totalSurcharge += parseInt(item[selection.type as keyof ContainerRateItem] as string || '0') * selection.count;
+          }
+        });
+      }
+    });
+
+    // 非按箱型计费
+    nonContainerRateList.forEach(item => {
+      totalOtherFees += parseInt(item.price || '0');
+    });
+    nonContainerSurchargeList.forEach(item => {
+      totalOtherFees += parseInt(item.price || '0');
+    });
+
+    const totalCost = totalOceanFreight + totalSurcharge + totalOtherFees;
+
+    const text = `
+【整箱运价报价】
+
+运价编号：${rateData.routeCode}
+航线：${rateData.departurePort} → ${rateData.dischargePort}
+船公司：${rateData.shipCompany}
+箱型箱量：${selectedContainers}
+
+价格明细：
+- 海运费：USD ${totalOceanFreight}
+- 附加费：USD ${totalSurcharge}
+- 其他费用：USD ${totalOtherFees}
+总计：USD ${totalCost}
+
+有效期：${rateData.validFrom} ~ ${rateData.validTo}
+船期：${rateData.vesselSchedule?.join(', ')}
+航程：${rateData.voyage} 天
+免用箱：${rateData.freeContainerDays} 天
+免堆存：${rateData.freeStorageDays} 天
+
+备注：${rateData.notes}
+
+※ 以上价格仅供参考，实际价格以正式合同为准
+※ 如有任何疑问，请联系我们的客服团队
+    `.trim();
+
+    setQuotationText(text);
+    setExportModalVisible(false);
+    setCopyTextModalVisible(true);
+  };
+
+  // 复制到剪贴板
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(quotationText);
+      Message.success('报价文本已复制到剪贴板');
+      setCopyTextModalVisible(false);
+    } catch (err) {
+      Message.error('复制失败，请手动复制');
+    }
+  };
+
+  // 生成并预览PDF
+  const generatePDF = () => {
+    const selectedContainers = containerSelections.filter(item => item.count > 0);
+
+    if (selectedContainers.length === 0) {
+      Message.warning('请先选择箱型箱量');
+      return;
+    }
+
+    setExportModalVisible(false);
+    setPdfPreviewVisible(true);
+  };
+
+  // 添加新的箱型选择
+  const addContainerSelection = () => {
+    const newId = Math.max(...containerSelections.map(item => item.id)) + 1;
+    setContainerSelections([...containerSelections, { id: newId, type: '20gp', count: 1 }]);
+  };
+
+  // 删除箱型选择
+  const removeContainerSelection = (id: number) => {
+    if (containerSelections.length > 1) {
+      setContainerSelections(containerSelections.filter(item => item.id !== id));
+    }
+  };
+
+  // 更新箱型选择
+  const updateContainerSelection = (id: number, field: 'type' | 'count', value: string | number) => {
+    setContainerSelections(containerSelections.map(item => 
+      item.id === id ? { ...item, [field]: value } : item
+    ));
+  };
+
+  // 获取可选择的箱型列表
+  const getAvailableContainerTypes = () => {
+    return Object.entries(boxTypeVisibility)
+      .filter(([_, visible]) => visible)
+      .map(([type, _]) => ({ label: type.toUpperCase(), value: type }));
   };
 
   return (
@@ -580,6 +725,418 @@ const ViewFclRate: React.FC = () => {
             />
                   </div>
       </Card>
+
+      {/* 导出运价弹窗 */}
+      <Modal
+        title="导出运价"
+        visible={exportModalVisible}
+        onCancel={() => setExportModalVisible(false)}
+        footer={null}
+        style={{ width: 600 }}
+      >
+        <div className="space-y-6">
+          {/* 箱型箱量选择 */}
+          <div>
+            <div className="flex justify-between items-center mb-4">
+              <h4 className="text-lg font-medium">选择箱型箱量</h4>
+              <Button 
+                type="primary" 
+                size="small"
+                onClick={addContainerSelection}
+              >
+                + 添加箱型
+              </Button>
+            </div>
+            
+            <div className="space-y-3">
+              {containerSelections.map((selection) => (
+                <Row key={selection.id} gutter={16} align="center">
+                  <Col span={8}>
+                    <Select
+                      placeholder="选择箱型"
+                      value={selection.type}
+                      onChange={(value) => updateContainerSelection(selection.id, 'type', value)}
+                      style={{ width: '100%' }}
+                    >
+                      {getAvailableContainerTypes().map(option => (
+                        <Option key={option.value} value={option.value}>
+                          {option.label}
+                        </Option>
+                      ))}
+                    </Select>
+                  </Col>
+                  <Col span={8}>
+                    <InputNumber
+                      min={1}
+                      max={999}
+                      value={selection.count}
+                      onChange={(value) => updateContainerSelection(selection.id, 'count', value || 1)}
+                      style={{ width: '100%' }}
+                      placeholder="数量"
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <Button
+                      type="text"
+                      status="danger"
+                      disabled={containerSelections.length === 1}
+                      onClick={() => removeContainerSelection(selection.id)}
+                    >
+                      删除
+                    </Button>
+                  </Col>
+                </Row>
+              ))}
+            </div>
+          </div>
+
+          {/* 操作按钮 */}
+          <div className="flex justify-center gap-4">
+            <Button
+              type="primary"
+              icon={<IconCopy />}
+              onClick={generateQuotationText}
+              size="large"
+            >
+              复制快捷报价文本
+            </Button>
+            <Button
+              type="primary"
+              icon={<IconPrinter />}
+              onClick={generatePDF}
+              size="large"
+            >
+              打印报价单文件
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* 快捷报价文本弹窗 */}
+      <Modal
+        title="快捷报价文本"
+        visible={copyTextModalVisible}
+        onCancel={() => setCopyTextModalVisible(false)}
+        footer={
+          <div className="flex justify-end space-x-2">
+            <Button onClick={() => setCopyTextModalVisible(false)}>
+              关闭
+            </Button>
+            <Button type="primary" icon={<IconCopy />} onClick={copyToClipboard}>
+              复制文本
+            </Button>
+          </div>
+        }
+        style={{ width: 700 }}
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-gray-600">
+            以下是根据您选择的箱型箱量生成的报价文本，您可以复制后发送给客户：
+          </p>
+          <TextArea
+            value={quotationText}
+            readOnly
+            rows={15}
+            style={{ fontFamily: 'monospace' }}
+          />
+        </div>
+      </Modal>
+
+      {/* PDF预览弹窗 */}
+      <Modal
+        title="报价单预览"
+        visible={pdfPreviewVisible}
+        onCancel={() => setPdfPreviewVisible(false)}
+        footer={
+          <div className="flex justify-end space-x-2">
+            <Button onClick={() => setPdfPreviewVisible(false)}>
+              关闭
+            </Button>
+            <Button type="primary" icon={<IconDownload />}>
+              下载PDF
+            </Button>
+          </div>
+        }
+        style={{ width: 900, top: 20 }}
+      >
+        <div className="space-y-4" style={{ height: '600px', overflow: 'auto' }}>
+          {/* PDF预览内容 */}
+          <div className="bg-white p-8 shadow-sm border" style={{ fontFamily: 'SimSun, serif' }}>
+            <div className="text-center mb-8">
+              <h1 className="text-2xl font-bold mb-2">整箱运价报价单</h1>
+              <p className="text-gray-600">Quotation for FCL Rate</p>
+            </div>
+
+            {/* 基本信息 */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-3 pb-2 border-b">基本信息</h3>
+              <Row gutter={[16, 8]}>
+                <Col span={8}>运价编号：{rateData.routeCode}</Col>
+                <Col span={8}>运价类型：{rateData.rateType}</Col>
+                <Col span={8}>货物类型：{rateData.cargoType}</Col>
+                <Col span={8}>起运港：{rateData.departurePort}</Col>
+                <Col span={8}>目的港：{rateData.dischargePort}</Col>
+                <Col span={8}>船公司：{rateData.shipCompany}</Col>
+              </Row>
+            </div>
+
+            {/* 箱型箱量 */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-3 pb-2 border-b">箱型箱量</h3>
+              <div className="grid grid-cols-3 gap-4">
+                {containerSelections
+                  .filter(selection => selection.count > 0)
+                  .map(selection => (
+                    <div key={selection.id} className="border p-3 text-center">
+                      <div className="font-medium">{selection.type.toUpperCase()}</div>
+                      <div className="text-xl font-bold text-blue-600">{selection.count} 箱</div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+
+            {/* 海运费明细 */}
+            <div className="mb-6">
+              <div className="bg-blue-50 px-4 py-2 mb-3 rounded">
+                <h3 className="text-lg font-semibold text-blue-800">海运费明细</h3>
+              </div>
+              <table className="w-full border-collapse border border-gray-300 shadow-sm">
+                <thead>
+                  <tr className="bg-blue-100">
+                    <th className="border border-gray-300 p-3 text-left font-semibold">费用项目</th>
+                    <th className="border border-gray-300 p-3 text-center font-semibold">币种</th>
+                    {containerSelections
+                      .filter(selection => selection.count > 0)
+                      .map(selection => (
+                        <th key={selection.id} className="border border-gray-300 p-3 text-center font-semibold">
+                          {selection.type.toUpperCase()} × {selection.count}
+                        </th>
+                      ))}
+                    <th className="border border-gray-300 p-3 text-center font-semibold bg-blue-200">小计</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {containerRateList.map((item, index) => (
+                    <tr key={item.key} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                      <td className="border border-gray-300 p-3 font-medium">{item.feeName}</td>
+                      <td className="border border-gray-300 p-3 text-center">{item.currency}</td>
+                      {containerSelections
+                        .filter(selection => selection.count > 0)
+                        .map(selection => {
+                          const unitPrice = item[selection.type as keyof ContainerRateItem] as string;
+                          const totalPrice = unitPrice ? parseInt(unitPrice) * selection.count : 0;
+                          return (
+                            <td key={selection.id} className="border border-gray-300 p-3 text-center">
+                              {unitPrice ? (
+                                <div>
+                                  <div className="text-sm text-gray-600">{item.currency} {unitPrice} × {selection.count}</div>
+                                  <div className="font-medium">{item.currency} {totalPrice}</div>
+                                </div>
+                              ) : (
+                                <span className="text-gray-400">-</span>
+                              )}
+                            </td>
+                          );
+                        })}
+                      <td className="border border-gray-300 p-3 text-center font-bold text-blue-700 bg-blue-50">
+                        {item.currency} {containerSelections
+                          .filter(selection => selection.count > 0)
+                          .reduce((sum, selection) => {
+                            const price = item[selection.type as keyof ContainerRateItem] as string;
+                            return sum + (price ? parseInt(price) * selection.count : 0);
+                          }, 0)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* 附加费明细 */}
+            <div className="mb-6">
+              <div className="bg-orange-50 px-4 py-2 mb-3 rounded">
+                <h3 className="text-lg font-semibold text-orange-800">附加费明细</h3>
+              </div>
+              <table className="w-full border-collapse border border-gray-300 shadow-sm">
+                <thead>
+                  <tr className="bg-orange-100">
+                    <th className="border border-gray-300 p-3 text-left font-semibold">费用项目</th>
+                    <th className="border border-gray-300 p-3 text-center font-semibold">币种</th>
+                    {containerSelections
+                      .filter(selection => selection.count > 0)
+                      .map(selection => (
+                        <th key={selection.id} className="border border-gray-300 p-3 text-center font-semibold">
+                          {selection.type.toUpperCase()} × {selection.count}
+                        </th>
+                      ))}
+                    <th className="border border-gray-300 p-3 text-center font-semibold bg-orange-200">小计</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {containerSurchargeList.map((item, index) => (
+                    <tr key={item.key} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                      <td className="border border-gray-300 p-3 font-medium">{item.feeName}</td>
+                      <td className="border border-gray-300 p-3 text-center">{item.currency}</td>
+                      {containerSelections
+                        .filter(selection => selection.count > 0)
+                        .map(selection => {
+                          const unitPrice = item[selection.type as keyof ContainerRateItem] as string;
+                          const totalPrice = unitPrice ? parseInt(unitPrice) * selection.count : 0;
+                          return (
+                            <td key={selection.id} className="border border-gray-300 p-3 text-center">
+                              {unitPrice ? (
+                                <div>
+                                  <div className="text-sm text-gray-600">{item.currency} {unitPrice} × {selection.count}</div>
+                                  <div className="font-medium">{item.currency} {totalPrice}</div>
+                                </div>
+                              ) : (
+                                <span className="text-gray-400">-</span>
+                              )}
+                            </td>
+                          );
+                        })}
+                      <td className="border border-gray-300 p-3 text-center font-bold text-orange-700 bg-orange-50">
+                        {item.currency} {containerSelections
+                          .filter(selection => selection.count > 0)
+                          .reduce((sum, selection) => {
+                            const price = item[selection.type as keyof ContainerRateItem] as string;
+                            return sum + (price ? parseInt(price) * selection.count : 0);
+                          }, 0)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* 其他费用明细 */}
+            {(nonContainerRateList.length > 0 || nonContainerSurchargeList.length > 0) && (
+              <div className="mb-6">
+                <div className="bg-green-50 px-4 py-2 mb-3 rounded">
+                  <h3 className="text-lg font-semibold text-green-800">其他费用明细</h3>
+                </div>
+                <table className="w-full border-collapse border border-gray-300 shadow-sm">
+                  <thead>
+                    <tr className="bg-green-100">
+                      <th className="border border-gray-300 p-3 text-left font-semibold">费用项目</th>
+                      <th className="border border-gray-300 p-3 text-center font-semibold">币种</th>
+                      <th className="border border-gray-300 p-3 text-center font-semibold">计费单位</th>
+                      <th className="border border-gray-300 p-3 text-center font-semibold">单价</th>
+                      <th className="border border-gray-300 p-3 text-center font-semibold">备注</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[...nonContainerRateList, ...nonContainerSurchargeList].map((item, index) => (
+                      <tr key={item.key} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                        <td className="border border-gray-300 p-3 font-medium">{item.feeName}</td>
+                        <td className="border border-gray-300 p-3 text-center">{item.currency}</td>
+                        <td className="border border-gray-300 p-3 text-center">{item.unit}</td>
+                        <td className="border border-gray-300 p-3 text-center font-medium">
+                          {item.currency} {item.price}
+                        </td>
+                        <td className="border border-gray-300 p-3 text-sm text-gray-600">{item.specialNote}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* 费用汇总 */}
+            <div className="mb-6">
+              <div className="bg-gray-100 px-4 py-2 mb-3 rounded">
+                <h3 className="text-lg font-semibold text-gray-800">费用汇总</h3>
+              </div>
+              <div className="bg-gray-50 p-4 rounded border">
+                <Row gutter={[16, 8]}>
+                  <Col span={12}>
+                    <div className="text-lg">
+                      <span className="text-gray-600">海运费总计：</span>
+                      <span className="font-bold text-blue-700">
+                        USD {containerRateList.reduce((total, item) => {
+                          return total + containerSelections
+                            .filter(selection => selection.count > 0)
+                            .reduce((sum, selection) => {
+                              const price = item[selection.type as keyof ContainerRateItem] as string;
+                              return sum + (price ? parseInt(price) * selection.count : 0);
+                            }, 0);
+                        }, 0)}
+                      </span>
+                    </div>
+                  </Col>
+                  <Col span={12}>
+                    <div className="text-lg">
+                      <span className="text-gray-600">附加费总计：</span>
+                      <span className="font-bold text-orange-700">
+                        USD {containerSurchargeList.reduce((total, item) => {
+                          return total + containerSelections
+                            .filter(selection => selection.count > 0)
+                            .reduce((sum, selection) => {
+                              const price = item[selection.type as keyof ContainerRateItem] as string;
+                              return sum + (price ? parseInt(price) * selection.count : 0);
+                            }, 0);
+                        }, 0)}
+                      </span>
+                    </div>
+                  </Col>
+                  <Col span={24}>
+                    <div className="text-xl pt-3 border-t border-gray-300 mt-3">
+                      <span className="text-gray-600">报价总计：</span>
+                      <span className="font-bold text-2xl text-red-600">
+                        USD {[...containerRateList, ...containerSurchargeList].reduce((total, item) => {
+                          return total + containerSelections
+                            .filter(selection => selection.count > 0)
+                            .reduce((sum, selection) => {
+                              const price = item[selection.type as keyof ContainerRateItem] as string;
+                              return sum + (price ? parseInt(price) * selection.count : 0);
+                            }, 0);
+                        }, 0) + [...nonContainerRateList, ...nonContainerSurchargeList].reduce((sum, item) => sum + parseInt(item.price || '0'), 0)}
+                      </span>
+                    </div>
+                  </Col>
+                </Row>
+              </div>
+            </div>
+
+            {/* 其他信息 */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-3 pb-2 border-b">其他信息</h3>
+              <Row gutter={[16, 8]}>
+                <Col span={12}>有效期：{rateData.validFrom} ~ {rateData.validTo}</Col>
+                <Col span={12}>船期：{rateData.vesselSchedule?.join(', ')}</Col>
+                <Col span={12}>航程：{rateData.voyage} 天</Col>
+                <Col span={12}>免用箱：{rateData.freeContainerDays} 天</Col>
+                <Col span={12}>免堆存：{rateData.freeStorageDays} 天</Col>
+              </Row>
+            </div>
+
+            {/* 备注 */}
+            {rateData.notes && (
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold mb-3 pb-2 border-b">备注</h3>
+                <p className="text-gray-700">{rateData.notes}</p>
+              </div>
+            )}
+
+            {/* 免责声明 */}
+            <div className="mt-8 p-4 bg-gray-50 border-l-4 border-yellow-400">
+              <p className="text-sm text-gray-600 mb-2">
+                <strong>重要声明：</strong>
+              </p>
+              <ul className="text-sm text-gray-600 space-y-1">
+                <li>• 以上价格仅供参考，实际价格以正式合同为准</li>
+                <li>• 价格有效期以报价单中标注的日期为准</li>
+                <li>• 如有任何疑问，请联系我们的客服团队</li>
+              </ul>
+            </div>
+
+            {/* 页脚 */}
+            <div className="mt-8 text-center text-sm text-gray-500">
+              <p>报价单生成时间：{new Date().toLocaleString()}</p>
+            </div>
+          </div>
+        </div>
+      </Modal>
     </ControlTowerSaasLayout>
   );
 };

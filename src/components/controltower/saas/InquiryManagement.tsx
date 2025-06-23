@@ -24,10 +24,8 @@ import {
   IconRefresh, 
   IconList, 
   IconDragDotVertical, 
-  IconEdit, 
   IconDelete, 
   IconDownload, 
-  IconEye, 
   IconUndo, 
   IconDown, 
   IconPlus,
@@ -147,7 +145,11 @@ const getFilterFieldsByTab = (activeTab: string): FilterFieldConfig[] => {
     { key: 'remark', label: '备注', type: 'text', placeholder: '请输入备注' },
     { key: 'createdAt', label: '创建时间', type: 'dateRange', placeholder: '请选择创建时间' },
     { key: 'clientType', label: '委托单位', type: 'text', placeholder: '请输入委托单位' },
-    { key: 'clientName', label: '委托单位名称', type: 'text', placeholder: '请输入委托单位名称' }
+    { key: 'clientName', label: '委托单位名称', type: 'text', placeholder: '请输入委托单位名称' },
+    { key: 'entryPerson', label: '创建人', type: 'text', placeholder: '请输入创建人' },
+    { key: 'createDate', label: '创建日期', type: 'dateRange', placeholder: '请选择创建日期范围' },
+    { key: 'rateModifier', label: '修改人', type: 'text', placeholder: '请输入修改人' },
+    { key: 'modifyDate', label: '修改日期', type: 'dateRange', placeholder: '请选择修改日期范围' }
   ];
 
   // 根据不同Tab返回不同字段
@@ -189,6 +191,11 @@ interface InquiryItem {
   createdAt: string;
   clientType: string;
   clientName: string;
+  // 新增字段
+  entryPerson: string; // 创建人
+  createDate: string; // 创建时间
+  rateModifier: string; // 修改人
+  modifyDate: string; // 修改时间
   // FCL特有
   containerInfo?: string;
   // LCL/Air特有
@@ -243,7 +250,11 @@ const InquiryManagement: React.FC = () => {
     clientName: true,
     containerInfo: true,
     weight: true,
-    volume: true
+    volume: true,
+    entryPerson: false,
+    createDate: false,
+    rateModifier: false,
+    modifyDate: false
   });
 
   // 筛选条件状态
@@ -507,7 +518,11 @@ const InquiryManagement: React.FC = () => {
       clientName: '委托单位名称',
       containerInfo: '箱型信息',
       weight: '重量',
-      volume: '体积'
+      volume: '体积',
+      entryPerson: '创建人',
+      createDate: '创建日期',
+      rateModifier: '修改人',
+      modifyDate: '修改日期'
     };
     return fieldLabels[columnKey] || columnKey;
   };
@@ -777,12 +792,13 @@ const InquiryManagement: React.FC = () => {
   const getColumns = () => {
     // 基础列（所有类型共有）
     const baseColumns: ColumnItem[] = [
-      { title: '询价编号', dataIndex: 'inquiryNo', sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
-      { title: '询价来源', dataIndex: 'source', sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
-      { title: '询价人', dataIndex: 'inquirer', sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
+      { title: '询价编号', dataIndex: 'inquiryNo', width: 140, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '询价来源', dataIndex: 'source', width: 100, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '询价人', dataIndex: 'inquirer', width: 100, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
       { 
         title: '询价状态', 
         dataIndex: 'inquiryStatus', 
+        width: 100,
         sorter: true, 
         resizable: true, 
         render: (val: string) => {
@@ -804,7 +820,7 @@ const InquiryManagement: React.FC = () => {
             <Tooltip content={val} mini>
               <div className="flex items-center">
                 <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: color, marginRight: 8 }}></div>
-                <span className="arco-ellipsis">{val}</span>
+                <span className="no-ellipsis">{val}</span>
               </div>
             </Tooltip>
           );
@@ -835,7 +851,7 @@ const InquiryManagement: React.FC = () => {
             <Tooltip content={val} mini>
               <div className="flex items-center">
                 <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: color, marginRight: 8 }}></div>
-                <span className="arco-ellipsis">{val}</span>
+                <span className="no-ellipsis">{val}</span>
               </div>
             </Tooltip>
           );
@@ -866,7 +882,7 @@ const InquiryManagement: React.FC = () => {
             <Tooltip content={val} mini>
               <div className="flex items-center">
                 <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: color, marginRight: 8 }}></div>
-                <span className="arco-ellipsis">{val}</span>
+                <span className="no-ellipsis">{val}</span>
               </div>
             </Tooltip>
           );
@@ -897,7 +913,7 @@ const InquiryManagement: React.FC = () => {
             <Tooltip content={val} mini>
               <div className="flex items-center">
                 <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: color, marginRight: 8 }}></div>
-                <span className="arco-ellipsis">{val}</span>
+                <span className="no-ellipsis">{val}</span>
               </div>
             </Tooltip>
           );
@@ -909,73 +925,131 @@ const InquiryManagement: React.FC = () => {
     let specificColumns: ColumnItem[] = [];
     if (activeTab === 'fcl') {
       specificColumns = [
-        { title: '箱型箱量', dataIndex: 'containerInfo', width: 160, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
+        { title: '箱型箱量', dataIndex: 'containerInfo', width: 160, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
       ];
     } else if (activeTab === 'lcl' || activeTab === 'air') {
       specificColumns = [
-        { title: '重量(KGS)', dataIndex: 'weight', width: 120, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
-        { title: '体积(CBM)', dataIndex: 'volume', width: 120, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
+        { title: '重量(KGS)', dataIndex: 'weight', width: 120, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+        { title: '体积(CBM)', dataIndex: 'volume', width: 120, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
       ];
     }
 
     // 公共后续列
     const commonColumns: ColumnItem[] = [
-      { title: '货好时间', dataIndex: 'cargoReadyTime', sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
-      { title: '货盘性质', dataIndex: 'cargoNature', sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
+      { title: '货好时间', dataIndex: 'cargoReadyTime', width: 120, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '货盘性质', dataIndex: 'cargoNature', width: 100, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
       { title: '船公司', dataIndex: 'shipCompany', width: 160, sorter: true, resizable: true, render: (val: string) => {
           if (val === '不指定') {
-            return <Tooltip content="不指定" mini><span className="arco-ellipsis text-gray-400">不指定</span></Tooltip>;
+            return <Tooltip content="不指定" mini><span className="no-ellipsis text-gray-400">不指定</span></Tooltip>;
           }
-          return <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip>;
+          return <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip>;
         }
       },
-      { title: '直达/中转', dataIndex: 'transitType', sorter: true, resizable: true, render: (val: string) => {
+      { title: '直达/中转', dataIndex: 'transitType', width: 100, sorter: true, resizable: true, render: (val: string) => {
           if (!val) {
-            return <Tooltip content="不限" mini><span className="arco-ellipsis text-gray-400">不限</span></Tooltip>;
+            return <Tooltip content="不限" mini><span className="no-ellipsis text-gray-400">不限</span></Tooltip>;
           }
-          return <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip>;
+          return <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip>;
         } 
       },
-      { title: '航线', dataIndex: 'route', width: 150, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
-      { title: '起运港', dataIndex: 'departurePort', width: 160, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
-      { title: '卸货港', dataIndex: 'dischargePort', width: 160, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
-      { title: '备注', dataIndex: 'remark', sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
-      { title: '创建时间', dataIndex: 'createdAt', sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
-      { title: '委托单位', dataIndex: 'clientType', sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
-      { title: '委托单位名称', dataIndex: 'clientName', sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="arco-ellipsis">{val}</span></Tooltip> },
+      { title: '航线', dataIndex: 'route', width: 150, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '起运港', dataIndex: 'departurePort', width: 160, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '卸货港', dataIndex: 'dischargePort', width: 160, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '备注', dataIndex: 'remark', width: 200, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '创建时间', dataIndex: 'createdAt', width: 140, sorter: true, resizable: true, render: (val: string) => {
+          const [date, time] = val.split(' ');
+          return (
+            <Tooltip content={val} mini>
+              <div className="flex flex-col text-xs leading-tight">
+                <span className="no-ellipsis">{date}</span>
+                <span className="no-ellipsis text-gray-500">{time}</span>
+              </div>
+            </Tooltip>
+          );
+        }
+      },
+      { title: '委托单位', dataIndex: 'clientType', width: 120, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '委托单位名称', dataIndex: 'clientName', width: 160, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '创建人', dataIndex: 'entryPerson', width: 100, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '创建日期', dataIndex: 'createDate', width: 140, sorter: true, resizable: true, render: (val: string) => {
+          const [date, time] = val.split(' ');
+          return (
+            <Tooltip content={val} mini>
+              <div className="flex flex-col text-xs leading-tight">
+                <span className="no-ellipsis">{date}</span>
+                <span className="no-ellipsis text-gray-500">{time}</span>
+              </div>
+            </Tooltip>
+          );
+        }
+      },
+      { title: '修改人', dataIndex: 'rateModifier', width: 100, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '修改日期', dataIndex: 'modifyDate', width: 140, sorter: true, resizable: true, render: (val: string) => {
+          const [date, time] = val.split(' ');
+          return (
+            <Tooltip content={val} mini>
+              <div className="flex flex-col text-xs leading-tight">
+                <span className="no-ellipsis">{date}</span>
+                <span className="no-ellipsis text-gray-500">{time}</span>
+              </div>
+            </Tooltip>
+          );
+        }
+      },
       {
         title: '操作',
         dataIndex: 'operations',
         fixed: 'right' as const,
-        width: 150,
-        render: (_: unknown, record: { inquiryNo: string }) => (
-          <div style={{display:'flex',flexWrap:'wrap',gap:4}}>
-            <div style={{display:'flex',gap:4,width:'100%'}}>
+        width: 200,
+        render: (_: unknown, record: InquiryItem) => {
+          // 检查是否可以撤销：头程、干线、尾程状态都是待报价
+          const canWithdraw = record.firstQuoteStatus === '待报价' && 
+                            record.mainQuoteStatus === '待报价' && 
+                            record.lastQuoteStatus === '待报价';
+          
+          // 检查是否可以删除：询价状态是草稿
+          const canDelete = record.inquiryStatus === '草稿';
+          
+          return (
+            <Space>
               <Button 
                 type="text" 
-                size="mini" 
-                icon={<IconEye />} 
+                size="small" 
                 onClick={() => navigate(`/controltower/saas/inquiry-detail/${activeTab}/${record.inquiryNo}`)}
               >
-                查看
+                详情
               </Button>
-              <Button type="text" size="mini" icon={<IconEdit />}>编辑</Button>
-            </div>
-            <div style={{display:'flex',gap:4,width:'100%'}}>
-              <Button type="text" size="mini" icon={<IconUndo />}>撤销</Button>
+              <Button type="text" size="small">编辑</Button>
               <Dropdown
                 droplist={
                   <Menu>
-                    <Menu.Item key="delete"><IconDelete style={{marginRight:4}} />删除</Menu.Item>
+                    {canWithdraw && (
+                      <Menu.Item key="withdraw">
+                        <IconUndo style={{ marginRight: 4 }} />
+                        撤销
+                      </Menu.Item>
+                    )}
+                    {canDelete && (
+                      <Menu.Item 
+                        key="delete"
+                        style={{ color: 'red' }}
+                      >
+                        <IconDelete style={{ marginRight: 4 }} />
+                        删除
+                      </Menu.Item>
+                    )}
                   </Menu>
                 }
-                position="br"
+                position="bottom"
+                trigger="click"
               >
-                <Button type="text" size="mini" icon={<IconDown />}>更多</Button>
+                <Button type="text" size="small">
+                  更多
+                </Button>
               </Dropdown>
-            </div>
-          </div>
-        ),
+            </Space>
+          );
+        },
       },
     ];
 
@@ -987,42 +1061,42 @@ const InquiryManagement: React.FC = () => {
   // 整箱数据
   const fclData: InquiryItem[] = [
     {
-      inquiryNo: 'R20240001', source: '内部', inquirer: '张三', inquiryStatus: '草稿', firstQuoteStatus: '待报价', mainQuoteStatus: '待报价', lastQuoteStatus: '待报价', containerInfo: '1*20GP+2*40HC', cargoReadyTime: '1周内', cargoNature: '询价', shipCompany: '不指定', transitType: '直达', route: '跨太平洋东行', departurePort: 'CNSHA | Shanghai', dischargePort: 'USLAX | Los Angeles', remark: '电子产品 优先考虑直达航线', createdAt: '2024-05-10 08:30:15', clientType: '正式客户', clientName: '上海测试',
+      inquiryNo: 'R20240001', source: '内部', inquirer: '张三', inquiryStatus: '草稿', firstQuoteStatus: '待报价', mainQuoteStatus: '待报价', lastQuoteStatus: '待报价', containerInfo: '1*20GP+2*40HC', cargoReadyTime: '1周内', cargoNature: '询价', shipCompany: '不指定', transitType: '直达', route: '跨太平洋东行', departurePort: 'CNSHA | Shanghai', dischargePort: 'USLAX | Los Angeles', remark: '电子产品 优先考虑直达航线', createdAt: '2024-05-10 08:30:15', clientType: '正式客户', clientName: '上海测试', entryPerson: '张三', createDate: '2024-05-10 08:30:15', rateModifier: '李四', modifyDate: '2024-05-10 10:30:15',
     },
     {
-      inquiryNo: 'R20240002', source: '内部', inquirer: '李四', inquiryStatus: '已提交', firstQuoteStatus: '已报价', mainQuoteStatus: '已报价', lastQuoteStatus: '待报价', containerInfo: '3*40HC', cargoReadyTime: '2周内', cargoNature: '实单', shipCompany: 'COSCO | 中远海运', transitType: '', route: '跨太平洋东行', departurePort: 'CNTAO | Qingdao', dischargePort: 'USNYC | New York', remark: '需要温控设备', createdAt: '2024-05-10 09:45:22', clientType: '正式客户', clientName: '深圳测试',
+      inquiryNo: 'R20240002', source: '内部', inquirer: '李四', inquiryStatus: '已提交', firstQuoteStatus: '已报价', mainQuoteStatus: '已报价', lastQuoteStatus: '待报价', containerInfo: '3*40HC', cargoReadyTime: '2周内', cargoNature: '实单', shipCompany: 'COSCO | 中远海运', transitType: '', route: '跨太平洋东行', departurePort: 'CNTAO | Qingdao', dischargePort: 'USNYC | New York', remark: '需要温控设备', createdAt: '2024-05-10 09:45:22', clientType: '正式客户', clientName: '深圳测试', entryPerson: '李四', createDate: '2024-05-10 09:45:22', rateModifier: '王五', modifyDate: '2024-05-10 11:45:22',
     },
     {
-      inquiryNo: 'R20240003', source: '内部', inquirer: '王五', inquiryStatus: '已提交', firstQuoteStatus: '已报价', mainQuoteStatus: '已报价', lastQuoteStatus: '已报价', containerInfo: '2*20GP', cargoReadyTime: '2024-06-15', cargoNature: '询价', shipCompany: '不指定', transitType: '直达', route: '远东西行', departurePort: 'CNNGB | Ningbo', dischargePort: 'DEHAM | Hamburg', remark: '', createdAt: '2024-05-10 10:15:30', clientType: '正式客户', clientName: '青岛测试',
+      inquiryNo: 'R20240003', source: '内部', inquirer: '王五', inquiryStatus: '已提交', firstQuoteStatus: '已报价', mainQuoteStatus: '已报价', lastQuoteStatus: '已报价', containerInfo: '2*20GP', cargoReadyTime: '2024-06-15', cargoNature: '询价', shipCompany: '不指定', transitType: '直达', route: '远东西行', departurePort: 'CNNGB | Ningbo', dischargePort: 'DEHAM | Hamburg', remark: '', createdAt: '2024-05-10 10:15:30', clientType: '正式客户', clientName: '青岛测试', entryPerson: '王五', createDate: '2024-05-10 10:15:30', rateModifier: '赵六', modifyDate: '2024-05-10 12:15:30',
     },
     {
-      inquiryNo: 'R20240004', source: '内部', inquirer: '赵六', inquiryStatus: '草稿', firstQuoteStatus: '拒绝报价', mainQuoteStatus: '待报价', lastQuoteStatus: '待报价', containerInfo: '1*40HC+1*40HQ', cargoReadyTime: '1个月内', cargoNature: '实单', shipCompany: 'CMA | 达飞轮船', transitType: '', route: '远东西行', departurePort: 'CNXMN | Xiamen', dischargePort: 'GBFXT | Felixstowe', remark: '客户要求准班期', createdAt: '2024-05-10 10:20:45', clientType: '正式客户', clientName: '宁波测试',
+      inquiryNo: 'R20240004', source: '内部', inquirer: '赵六', inquiryStatus: '草稿', firstQuoteStatus: '拒绝报价', mainQuoteStatus: '待报价', lastQuoteStatus: '待报价', containerInfo: '1*40HC+1*40HQ', cargoReadyTime: '1个月内', cargoNature: '实单', shipCompany: 'CMA | 达飞轮船', transitType: '', route: '远东西行', departurePort: 'CNXMN | Xiamen', dischargePort: 'GBFXT | Felixstowe', remark: '客户要求准班期', createdAt: '2024-05-10 10:20:45', clientType: '正式客户', clientName: '宁波测试', entryPerson: '赵六', createDate: '2024-05-10 10:20:45', rateModifier: '钱七', modifyDate: '2024-05-10 14:20:45',
     },
     {
-      inquiryNo: 'R20240005', source: '内部', inquirer: '钱七', inquiryStatus: '草稿', firstQuoteStatus: '待报价', mainQuoteStatus: '待报价', lastQuoteStatus: '拒绝报价', containerInfo: '5*40GP', cargoReadyTime: '暂不确定', cargoNature: '询价', shipCompany: '不指定', transitType: '', route: '亚洲区域', departurePort: 'CNDLC | Dalian', dischargePort: 'SGSIN | Singapore', remark: '危险品6.1类', createdAt: '2024-05-10 10:25:10', clientType: '正式客户', clientName: '大连测试',
+      inquiryNo: 'R20240005', source: '内部', inquirer: '钱七', inquiryStatus: '草稿', firstQuoteStatus: '待报价', mainQuoteStatus: '待报价', lastQuoteStatus: '拒绝报价', containerInfo: '5*40GP', cargoReadyTime: '暂不确定', cargoNature: '询价', shipCompany: '不指定', transitType: '', route: '亚洲区域', departurePort: 'CNDLC | Dalian', dischargePort: 'SGSIN | Singapore', remark: '危险品6.1类', createdAt: '2024-05-10 10:25:10', clientType: '正式客户', clientName: '大连测试', entryPerson: '钱七', createDate: '2024-05-10 10:25:10', rateModifier: '孙八', modifyDate: '2024-05-10 15:25:10',
     },
   ];
 
   // 拼箱数据
   const lclData: InquiryItem[] = [
     {
-      inquiryNo: 'L20240001', source: '内部', inquirer: '张三', inquiryStatus: '草稿', firstQuoteStatus: '待报价', mainQuoteStatus: '待报价', lastQuoteStatus: '待报价', weight: '1200', volume: '3.5', cargoReadyTime: '1周内', cargoNature: '询价', shipCompany: '不指定', transitType: '直达', route: '跨太平洋东行', departurePort: 'CNSHA | Shanghai', dischargePort: 'USLAX | Los Angeles', remark: '服装类产品', createdAt: '2024-05-12 08:30:15', clientType: '正式客户', clientName: '杭州测试',
+      inquiryNo: 'L20240001', source: '内部', inquirer: '张三', inquiryStatus: '草稿', firstQuoteStatus: '待报价', mainQuoteStatus: '待报价', lastQuoteStatus: '待报价', weight: '1200', volume: '3.5', cargoReadyTime: '1周内', cargoNature: '询价', shipCompany: '不指定', transitType: '直达', route: '跨太平洋东行', departurePort: 'CNSHA | Shanghai', dischargePort: 'USLAX | Los Angeles', remark: '服装类产品', createdAt: '2024-05-12 08:30:15', clientType: '正式客户', clientName: '杭州测试', entryPerson: '张三', createDate: '2024-05-12 08:30:15', rateModifier: '李四', modifyDate: '2024-05-12 10:30:15',
     },
     {
-      inquiryNo: 'L20240002', source: '内部', inquirer: '李四', inquiryStatus: '已提交', firstQuoteStatus: '已报价', mainQuoteStatus: '已报价', lastQuoteStatus: '待报价', weight: '850', volume: '2.1', cargoReadyTime: '2周内', cargoNature: '实单', shipCompany: 'COSCO | 中远海运', transitType: '', route: '跨太平洋东行', departurePort: 'CNTAO | Qingdao', dischargePort: 'USNYC | New York', remark: '鞋类产品', createdAt: '2024-05-12 09:45:22', clientType: '正式客户', clientName: '温州测试',
+      inquiryNo: 'L20240002', source: '内部', inquirer: '李四', inquiryStatus: '已提交', firstQuoteStatus: '已报价', mainQuoteStatus: '已报价', lastQuoteStatus: '待报价', weight: '850', volume: '2.1', cargoReadyTime: '2周内', cargoNature: '实单', shipCompany: 'COSCO | 中远海运', transitType: '', route: '跨太平洋东行', departurePort: 'CNTAO | Qingdao', dischargePort: 'USNYC | New York', remark: '鞋类产品', createdAt: '2024-05-12 09:45:22', clientType: '正式客户', clientName: '温州测试', entryPerson: '李四', createDate: '2024-05-12 09:45:22', rateModifier: '王五', modifyDate: '2024-05-12 11:45:22',
     },
     {
-      inquiryNo: 'L20240003', source: '内部', inquirer: '王五', inquiryStatus: '已提交', firstQuoteStatus: '已报价', mainQuoteStatus: '已报价', lastQuoteStatus: '已报价', weight: '1500', volume: '4.8', cargoReadyTime: '2024-06-15', cargoNature: '询价', shipCompany: '不指定', transitType: '直达', route: '远东西行', departurePort: 'CNNGB | Ningbo', dischargePort: 'DEHAM | Hamburg', remark: '五金配件', createdAt: '2024-05-12 10:15:30', clientType: '正式客户', clientName: '宁波测试',
+      inquiryNo: 'L20240003', source: '内部', inquirer: '王五', inquiryStatus: '已提交', firstQuoteStatus: '已报价', mainQuoteStatus: '已报价', lastQuoteStatus: '已报价', weight: '1500', volume: '4.8', cargoReadyTime: '2024-06-15', cargoNature: '询价', shipCompany: '不指定', transitType: '直达', route: '远东西行', departurePort: 'CNNGB | Ningbo', dischargePort: 'DEHAM | Hamburg', remark: '五金配件', createdAt: '2024-05-12 10:15:30', clientType: '正式客户', clientName: '宁波测试', entryPerson: '王五', createDate: '2024-05-12 10:15:30', rateModifier: '赵六', modifyDate: '2024-05-12 12:15:30',
     },
   ];
 
   // 空运数据
   const airData: InquiryItem[] = [
     {
-      inquiryNo: 'A20240001', source: '内部', inquirer: '张三', inquiryStatus: '草稿', firstQuoteStatus: '待报价', mainQuoteStatus: '待报价', lastQuoteStatus: '待报价', weight: '350', volume: '1.2', cargoReadyTime: '1周内', cargoNature: '询价', shipCompany: '不指定', transitType: '直达', route: '跨太平洋东行', departurePort: 'CNPVG | Shanghai Pudong', dischargePort: 'USLAX | Los Angeles', remark: '电子产品 紧急发货', createdAt: '2024-05-15 08:30:15', clientType: '正式客户', clientName: '上海电子',
+      inquiryNo: 'A20240001', source: '内部', inquirer: '张三', inquiryStatus: '草稿', firstQuoteStatus: '待报价', mainQuoteStatus: '待报价', lastQuoteStatus: '待报价', weight: '350', volume: '1.2', cargoReadyTime: '1周内', cargoNature: '询价', shipCompany: '不指定', transitType: '直达', route: '跨太平洋东行', departurePort: 'CNPVG | Shanghai Pudong', dischargePort: 'USLAX | Los Angeles', remark: '电子产品 紧急发货', createdAt: '2024-05-15 08:30:15', clientType: '正式客户', clientName: '上海电子', entryPerson: '张三', createDate: '2024-05-15 08:30:15', rateModifier: '李四', modifyDate: '2024-05-15 10:30:15',
     },
     {
-      inquiryNo: 'A20240002', source: '内部', inquirer: '李四', inquiryStatus: '已提交', firstQuoteStatus: '已报价', mainQuoteStatus: '已报价', lastQuoteStatus: '待报价', weight: '120', volume: '0.5', cargoReadyTime: '3天内', cargoNature: '实单', shipCompany: 'CX | 国泰航空', transitType: '', route: '跨太平洋东行', departurePort: 'CNHKG | Hong Kong', dischargePort: 'USNYC | New York', remark: '医疗产品', createdAt: '2024-05-15 09:45:22', clientType: '正式客户', clientName: '深圳医疗',
+      inquiryNo: 'A20240002', source: '内部', inquirer: '李四', inquiryStatus: '已提交', firstQuoteStatus: '已报价', mainQuoteStatus: '已报价', lastQuoteStatus: '待报价', weight: '120', volume: '0.5', cargoReadyTime: '3天内', cargoNature: '实单', shipCompany: 'CX | 国泰航空', transitType: '', route: '跨太平洋东行', departurePort: 'CNHKG | Hong Kong', dischargePort: 'USNYC | New York', remark: '医疗产品', createdAt: '2024-05-15 09:45:22', clientType: '正式客户', clientName: '深圳医疗', entryPerson: '李四', createDate: '2024-05-15 09:45:22', rateModifier: '王五', modifyDate: '2024-05-15 11:45:22',
     },
   ];
 
