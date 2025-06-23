@@ -1,11 +1,11 @@
 import React from 'react';
 import { 
   IconDashboard, 
-  IconFile, 
   IconRobot, 
   IconSearch,
   IconSafe,
-  IconCloud
+  IconCloud,
+  IconThunderbolt
 } from '@arco-design/web-react/icon';
 
 const PortalFeatures: React.FC = () => {
@@ -13,41 +13,41 @@ const PortalFeatures: React.FC = () => {
     {
       icon: <IconDashboard className="text-white text-3xl" />,
       title: '智能控制面板',
-      description: '直观的数据可视化，实时监控业务状况，帮助您做出明智决策。',
+      description: '直观的数据可视化，实时监控业务状况，智能决策支持系统。',
       color: 'from-blue-300 to-blue-400',
       bgColor: 'bg-blue-50'
     },
     {
-      icon: <IconFile className="text-white text-3xl" />,
-      title: '运价管理系统',
-      description: '高效管理海运、空运运价，支持批量导入导出，轻松应对市场变化。',
+      icon: <IconRobot className="text-white text-3xl" />,
+      title: 'AI助手实时回复',
+      description: '24/7智能客服机器人，即时响应客户询价，提供专业运价咨询服务。',
       color: 'from-green-300 to-green-400',
       bgColor: 'bg-green-50'
     },
     {
       icon: <IconSearch className="text-white text-3xl" />,
-      title: '询价报价一体化',
-      description: '完整的询价报价流程，自动计算利润率，提高报价效率和准确性。',
+      title: '海量运价实时查询',
+      description: '覆盖全球航线运价数据库，毫秒级查询响应，实时市场价格更新。',
       color: 'from-purple-300 to-purple-400',
       bgColor: 'bg-purple-50'
     },
     {
-      icon: <IconRobot className="text-white text-3xl" />,
-      title: 'AI智能助手',
-      description: '24/7在线AI助手，自动识别合约文件，智能回答运价查询问题。',
+      icon: <IconCloud className="text-white text-3xl" />,
+      title: '端到端全流程线上化',
+      description: '从询价到订舱全流程数字化，无纸化操作，提升业务效率。',
       color: 'from-orange-300 to-orange-400',
       bgColor: 'bg-orange-50'
     },
     {
-      icon: <IconCloud className="text-white text-3xl" />,
-      title: '云端数据同步',
-      description: '多设备数据同步，随时随地访问系统，确保业务连续性。',
+      icon: <IconThunderbolt className="text-white text-3xl" />,
+      title: 'AI识别解放双手',
+      description: '智能文档识别，自动提取合约信息，OCR技术释放人力资源。',
       color: 'from-cyan-300 to-cyan-400',
       bgColor: 'bg-cyan-50'
     },
     {
       icon: <IconSafe className="text-white text-3xl" />,
-      title: '企业级安全',
+      title: '企业级数据安全',
       description: '银行级安全保障，数据加密传输存储，完善的权限管理体系。',
       color: 'from-red-300 to-red-400',
       bgColor: 'bg-red-50'
@@ -110,26 +110,6 @@ const PortalFeatures: React.FC = () => {
               </div>
             </div>
           ))}
-        </div>
-
-        {/* 底部行动号召 */}
-        <div className="text-center bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-          <div className="max-w-2xl mx-auto">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              准备体验我们的完整功能了吗？
-            </h3>
-            <p className="text-gray-600 mb-6">
-              立即联系我们的专业团队，获取个性化的系统演示和定制方案
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-                立即咨询
-              </button>
-              <button className="px-8 py-3 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:text-blue-600 transition-all duration-300">
-                查看演示
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </section>
