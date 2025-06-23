@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faCalendarAlt, faEye, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import PortalHeader from './PortalHeader';
 import PortalFooter from './PortalFooter';
+import { UserProvider } from './UserContext';
 
 interface NewsItem {
   id: string;
@@ -143,11 +144,12 @@ const NewsListPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <PortalHeader />
-      
-      {/* 页面头部 */}
-      <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-600 text-white py-16">
+    <UserProvider>
+      <div className="min-h-screen bg-gray-50">
+        <PortalHeader />
+        
+        {/* 页面头部 */}
+        <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-600 text-white py-16">
         <div className="container mx-auto px-4">
           <button 
             onClick={handleBackHome}
@@ -273,8 +275,9 @@ const NewsListPage: React.FC = () => {
         )}
       </div>
 
-      <PortalFooter />
-    </div>
+        <PortalFooter />
+      </div>
+    </UserProvider>
   );
 };
 

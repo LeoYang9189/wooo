@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt, faEye, faUser, faArrowLeft, faShare, faBookmark } from '@fortawesome/free-solid-svg-icons';
 import PortalHeader from './PortalHeader';
 import PortalFooter from './PortalFooter';
+import { UserProvider } from './UserContext';
 
 interface NewsItem {
   id: string;
@@ -107,11 +108,12 @@ const NewsDetailPage: React.FC = () => {
   ).slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <PortalHeader />
-      
-      {/* 文章头部 */}
-      <div className="bg-white border-b border-gray-200">
+    <UserProvider>
+      <div className="min-h-screen bg-gray-50">
+        <PortalHeader />
+        
+        {/* 文章头部 */}
+        <div className="bg-white border-b border-gray-200">
         <div className="container mx-auto px-4 py-8">
           <button 
             onClick={handleBack}
@@ -276,8 +278,9 @@ const NewsDetailPage: React.FC = () => {
         </div>
       </div>
 
-      <PortalFooter />
-    </div>
+        <PortalFooter />
+      </div>
+    </UserProvider>
   );
 };
 
