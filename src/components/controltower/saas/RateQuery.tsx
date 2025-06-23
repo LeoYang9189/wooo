@@ -21,12 +21,9 @@ import {
 import { 
   IconSearch, 
   IconDownload, 
-  IconEdit, 
-  IconDelete, 
   IconRefresh, 
   IconList,
   IconDragDotVertical,
-  IconEye,
   IconDown,
   IconUp,
   IconSettings
@@ -720,7 +717,6 @@ interface LclAirDataItem {
 const RateQuery: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
   const [activeTab, setActiveTab] = useState<string>('fcl');
   const [customTableModalVisible, setCustomTableModalVisible] = useState(false);
   
@@ -890,7 +886,6 @@ const RateQuery: React.FC = () => {
   // 处理Tab切换
   const handleTabChange = (key: string) => {
     setActiveTab(key);
-    setSelectedRowKeys([]);
   };
 
   // 打开组合方案查询页面
@@ -898,9 +893,7 @@ const RateQuery: React.FC = () => {
     navigate('/controltower/saas/combination-rate-query');
   };
 
-  const onSelectChange = (selectedRowKeys: (string | number)[]) => {
-    setSelectedRowKeys(selectedRowKeys);
-  };
+
 
   // 判断是否为客户端访问
   const isClientAccess = location.pathname.includes('/controltower-client/');
@@ -1311,10 +1304,11 @@ const RateQuery: React.FC = () => {
       title: '操作',
       dataIndex: 'operations',
       fixed: 'right' as const,
-      width: 80,
+      width: 120,
+      className: 'action-column',
       render: (_: any, record: DataItem) => (
-        <Button type="text" size="mini" icon={<IconEye />} onClick={() => handleViewFclRate(record.key)}>
-          查看
+        <Button type="text" size="mini" onClick={() => handleViewFclRate(record.key)}>
+          详情
         </Button>
       ),
     },
@@ -1577,15 +1571,16 @@ const RateQuery: React.FC = () => {
       title: '操作',
       dataIndex: 'operations',
       fixed: 'right' as const,
-      width: 150,
+      width: 165,
+      className: 'action-column',
       render: () => (
-        <div style={{display:'flex',flexWrap:'wrap',gap:4}}>
-          <div style={{display:'flex',gap:4,width:'100%'}}>
-            <Button type="text" size="mini" icon={<IconEdit />}>编辑</Button>
-            <Button type="text" size="mini" icon={<IconDownload />}>下载</Button>
+        <div style={{display:'flex',flexWrap:'wrap',gap:0}}>
+          <div style={{display:'flex',gap:0,width:'100%'}}>
+            <Button type="text" size="mini">编辑</Button>
+            <Button type="text" size="mini">下载</Button>
           </div>
-          <div style={{display:'flex',gap:4,width:'100%'}}>
-            <Button type="text" size="mini" icon={<IconDelete />}>复制</Button>
+          <div style={{display:'flex',gap:0,width:'100%'}}>
+            <Button type="text" size="mini">复制</Button>
           </div>
         </div>
       ),
@@ -1831,9 +1826,10 @@ const RateQuery: React.FC = () => {
       title: '操作',
       dataIndex: 'operations',
       fixed: 'right' as const,
-      width: 80,
+      width: 120,
+      className: 'action-column',
       render: (_: any, record: PrecarriageDataItem) => (
-        <Button type="text" size="mini" icon={<IconEye />} onClick={() => handleViewPrecarriageRate(record.key)}>查看</Button>
+        <Button type="text" size="mini" onClick={() => handleViewPrecarriageRate(record.key)}>详情</Button>
       ),
     },
   ];
@@ -2166,9 +2162,10 @@ const RateQuery: React.FC = () => {
       title: '操作',
       dataIndex: 'operations',
       fixed: 'right' as const,
-      width: 80,
+      width: 120,
+      className: 'action-column',
       render: (_: any, record: OncarriageDataItem) => (
-        <Button type="text" size="mini" icon={<IconEye />} onClick={() => handleViewLastMileRate(record.key)}>查看</Button>
+        <Button type="text" size="mini" onClick={() => handleViewLastMileRate(record.key)}>详情</Button>
       ),
     },
   ];
@@ -2816,12 +2813,8 @@ const RateQuery: React.FC = () => {
             loading={false}
             columns={getTableColumns()}
             data={getTableData()}
-            rowSelection={{
-              selectedRowKeys,
-              onChange: onSelectChange,
-            }}
             pagination={pagination}
-            scroll={{ x: 2700 }}
+            scroll={{ x: 2740 }}
             border={false}
             className="mt-4 inquiry-table-nowrap"
           />

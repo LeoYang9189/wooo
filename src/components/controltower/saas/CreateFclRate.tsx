@@ -59,18 +59,96 @@ interface NonContainerRateItem {
   specialNote: string;
 }
 
+// 定义类型接口
+interface ContainerInfo {
+  type: string;
+  count: number;
+}
+
+interface MainlineRate {
+  id: string;
+  certNo: string;
+  departurePort: string;
+  dischargePort: string;
+  shipCompany: string;
+  validPeriod: string;
+  transitType: string;
+  '20GP': string;
+  '40GP': string;
+  '40HC': string;
+  transitTime: string;
+  etd: string;
+  eta: string;
+  price: string;
+  currency: string;
+}
+
+interface PrecarriageRate {
+  id: string;
+  certNo: string;
+  type: string;
+  origin: string;
+  destination: string;
+  vendor: string;
+  '20GP': string;
+  '40GP': string;
+  '40HC': string;
+  price: string;
+  currency: string;
+}
+
+interface OncarriageRate {
+  id: string;
+  certNo: string;
+  destination: string;
+  addressType: string;
+  zipCode: string;
+  address: string;
+  agentName: string;
+  price: string;
+  currency: string;
+}
+
+interface QuoteForm {
+  quoteNo: string;
+  inquiryNo: string;
+  quoter: string;
+  quoteType: 'fcl' | 'lcl' | 'air';
+  cargoReadyTime: string;
+  cargoNature: string;
+  shipCompany: string;
+  transitType: string;
+  route: string;
+  departurePort: string;
+  dischargePort: string;
+  remark: string;
+  clientType: string;
+  clientName: string;
+  validityDate: string[];
+  // 整箱特有字段
+  containerInfo?: ContainerInfo[];
+  // 拼箱/空运特有字段
+  weight?: string;
+  volume?: string;
+  // 报价方案数据
+  mainlineRates: MainlineRate[];
+  precarriageRates: PrecarriageRate[];
+  oncarriageRates: OncarriageRate[];
+}
+
 /**
  * 整箱运价新增/编辑页面
  */
 const CreateFclRate: React.FC = () => {
   const navigate = useNavigate();
-  const params = useParams();
+  const { type, id } = useParams<{ type?: string; id?: string }>();
+
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   
   // 判断是否为编辑模式
-  const isEditMode = Boolean(params.id);
-  const rateId = params.id;
+  const isEditMode = Boolean(id);
+  const rateId = id;
   
   // 基本信息状态
   const [rateType, setRateType] = useState('合约价');
@@ -147,31 +225,79 @@ const CreateFclRate: React.FC = () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // 模拟返回的数据
-      const mockData = {
-        routeCode: `FCL${id}`,
-        rateType: '合约价',
-        cargoType: '普货',
+      const mockData: QuoteForm = {
+        quoteNo: id,
+        inquiryNo: 'INQ2024050001',
+        quoter: '张三',
+        quoteType: type === 'fcl' || type === 'lcl' || type === 'air' ? type : 'fcl',
+        cargoReadyTime: '1周内',
+        cargoNature: '实盘',
+        shipCompany: '地中海',
+        transitType: '直达',
+        route: '美加线',
         departurePort: 'CNSHA',
         dischargePort: 'USLAX',
-        transitType: '直达',
-        shipCompany: 'COSCO',
-        spaceStatus: '正常',
-        contractNo: 'CONTRACT001',
-        priceStatus: '价格稳定',
-        nac: 'NAC01',
-        vesselSchedule: ['周一', '周三'],
-        voyage: 15,
-        chargeSpecialNote: '注意包装',
-        shipName: 'COSCO SHIPPING',
-        voyageNumber: 'V001',
-        freeContainerDays: 7,
-        freeStorageDays: 5
+        remark: '电子产品 优先考虑直达航线',
+        clientType: '正式客户',
+        clientName: '上海测试公司',
+        validityDate: ['2024-06-01', '2024-06-30'],
+        containerInfo: type === 'fcl' ? [
+          { type: '20GP', count: 1 },
+          { type: '40HC', count: 2 }
+        ] : undefined,
+        weight: type === 'lcl' ? '1200' : undefined,
+        volume: type === 'lcl' ? '3.5' : undefined,
+        mainlineRates: [
+          {
+            id: '1',
+            certNo: 'M001',
+            departurePort: 'CNSHA | Shanghai',
+            dischargePort: 'USLAX | Los Angeles',
+            shipCompany: '地中海',
+            validPeriod: '2024-06-01 ~ 2024-07-01',
+            transitType: '直达',
+            '20GP': '1500',
+            '40GP': '2800',
+            '40HC': '2900',
+            transitTime: '14天',
+            etd: '2024-07-10',
+            eta: '2024-07-24',
+            price: '2900',
+            currency: 'USD'
+          }
+        ],
+        precarriageRates: [
+          {
+            id: '1',
+            certNo: 'P001',
+            type: '直达',
+            origin: '苏州工业园区',
+            destination: '洋山港',
+            vendor: '德邦专线',
+            '20GP': '800',
+            '40GP': '1200',
+            '40HC': '1300',
+            price: '1300',
+            currency: 'CNY'
+          }
+        ],
+        oncarriageRates: [
+          {
+            id: '1',
+            certNo: 'O001',
+            destination: 'San Diego, CA',
+            addressType: '第三方地址',
+            zipCode: '92101',
+            address: 'San Diego, CA',
+            agentName: 'XPO TRUCK LLC',
+            price: '800',
+            currency: 'USD'
+          }
+        ]
       };
       
       // 设置表单数据
       form.setFieldsValue(mockData);
-      setRateType(mockData.rateType);
-      setTransitType(mockData.transitType);
       
       Message.success('运价数据加载成功');
     } catch (error) {
@@ -329,6 +455,8 @@ const CreateFclRate: React.FC = () => {
     });
     setNonContainerRateList(newRateList);
   };
+
+
 
   return (
     <ControlTowerSaasLayout menuSelectedKey="2" breadcrumb={

@@ -24,9 +24,7 @@ import {
   IconRefresh, 
   IconList, 
   IconDragDotVertical, 
-  IconDelete, 
   IconDownload, 
-  IconUndo, 
   IconDown, 
   IconPlus,
   IconUp,
@@ -211,6 +209,7 @@ interface ColumnItem {
   sorter?: boolean;
   resizable?: boolean;
   fixed?: 'left' | 'right';
+  className?: string;
   render?: (value: any, record: InquiryItem) => React.ReactNode;
 }
 
@@ -1000,7 +999,8 @@ const InquiryManagement: React.FC = () => {
         title: '操作',
         dataIndex: 'operations',
         fixed: 'right' as const,
-        width: 200,
+        width: 210,
+        className: 'action-column',
         render: (_: unknown, record: InquiryItem) => {
           // 检查是否可以撤销：头程、干线、尾程状态都是待报价
           const canWithdraw = record.firstQuoteStatus === '待报价' && 
@@ -1011,7 +1011,7 @@ const InquiryManagement: React.FC = () => {
           const canDelete = record.inquiryStatus === '草稿';
           
           return (
-            <Space>
+            <Space size={0}>
               <Button 
                 type="text" 
                 size="small" 
@@ -1025,7 +1025,6 @@ const InquiryManagement: React.FC = () => {
                   <Menu>
                     {canWithdraw && (
                       <Menu.Item key="withdraw">
-                        <IconUndo style={{ marginRight: 4 }} />
                         撤销
                       </Menu.Item>
                     )}
@@ -1034,7 +1033,6 @@ const InquiryManagement: React.FC = () => {
                         key="delete"
                         style={{ color: 'red' }}
                       >
-                        <IconDelete style={{ marginRight: 4 }} />
                         删除
                       </Menu.Item>
                     )}
@@ -1181,7 +1179,7 @@ const InquiryManagement: React.FC = () => {
             data={data}
             rowSelection={{ selectedRowKeys, onChange: onSelectChange }}
             pagination={pagination}
-            scroll={{ x: 2800 }}
+            scroll={{ x: 2880 }}
             border={false}
             className="mt-4 inquiry-table-nowrap"
           />

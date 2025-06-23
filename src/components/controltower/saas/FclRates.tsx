@@ -1428,10 +1428,11 @@ const FclRates: React.FC = () => {
     {
       title: '操作',
       dataIndex: 'actions',
-      width: 200,
+      width: 210,
       fixed: 'right' as const,
+      className: 'action-column',
       render: (_: unknown, record: DataItem) => (
-        <Space>
+        <Space size={0}>
           <Button type="text" size="small" onClick={() => handleViewDetail(record.key)}>
             详情
           </Button>
@@ -1797,10 +1798,11 @@ const FclRates: React.FC = () => {
     {
       title: '操作',
       dataIndex: 'actions',
-      width: 200,
+      width: 210,
       fixed: 'right' as const,
+      className: 'action-column',
       render: (_: unknown, record: any) => (
-        <Space>
+        <Space size={0}>
           <Button type="text" size="small" onClick={() => handleViewDetail(record.key)}>
             详情
           </Button>
@@ -1888,10 +1890,11 @@ const FclRates: React.FC = () => {
     {
       title: '操作',
       dataIndex: 'actions',
-      width: 200,
+      width: 210,
       fixed: 'right' as const,
+      className: 'action-column',
       render: (_: unknown, record: any) => (
-        <Space>
+        <Space size={0}>
           <Button type="text" size="small" onClick={() => handleViewDetail(record.key)}>
             详情
           </Button>
@@ -1963,7 +1966,7 @@ const FclRates: React.FC = () => {
           columns={precarriageColumns}
           data={precarriageData}
           pagination={pagination}
-          scroll={{ x: 2000 }}
+          scroll={{ x: 2010 }}
           border={false}
           className="mt-4 inquiry-table-nowrap"
         />
@@ -1976,7 +1979,7 @@ const FclRates: React.FC = () => {
           columns={oncarriageColumns}
           data={oncarriageData}
           pagination={pagination}
-          scroll={{ x: 2000 }}
+          scroll={{ x: 2010 }}
           border={false}
           className="mt-4 inquiry-table-nowrap"
         />
@@ -1995,7 +1998,7 @@ const FclRates: React.FC = () => {
             columnWidth: 60
         }}
         pagination={pagination}
-          scroll={{ x: 3200, y: 'calc(100vh - 400px)' }}
+          scroll={{ x: 3210, y: 'calc(100vh - 400px)' }}
         border={false}
         className="mt-4 inquiry-table-nowrap"
           style={{

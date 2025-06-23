@@ -43,6 +43,7 @@ import ViewPrecarriageRate from './saas/ViewPrecarriageRate';
 import ViewLastMileRate from './saas/ViewLastMileRate';
 import ViewFclRate from './saas/ViewFclRate';
 import CombinationRateQuery from './saas/CombinationRateQuery';
+import QuoteForm from './saas/QuoteForm';
 
 // 引入包装器
 import SaasPageWrapper from './pages/SaasPageWrapper';
@@ -256,6 +257,18 @@ const ControlTowerRoutes: React.FC = () => {
       <Route path="/saas/inquiry-detail/:type/:id" element={
         <SaasPageWrapper>
           <InquiryDetail />
+        </SaasPageWrapper>
+      } />
+      
+      {/* 报价表单 - 新增和编辑 */}
+      <Route path="/saas/quote-form/:type" element={
+        <SaasPageWrapper>
+          <QuoteForm />
+        </SaasPageWrapper>
+      } />
+      <Route path="/saas/quote-form/:type/:id" element={
+        <SaasPageWrapper>
+          <QuoteForm />
         </SaasPageWrapper>
       } />
       

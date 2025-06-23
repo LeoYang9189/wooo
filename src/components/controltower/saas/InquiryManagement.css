@@ -13,6 +13,13 @@
   max-width: 200px;
 }
 
+/* 操作列特殊样式 - 不限制宽度，确保按钮完全显示 */
+.inquiry-table-nowrap .action-column {
+  max-width: none !important;
+  overflow: visible !important;
+  white-space: nowrap;
+}
+
 .arco-ellipsis {
   display: inline-block;
   max-width: 100%;

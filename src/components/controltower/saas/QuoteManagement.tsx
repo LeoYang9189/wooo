@@ -15,17 +15,16 @@ import {
   Input,
   DatePicker,
   Drawer,
-  Message
+  Message,
+  Dropdown,
+  Menu
 } from '@arco-design/web-react';
 import { 
   IconSearch, 
   IconRefresh, 
   IconList, 
   IconDragDotVertical, 
-  IconEdit, 
-  IconDelete, 
   IconDownload, 
-  IconEye, 
   IconPlus,
   IconUp,
   IconDown,
@@ -92,107 +91,168 @@ export interface FilterScheme {
 
 // 根据Tab获取筛选字段配置
 const getFilterFieldsByTab = (activeTab: string): FilterFieldConfig[] => {
-  const commonFields: FilterFieldConfig[] = [
+  let fields: FilterFieldConfig[] = [
     { key: 'quoteNo', label: '报价编号', type: 'text', placeholder: '请输入报价编号' },
     { key: 'inquiryNo', label: '询价编号', type: 'text', placeholder: '请输入询价编号' },
-    { key: 'source', label: '报价来源', type: 'select', placeholder: '请选择报价来源', options: [
-      { label: '网站报价', value: 'website' },
-      { label: '电话报价', value: 'phone' },
-      { label: '邮件报价', value: 'email' },
-      { label: '客户端报价', value: 'client' }
-    ]},
     { key: 'quoter', label: '报价人', type: 'text', placeholder: '请输入报价人' },
-    { key: 'quoteStatus', label: '报价状态', type: 'select', placeholder: '请选择报价状态', options: [
-      { label: '草稿', value: 'draft' },
-      { label: '已提交', value: 'submitted' },
-      { label: '已撤回', value: 'withdrawn' },
-      { label: '已过期', value: 'expired' }
-    ]},
-    { key: 'firstQuoteStatus', label: '头程报价状态', type: 'select', placeholder: '请选择头程报价状态', options: [
-      { label: '待报价', value: 'pending' },
-      { label: '已报价', value: 'quoted' },
-      { label: '拒绝报价', value: 'rejected' }
-    ]},
-    { key: 'mainQuoteStatus', label: '干线报价状态', type: 'select', placeholder: '请选择干线报价状态', options: [
-      { label: '待报价', value: 'pending' },
-      { label: '已报价', value: 'quoted' },
-      { label: '拒绝报价', value: 'rejected' }
-    ]},
-    { key: 'lastQuoteStatus', label: '尾程报价状态', type: 'select', placeholder: '请选择尾程报价状态', options: [
-      { label: '待报价', value: 'pending' },
-      { label: '已报价', value: 'quoted' },
-      { label: '拒绝报价', value: 'rejected' }
-    ]},
+    { 
+      key: 'demandSource', 
+      label: '需求来源', 
+      type: 'select', 
+      placeholder: '请选择需求来源', 
+      options: [
+        { label: '外部询价', value: 'external_inquiry' },
+        { label: '内部询价', value: 'internal_inquiry' },
+        { label: '直接创建', value: 'direct_create' }
+      ]
+    },
+  ];
+
+  // 根据不同Tab类型添加不同的报价状态字段
+  if (activeTab === 'precarriage') {
+    // 港前报价：只有港前报价状态
+    fields.push({
+      key: 'firstQuoteStatus', 
+      label: '港前报价状态', 
+      type: 'select', 
+      placeholder: '请选择港前报价状态', 
+      options: [
+        { label: '待报价', value: 'pending' },
+        { label: '已报价', value: 'quoted' },
+        { label: '拒绝报价', value: 'rejected' },
+        { label: '无需报价', value: 'not_needed' }
+      ]
+    });
+  } else if (activeTab === 'oncarriage') {
+    // 尾程报价：只有尾程报价状态
+    fields.push({
+      key: 'lastQuoteStatus', 
+      label: '尾程报价状态', 
+      type: 'select', 
+      placeholder: '请选择尾程报价状态', 
+      options: [
+        { label: '待报价', value: 'pending' },
+        { label: '已报价', value: 'quoted' },
+        { label: '拒绝报价', value: 'rejected' },
+        { label: '无需报价', value: 'not_needed' }
+      ]
+    });
+      } else {
+      // 其他Tab：包含所有报价状态
+      fields.push(
+        {
+          key: 'firstQuoteStatus', 
+          label: '港前报价状态', 
+          type: 'select', 
+          placeholder: '请选择港前报价状态', 
+          options: [
+            { label: '待报价', value: 'pending' },
+            { label: '已报价', value: 'quoted' },
+            { label: '拒绝报价', value: 'rejected' },
+            { label: '无需报价', value: 'not_needed' }
+          ]
+        },
+        {
+          key: 'mainQuoteStatus', 
+          label: '干线报价状态', 
+          type: 'select', 
+          placeholder: '请选择干线报价状态', 
+          options: [
+            { label: '待报价', value: 'pending' },
+            { label: '已报价', value: 'quoted' },
+            { label: '拒绝报价', value: 'rejected' }
+          ]
+        },
+        {
+          key: 'lastQuoteStatus', 
+          label: '尾程报价状态', 
+          type: 'select', 
+          placeholder: '请选择尾程报价状态', 
+          options: [
+            { label: '待报价', value: 'pending' },
+            { label: '已报价', value: 'quoted' },
+            { label: '拒绝报价', value: 'rejected' },
+            { label: '无需报价', value: 'not_needed' }
+          ]
+        }
+      );
+    }
+
+  // 添加常用筛选字段（在报价状态字段之后）
+  const priorityFields: FilterFieldConfig[] = [
     { key: 'validityDate', label: '有效期', type: 'dateRange', placeholder: '请选择有效期' },
-    { key: 'cargoNature', label: '货盘性质', type: 'select', placeholder: '请选择货盘性质', options: [
-      { label: '普通货物', value: 'normal' },
-      { label: '危险品', value: 'dangerous' },
-      { label: '冷藏货', value: 'refrigerated' },
-      { label: '超重货', value: 'overweight' }
+    { key: 'cargoReadyTime', label: '货好时间', type: 'select', placeholder: '请选择货好时间', options: [
+      { label: '一周内', value: 'within_week' },
+      { label: '两周内', value: 'within_two_weeks' },
+      { label: '一个月内', value: 'within_month' },
+      { label: '暂不确定', value: 'tbd' },
+      { label: '具体日期', value: 'specific_date' }
     ]},
-    { key: 'shipCompany', label: '船公司', type: 'select', placeholder: '请选择船公司', options: [
-      { label: 'SITC', value: 'sitc' },
-      { label: 'COSCO', value: 'cosco' },
-      { label: 'MSK', value: 'msk' },
-      { label: 'ONE', value: 'one' }
+    { key: 'cargoNature', label: '货盘性质', type: 'select', placeholder: '请选择货盘性质', options: [
+      { label: '仅询价', value: 'inquiry_only' },
+      { label: '实盘', value: 'real_cargo' }
+    ]},
+    { key: 'route', label: '航线', type: 'select', placeholder: '请选择航线', options: [
+      { label: '美加线', value: 'north_america' },
+      { label: '东南亚线', value: 'southeast_asia' },
+      { label: '欧洲线', value: 'europe' },
+      { label: '中东线', value: 'middle_east' },
+      { label: '澳洲线', value: 'australia' },
+      { label: '南美线', value: 'south_america' },
+      { label: '非洲线', value: 'africa' },
+      { label: '日韩线', value: 'japan_korea' }
     ]},
     { key: 'transitType', label: '直达/中转', type: 'select', placeholder: '请选择直达/中转', options: [
       { label: '直达', value: 'direct' },
       { label: '中转', value: 'transit' }
     ]},
-    { key: 'route', label: '航线', type: 'text', placeholder: '请输入航线' },
     { key: 'departurePort', label: '起运港', type: 'text', placeholder: '请输入起运港' },
     { key: 'dischargePort', label: '卸货港', type: 'text', placeholder: '请输入卸货港' },
     { key: 'remark', label: '备注', type: 'text', placeholder: '请输入备注' },
     { key: 'createdAt', label: '创建时间', type: 'dateRange', placeholder: '请选择创建时间' },
-    { key: 'clientType', label: '委托单位', type: 'text', placeholder: '请输入委托单位' },
-    { key: 'clientName', label: '委托单位名称', type: 'text', placeholder: '请输入委托单位名称' },
     { key: 'entryPerson', label: '创建人', type: 'text', placeholder: '请输入创建人' },
     { key: 'createDate', label: '创建日期', type: 'dateRange', placeholder: '请选择创建日期范围' },
     { key: 'rateModifier', label: '修改人', type: 'text', placeholder: '请输入修改人' },
     { key: 'modifyDate', label: '修改日期', type: 'dateRange', placeholder: '请选择修改日期范围' }
   ];
 
-  // 根据不同Tab返回不同字段
+  fields.push(...priorityFields);
+
+  // 根据不同Tab添加特定字段
   switch (activeTab) {
     case 'fcl':
-      return [
-        ...commonFields,
-        { key: 'containerInfo', label: '箱型信息', type: 'text', placeholder: '请输入箱型信息' }
-      ];
+      fields.push({ key: 'containerInfo', label: '箱型箱量', type: 'text', placeholder: '请输入箱型箱量' });
+      break;
     case 'lcl':
     case 'air':
-      return [
-        ...commonFields,
+      fields.push(
         { key: 'weight', label: '重量', type: 'number', placeholder: '请输入重量' },
         { key: 'volume', label: '体积', type: 'number', placeholder: '请输入体积' }
-      ];
-    default:
-      return commonFields;
+      );
+      break;
   }
+  
+  return fields;
 };
 
 // 定义报价项接口
 interface QuoteItem {
   quoteNo: string;
   inquiryNo: string;
-  source: string;
   quoter: string;
-  quoteStatus: string;
+  demandSource: string; // 需求来源
   firstQuoteStatus: string;
   mainQuoteStatus: string;
   lastQuoteStatus: string;
   validityDate: string;
+  cargoReadyTime: string;
   cargoNature: string;
-  shipCompany: string;
   transitType: string;
   route: string;
   departurePort: string;
   dischargePort: string;
   remark: string;
   createdAt: string;
-  clientType: string;
-  clientName: string;
   // 新增字段
   entryPerson: string; // 创建人
   createDate: string; // 创建时间
@@ -213,13 +273,12 @@ interface ColumnItem {
   sorter?: boolean;
   resizable?: boolean;
   fixed?: 'left' | 'right';
+  className?: string;
   render?: (value: string, record: QuoteItem) => React.ReactNode;
 }
 
 const QuoteManagement: React.FC = () => {
   // 基础状态
-  const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
-  const onSelectChange = (keys: (string | number)[]) => setSelectedRowKeys(keys);
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const navigate = useNavigate();
@@ -234,24 +293,21 @@ const QuoteManagement: React.FC = () => {
   const [columnVisibility, setColumnVisibility] = useState({
     quoteNo: true,
     inquiryNo: true,
-    source: true,
     quoter: true,
-    quoteStatus: true,
+    demandSource: true,
     firstQuoteStatus: true,
     mainQuoteStatus: true,
     lastQuoteStatus: true,
     validityDate: true,
+    containerInfo: true,
+    cargoReadyTime: true,
     cargoNature: true,
-    shipCompany: true,
     transitType: true,
     route: true,
     departurePort: true,
     dischargePort: true,
     remark: true,
     createdAt: true,
-    clientType: true,
-    clientName: true,
-    containerInfo: true,
     weight: true,
     volume: true,
     entryPerson: false,
@@ -262,11 +318,11 @@ const QuoteManagement: React.FC = () => {
 
   // 列顺序状态
   const [columnOrder, setColumnOrder] = useState([
-    'quoteNo', 'inquiryNo', 'source', 'quoter', 'quoteStatus', 
+    'quoteNo', 'inquiryNo', 'quoter', 'demandSource',
     'firstQuoteStatus', 'mainQuoteStatus', 'lastQuoteStatus', 'validityDate',
-    'cargoNature', 'shipCompany', 'transitType', 'route', 'departurePort', 
-    'dischargePort', 'remark', 'createdAt', 'clientType', 'clientName',
-    'containerInfo', 'weight', 'volume', 'entryPerson', 'createDate', 
+    'containerInfo', 'cargoReadyTime', 'cargoNature', 'transitType', 'route', 'departurePort', 
+    'dischargePort', 'remark', 'createdAt',
+    'weight', 'volume', 'entryPerson', 'createDate', 
     'rateModifier', 'modifyDate'
   ]);
 
@@ -309,36 +365,69 @@ const QuoteManagement: React.FC = () => {
     // 根据当前选中的Tab类型跳转到对应页面
     switch(activeTab) {
       case 'fcl':
-        navigate('/controltower/saas/create-quote/fcl');
+        navigate('/controltower/saas/quote-form/fcl');
         break;
       case 'lcl':
-        navigate('/controltower/saas/create-quote/lcl');
+        navigate('/controltower/saas/quote-form/lcl');
         break;
       case 'air':
-        navigate('/controltower/saas/create-quote/air');
+        navigate('/controltower/saas/quote-form/air');
+        break;
+      case 'precarriage':
+        navigate('/controltower/saas/quote-form/precarriage');
+        break;
+      case 'oncarriage':
+        navigate('/controltower/saas/quote-form/oncarriage');
         break;
       default:
-        navigate('/controltower/saas/create-quote/fcl');
+        navigate('/controltower/saas/quote-form/fcl');
+    }
+  };
+
+  // 导航到编辑报价页面
+  const navigateToEditQuote = (quoteNo: string) => {
+    // 根据当前选中的Tab类型跳转到对应编辑页面
+    switch(activeTab) {
+      case 'fcl':
+        navigate(`/controltower/saas/quote-form/fcl/${quoteNo}`);
+        break;
+      case 'lcl':
+        navigate(`/controltower/saas/quote-form/lcl/${quoteNo}`);
+        break;
+      case 'air':
+        navigate(`/controltower/saas/quote-form/air/${quoteNo}`);
+        break;
+      case 'precarriage':
+        navigate(`/controltower/saas/quote-form/precarriage/${quoteNo}`);
+        break;
+      case 'oncarriage':
+        navigate(`/controltower/saas/quote-form/oncarriage/${quoteNo}`);
+        break;
+      default:
+        navigate(`/controltower/saas/quote-form/fcl/${quoteNo}`);
     }
   };
 
   // 处理Tab切换
   const handleTabChange = (key: string) => {
     setActiveTab(key);
-    // 重置分页和选中项
+    // 重置分页
     setCurrent(1);
-    setSelectedRowKeys([]);
   };
 
   // 初始化默认筛选条件
   const initializeDefaultConditions = (activeTab: string): FilterCondition[] => {
     const fields = getFilterFieldsByTab(activeTab);
-    return fields.slice(0, 4).map(field => ({
+    
+    // 创建所有字段的筛选条件
+    const conditions: FilterCondition[] = fields.map((field, index) => ({
       key: field.key,
       mode: FilterMode.EQUAL,
       value: '',
-      visible: true
+      visible: index < 4 // 前4个字段默认可见
     }));
+    
+    return conditions;
   };
 
   // 初始化默认筛选方案
@@ -510,24 +599,21 @@ const QuoteManagement: React.FC = () => {
     const labelMap: { [key: string]: string } = {
       quoteNo: '报价编号',
       inquiryNo: '询价编号',
-      source: '报价来源',
       quoter: '报价人',
-      quoteStatus: '报价状态',
-      firstQuoteStatus: '头程报价状态',
+      demandSource: '需求来源',
+      firstQuoteStatus: '港前报价状态',
       mainQuoteStatus: '干线报价状态',
       lastQuoteStatus: '尾程报价状态',
       validityDate: '有效期',
+      containerInfo: '箱型箱量',
+      cargoReadyTime: '货好时间',
       cargoNature: '货盘性质',
-      shipCompany: '船公司',
       transitType: '直达/中转',
       route: '航线',
       departurePort: '起运港',
       dischargePort: '卸货港',
       remark: '备注',
       createdAt: '创建时间',
-      clientType: '委托单位',
-      clientName: '委托单位名称',
-      containerInfo: '箱型信息',
       weight: '重量',
       volume: '体积',
       entryPerson: '创建人',
@@ -535,6 +621,7 @@ const QuoteManagement: React.FC = () => {
       rateModifier: '修改人',
       modifyDate: '修改日期'
     };
+    
     return labelMap[columnKey] || columnKey;
   };
 
@@ -801,50 +888,21 @@ const QuoteManagement: React.FC = () => {
     );
   };
 
-  // 根据Tab获取当前要显示的列
+    // 根据Tab获取当前要显示的列
   const getColumns = () => {
     // 基础列（所有类型共有）
-    const baseColumns: ColumnItem[] = [
+    let baseColumns: ColumnItem[] = [
       { title: '报价编号', dataIndex: 'quoteNo', width: 140, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
       { title: '询价编号', dataIndex: 'inquiryNo', width: 140, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
-      { title: '报价来源', dataIndex: 'source', width: 100, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
       { title: '报价人', dataIndex: 'quoter', width: 100, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
-      { 
-        title: '报价状态', 
-        dataIndex: 'quoteStatus', 
-        width: 100,
-        sorter: true, 
-        resizable: true, 
-        render: (val: string) => {
-          let color = '';
-          switch(val) {
-            case '草稿':
-              color = '#86909C'; // 灰色
-              break;
-            case '已提交':
-              color = '#00B42A'; // 绿色
-              break;
-            case '已撤回':
-              color = '#F53F3F'; // 红色
-              break;
-            case '已过期':
-              color = '#F7BA1E'; // 黄色
-              break;
-            default:
-              color = '#86909C'; // 默认灰色
-          }
-          return (
-            <Tooltip content={val} mini>
-              <div className="flex items-center">
-                <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: color, marginRight: 8 }}></div>
-                <span className="no-ellipsis">{val}</span>
-              </div>
-            </Tooltip>
-          );
-        }
-      },
-      { 
-        title: '头程报价状态', 
+      { title: '需求来源', dataIndex: 'demandSource', width: 120, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+    ];
+
+    // 根据不同Tab添加不同的报价状态列
+    if (activeTab === 'precarriage') {
+      // 港前报价：只显示港前报价状态
+      baseColumns.push({
+        title: '港前报价状态', 
         dataIndex: 'firstQuoteStatus', 
         sorter: true, 
         resizable: true, 
@@ -861,36 +919,8 @@ const QuoteManagement: React.FC = () => {
             case '拒绝报价':
               color = '#F53F3F'; // 红色
               break;
-            default:
-              color = '#86909C'; // 默认灰色
-          }
-          return (
-            <Tooltip content={val} mini>
-              <div className="flex items-center">
-                <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: color, marginRight: 8 }}></div>
-                <span className="no-ellipsis">{val}</span>
-              </div>
-            </Tooltip>
-          );
-        }
-      },
-      { 
-        title: '干线报价状态', 
-        dataIndex: 'mainQuoteStatus', 
-        sorter: true, 
-        resizable: true, 
-        width: 150,
-        render: (val: string) => {
-          let color = '';
-          switch(val) {
-            case '待报价':
-              color = '#F7BA1E'; // 黄色
-              break;
-            case '已报价':
-              color = '#00B42A'; // 绿色
-              break;
-            case '拒绝报价':
-              color = '#F53F3F'; // 红色
+            case '无需报价':
+              color = '#86909C'; // 灰色
               break;
             default:
               color = '#86909C'; // 默认灰色
@@ -904,8 +934,10 @@ const QuoteManagement: React.FC = () => {
             </Tooltip>
           );
         }
-      },
-      { 
+      });
+    } else if (activeTab === 'oncarriage') {
+      // 尾程报价：只显示尾程报价状态
+      baseColumns.push({
         title: '尾程报价状态', 
         dataIndex: 'lastQuoteStatus', 
         sorter: true, 
@@ -923,6 +955,9 @@ const QuoteManagement: React.FC = () => {
             case '拒绝报价':
               color = '#F53F3F'; // 红色
               break;
+            case '无需报价':
+              color = '#86909C'; // 灰色
+              break;
             default:
               color = '#86909C'; // 默认灰色
           }
@@ -935,10 +970,148 @@ const QuoteManagement: React.FC = () => {
             </Tooltip>
           );
         }
+      });
+    } else {
+      // 其他Tab：显示所有报价状态
+      baseColumns.push(
+        { 
+          title: '港前报价状态', 
+          dataIndex: 'firstQuoteStatus', 
+          sorter: true, 
+          resizable: true, 
+          width: 150,
+          render: (val: string) => {
+            let color = '';
+            switch(val) {
+              case '待报价':
+                color = '#F7BA1E'; // 黄色
+                break;
+              case '已报价':
+                color = '#00B42A'; // 绿色
+                break;
+              case '拒绝报价':
+                color = '#F53F3F'; // 红色
+                break;
+              case '无需报价':
+                color = '#86909C'; // 灰色
+                break;
+              default:
+                color = '#86909C'; // 默认灰色
+            }
+            return (
+              <Tooltip content={val} mini>
+                <div className="flex items-center">
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: color, marginRight: 8 }}></div>
+                  <span className="no-ellipsis">{val}</span>
+                </div>
+              </Tooltip>
+            );
+          }
+        },
+        { 
+          title: '干线报价状态', 
+          dataIndex: 'mainQuoteStatus', 
+          sorter: true, 
+          resizable: true, 
+          width: 150,
+          render: (val: string) => {
+            let color = '';
+            switch(val) {
+              case '待报价':
+                color = '#F7BA1E'; // 黄色
+                break;
+              case '已报价':
+                color = '#00B42A'; // 绿色
+                break;
+              case '拒绝报价':
+                color = '#F53F3F'; // 红色
+                break;
+              default:
+                color = '#86909C'; // 默认灰色
+            }
+            return (
+              <Tooltip content={val} mini>
+                <div className="flex items-center">
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: color, marginRight: 8 }}></div>
+                  <span className="no-ellipsis">{val}</span>
+                </div>
+              </Tooltip>
+            );
+          }
+        },
+        { 
+          title: '尾程报价状态', 
+          dataIndex: 'lastQuoteStatus', 
+          sorter: true, 
+          resizable: true, 
+          width: 150,
+          render: (val: string) => {
+            let color = '';
+            switch(val) {
+              case '待报价':
+                color = '#F7BA1E'; // 黄色
+                break;
+              case '已报价':
+                color = '#00B42A'; // 绿色
+                break;
+              case '拒绝报价':
+                color = '#F53F3F'; // 红色
+                break;
+              case '无需报价':
+                color = '#86909C'; // 灰色
+                break;
+              default:
+                color = '#86909C'; // 默认灰色
+            }
+            return (
+              <Tooltip content={val} mini>
+                <div className="flex items-center">
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: color, marginRight: 8 }}></div>
+                  <span className="no-ellipsis">{val}</span>
+                </div>
+              </Tooltip>
+            );
+          }
+        }
+      );
+    }
+
+    // 添加后续通用列
+    baseColumns.push(
+      { title: '有效期', dataIndex: 'validityDate', width: 160, sorter: true, resizable: true, render: (val: string) => {
+          const parts = val.split(' 至 ');
+          return (
+            <Tooltip content={val} mini>
+              <div className="flex flex-col text-xs leading-tight">
+                <span className="no-ellipsis">{parts[0]}</span>
+                {parts[1] && <span className="no-ellipsis text-gray-500">至 {parts[1]}</span>}
+              </div>
+            </Tooltip>
+          );
+        }
       },
-      { title: '有效期', dataIndex: 'validityDate', width: 120, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
+      { title: '货好时间', dataIndex: 'cargoReadyTime', width: 160, sorter: true, resizable: true, render: (val: string) => {
+          // 如果是具体日期（包含数字），则按日期处理，否则直接显示枚举值
+          if (val && val.match(/\d{4}-\d{2}-\d{2}/)) {
+            // 具体日期格式处理
+            return (
+              <Tooltip content={val} mini>
+                <div className="flex flex-col text-xs leading-tight">
+                  <span className="no-ellipsis">{val}</span>
+                </div>
+              </Tooltip>
+            );
+          } else {
+            // 枚举值直接显示
+            return (
+              <Tooltip content={val} mini>
+                <span className="no-ellipsis">{val}</span>
+              </Tooltip>
+            );
+          }
+        }
+      },
       { title: '货盘性质', dataIndex: 'cargoNature', width: 100, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
-      { title: '船公司', dataIndex: 'shipCompany', width: 160, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
       { title: '直达/中转', dataIndex: 'transitType', width: 100, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
       { title: '航线', dataIndex: 'route', width: 150, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
       { title: '起运港', dataIndex: 'departurePort', width: 160, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
@@ -956,8 +1129,6 @@ const QuoteManagement: React.FC = () => {
           );
         }
       },
-      { title: '委托单位', dataIndex: 'clientType', width: 120, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
-      { title: '委托单位名称', dataIndex: 'clientName', width: 160, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
       { title: '创建人', dataIndex: 'entryPerson', width: 100, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
       { title: '创建日期', dataIndex: 'createDate', width: 140, sorter: true, resizable: true, render: (val: string) => {
           const [date, time] = val.split(' ');
@@ -986,61 +1157,73 @@ const QuoteManagement: React.FC = () => {
       },
       { 
         title: '操作', 
-        width: 160, 
+        width: 210, 
         fixed: 'right' as const,
+        className: 'action-column',
         render: (_: any, record: QuoteItem) => (
-          <Space>
+          <Space size={0}>
             <Button 
               type="text" 
               size="small" 
-              icon={<IconEye />}
-              onClick={() => console.log('查看', record.quoteNo)}
+              onClick={() => console.log('查看详情', record.quoteNo)}
             >
-              查看
+              详情
             </Button>
             <Button 
               type="text" 
               size="small" 
-              icon={<IconEdit />}
-              onClick={() => console.log('编辑', record.quoteNo)}
+              onClick={() => navigateToEditQuote(record.quoteNo)}
             >
               编辑
             </Button>
-            <Button 
-              type="text" 
-              size="small" 
-              status="danger"
-              icon={<IconDelete />}
-              onClick={() => console.log('删除', record.quoteNo)}
+            <Dropdown
+              droplist={
+                <Menu>
+                  <Menu.Item 
+                    key="withdraw"
+                    onClick={() => console.log('撤回', record.quoteNo)}
+                  >
+                    撤回
+                  </Menu.Item>
+                  <Menu.Item 
+                    key="delete"
+                    onClick={() => console.log('删除', record.quoteNo)}
+                    style={{ color: '#F53F3F' }}
+                  >
+                    删除
+                  </Menu.Item>
+                </Menu>
+              }
+              trigger="click"
+              position="bottom"
             >
-              删除
-            </Button>
+              <Button 
+                type="text" 
+                size="small"
+              >
+                更多
+              </Button>
+            </Dropdown>
           </Space>
         )
       }
-    ];
+    );
     
-    // 根据Tab类型添加特定列
-    let specificColumns: ColumnItem[] = [];
+    // 根据Tab类型插入特定列到有效期后面
+    const insertIndex = baseColumns.findIndex(col => col.dataIndex === 'validityDate') + 1;
+    
     if (activeTab === 'fcl') {
-      specificColumns = [
+      baseColumns.splice(insertIndex, 0, 
         { title: '箱型箱量', dataIndex: 'containerInfo', width: 160, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> }
-      ];
+      );
     } else if (activeTab === 'lcl' || activeTab === 'air') {
-      specificColumns = [
+      baseColumns.splice(insertIndex, 0, 
         { title: '重量(KGS)', dataIndex: 'weight', width: 120, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> },
         { title: '体积(CBM)', dataIndex: 'volume', width: 120, sorter: true, resizable: true, render: (val: string) => <Tooltip content={val} mini><span className="no-ellipsis">{val}</span></Tooltip> }
-      ];
+      );
     }
     
-    // 合并列，特定列插入到操作列之前
-    const operationColumn = baseColumns.pop(); // 取出操作列
-    const allColumns = [...baseColumns, ...specificColumns];
-    if (operationColumn) {
-      allColumns.push(operationColumn); // 重新添加操作列到最后
-    }
-    
-    return allColumns;
+    return baseColumns;
   };
 
   const columns = getColumns();
@@ -1050,23 +1233,20 @@ const QuoteManagement: React.FC = () => {
     {
       quoteNo: 'QT2024050001',
       inquiryNo: 'INQ2024050001',
-      source: '客户询价',
       quoter: '张三',
-      quoteStatus: '已提交',
+      demandSource: '外部询价',
       firstQuoteStatus: '已报价',
       mainQuoteStatus: '已报价',
-      lastQuoteStatus: '待报价',
-      validityDate: '2024-06-30',
-      cargoNature: '普货',
-      shipCompany: 'COSCO',
+      lastQuoteStatus: '无需报价',
+      validityDate: '2024-06-01 至 2024-06-30',
+      cargoReadyTime: '2024-05-20',
+      cargoNature: '实盘',
       transitType: '直达',
-      route: '中国-美国',
+      route: '美加线',
       departurePort: 'CNSHA',
       dischargePort: 'USLAX',
-      remark: '客户要求快船',
+      remark: '客户要求快船，自提货物',
       createdAt: '2024-05-01 10:30:00',
-      clientType: '直客',
-      clientName: '上海贸易有限公司',
       containerInfo: '20GP*2, 40HC*1',
       entryPerson: '张三',
       createDate: '2024-05-01 10:30:00',
@@ -1076,23 +1256,20 @@ const QuoteManagement: React.FC = () => {
     {
       quoteNo: 'QT2024050002',
       inquiryNo: 'INQ2024050002',
-      source: '平台询价',
       quoter: '李四',
-      quoteStatus: '草稿',
-      firstQuoteStatus: '待报价',
+      demandSource: '内部询价',
+      firstQuoteStatus: '无需报价',
       mainQuoteStatus: '已报价',
       lastQuoteStatus: '已报价',
-      validityDate: '2024-07-15',
-      cargoNature: '危险品',
-      shipCompany: 'MSK',
+      validityDate: '2024-07-01 至 2024-07-15',
+      cargoReadyTime: '一周内',
+      cargoNature: '仅询价',
       transitType: '中转',
-      route: '中国-欧洲',
+      route: '欧洲线',
       departurePort: 'CNNGB',
       dischargePort: 'DEHAM',
-      remark: '需要危险品证书',
+      remark: '客户自己安排港前运输',
       createdAt: '2024-05-02 14:20:00',
-      clientType: '货代',
-      clientName: '德国物流公司',
       weight: '15.5吨',
       volume: '25.8立方米',
       entryPerson: '李四',
@@ -1103,23 +1280,20 @@ const QuoteManagement: React.FC = () => {
     {
       quoteNo: 'QT2024050003',
       inquiryNo: 'INQ2024050003',
-      source: '系统询价',
       quoter: '王五',
-      quoteStatus: '已过期',
+      demandSource: '直接创建',
       firstQuoteStatus: '已报价',
       mainQuoteStatus: '已报价',
       lastQuoteStatus: '拒绝报价',
-      validityDate: '2024-05-20',
-      cargoNature: '普货',
-      shipCompany: 'ONE',
+      validityDate: '2024-05-10 至 2024-05-20',
+      cargoReadyTime: '两周内',
+      cargoNature: '实盘',
       transitType: '直达',
-      route: '中国-日本',
+      route: '日韩线',
       departurePort: 'CNSHA',
       dischargePort: 'JPTYO',
       remark: '价格敏感客户',
       createdAt: '2024-05-03 09:15:00',
-      clientType: '直客',
-      clientName: '东京贸易株式会社',
       containerInfo: '40HC*3',
       entryPerson: '王五',
       createDate: '2024-05-03 09:15:00',
@@ -1129,29 +1303,73 @@ const QuoteManagement: React.FC = () => {
     {
       quoteNo: 'QT2024050004',
       inquiryNo: 'INQ2024050004',
-      source: '客户询价',
       quoter: '赵六',
-      quoteStatus: '已撤回',
-      firstQuoteStatus: '拒绝报价',
+      demandSource: '外部询价',
+      firstQuoteStatus: '待报价',
       mainQuoteStatus: '待报价',
-      lastQuoteStatus: '待报价',
-      validityDate: '2024-08-01',
-      cargoNature: '冷冻品',
-      shipCompany: 'CMA',
+      lastQuoteStatus: '无需报价',
+      validityDate: '2024-08-01 至 2024-08-15',
+      cargoReadyTime: '一个月内',
+      cargoNature: '仅询价',
       transitType: '中转',
-      route: '中国-澳洲',
+      route: '澳洲线',
       departurePort: 'CNQIN',
       dischargePort: 'AUSYD',
-      remark: '需要冷链运输',
+      remark: '目的港自提货物',
       createdAt: '2024-05-04 16:45:00',
-      clientType: '货代',
-      clientName: '澳洲物流有限公司',
       weight: '22.3吨',
       volume: '18.5立方米',
       entryPerson: '赵六',
       createDate: '2024-05-04 16:45:00',
       rateModifier: '钱七',
       modifyDate: '2024-05-04 18:45:00',
+    },
+    {
+      quoteNo: 'QT2024050005',
+      inquiryNo: 'INQ2024050005',
+      quoter: '钱七',
+      demandSource: '内部询价',
+      firstQuoteStatus: '无需报价',
+      mainQuoteStatus: '已报价',
+      lastQuoteStatus: '无需报价',
+      validityDate: '2024-09-01 至 2024-09-15',
+      cargoReadyTime: '暂不确定',
+      cargoNature: '实盘',
+      transitType: '直达',
+      route: '东南亚线',
+      departurePort: 'CNSZX',
+      dischargePort: 'SGSIN',
+      remark: '客户自安排首末端运输',
+      createdAt: '2024-05-05 11:20:00',
+      containerInfo: '20GP*5',
+      entryPerson: '钱七',
+      createDate: '2024-05-05 11:20:00',
+      rateModifier: '孙八',
+      modifyDate: '2024-05-05 13:20:00',
+    },
+    {
+      quoteNo: 'QT2024050006',
+      inquiryNo: 'INQ2024050006',
+      quoter: '孙八',
+      demandSource: '直接创建',
+      firstQuoteStatus: '已报价',
+      mainQuoteStatus: '已报价',
+      lastQuoteStatus: '待报价',
+      validityDate: '2024-10-01 至 2024-10-31',
+      cargoReadyTime: '2024-09-25',
+      cargoNature: '仅询价',
+      transitType: '中转',
+      route: '中东线',
+      departurePort: 'CNSHA',
+      dischargePort: 'AEJEA',
+      remark: '需要特殊包装',
+      createdAt: '2024-05-06 15:45:00',
+      weight: '32.1吨',
+      volume: '45.6立方米',
+      entryPerson: '孙八',
+      createDate: '2024-05-06 15:45:00',
+      rateModifier: '周九',
+      modifyDate: '2024-05-06 17:45:00',
     },
   ];
 
@@ -1226,9 +1444,8 @@ const QuoteManagement: React.FC = () => {
             loading={false}
             columns={columns}
             data={data}
-            rowSelection={{ selectedRowKeys, onChange: onSelectChange }}
             pagination={pagination}
-            scroll={{ x: 2800 }}
+            scroll={{ x: 2850 }}
             border={false}
             className="mt-4 inquiry-table-nowrap"
           />
