@@ -1,8 +1,12 @@
-// import React from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faWeixin } from '@fortawesome/free-brands-svg-icons';
+import { faMusic, faBookOpen } from '@fortawesome/free-solid-svg-icons';
 
 const PortalFooter = () => {
   const navigate = useNavigate();
+  const [hoveredSocial, setHoveredSocial] = useState<string | null>(null);
 
   const footerLinks = [
     {
@@ -25,7 +29,7 @@ const PortalFooter = () => {
       title: '公司',
       links: [
         { label: '关于我们', href: '/about' },
-        { label: '资讯中心', href: '#' },
+        { label: '资讯中心', href: '/portal/news', onClick: () => navigate('/portal/news') },
         { label: '联系我们', href: '#' },
         { label: '员工登录', href: '/staff/auth', onClick: () => navigate('/staff/auth') }
       ]
@@ -53,21 +57,77 @@ const PortalFooter = () => {
               为全球国际物流提供智能化解决方案
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-primary" title="YouTube" aria-label="访问我们的YouTube频道">
-                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm4.441 16.892c-2.102.144-6.784.144-8.883 0-2.276-.156-2.541-1.27-2.558-4.892.017-3.629.285-4.736 2.558-4.892 2.099-.144 6.782-.144 8.883 0 2.277.156 2.541 1.27 2.559 4.892-.018 3.629-.285 4.736-2.559 4.892zm-6.441-7.234l4.917 2.338-4.917 2.346v-4.684z"/>
-                </svg>
-              </a>
-              <a href="#" className="text-gray-400 hover:text-primary" title="Instagram" aria-label="访问我们的Instagram账号">
-                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-2.917 18.339c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm8.342-8.248c-1.105 0-2-0.895-2-2 0-1.105 0.895-2 2-2 1.104 0 2 0.895 2 2 0 1.105-0.896 2-2 2z"/>
-                </svg>
-              </a>
-              <a href="#" className="text-gray-400 hover:text-primary" title="LinkedIn" aria-label="访问我们的LinkedIn主页">
-                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-2 16h-2v-6h2v6zm-1-6.891c-.607 0-1.1-.496-1.1-1.109 0-.612.492-1.109 1.1-1.109s1.1.497 1.1 1.109c0 .613-.493 1.109-1.1 1.109zm8 6.891h-1.998v-2.861c0-1.881-2.002-1.722-2.002 0v2.861h-2v-6h2v1.093c.872-1.616 4-1.736 4 1.548v3.359z"/>
-                </svg>
-              </a>
+              {/* 微信 */}
+              <div 
+                className="relative"
+                onMouseEnter={() => setHoveredSocial('wechat')}
+                onMouseLeave={() => setHoveredSocial(null)}
+              >
+                <button className="text-gray-400 hover:text-green-500 transition-colors duration-300" title="微信" aria-label="关注我们的微信">
+                  <FontAwesomeIcon icon={faWeixin} className="h-5 w-5" />
+                </button>
+                {hoveredSocial === 'wechat' && (
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-white rounded-lg shadow-xl border border-gray-200 p-3 z-50">
+                    <div className="text-center">
+                      <img 
+                        src="/qrcodes/wechat-qr.svg" 
+                        alt="微信二维码" 
+                        className="w-24 h-24 mx-auto"
+                      />
+                      <p className="text-xs text-gray-600 mt-2">扫码关注微信公众号</p>
+                    </div>
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-white"></div>
+                  </div>
+                )}
+              </div>
+
+              {/* 抖音 */}
+              <div 
+                className="relative"
+                onMouseEnter={() => setHoveredSocial('douyin')}
+                onMouseLeave={() => setHoveredSocial(null)}
+              >
+                <button className="text-gray-400 hover:text-pink-500 transition-colors duration-300" title="抖音" aria-label="关注我们的抖音">
+                  <FontAwesomeIcon icon={faMusic} className="h-5 w-5" />
+                </button>
+                {hoveredSocial === 'douyin' && (
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-white rounded-lg shadow-xl border border-gray-200 p-3 z-50">
+                    <div className="text-center">
+                      <img 
+                        src="/qrcodes/douyin-qr.svg" 
+                        alt="抖音二维码" 
+                        className="w-24 h-24 mx-auto"
+                      />
+                      <p className="text-xs text-gray-600 mt-2">扫码关注抖音账号</p>
+                    </div>
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-white"></div>
+                  </div>
+                )}
+              </div>
+
+              {/* 小红书 */}
+              <div 
+                className="relative"
+                onMouseEnter={() => setHoveredSocial('xiaohongshu')}
+                onMouseLeave={() => setHoveredSocial(null)}
+              >
+                <button className="text-gray-400 hover:text-red-500 transition-colors duration-300" title="小红书" aria-label="关注我们的小红书">
+                  <FontAwesomeIcon icon={faBookOpen} className="h-5 w-5" />
+                </button>
+                {hoveredSocial === 'xiaohongshu' && (
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-white rounded-lg shadow-xl border border-gray-200 p-3 z-50">
+                    <div className="text-center">
+                      <img 
+                        src="/qrcodes/xiaohongshu-qr.svg" 
+                        alt="小红书二维码" 
+                        className="w-24 h-24 mx-auto"
+                      />
+                      <p className="text-xs text-gray-600 mt-2">扫码关注小红书账号</p>
+                    </div>
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-white"></div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 

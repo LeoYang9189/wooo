@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Grid } from '@arco-design/web-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShip, faPlane, faWarehouse, faFileAlt } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
+import LeadFormModal from './LeadFormModal';
 
 const { Row, Col } = Grid;
 
 const PortalSolutions: React.FC = () => {
+  const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [showLeadForm, setShowLeadForm] = useState(false);
 
   const services = [
     {
@@ -84,6 +88,14 @@ const PortalSolutions: React.FC = () => {
     setCurrentSlide((prev) => (prev + 1) % services.length);
     setIsAutoPlaying(false);
     setTimeout(() => setIsAutoPlaying(true), 10000);
+  };
+
+  const handleConsultationClick = () => {
+    setShowLeadForm(true);
+  };
+
+  const handleExperienceClick = () => {
+    navigate('/portal/auth');
   };
 
   const currentService = services[currentSlide];
@@ -270,16 +282,28 @@ const PortalSolutions: React.FC = () => {
               从海运到空运，从仓储到关务，我们为您提供完整的供应链管理服务，让您的货物安全、快速地到达目的地
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+              <button 
+                onClick={handleConsultationClick}
+                className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              >
                 免费咨询方案
               </button>
-              <button className="px-8 py-4 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:text-blue-600 transition-all duration-300">
-                查看成功案例
+              <button 
+                onClick={handleExperienceClick}
+                className="px-8 py-4 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:text-blue-600 transition-all duration-300"
+              >
+                体验控制塔系统
               </button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* 留资弹窗 */}
+      <LeadFormModal 
+        visible={showLeadForm}
+        onClose={() => setShowLeadForm(false)}
+      />
     </section>
   );
 };

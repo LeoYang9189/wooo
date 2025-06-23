@@ -57,7 +57,7 @@ const PortalHeader: React.FC = () => {
     { label: '首页', href: '/portal' },
     { label: '控制塔', href: '/controltower-client' },
     { label: '业务介绍', href: '#services' },
-    { label: '资讯中心', href: '#news' },
+    { label: '资讯中心', href: '/portal/news' },
     { label: '关于我们', href: '#about' },
   ];
 

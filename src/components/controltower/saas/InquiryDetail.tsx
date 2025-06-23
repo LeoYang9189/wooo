@@ -11,7 +11,7 @@ import {
   Modal,
   InputNumber,
   Select,
-  Input,
+  Input, 
   Message,
   Grid
 } from '@arco-design/web-react';
@@ -575,7 +575,7 @@ ${type === 'air' ? '航空公司' : '船公司'}：${inquiryDetail.shipCompany}
           </div>
         </div>
         
-        {/* 基本信息区域 */}
+          {/* 基本信息区域 */}
         <Card title="基本信息" className="mb-6">
           <Descriptions 
             column={3}

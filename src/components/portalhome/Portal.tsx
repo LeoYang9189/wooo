@@ -4,6 +4,7 @@ import PortalFooter from './PortalFooter';
 import PortalHero from './PortalHero';
 import PortalFeatures from './PortalFeatures';
 import PortalSolutions from './PortalSolutions';
+import NewsCenter from './NewsCenter';
 import PortalCTA from './PortalCTA';
 import { UserProvider } from './UserContext';
 import './PortalStyles.css';
@@ -17,6 +18,7 @@ const Portal: React.FC = () => {
         <PortalHero />
         <PortalFeatures />
         <PortalSolutions />
+        <NewsCenter />
         <PortalCTA />
       </main>
         <PortalFooter />

@@ -375,7 +375,7 @@ const ViewPrecarriageRate: React.FC = () => {
               导出运价
             </Button>
           </Space>
-        </div>
+                    </div>
       </Card>
 
       {/* 基本信息区域 */}
@@ -421,36 +421,36 @@ const ViewPrecarriageRate: React.FC = () => {
       <Card title="运价明细" className="mb-6">
         <div className="mb-4">
           <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2 mb-4">按箱型计费</div>
-          
-          <Table
-            borderCell={true}
-            columns={[
+                
+                <Table
+                  borderCell={true}
+                  columns={[
+                    {
+                      title: '费用名称',
+                      dataIndex: 'feeName',
+                      width: 180,
+                    },
+                    {
+                      title: '币种',
+                      dataIndex: 'currency',
+                      width: 120,
+                    },
               {
-                title: '费用名称',
-                dataIndex: 'feeName',
-                width: 180,
-              },
-              {
-                title: '币种',
-                dataIndex: 'currency',
-                width: 120,
-              },
-              {
-                title: '20GP',
-                dataIndex: '20gp',
-                width: 120,
+                      title: '20GP',
+                      dataIndex: '20gp',
+                      width: 120,
                 render: (value: string) => value ? `¥ ${value}` : '-'
               },
               {
-                title: '40GP',
-                dataIndex: '40gp',
-                width: 120,
+                      title: '40GP',
+                      dataIndex: '40gp',
+                      width: 120,
                 render: (value: string) => value ? `¥ ${value}` : '-'
               },
               {
-                title: '40HC',
-                dataIndex: '40hc',
-                width: 120,
+                      title: '40HC',
+                      dataIndex: '40hc',
+                      width: 120,
                 render: (value: string) => value ? `¥ ${value}` : '-'
               },
               {
@@ -460,60 +460,60 @@ const ViewPrecarriageRate: React.FC = () => {
                 render: (value: string) => value ? `¥ ${value}` : '-'
               },
               {
-                title: '45HC',
-                dataIndex: '45hc',
-                width: 120,
+                      title: '45HC',
+                      dataIndex: '45hc',
+                      width: 120,
                 render: (value: string) => value ? `¥ ${value}` : '-'
               },
-              {
-                title: '特殊备注',
-                dataIndex: 'specialNote',
+                    {
+                      title: '特殊备注',
+                      dataIndex: 'specialNote',
                 width: 200,
-              }
-            ]}
-            data={rateList}
-            pagination={false}
-            rowKey="key"
-          />
-        </div>
-        
-        <div>
+                    }
+                  ]}
+                  data={rateList}
+                  pagination={false}
+                  rowKey="key"
+                />
+                </div>
+                
+                <div>
           <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2 mb-4">非按箱型计费</div>
-          
-          <Table
-            borderCell={true}
-            columns={[
-              {
-                title: '费用名称',
-                dataIndex: 'feeName',
-                width: 180,
-              },
-              {
-                title: '币种',
-                dataIndex: 'currency',
-                width: 120,
-              },
-              {
-                title: '计费单位',
-                dataIndex: 'unit',
-                width: 120,
-              },
-              {
-                title: '单价',
-                dataIndex: 'price',
-                width: 120,
+                  
+                  <Table
+                    borderCell={true}
+                    columns={[
+                      {
+                        title: '费用名称',
+                        dataIndex: 'feeName',
+                        width: 180,
+                      },
+                      {
+                        title: '币种',
+                        dataIndex: 'currency',
+                        width: 120,
+                      },
+                      {
+                        title: '计费单位',
+                        dataIndex: 'unit',
+                        width: 120,
+                      },
+                      {
+                        title: '单价',
+                        dataIndex: 'price',
+                        width: 120,
                 render: (value: string) => value ? `¥ ${value}` : '-'
-              },
-              {
-                title: '特殊备注',
-                dataIndex: 'specialNote',
+                      },
+                      {
+                        title: '特殊备注',
+                        dataIndex: 'specialNote',
                 width: 200,
-              }
-            ]}
-            data={nonContainerRateList}
-            pagination={false}
-            rowKey="key"
-          />
+                      }
+                    ]}
+                    data={nonContainerRateList}
+                    pagination={false}
+                    rowKey="key"
+                  />
         </div>
       </Card>
 
