@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Form, Input, Select, Button, Message } from '@arco-design/web-react';
+import { Modal, Form, Input, Button, Message } from '@arco-design/web-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faEnvelope, faPhone, faBuilding, faComments } from '@fortawesome/free-solid-svg-icons';
 
@@ -33,20 +33,15 @@ const LeadFormModal: React.FC<LeadFormModalProps> = ({ visible, onClose }) => {
     }
   };
 
-  const companyTypes = [
-    { label: '贸易公司', value: 'trading' },
-    { label: '制造企业', value: 'manufacturing' },
-    { label: '跨境电商', value: 'ecommerce' },
-    { label: '物流企业', value: 'logistics' },
-    { label: '其他', value: 'other' }
-  ];
-
-  const businessScales = [
-    { label: '1-10人', value: 'small' },
-    { label: '11-50人', value: 'medium' },
-    { label: '51-200人', value: 'large' },
-    { label: '200+人', value: 'enterprise' }
-  ];
+  // 验证邮箱或电话至少填写一个
+  const validateEmailOrPhone = (_: any, callback: any) => {
+    const formData = form.getFieldsValue();
+    if (!formData.email && !formData.phone) {
+      callback('请至少填写邮箱或电话其中一项');
+    } else {
+      callback();
+    }
+  };
 
   return (
     <Modal
@@ -94,7 +89,7 @@ const LeadFormModal: React.FC<LeadFormModalProps> = ({ visible, onClose }) => {
             }
             field="phone"
             rules={[
-              { required: true, message: '请输入联系电话' },
+              { validator: validateEmailOrPhone },
               { 
                 validator: (value) => {
                   if (!value || /^1[3-9]\d{9}$/.test(value)) {
@@ -106,7 +101,7 @@ const LeadFormModal: React.FC<LeadFormModalProps> = ({ visible, onClose }) => {
             ]}
           >
             <Input
-              placeholder="请输入您的手机号码"
+              placeholder="请输入您的手机号码（与邮箱二选一）"
               size="large"
               className="rounded-lg"
             />
@@ -121,12 +116,19 @@ const LeadFormModal: React.FC<LeadFormModalProps> = ({ visible, onClose }) => {
             }
             field="email"
             rules={[
-              { required: true, message: '请输入邮箱地址' },
-              { type: 'email', message: '请输入正确的邮箱格式' }
+              { validator: validateEmailOrPhone },
+              { 
+                validator: (value) => {
+                  if (!value || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject('请输入正确的邮箱格式');
+                }
+              }
             ]}
           >
             <Input
-              placeholder="请输入您的邮箱地址"
+              placeholder="请输入您的邮箱地址（与电话二选一）"
               size="large"
               className="rounded-lg"
             />
@@ -149,33 +151,7 @@ const LeadFormModal: React.FC<LeadFormModalProps> = ({ visible, onClose }) => {
             />
           </FormItem>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormItem
-              label="公司类型"
-              field="companyType"
-              rules={[{ required: true, message: '请选择公司类型' }]}
-            >
-              <Select
-                placeholder="请选择"
-                size="large"
-                className="rounded-lg"
-                options={companyTypes}
-              />
-            </FormItem>
 
-            <FormItem
-              label="团队规模"
-              field="businessScale"
-              rules={[{ required: true, message: '请选择团队规模' }]}
-            >
-              <Select
-                placeholder="请选择"
-                size="large"
-                className="rounded-lg"
-                options={businessScales}
-              />
-            </FormItem>
-          </div>
 
           <FormItem
             label={
@@ -193,7 +169,7 @@ const LeadFormModal: React.FC<LeadFormModalProps> = ({ visible, onClose }) => {
             />
           </FormItem>
 
-          <div className="flex justify-center space-x-4 pt-4">
+          <div className="flex justify-center gap-6 pt-4">
             <Button
               type="secondary"
               size="large"

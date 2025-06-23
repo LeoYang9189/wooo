@@ -66,19 +66,19 @@ const PortalFooter = () => {
                 <button className="text-gray-400 hover:text-green-500 transition-colors duration-300" title="微信" aria-label="关注我们的微信">
                   <FontAwesomeIcon icon={faWeixin} className="h-5 w-5" />
                 </button>
-                {hoveredSocial === 'wechat' && (
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-white rounded-lg shadow-xl border border-gray-200 p-3 z-50">
-                    <div className="text-center">
-                      <img 
-                        src="/qrcodes/wechat-qr.svg" 
-                        alt="微信二维码" 
-                        className="w-24 h-24 mx-auto"
-                      />
-                      <p className="text-xs text-gray-600 mt-2">扫码关注微信公众号</p>
-                    </div>
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-white"></div>
-                  </div>
-                )}
+                                 {hoveredSocial === 'wechat' && (
+                   <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-50">
+                     <div className="text-center">
+                       <img 
+                         src="/qrcodes/wechat-qr.svg" 
+                         alt="微信二维码" 
+                         className="w-32 h-32 mx-auto"
+                       />
+                       <p className="text-xs text-gray-600 mt-3">扫码关注微信公众号</p>
+                     </div>
+                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-white"></div>
+                   </div>
+                 )}
               </div>
 
               {/* 抖音 */}
@@ -90,19 +90,19 @@ const PortalFooter = () => {
                 <button className="text-gray-400 hover:text-pink-500 transition-colors duration-300" title="抖音" aria-label="关注我们的抖音">
                   <FontAwesomeIcon icon={faMusic} className="h-5 w-5" />
                 </button>
-                {hoveredSocial === 'douyin' && (
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-white rounded-lg shadow-xl border border-gray-200 p-3 z-50">
-                    <div className="text-center">
-                      <img 
-                        src="/qrcodes/douyin-qr.svg" 
-                        alt="抖音二维码" 
-                        className="w-24 h-24 mx-auto"
-                      />
-                      <p className="text-xs text-gray-600 mt-2">扫码关注抖音账号</p>
-                    </div>
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-white"></div>
-                  </div>
-                )}
+                                 {hoveredSocial === 'douyin' && (
+                   <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-50">
+                     <div className="text-center">
+                       <img 
+                         src="/qrcodes/douyin-qr.svg" 
+                         alt="抖音二维码" 
+                         className="w-32 h-32 mx-auto"
+                       />
+                       <p className="text-xs text-gray-600 mt-3">扫码关注抖音账号</p>
+                     </div>
+                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-white"></div>
+                   </div>
+                 )}
               </div>
 
               {/* 小红书 */}
@@ -114,19 +114,19 @@ const PortalFooter = () => {
                 <button className="text-gray-400 hover:text-red-500 transition-colors duration-300" title="小红书" aria-label="关注我们的小红书">
                   <FontAwesomeIcon icon={faBookOpen} className="h-5 w-5" />
                 </button>
-                {hoveredSocial === 'xiaohongshu' && (
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-white rounded-lg shadow-xl border border-gray-200 p-3 z-50">
-                    <div className="text-center">
-                      <img 
-                        src="/qrcodes/xiaohongshu-qr.svg" 
-                        alt="小红书二维码" 
-                        className="w-24 h-24 mx-auto"
-                      />
-                      <p className="text-xs text-gray-600 mt-2">扫码关注小红书账号</p>
-                    </div>
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-white"></div>
-                  </div>
-                )}
+                                 {hoveredSocial === 'xiaohongshu' && (
+                   <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-50">
+                     <div className="text-center">
+                       <img 
+                         src="/qrcodes/xiaohongshu-qr.svg" 
+                         alt="小红书二维码" 
+                         className="w-32 h-32 mx-auto"
+                       />
+                       <p className="text-xs text-gray-600 mt-3">扫码关注小红书账号</p>
+                     </div>
+                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-white"></div>
+                   </div>
+                 )}
               </div>
             </div>
           </div>

@@ -213,7 +213,7 @@ const NewsCenter: React.FC = () => {
             {/* 轮播控制 */}
             <div className="flex items-center justify-between mt-8">
               {/* 左侧指示器 */}
-              <div className="flex space-x-2">
+              <div className="flex gap-3">
                 {Array.from({ length: totalSlides }).map((_, index) => (
                   <button
                     key={index}
@@ -228,7 +228,7 @@ const NewsCenter: React.FC = () => {
               </div>
 
               {/* 右侧控制按钮 */}
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center gap-4">
                 <button
                   onClick={goToPrevious}
                   className="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors duration-300"
@@ -241,13 +241,15 @@ const NewsCenter: React.FC = () => {
                 >
                   <FontAwesomeIcon icon={faChevronRight} className="text-gray-600" />
                 </button>
-                <button
-                  onClick={handleMoreClick}
-                  className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-sm font-medium rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 flex items-center"
-                >
-                  <FontAwesomeIcon icon={faNewspaper} className="mr-2" />
-                  查看更多
-                </button>
+                <div className="ml-2">
+                  <button
+                    onClick={handleMoreClick}
+                    className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-sm font-medium rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 flex items-center"
+                  >
+                    <FontAwesomeIcon icon={faNewspaper} className="mr-2" />
+                    查看更多
+                  </button>
+                </div>
               </div>
             </div>
           </div>
