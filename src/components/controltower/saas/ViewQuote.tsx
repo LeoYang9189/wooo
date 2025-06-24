@@ -541,7 +541,7 @@ ${costDetails.join('\n')}
             
             {/* 右侧：货物信息 */}
             <Col span={12}>
-              <div className="border rounded p-4">
+              <div className="border rounded p-4 mb-4">
                 <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2 mb-4">货物信息</div>
                 <Descriptions
                   column={1}
@@ -557,28 +557,31 @@ ${costDetails.join('\n')}
                   ]}
                 />
               </div>
+              
+              {/* 箱型箱量 */}
+              <div className="border rounded p-4">
+                <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2 mb-4">箱型箱量</div>
+                <Row gutter={[16, 16]}>
+                  {containerList.map((container, index) => (
+                    <Col span={8} key={container.id}>
+                      <div className="border border-gray-200 rounded p-3 text-center">
+                        <div className="text-lg font-semibold text-blue-600">
+                          {container.type}
+                        </div>
+                        <div className="text-2xl font-bold mt-2">
+                          {container.count}
+                        </div>
+                        <div className="text-gray-500 text-sm">箱</div>
+                      </div>
+                    </Col>
+                  ))}
+                </Row>
+              </div>
             </Col>
           </Row>
         </Card>
 
-        {/* 箱型箱量 */}
-        <Card className="mb-4" title="箱型箱量">
-          <Row gutter={[16, 16]}>
-            {containerList.map((container, index) => (
-              <Col span={8} key={container.id}>
-                <div className="border border-gray-200 rounded p-3 text-center">
-                  <div className="text-lg font-semibold text-blue-600">
-                    {container.type}
-                  </div>
-                  <div className="text-2xl font-bold mt-2">
-                    {container.count}
-                  </div>
-                  <div className="text-gray-500 text-sm">箱</div>
-                </div>
-              </Col>
-            ))}
-          </Row>
-        </Card>
+
 
         {/* 运价明细模块 */}
         <Card title="运价明细">
