@@ -72,6 +72,7 @@ interface RateItem {
 interface MainlineRate {
   id: number;
   selected: boolean;
+  rateCode: string; // 运价编号
   shipCompany: string;
   validPeriod: string;
   transitType: string;
@@ -85,6 +86,7 @@ interface MainlineRate {
 interface PrecarriageRate {
   id: number;
   selected: boolean;
+  rateCode: string; // 运价编号
   type: string;
   subType?: string;
   vendor: string;
@@ -96,6 +98,7 @@ interface PrecarriageRate {
 interface OncarriageRate {
   id: number;
   selected: boolean;
+  rateCode: string; // 运价编号
   agentName: string;
   validPeriod: string;
   status: '已报价' | '待报价' | '拒绝报价' | '无需报价';
@@ -181,11 +184,12 @@ const ViewQuote: React.FC = () => {
 
   // 生成mock数据的函数
   const generateMockMainlineRates = (): MainlineRate[] => {
-    const statuses: Array<'已报价' | '待报价' | '拒绝报价' | '无需报价'> = ['已报价', '待报价', '拒绝报价', '无需报价'];
+    const statuses: Array<'已报价' | '待报价' | '拒绝报价' | '无需报价'> = ['已报价', '已报价', '已报价']; // 只返回已报价的运价
     
     return Array(3).fill(null).map((_, index) => ({
       id: index + 1,
       selected: index === 0, // 默认选中第一个
+      rateCode: `FCL${2024}${String(index + 1).padStart(4, '0')}`, // 运价编号
       shipCompany: ['MSC | 地中海', 'COSCO | 中远海运', 'MAERSK | 马士基'][index],
       validPeriod: '2024-05-01 至 2024-12-31',
       transitType: ['直达', '中转', '直达'][index],
@@ -215,6 +219,22 @@ const ViewQuote: React.FC = () => {
             '40HC': (250 + index * 30).toString()
           },
           remark: ''
+        },
+        {
+          id: 3,
+          feeName: '单证费',
+          currency: 'USD',
+          unit: '票',
+          unitPrice: (50 + index * 10).toString(),
+          remark: '每票收取'
+        },
+        {
+          id: 4,
+          feeName: '拖车费',
+          currency: 'CNY',
+          unit: '公里',
+          unitPrice: (8 + index * 2).toString(),
+          remark: '按公里计费'
         }
       ]
     }));
@@ -342,7 +362,7 @@ const ViewQuote: React.FC = () => {
           }
         });
       });
-      costDetails.push(`干线运价：${selectedMainline.shipCompany}`);
+      costDetails.push(`干线运价：${selectedMainline.rateCode} - ${selectedMainline.shipCompany}`);
     }
     
     // 计算港前费用
@@ -356,7 +376,7 @@ const ViewQuote: React.FC = () => {
           }
         });
       });
-      costDetails.push(`港前运价：${selectedPrecarriage.vendor}`);
+      costDetails.push(`港前运价：${selectedPrecarriage.rateCode} - ${selectedPrecarriage.vendor}`);
     }
     
     // 计算尾程费用
@@ -370,7 +390,7 @@ const ViewQuote: React.FC = () => {
           }
         });
       });
-      costDetails.push(`尾程运价：${selectedOncarriage.agentName}`);
+      costDetails.push(`尾程运价：${selectedOncarriage.rateCode} - ${selectedOncarriage.agentName}`);
     }
 
     const text = `
@@ -434,7 +454,12 @@ ${costDetails.join('\n')}
 
   // 渲染运价表格
   const renderRateTable = (rateItems: RateItem[], containerTypes: string[]) => {
-    const columns = [
+    // 按计费方式分组
+    const containerRateItems = rateItems.filter(item => item.containerRates);
+    const unitRateItems = rateItems.filter(item => item.unitPrice && !item.containerRates);
+
+    // 按箱计费表格列
+    const containerColumns = [
       {
         title: '费用名称',
         dataIndex: 'feeName',
@@ -459,18 +484,74 @@ ${costDetails.join('\n')}
       }
     ];
 
+    // 非按箱计费表格列
+    const unitColumns = [
+      {
+        title: '费用名称',
+        dataIndex: 'feeName',
+        width: 120,
+      },
+      {
+        title: '币种',
+        dataIndex: 'currency',
+        width: 80,
+      },
+      {
+        title: '单价',
+        dataIndex: 'unitPrice',
+        width: 100,
+      },
+      {
+        title: '单位',
+        dataIndex: 'unit',
+        width: 80,
+      },
+      {
+        title: '备注',
+        dataIndex: 'remark',
+        width: 120,
+        render: (value: string) => value || '-'
+      }
+    ];
+
     return (
-      <Table
-        columns={columns}
-        data={rateItems}
-        rowKey="id"
-        pagination={false}
-        size="small"
-        border={{
-          wrapper: true,
-          cell: true
-        }}
-      />
+      <div className="space-y-4">
+        {/* 按箱计费表格 */}
+        {containerRateItems.length > 0 && (
+          <div>
+            <div className="text-sm font-medium text-gray-600 mb-2">按箱计费</div>
+            <Table
+              columns={containerColumns}
+              data={containerRateItems}
+              rowKey="id"
+              pagination={false}
+              size="small"
+              border={{
+                wrapper: true,
+                cell: true
+              }}
+            />
+          </div>
+        )}
+
+        {/* 非按箱计费表格 */}
+        {unitRateItems.length > 0 && (
+          <div>
+            <div className="text-sm font-medium text-gray-600 mb-2">非按箱计费</div>
+            <Table
+              columns={unitColumns}
+              data={unitRateItems}
+              rowKey="id"
+              pagination={false}
+              size="small"
+              border={{
+                wrapper: true,
+                cell: true
+              }}
+            />
+          </div>
+        )}
+      </div>
     );
   };
 
@@ -508,83 +589,103 @@ ${costDetails.join('\n')}
           </div>
         }
       >
+        {/* 运价类型选择 */}
+        <div className="border rounded p-4 mb-4">
+          <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2 mb-4">运价类型</div>
+          <div className="flex items-center gap-8">
+            <Checkbox
+              checked={true}
+              disabled={true}
+              className="text-gray-500"
+            >
+              干线运价
+            </Checkbox>
+            <Checkbox
+              checked={true}
+              disabled={true}
+              className="text-gray-500"
+            >
+              港前运价
+            </Checkbox>
+            <Checkbox
+              checked={true}
+              disabled={true}
+              className="text-gray-500"
+            >
+              尾程运价
+            </Checkbox>
+          </div>
+        </div>
+
         {/* 上半部分：基本信息和货物信息并排 */}
-        <Card className="mb-4">
-          <Row gutter={[16, 16]}>
-            {/* 左侧：基本信息 */}
-            <Col span={12}>
-              <div className="border rounded p-4">
-                <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2 mb-4">基本信息</div>
-                <Descriptions
-                  column={1}
-                  data={[
-                    { label: '报价编号', value: basicInfo.quoteNo },
-                    { label: '询价编号', value: basicInfo.inquiryNo },
-                    { label: '报价人', value: basicInfo.quoter },
-                    { label: '货盘性质', value: basicInfo.cargoNature },
-                    { label: '货好时间', value: basicInfo.cargoReadyTime },
-                    { label: '委托单位', value: basicInfo.clientType === '正式客户' ? basicInfo.clientCompany : basicInfo.clientName },
-                    ...(basicInfo.loadingPointDetail ? [{ label: '装箱门点', value: basicInfo.loadingPointDetail }] : []),
-                    ...(basicInfo.addressType ? [
-                      { label: '配送地址类型', value: basicInfo.addressType },
-                      ...(basicInfo.addressType === '第三方地址' ? [
-                        { label: '邮编', value: basicInfo.zipCode },
-                        { label: '地址', value: basicInfo.address }
-                      ] : [
-                        { label: '仓库代码', value: basicInfo.warehouseCode }
-                      ])
-                    ] : [])
-                  ]}
-                />
-              </div>
-            </Col>
+        <Row gutter={[16, 16]} className="mb-4">
+          {/* 左侧：基本信息 */}
+          <Col span={12}>
+            <div className="border rounded p-4">
+              <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2 mb-4">基本信息</div>
+              <Descriptions
+                column={1}
+                data={[
+                  { label: '报价编号', value: basicInfo.quoteNo },
+                  { label: '询价编号', value: basicInfo.inquiryNo },
+                  { label: '报价人', value: basicInfo.quoter },
+                  { label: '货盘性质', value: basicInfo.cargoNature },
+                  { label: '货好时间', value: basicInfo.cargoReadyTime },
+                  { label: '委托单位', value: basicInfo.clientType === '正式客户' ? basicInfo.clientCompany : basicInfo.clientName },
+                  ...(basicInfo.loadingPointDetail ? [{ label: '装箱门点', value: basicInfo.loadingPointDetail }] : []),
+                  ...(basicInfo.addressType ? [
+                    { label: '配送地址类型', value: basicInfo.addressType },
+                    ...(basicInfo.addressType === '第三方地址' ? [
+                      { label: '邮编', value: basicInfo.zipCode },
+                      { label: '地址', value: basicInfo.address }
+                    ] : [
+                      { label: '仓库代码', value: basicInfo.warehouseCode }
+                    ])
+                  ] : [])
+                ]}
+              />
+            </div>
+          </Col>
+          
+          {/* 右侧：货物信息 */}
+          <Col span={12}>
+            <div className="border rounded p-4 mb-4">
+              <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2 mb-4">货物信息</div>
+              <Descriptions
+                column={1}
+                data={[
+                  { label: '直达/中转', value: cargoInfo.transitType },
+                  { label: '航线', value: cargoInfo.route },
+                  { label: '起运港', value: cargoInfo.departurePort },
+                  { label: '卸货港', value: cargoInfo.dischargePort },
+                  ...(cargoInfo.transitPort ? [{ label: '中转港', value: cargoInfo.transitPort }] : []),
+                  { label: '重量', value: cargoInfo.weight ? `${cargoInfo.weight} KGS` : '' },
+                  { label: '船公司', value: cargoInfo.shipCompany },
+                  { label: '备注', value: cargoInfo.remark }
+                ]}
+              />
+            </div>
             
-            {/* 右侧：货物信息 */}
-            <Col span={12}>
-              <div className="border rounded p-4 mb-4">
-                <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2 mb-4">货物信息</div>
-                <Descriptions
-                  column={1}
-                  data={[
-                    { label: '直达/中转', value: cargoInfo.transitType },
-                    { label: '航线', value: cargoInfo.route },
-                    { label: '起运港', value: cargoInfo.departurePort },
-                    { label: '卸货港', value: cargoInfo.dischargePort },
-                    ...(cargoInfo.transitPort ? [{ label: '中转港', value: cargoInfo.transitPort }] : []),
-                    { label: '重量', value: cargoInfo.weight ? `${cargoInfo.weight} KGS` : '' },
-                    { label: '船公司', value: cargoInfo.shipCompany },
-                    { label: '备注', value: cargoInfo.remark }
-                  ]}
-                />
+            {/* 箱型箱量 */}
+            <div className="border rounded p-4">
+              <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2 mb-4">箱型箱量</div>
+              <div className="flex items-center gap-4">
+                {containerList.map((container, index) => (
+                  <span key={container.id} className="text-lg font-medium">
+                    {container.count} × {container.type}
+                  </span>
+                ))}
               </div>
-              
-              {/* 箱型箱量 */}
-              <div className="border rounded p-4">
-                <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2 mb-4">箱型箱量</div>
-                <Row gutter={[16, 16]}>
-                  {containerList.map((container, index) => (
-                    <Col span={8} key={container.id}>
-                      <div className="border border-gray-200 rounded p-3 text-center">
-                        <div className="text-lg font-semibold text-blue-600">
-                          {container.type}
-                        </div>
-                        <div className="text-2xl font-bold mt-2">
-                          {container.count}
-                        </div>
-                        <div className="text-gray-500 text-sm">箱</div>
-                      </div>
-                    </Col>
-                  ))}
-                </Row>
-              </div>
-            </Col>
-          </Row>
-        </Card>
+            </div>
+          </Col>
+        </Row>
 
 
 
         {/* 运价明细模块 */}
-        <Card title="运价明细">
+        <div>
+          <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2 mb-6 text-lg">运价明细</div>
+          
           {/* 干线运价 */}
           {mainlineRates.length > 0 && (
             <div className="mb-6">
@@ -605,6 +706,7 @@ ${costDetails.join('\n')}
                       <div className="flex-1">
                         {/* 基本信息 */}
                         <div className="flex items-center gap-4 mb-4">
+                          <span className="font-medium text-blue-600">运价编号：{rate.rateCode}</span>
                           <span className="font-medium">船公司：{rate.shipCompany}</span>
                           <span>有效期：{rate.validPeriod}</span>
                           <span>直达/中转：{rate.transitType}</span>
@@ -706,7 +808,7 @@ ${costDetails.join('\n')}
               </div>
             )}
           </div>
-        </Card>
+        </div>
 
       </Card>
 
@@ -746,22 +848,22 @@ ${costDetails.join('\n')}
           <div>
             <h4 className="text-lg font-medium mb-4">已选择的运价方案</h4>
             <div className="space-y-2 bg-gray-50 p-4 rounded">
-              {mainlineRates.filter(r => r.selected).map(rate => (
+              {mainlineRates.filter(r => r.selected && r.status === '已报价').map(rate => (
                 <div key={rate.id} className="flex justify-between">
-                  <span>干线运价：{rate.shipCompany}</span>
-                  <Tag color={getStatusColor(rate.status)}>{rate.status}</Tag>
+                  <span>干线运价：{rate.rateCode} - {rate.shipCompany}</span>
+                  <Tag color="green">已报价</Tag>
                 </div>
               ))}
-              {precarriageRates.filter(r => r.selected).map(rate => (
+              {precarriageRates.filter(r => r.selected && r.status === '已报价').map(rate => (
                 <div key={rate.id} className="flex justify-between">
-                  <span>港前运价：{rate.vendor}</span>
-                  <Tag color={getStatusColor(rate.status)}>{rate.status}</Tag>
+                  <span>港前运价：{rate.rateCode} - {rate.vendor}</span>
+                  <Tag color="green">已报价</Tag>
                 </div>
               ))}
-              {oncarriageRates.filter(r => r.selected).map(rate => (
+              {oncarriageRates.filter(r => r.selected && r.status === '已报价').map(rate => (
                 <div key={rate.id} className="flex justify-between">
-                  <span>尾程运价：{rate.agentName}</span>
-                  <Tag color={getStatusColor(rate.status)}>{rate.status}</Tag>
+                  <span>尾程运价：{rate.rateCode} - {rate.agentName}</span>
+                  <Tag color="green">已报价</Tag>
                 </div>
               ))}
             </div>
