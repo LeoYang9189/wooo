@@ -12,17 +12,15 @@ import {
   Table,
   Typography,
   Grid,
-  InputNumber,
-  Select,
   Input
 } from '@arco-design/web-react';
-import { IconClose, IconDownload, IconCheck, IconCopy, IconPrinter } from '@arco-design/web-react/icon';
+import { IconClose, IconDownload, IconCopy, IconPrinter } from '@arco-design/web-react/icon';
 import { useNavigate, useParams } from 'react-router-dom';
 import ControlTowerSaasLayout from "./ControlTowerSaasLayout";
 
 const { Title } = Typography;
 const { Row, Col } = Grid;
-const { Option } = Select;
+
 const { TextArea } = Input;
 
 interface QuoteBasicInfo {
@@ -441,16 +439,7 @@ ${costDetails.join('\n')}
     setPdfPreviewVisible(true);
   };
 
-  // 获取状态标签颜色
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case '已报价': return 'green';
-      case '待报价': return 'orange';
-      case '拒绝报价': return 'red';
-      case '无需报价': return 'gray';
-      default: return 'blue';
-    }
-  };
+
 
   // 渲染运价表格
   const renderRateTable = (rateItems: RateItem[], containerTypes: string[]) => {
@@ -670,7 +659,7 @@ ${costDetails.join('\n')}
             <div className="border rounded p-4">
               <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2 mb-4">箱型箱量</div>
               <div className="flex items-center gap-4">
-                {containerList.map((container, index) => (
+                {containerList.map((container) => (
                   <span key={container.id} className="text-lg font-medium">
                     {container.count} × {container.type}
                   </span>
