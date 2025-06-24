@@ -82,7 +82,7 @@ const EditStaff: React.FC = () => {
   const handleSubmit = async () => {
     try {
       const values = await form.validate();
-      
+
       const employeeData = {
         ...values,
         avatar,

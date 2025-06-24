@@ -92,12 +92,12 @@ const lineOptions = [
 
 // 费用类型选项
 const chargeTypeOptions = [
-  { value: '文件费', label: '文件费' },
-  { value: '操作费', label: '操作费' },
-  { value: '港杂费', label: '港杂费' },
-  { value: '燃油费', label: '燃油费' },
-  { value: '安全费', label: '安全费' },
-  { value: '码头费', label: '码头费' }
+  { value: '文件费', label: '文件费', currency: 'CNY' },
+  { value: '操作费', label: '操作费', currency: 'CNY' },
+  { value: '港杂费', label: '港杂费', currency: 'USD' },
+  { value: '燃油费', label: '燃油费', currency: 'USD' },
+  { value: '安全费', label: '安全费', currency: 'USD' },
+  { value: '码头费', label: '码头费', currency: 'USD' }
 ];
 
 // 币种选项
@@ -187,7 +187,7 @@ const SurchargeForm: React.FC = () => {
     const newDetail: ContainerSurchargeDetail = {
       id: Date.now().toString(),
       chargeType: '',
-      currency: 'CNY',
+      currency: '',
       price20GP: 0,
       price40GP: 0,
       price40HC: 0,
@@ -224,7 +224,7 @@ const SurchargeForm: React.FC = () => {
     const newDetail: NonContainerSurchargeDetail = {
       id: Date.now().toString(),
       chargeType: '',
-      currency: 'CNY',
+      currency: '',
       unit: '票',
       unitPrice: 0,
       specialNote: ''
@@ -251,6 +251,38 @@ const SurchargeForm: React.FC = () => {
         detail.id === id ? { ...detail, [field]: value } : detail
       )
     }));
+  };
+
+  // 处理按箱型计费明细的费用类型变化，自动设置币种
+  const handleContainerChargeTypeChange = (id: string, value: string) => {
+    const selectedCharge = chargeTypeOptions.find(option => option.value === value);
+    if (selectedCharge) {
+      // 同时更新费用类型和币种
+      setFormData(prev => ({
+        ...prev,
+        containerSurchargeDetails: prev.containerSurchargeDetails.map(detail =>
+          detail.id === id 
+            ? { ...detail, chargeType: value, currency: selectedCharge.currency }
+            : detail
+        )
+      }));
+    }
+  };
+
+  // 处理非按箱型计费明细的费用类型变化，自动设置币种
+  const handleNonContainerChargeTypeChange = (id: string, value: string) => {
+    const selectedCharge = chargeTypeOptions.find(option => option.value === value);
+    if (selectedCharge) {
+      // 同时更新费用类型和币种
+      setFormData(prev => ({
+        ...prev,
+        nonContainerSurchargeDetails: prev.nonContainerSurchargeDetails.map(detail =>
+          detail.id === id 
+            ? { ...detail, chargeType: value, currency: selectedCharge.currency }
+            : detail
+        )
+      }));
+    }
   };
 
   // 保存数据
@@ -316,7 +348,7 @@ const SurchargeForm: React.FC = () => {
   // 按箱型计费明细表格列定义
   const containerDetailColumns = [
     {
-      title: '费用',
+      title: '费用类型',
       dataIndex: 'chargeType',
       key: 'chargeType',
       width: 120,
@@ -328,7 +360,7 @@ const SurchargeForm: React.FC = () => {
             value={value}
             placeholder="请选择费用类型"
             style={{ width: '100%' }}
-            onChange={(val) => handleUpdateContainerDetail(record.id, 'chargeType', val)}
+            onChange={(val) => handleContainerChargeTypeChange(record.id, val)}
           >
             {chargeTypeOptions.map(option => (
               <Option key={option.value} value={option.value}>
@@ -348,17 +380,12 @@ const SurchargeForm: React.FC = () => {
         isViewing ? (
           <span>{value}</span>
         ) : (
-          <Select
-            value={value}
+          <Input
+            value={value || '请选择费用类型'}
+            placeholder="自动设置"
             style={{ width: '100%' }}
-            onChange={(val) => handleUpdateContainerDetail(record.id, 'currency', val)}
-          >
-            {currencyOptions.map(option => (
-              <Option key={option.value} value={option.value}>
-                {option.label}
-              </Option>
-            ))}
-          </Select>
+            disabled={true}
+          />
         )
       )
     },
@@ -508,7 +535,7 @@ const SurchargeForm: React.FC = () => {
             value={value}
             placeholder="请选择费用类型"
             style={{ width: '100%' }}
-            onChange={(val) => handleUpdateNonContainerDetail(record.id, 'chargeType', val)}
+            onChange={(val) => handleNonContainerChargeTypeChange(record.id, val)}
           >
             {chargeTypeOptions.map(option => (
               <Option key={option.value} value={option.value}>
@@ -528,17 +555,12 @@ const SurchargeForm: React.FC = () => {
         isViewing ? (
           <span>{value}</span>
         ) : (
-          <Select
-            value={value}
+          <Input
+            value={value || '请选择费用类型'}
+            placeholder="自动设置"
             style={{ width: '100%' }}
-            onChange={(val) => handleUpdateNonContainerDetail(record.id, 'currency', val)}
-          >
-            {currencyOptions.map(option => (
-              <Option key={option.value} value={option.value}>
-                {option.label}
-              </Option>
-            ))}
-          </Select>
+            disabled={true}
+          />
         )
       )
     },

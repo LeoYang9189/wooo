@@ -434,7 +434,7 @@ const PermissionManagement: React.FC = () => {
         const hasChildren = record.children && record.children.length > 0;
         const isExpanded = expandedKeys.includes(record.id);
         
-        return (
+  return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
             {hasChildren && (
               <div
@@ -453,9 +453,9 @@ const PermissionManagement: React.FC = () => {
                   borderRadius: '3px',
                   backgroundColor: isExpanded ? '#165dff' : '#f2f3f5',
                   color: isExpanded ? '#ffffff' : '#86909c',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
                   fontSize: '12px',
                   fontWeight: 'bold',
                   transition: 'all 0.2s ease',
@@ -665,7 +665,7 @@ const PermissionManagement: React.FC = () => {
           <Button onClick={collapseAll}>收起全部</Button>
         </div>
       </div>
-      
+
       {/* 表格 */}
       <Table
         columns={columns}
@@ -749,7 +749,7 @@ const PermissionManagement: React.FC = () => {
                   <div style={{ fontSize: '14px', color: '#1d2129', fontWeight: 500 }}>{currentPermission.nameEn}</div>
                 </div>
               </div>
-            </div>
+      </div>
 
             {/* 权限分类 */}
             <div style={{ marginBottom: '24px' }}>
@@ -775,7 +775,7 @@ const PermissionManagement: React.FC = () => {
                     {permissionClassOptions.find(opt => opt.value === currentPermission.permissionClass)?.label || currentPermission.permissionClass}
                   </Tag>
                 </div>
-                <div style={{ 
+      <div style={{
                   padding: '12px', 
                   backgroundColor: '#f7f8fa', 
                   borderRadius: '6px',
@@ -787,8 +787,8 @@ const PermissionManagement: React.FC = () => {
                   </Tag>
                 </div>
               </div>
-            </div>
-
+      </div>
+      
             {/* 权限标识 */}
             <div style={{ marginBottom: '24px' }}>
               <h4 style={{ 
@@ -808,7 +808,7 @@ const PermissionManagement: React.FC = () => {
                 border: '1px solid #e5e6eb'
               }}>
                 <div style={{ fontSize: '12px', color: '#86909c', marginBottom: '4px' }}>权限点</div>
-                <div style={{ 
+      <div style={{
                   fontSize: '14px', 
                   color: '#1d2129', 
                   fontFamily: 'Monaco, Consolas, "Courier New", monospace',
@@ -816,12 +816,12 @@ const PermissionManagement: React.FC = () => {
                   padding: '6px 8px',
                   borderRadius: '4px',
                   border: '1px solid #e5e6eb'
-                }}>
+      }}>
                   {currentPermission.permissionCode}
                 </div>
               </div>
-            </div>
-
+      </div>
+      
             {/* 层级关系 */}
             <div style={{ marginBottom: '24px' }}>
               <h4 style={{ 
@@ -853,7 +853,7 @@ const PermissionManagement: React.FC = () => {
                     })()}
                   </div>
                 </div>
-                <div style={{ 
+      <div style={{
                   padding: '12px', 
                   backgroundColor: '#f7f8fa', 
                   borderRadius: '6px',
@@ -869,7 +869,7 @@ const PermissionManagement: React.FC = () => {
                   </div>
                 </div>
               </div>
-            </div>
+      </div>
 
             {/* 权限描述 */}
             {currentPermission.description && (
@@ -952,7 +952,7 @@ const PermissionManagement: React.FC = () => {
         }
         .permission-row-level-1 {
           background-color: #fafafa;
-        }
+            }
         .permission-row-level-1 td:first-child {
           padding-left: 32px !important;
         }
@@ -966,7 +966,7 @@ const PermissionManagement: React.FC = () => {
         /* 隐藏表格自带的展开图标 */
         .arco-table-expand-icon-cell {
           display: none !important;
-        }
+            }
         .arco-table-expand-icon {
           display: none !important;
         }

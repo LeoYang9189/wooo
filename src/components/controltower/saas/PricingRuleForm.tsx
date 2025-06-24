@@ -845,18 +845,15 @@ const PricingRuleForm: React.FC = () => {
               field="currency"
               rules={[{ required: true, message: '币种不能为空' }]}
             >
-              <Select 
-                placeholder="币种将根据费用名称自动设置"
-                disabled
+              <Input 
+                value={formData.currency || '请选择费用名称'}
+                placeholder="自动设置"
+                disabled={true}
                 style={{ 
                   backgroundColor: '#f7f8fa',
                   color: '#86909c'
                 }}
-              >
-                {currencyOptions.map(option => (
-                  <Option key={option.value} value={option.value}>{option.label}</Option>
-                ))}
-              </Select>
+              />
             </Form.Item>
 
             <Form.Item

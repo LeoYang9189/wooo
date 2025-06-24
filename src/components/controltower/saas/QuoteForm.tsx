@@ -20,6 +20,7 @@ import ControlTowerSaasLayout from "./ControlTowerSaasLayout";
 
 const { Row, Col } = Grid;
 const { Option } = Select;
+const { RangePicker } = DatePicker;
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 
@@ -94,6 +95,9 @@ interface RateItem {
     '40GP'?: string;
     '40HC'?: string;
     '45HC'?: string;
+    '20NOR'?: string;
+    '40NOR'?: string;
+    [key: string]: string | undefined;
   };
   // 非箱型计费
   unitPrice?: string; // 单价
@@ -104,7 +108,7 @@ interface MainlineRateDetail {
   id: number;
   certNo?: string; // 运价编号（新增时为空）
   shipCompany: string; // 船公司
-  validPeriod: string; // 有效期
+  validPeriod: string[]; // 有效期区间
   transitType: string; // 直达/中转
   transitTime: string; // 航程
   freeBox: string; // 免用箱
@@ -117,6 +121,7 @@ interface PrecarriageRateDetail {
   id: number;
   certNo?: string; // 运价编号（新增时为空）
   type: string; // 类型：直达、支线、海铁
+  subType?: string; // 子类型：支线类型/海铁类型
   vendor: string; // 供应商
   validPeriod: string[]; // 有效期区间
   rateItems: RateItem[]; // 费用明细
@@ -178,7 +183,7 @@ const QuoteForm: React.FC = () => {
 
   // 箱型箱量数据
   const [containerList, setContainerList] = useState<ContainerItem[]>([
-    { id: 1, type: '', count: 1 }
+    { id: 1, type: '20GP', count: 1 }
   ]);
 
   // 已选择的箱型列表（用于避免重复选择）
@@ -220,7 +225,29 @@ const QuoteForm: React.FC = () => {
     { label: '操作费', value: '操作费', currency: 'USD' }
   ];
 
-
+  // 添加船公司选项
+  const shipCompanyOptions = [
+    { value: 'COSCO', label: 'COSCO | 中远海运' },
+    { value: 'MSC', label: 'MSC | 地中海' },
+    { value: 'MAERSK', label: 'MAERSK | 马士基' },
+    { value: 'EVERGREEN', label: 'EVERGREEN | 长荣' },
+    { value: 'HMM', label: 'HMM | 现代商船' },
+    { value: 'ONE', label: 'ONE | 海洋网联' },
+    { value: 'CMA CGM', label: 'CMA CGM | 达飞' },
+    { value: 'HAPAG-LLOYD', label: 'HAPAG-LLOYD | 赫伯罗特' },
+    { value: 'YANG MING', label: 'YANG MING | 阳明' },
+    { value: 'PIL', label: 'PIL | 太平船务' },
+    { value: 'OOCL', label: 'OOCL | 东方海外' },
+    { value: 'APL', label: 'APL | 美总轮船' },
+    { value: 'K LINE', label: 'K LINE | 川崎汽船' },
+    { value: 'MOL', label: 'MOL | 商船三井' },
+    { value: 'NYK', label: 'NYK | 日本邮船' },
+    { value: 'WANHAI', label: 'WANHAI | 万海' },
+    { value: 'SITC', label: 'SITC | 海丰国际' },
+    { value: 'TS LINES', label: 'TS LINES | 德翔' },
+    { value: 'HEUNG-A', label: 'HEUNG-A | 兴亚' },
+    { value: 'ZIM', label: 'ZIM | 以星' }
+  ];
 
   // 处理表单字段变化
   const handleFormChange = (key: string, value: any) => {
@@ -302,7 +329,7 @@ const QuoteForm: React.FC = () => {
     const newRate: MainlineRateDetail = {
       id: Date.now(),
       shipCompany: '',
-      validPeriod: '',
+      validPeriod: ['', ''],
       transitType: '直达',
       transitTime: '',
       freeBox: '',
@@ -317,11 +344,55 @@ const QuoteForm: React.FC = () => {
     setMainlineRates(mainlineRates.filter(rate => rate.id !== id));
   };
 
+  // 更新干线运价字段
+  const updateMainlineRateField = (rateId: number, field: string, value: any) => {
+    setMainlineRates(mainlineRates.map(rate => 
+      rate.id === rateId ? { ...rate, [field]: value } : rate
+    ));
+  };
+
+  // 更新港前运价字段
+  const updatePrecarriageRateField = (rateId: number, field: string, value: any) => {
+    setPrecarriageRates(precarriageRates.map(rate => 
+      rate.id === rateId ? { ...rate, [field]: value } : rate
+    ));
+  };
+
+  // 更新尾程运价字段
+  const updateOncarriageRateField = (rateId: number, field: string, value: any) => {
+    setOncarriageRates(oncarriageRates.map(rate => 
+      rate.id === rateId ? { ...rate, [field]: value } : rate
+    ));
+  };
+
+  // 获取当前可用的箱型列表（基于基本信息模块中设置的箱型，过滤掉空值）
+  const getAvailableContainerTypes = () => {
+    return containerList.map(container => container.type).filter(type => type !== '');
+  };
+
+  // 获取港前运价子类型选项
+  const getPrecarriageSubTypeOptions = (type: string) => {
+    if (type === '支线') {
+      return [
+        { value: '乍浦支线', label: '乍浦支线' },
+        { value: '温州支线', label: '温州支线' },
+        { value: '九江支线', label: '九江支线' }
+      ];
+    } else if (type === '海铁') {
+      return [
+        { value: '湖州海铁', label: '湖州海铁' },
+        { value: '义乌海铁', label: '义乌海铁' }
+      ];
+    }
+    return [];
+  };
+
   // 添加港前运价
   const addPrecarriageRate = () => {
     const newRate: PrecarriageRateDetail = {
       id: Date.now(),
-      type: '直达',
+      type: '',
+      subType: '',
       vendor: '',
       validPeriod: ['', ''],
       rateItems: []
@@ -356,7 +427,7 @@ const QuoteForm: React.FC = () => {
       id: Date.now(),
       feeType: 'container',
       feeName: '',
-      currency: 'USD',
+      currency: '', // 初始为空，等待用户选择费用名称后自动设置
       unit: '箱',
       remark: '',
       containerRates: {
@@ -388,7 +459,7 @@ const QuoteForm: React.FC = () => {
       id: Date.now(),
       feeType: 'non-container',
       feeName: '',
-      currency: 'USD',
+      currency: '', // 初始为空，等待用户选择费用名称后自动设置
       unit: '票',
       remark: '',
       unitPrice: ''
@@ -422,6 +493,79 @@ const QuoteForm: React.FC = () => {
     } else {
       setOncarriageRates(oncarriageRates.map(rate => 
         rate.id === rateId ? { ...rate, rateItems: rate.rateItems.filter(item => item.id !== itemId) } : rate
+      ));
+    }
+  };
+
+  // 更新费用明细项字段
+  const updateRateItemField = (rateType: 'mainline' | 'precarriage' | 'oncarriage', rateId: number, itemId: number, field: string, value: any) => {
+    if (rateType === 'mainline') {
+      setMainlineRates(mainlineRates.map(rate => 
+        rate.id === rateId ? { 
+          ...rate, 
+          rateItems: rate.rateItems.map(item => 
+            item.id === itemId ? { ...item, [field]: value } : item
+          ) 
+        } : rate
+      ));
+    } else if (rateType === 'precarriage') {
+      setPrecarriageRates(precarriageRates.map(rate => 
+        rate.id === rateId ? { 
+          ...rate, 
+          rateItems: rate.rateItems.map(item => 
+            item.id === itemId ? { ...item, [field]: value } : item
+          ) 
+        } : rate
+      ));
+    } else {
+      setOncarriageRates(oncarriageRates.map(rate => 
+        rate.id === rateId ? { 
+          ...rate, 
+          rateItems: rate.rateItems.map(item => 
+            item.id === itemId ? { ...item, [field]: value } : item
+          ) 
+        } : rate
+      ));
+    }
+  };
+
+  // 更新箱型计费价格
+  const updateContainerRatePrice = (rateType: 'mainline' | 'precarriage' | 'oncarriage', rateId: number, itemId: number, containerType: string, value: string) => {
+    if (rateType === 'mainline') {
+      setMainlineRates(mainlineRates.map(rate => 
+        rate.id === rateId ? { 
+          ...rate, 
+          rateItems: rate.rateItems.map(item => 
+            item.id === itemId ? { 
+              ...item, 
+              containerRates: { ...item.containerRates, [containerType]: value }
+            } : item
+          ) 
+        } : rate
+      ));
+    } else if (rateType === 'precarriage') {
+      setPrecarriageRates(precarriageRates.map(rate => 
+        rate.id === rateId ? { 
+          ...rate, 
+          rateItems: rate.rateItems.map(item => 
+            item.id === itemId ? { 
+              ...item, 
+              containerRates: { ...item.containerRates, [containerType]: value }
+            } : item
+          ) 
+        } : rate
+      ));
+    } else {
+      setOncarriageRates(oncarriageRates.map(rate => 
+        rate.id === rateId ? { 
+          ...rate, 
+          rateItems: rate.rateItems.map(item => 
+            item.id === itemId ? { 
+              ...item, 
+              containerRates: { ...item.containerRates, [containerType]: value }
+            } : item
+          ) 
+        } : rate
       ));
     }
   };
@@ -1021,25 +1165,64 @@ const QuoteForm: React.FC = () => {
                         {/* 基本信息 */}
                         <Row gutter={[16, 16]} className="mb-4">
                           <Col span={4}>
-                            <Input placeholder="船公司" size="small" />
+                            <Select 
+                              placeholder="船公司" 
+                              size="small" 
+                              style={{ width: '100%' }}
+                              value={rate.shipCompany}
+                              onChange={(value) => updateMainlineRateField(rate.id, 'shipCompany', value)}
+                            >
+                              {shipCompanyOptions.map(option => (
+                                <Option key={option.value} value={option.value}>
+                                  {option.label}
+                                </Option>
+                              ))}
+                            </Select>
                           </Col>
                           <Col span={4}>
-                            <Input placeholder="有效期" size="small" />
+                            <RangePicker 
+                              placeholder={['开始日期', '结束日期']}
+                              size="small" 
+                              style={{ width: '100%' }}
+                              value={rate.validPeriod}
+                              onChange={(value: any) => updateMainlineRateField(rate.id, 'validPeriod', value)}
+                            />
                           </Col>
                           <Col span={4}>
-                            <Select placeholder="直达/中转" size="small" style={{ width: '100%' }}>
+                            <Select 
+                              placeholder="直达/中转" 
+                              size="small" 
+                              style={{ width: '100%' }}
+                              value={rate.transitType}
+                              onChange={(value) => updateMainlineRateField(rate.id, 'transitType', value)}
+                            >
                               <Option value="直达">直达</Option>
                               <Option value="中转">中转</Option>
                             </Select>
                           </Col>
                           <Col span={4}>
-                            <Input placeholder="航程" size="small" />
+                            <Input 
+                              placeholder="航程(天)" 
+                              size="small" 
+                              value={rate.transitTime}
+                              onChange={(value) => updateMainlineRateField(rate.id, 'transitTime', value)}
+                            />
                           </Col>
                           <Col span={4}>
-                            <Input placeholder="免用箱(天)" size="small" />
+                            <Input 
+                              placeholder="免用箱(天)" 
+                              size="small" 
+                              value={rate.freeBox}
+                              onChange={(value) => updateMainlineRateField(rate.id, 'freeBox', value)}
+                            />
                           </Col>
                           <Col span={4}>
-                            <Input placeholder="免堆存(天)" size="small" />
+                            <Input 
+                              placeholder="免堆存(天)" 
+                              size="small" 
+                              value={rate.freeStorage}
+                              onChange={(value) => updateMainlineRateField(rate.id, 'freeStorage', value)}
+                            />
                           </Col>
                         </Row>
                         
@@ -1075,7 +1258,26 @@ const QuoteForm: React.FC = () => {
                                 <div key={item.id} className="bg-white p-2 rounded border">
                                   <Row gutter={[8, 8]} align="center">
                                     <Col span={3}>
-                                      <Select placeholder="费用名称" size="small" style={{ width: '100%' }}>
+                                      <Select 
+                                        placeholder="费用名称" 
+                                        size="small" 
+                                        style={{ width: '100%' }}
+                                        value={item.feeName}
+                                        onChange={(value) => {
+                                          // 根据费用名称自动设置币种
+                                          const selectedFee = feeNameOptions.find(opt => opt.value === value);
+                                          const currency = selectedFee ? selectedFee.currency : 'USD';
+                                          
+                                          setMainlineRates(mainlineRates.map(r => 
+                                            r.id === rate.id ? { 
+                                              ...r, 
+                                              rateItems: r.rateItems.map(i => 
+                                                i.id === item.id ? { ...i, feeName: value, currency: currency } : i
+                                              ) 
+                                            } : r
+                                          ));
+                                        }}
+                                      >
                                         {feeNameOptions.map(option => (
                                           <Option key={option.value} value={option.value}>
                                             {option.label}
@@ -1084,30 +1286,46 @@ const QuoteForm: React.FC = () => {
                                       </Select>
                                     </Col>
                                     <Col span={2}>
-                                      <Input placeholder="币种" size="small" disabled value={item.currency} />
+                                      <Input 
+                                        placeholder="自动设置" 
+                                        size="small" 
+                                        style={{ width: '100%', color: '#666' }}
+                                        value={item.currency || '请选择费用'}
+                                        disabled
+                                      />
                                     </Col>
                                     {item.feeType === 'container' ? (
                                       <>
-                                        <Col span={2}>
-                                          <Input placeholder="20GP" size="small" />
-                                        </Col>
-                                        <Col span={2}>
-                                          <Input placeholder="40GP" size="small" />
-                                        </Col>
-                                        <Col span={2}>
-                                          <Input placeholder="40HC" size="small" />
-                                        </Col>
-                                        <Col span={2}>
-                                          <Input placeholder="45HC" size="small" />
-                                        </Col>
+                                        {/* 只显示基本信息模块中设置的箱型 */}
+                                        {getAvailableContainerTypes().map(containerType => (
+                                          <Col span={2} key={containerType}>
+                                            <Input 
+                                              placeholder={containerType} 
+                                              size="small" 
+                                              value={item.containerRates?.[containerType as keyof typeof item.containerRates] || ''}
+                                              onChange={(value) => updateContainerRatePrice('mainline', rate.id, item.id, containerType, value)}
+                                            />
+                                          </Col>
+                                        ))}
                                       </>
                                     ) : (
                                       <>
                                         <Col span={3}>
-                                          <Input placeholder="单价" size="small" />
+                                          <Input 
+                                            placeholder="单价" 
+                                            size="small" 
+                                            value={item.unitPrice || ''}
+                                            onChange={(value) => updateRateItemField('mainline', rate.id, item.id, 'unitPrice', value)}
+                                          />
                                         </Col>
                                         <Col span={2}>
-                                          <Select placeholder="单位" size="small" style={{ width: '100%' }}>
+                                          <Select 
+                                            placeholder="单位" 
+                                            size="small" 
+                                            style={{ width: '100%' }}
+                                            value={item.unit}
+                                            onChange={(value) => updateRateItemField('mainline', rate.id, item.id, 'unit', value)}
+                                          >
                                             <Option value="票">票</Option>
                                             <Option value="吨">吨</Option>
                                             <Option value="CBM">CBM</Option>
@@ -1117,7 +1335,12 @@ const QuoteForm: React.FC = () => {
                                       </>
                                     )}
                                     <Col span={3}>
-                                      <Input placeholder="备注" size="small" />
+                                      <Input 
+                                        placeholder="备注" 
+                                        size="small" 
+                                        value={item.remark}
+                                        onChange={(value) => updateRateItemField('mainline', rate.id, item.id, 'remark', value)}
+                                      />
                                     </Col>
                                     <Col span={2}>
                                       <Button 
@@ -1181,21 +1404,71 @@ const QuoteForm: React.FC = () => {
                         
                         {/* 基本信息 */}
                         <Row gutter={[16, 16]} className="mb-4">
-                          <Col span={6}>
-                            <Select placeholder="类型" size="small" style={{ width: '100%' }}>
+                          <Col span={4}>
+                            <Select 
+                              placeholder="类型" 
+                              size="small" 
+                              style={{ width: '100%' }}
+                              value={rate.type || undefined}
+                              onChange={(value) => {
+                                // 使用函数式更新确保状态正确更新
+                                setPrecarriageRates(prevRates => prevRates.map(r => 
+                                  r.id === rate.id ? { ...r, type: value, subType: '' } : r
+                                ));
+                              }}
+                              allowClear
+                            >
                               <Option value="直达">直达</Option>
                               <Option value="支线">支线</Option>
                               <Option value="海铁">海铁</Option>
                             </Select>
                           </Col>
-                          <Col span={9}>
-                            <Input placeholder="供应商" size="small" />
+                          {(rate.type === '支线' || rate.type === '海铁') && (
+                            <Col span={4}>
+                              <Select 
+                                placeholder={rate.type === '支线' ? '支线类型' : '海铁类型'}
+                                size="small" 
+                                style={{ width: '100%' }}
+                                value={rate.subType || undefined}
+                                onChange={(value) => {
+                                  setPrecarriageRates(prevRates => prevRates.map(r => 
+                                    r.id === rate.id ? { ...r, subType: value } : r
+                                  ));
+                                }}
+                                allowClear
+                                key={`${rate.id}-${rate.type}`}
+                              >
+                                {getPrecarriageSubTypeOptions(rate.type).map(option => (
+                                  <Option key={option.value} value={option.value}>
+                                    {option.label}
+                                  </Option>
+                                ))}
+                              </Select>
+                            </Col>
+                          )}
+                          <Col span={rate.type === '直达' ? 8 : 6}>
+                            <Input 
+                              placeholder="供应商" 
+                              size="small" 
+                              value={rate.vendor}
+                              onChange={(value) => {
+                                setPrecarriageRates(prevRates => prevRates.map(r => 
+                                  r.id === rate.id ? { ...r, vendor: value } : r
+                                ));
+                              }}
+                            />
                           </Col>
-                          <Col span={9}>
+                          <Col span={rate.type === '直达' ? 8 : 6}>
                             <DatePicker.RangePicker 
                               placeholder={['开始日期', '结束日期']} 
                               size="small" 
                               style={{ width: '100%' }}
+                              value={rate.validPeriod}
+                              onChange={(value: any) => {
+                                setPrecarriageRates(prevRates => prevRates.map(r => 
+                                  r.id === rate.id ? { ...r, validPeriod: value } : r
+                                ));
+                              }}
                             />
                           </Col>
                         </Row>
@@ -1232,7 +1505,26 @@ const QuoteForm: React.FC = () => {
                                 <div key={item.id} className="bg-white p-2 rounded border">
                                   <Row gutter={[8, 8]} align="center">
                                     <Col span={3}>
-                                      <Select placeholder="费用名称" size="small" style={{ width: '100%' }}>
+                                      <Select 
+                                        placeholder="费用名称" 
+                                        size="small" 
+                                        style={{ width: '100%' }}
+                                        value={item.feeName}
+                                        onChange={(value) => {
+                                          // 根据费用名称自动设置币种
+                                          const selectedFee = feeNameOptions.find(opt => opt.value === value);
+                                          const currency = selectedFee ? selectedFee.currency : 'USD';
+                                          
+                                          setPrecarriageRates(precarriageRates.map(r => 
+                                            r.id === rate.id ? { 
+                                              ...r, 
+                                              rateItems: r.rateItems.map(i => 
+                                                i.id === item.id ? { ...i, feeName: value, currency: currency } : i
+                                              ) 
+                                            } : r
+                                          ));
+                                        }}
+                                      >
                                         {feeNameOptions.map(option => (
                                           <Option key={option.value} value={option.value}>
                                             {option.label}
@@ -1241,30 +1533,46 @@ const QuoteForm: React.FC = () => {
                                       </Select>
                                     </Col>
                                     <Col span={2}>
-                                      <Input placeholder="币种" size="small" disabled value={item.currency} />
+                                      <Input 
+                                        placeholder="自动设置" 
+                                        size="small" 
+                                        style={{ width: '100%', color: '#666' }}
+                                        value={item.currency || '请选择费用'}
+                                        disabled
+                                      />
                                     </Col>
                                     {item.feeType === 'container' ? (
                                       <>
-                                        <Col span={2}>
-                                          <Input placeholder="20GP" size="small" />
-                                        </Col>
-                                        <Col span={2}>
-                                          <Input placeholder="40GP" size="small" />
-                                        </Col>
-                                        <Col span={2}>
-                                          <Input placeholder="40HC" size="small" />
-                                        </Col>
-                                        <Col span={2}>
-                                          <Input placeholder="45HC" size="small" />
-                                        </Col>
+                                        {/* 只显示基本信息模块中设置的箱型 */}
+                                        {getAvailableContainerTypes().map(containerType => (
+                                          <Col span={2} key={containerType}>
+                                            <Input 
+                                              placeholder={containerType} 
+                                              size="small" 
+                                              value={item.containerRates?.[containerType as keyof typeof item.containerRates] || ''}
+                                              onChange={(value) => updateContainerRatePrice('precarriage', rate.id, item.id, containerType, value)}
+                                            />
+                                          </Col>
+                                        ))}
                                       </>
                                     ) : (
                                       <>
                                         <Col span={3}>
-                                          <Input placeholder="单价" size="small" />
+                                          <Input 
+                                            placeholder="单价" 
+                                            size="small" 
+                                            value={item.unitPrice || ''}
+                                            onChange={(value) => updateRateItemField('precarriage', rate.id, item.id, 'unitPrice', value)}
+                                          />
                                         </Col>
                                         <Col span={2}>
-                                          <Select placeholder="单位" size="small" style={{ width: '100%' }}>
+                                          <Select 
+                                            placeholder="单位" 
+                                            size="small" 
+                                            style={{ width: '100%' }}
+                                            value={item.unit}
+                                            onChange={(value) => updateRateItemField('precarriage', rate.id, item.id, 'unit', value)}
+                                          >
                                             <Option value="票">票</Option>
                                             <Option value="吨">吨</Option>
                                             <Option value="CBM">CBM</Option>
@@ -1274,7 +1582,12 @@ const QuoteForm: React.FC = () => {
                                       </>
                                     )}
                                     <Col span={3}>
-                                      <Input placeholder="备注" size="small" />
+                                      <Input 
+                                        placeholder="备注" 
+                                        size="small" 
+                                        value={item.remark}
+                                        onChange={(value) => updateRateItemField('precarriage', rate.id, item.id, 'remark', value)}
+                                      />
                                     </Col>
                                     <Col span={2}>
                                       <Button 
@@ -1339,13 +1652,20 @@ const QuoteForm: React.FC = () => {
                         {/* 基本信息 */}
                         <Row gutter={[16, 16]} className="mb-4">
                           <Col span={12}>
-                            <Input placeholder="代理名称" size="small" />
+                            <Input 
+                              placeholder="代理名称" 
+                              size="small" 
+                              value={rate.agentName}
+                              onChange={(value) => updateOncarriageRateField(rate.id, 'agentName', value)}
+                            />
                           </Col>
                           <Col span={12}>
                             <DatePicker.RangePicker 
                               placeholder={['开始日期', '结束日期']} 
                               size="small" 
                               style={{ width: '100%' }}
+                              value={rate.validPeriod}
+                              onChange={(value: any) => updateOncarriageRateField(rate.id, 'validPeriod', value)}
                             />
                           </Col>
                         </Row>
@@ -1382,7 +1702,26 @@ const QuoteForm: React.FC = () => {
                                 <div key={item.id} className="bg-white p-2 rounded border">
                                   <Row gutter={[8, 8]} align="center">
                                     <Col span={3}>
-                                      <Select placeholder="费用名称" size="small" style={{ width: '100%' }}>
+                                      <Select 
+                                        placeholder="费用名称" 
+                                        size="small" 
+                                        style={{ width: '100%' }}
+                                        value={item.feeName}
+                                        onChange={(value) => {
+                                          // 根据费用名称自动设置币种
+                                          const selectedFee = feeNameOptions.find(opt => opt.value === value);
+                                          const currency = selectedFee ? selectedFee.currency : 'USD';
+                                          
+                                          setOncarriageRates(oncarriageRates.map(r => 
+                                            r.id === rate.id ? { 
+                                              ...r, 
+                                              rateItems: r.rateItems.map(i => 
+                                                i.id === item.id ? { ...i, feeName: value, currency: currency } : i
+                                              ) 
+                                            } : r
+                                          ));
+                                        }}
+                                      >
                                         {feeNameOptions.map(option => (
                                           <Option key={option.value} value={option.value}>
                                             {option.label}
@@ -1391,30 +1730,46 @@ const QuoteForm: React.FC = () => {
                                       </Select>
                                     </Col>
                                     <Col span={2}>
-                                      <Input placeholder="币种" size="small" disabled value={item.currency} />
+                                      <Input 
+                                        placeholder="自动设置" 
+                                        size="small" 
+                                        style={{ width: '100%', color: '#666' }}
+                                        value={item.currency || '请选择费用'}
+                                        disabled
+                                      />
                                     </Col>
                                     {item.feeType === 'container' ? (
                                       <>
-                                        <Col span={2}>
-                                          <Input placeholder="20GP" size="small" />
-                                        </Col>
-                                        <Col span={2}>
-                                          <Input placeholder="40GP" size="small" />
-                                        </Col>
-                                        <Col span={2}>
-                                          <Input placeholder="40HC" size="small" />
-                                        </Col>
-                                        <Col span={2}>
-                                          <Input placeholder="45HC" size="small" />
-                                        </Col>
+                                        {/* 只显示基本信息模块中设置的箱型 */}
+                                        {getAvailableContainerTypes().map(containerType => (
+                                          <Col span={2} key={containerType}>
+                                            <Input 
+                                              placeholder={containerType} 
+                                              size="small" 
+                                              value={item.containerRates?.[containerType as keyof typeof item.containerRates] || ''}
+                                              onChange={(value) => updateContainerRatePrice('oncarriage', rate.id, item.id, containerType, value)}
+                                            />
+                                          </Col>
+                                        ))}
                                       </>
                                     ) : (
                                       <>
                                         <Col span={3}>
-                                          <Input placeholder="单价" size="small" />
+                                          <Input 
+                                            placeholder="单价" 
+                                            size="small" 
+                                            value={item.unitPrice || ''}
+                                            onChange={(value) => updateRateItemField('oncarriage', rate.id, item.id, 'unitPrice', value)}
+                                          />
                                         </Col>
                                         <Col span={2}>
-                                          <Select placeholder="单位" size="small" style={{ width: '100%' }}>
+                                          <Select 
+                                            placeholder="单位" 
+                                            size="small" 
+                                            style={{ width: '100%' }}
+                                            value={item.unit}
+                                            onChange={(value) => updateRateItemField('oncarriage', rate.id, item.id, 'unit', value)}
+                                          >
                                             <Option value="票">票</Option>
                                             <Option value="吨">吨</Option>
                                             <Option value="CBM">CBM</Option>
@@ -1424,7 +1779,12 @@ const QuoteForm: React.FC = () => {
                                       </>
                                     )}
                                     <Col span={3}>
-                                      <Input placeholder="备注" size="small" />
+                                      <Input 
+                                        placeholder="备注" 
+                                        size="small" 
+                                        value={item.remark}
+                                        onChange={(value) => updateRateItemField('oncarriage', rate.id, item.id, 'remark', value)}
+                                      />
                                     </Col>
                                     <Col span={2}>
                                       <Button 
