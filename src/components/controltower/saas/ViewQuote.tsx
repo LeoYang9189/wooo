@@ -11,14 +11,19 @@ import {
   Tag,
   Table,
   Typography,
-  Grid
+  Grid,
+  InputNumber,
+  Select,
+  Input
 } from '@arco-design/web-react';
-import { IconClose, IconDownload, IconCheck } from '@arco-design/web-react/icon';
+import { IconClose, IconDownload, IconCheck, IconCopy, IconPrinter } from '@arco-design/web-react/icon';
 import { useNavigate, useParams } from 'react-router-dom';
 import ControlTowerSaasLayout from "./ControlTowerSaasLayout";
 
 const { Title } = Typography;
 const { Row, Col } = Grid;
+const { Option } = Select;
+const { TextArea } = Input;
 
 interface QuoteBasicInfo {
   quoteNo: string;
@@ -105,6 +110,9 @@ const ViewQuote: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [exportModalVisible, setExportModalVisible] = useState(false);
   const [incompleteModalVisible, setIncompleteModalVisible] = useState(false);
+  const [copyTextModalVisible, setCopyTextModalVisible] = useState(false);
+  const [pdfPreviewVisible, setPdfPreviewVisible] = useState(false);
+  const [quotationText, setQuotationText] = useState('');
   
   // 报价数据
   const [basicInfo, setBasicInfo] = useState<QuoteBasicInfo>({} as QuoteBasicInfo);
@@ -213,55 +221,13 @@ const ViewQuote: React.FC = () => {
   };
 
   const generateMockPrecarriageRates = (): PrecarriageRate[] => {
-    const statuses: Array<'已报价' | '待报价' | '拒绝报价' | '无需报价'> = ['已报价', '待报价', '无需报价'];
-    
-    return Array(3).fill(null).map((_, index) => ({
-      id: index + 1,
-      selected: index === 0, // 默认选中第一个
-      type: ['直拖', '支线', '海铁'][index],
-      subType: index === 1 ? '乍浦支线' : index === 2 ? '湖州海铁' : undefined,
-      vendor: ['安吉物流', '中远海运', '德邦物流'][index],
-      validPeriod: '2024-05-01 至 2024-12-31',
-      status: statuses[index],
-      rateItems: [
-        {
-          id: 1,
-          feeName: '拖车费',
-          currency: 'CNY',
-          unit: '箱',
-          containerRates: {
-            '20GP': (800 + index * 100).toString(),
-            '40HC': (1200 + index * 150).toString()
-          },
-          remark: '含装卸费'
-        }
-      ]
-    }));
+    // Mock数据：港前待报价，返回空数组表示无运价
+    return [];
   };
 
   const generateMockOncarriageRates = (): OncarriageRate[] => {
-    const statuses: Array<'已报价' | '待报价' | '拒绝报价' | '无需报价'> = ['已报价', '拒绝报价', '无需报价'];
-    
-    return Array(3).fill(null).map((_, index) => ({
-      id: index + 1,
-      selected: index === 0, // 默认选中第一个
-      agentName: ['XPO TRUCK LLC', 'DRAYEASY INC', 'AMERICAN FREIGHT'][index],
-      validPeriod: '2024-05-01 至 2024-12-31',
-      status: statuses[index],
-      rateItems: [
-        {
-          id: 1,
-          feeName: '配送费',
-          currency: 'USD',
-          unit: '箱',
-          containerRates: {
-            '20GP': (1200 + index * 100).toString(),
-            '40HC': (1800 + index * 150).toString()
-          },
-          remark: '含卸货费'
-        }
-      ]
-    }));
+    // Mock数据：尾程拒绝报价，返回空数组表示无运价
+    return [];
   };
 
   // 关闭页面
@@ -306,23 +272,153 @@ const ViewQuote: React.FC = () => {
     return incomplete;
   };
 
-  // 处理运价选择
+  // 处理运价选择（单选）
   const handleMainlineRateSelect = (rateId: number, checked: boolean) => {
-    setMainlineRates(prev => prev.map(rate => 
-      rate.id === rateId ? { ...rate, selected: checked } : rate
-    ));
+    if (checked) {
+      // 单选：取消其他选中，只选中当前项
+      setMainlineRates(prev => prev.map(rate => ({
+        ...rate,
+        selected: rate.id === rateId
+      })));
+    } else {
+      // 取消选中
+      setMainlineRates(prev => prev.map(rate => 
+        rate.id === rateId ? { ...rate, selected: false } : rate
+      ));
+    }
   };
 
   const handlePrecarriageRateSelect = (rateId: number, checked: boolean) => {
-    setPrecarriageRates(prev => prev.map(rate => 
-      rate.id === rateId ? { ...rate, selected: checked } : rate
-    ));
+    if (checked) {
+      // 单选：取消其他选中，只选中当前项
+      setPrecarriageRates(prev => prev.map(rate => ({
+        ...rate,
+        selected: rate.id === rateId
+      })));
+    } else {
+      // 取消选中
+      setPrecarriageRates(prev => prev.map(rate => 
+        rate.id === rateId ? { ...rate, selected: false } : rate
+      ));
+    }
   };
 
   const handleOncarriageRateSelect = (rateId: number, checked: boolean) => {
-    setOncarriageRates(prev => prev.map(rate => 
-      rate.id === rateId ? { ...rate, selected: checked } : rate
-    ));
+    if (checked) {
+      // 单选：取消其他选中，只选中当前项
+      setOncarriageRates(prev => prev.map(rate => ({
+        ...rate,
+        selected: rate.id === rateId
+      })));
+    } else {
+      // 取消选中
+      setOncarriageRates(prev => prev.map(rate => 
+        rate.id === rateId ? { ...rate, selected: false } : rate
+      ));
+    }
+  };
+
+  // 生成快捷报价文本
+  const generateQuotationText = () => {
+    const containerInfo = containerList.map(c => `${c.count}*${c.type}`).join(' + ');
+    
+    // 获取选中的运价
+    const selectedMainline = mainlineRates.find(rate => rate.selected);
+    const selectedPrecarriage = precarriageRates.find(rate => rate.selected);
+    const selectedOncarriage = oncarriageRates.find(rate => rate.selected);
+    
+    // 计算总价格
+    let totalCost = 0;
+    const costDetails: string[] = [];
+    
+    // 计算干线费用
+    if (selectedMainline && selectedMainline.status === '已报价') {
+      selectedMainline.rateItems.forEach(item => {
+        containerList.forEach(container => {
+          const rate = item.containerRates?.[container.type];
+          if (rate) {
+            const cost = parseFloat(rate) * container.count;
+            totalCost += cost;
+          }
+        });
+      });
+      costDetails.push(`干线运价：${selectedMainline.shipCompany}`);
+    }
+    
+    // 计算港前费用
+    if (selectedPrecarriage && selectedPrecarriage.status === '已报价') {
+      selectedPrecarriage.rateItems.forEach(item => {
+        containerList.forEach(container => {
+          const rate = item.containerRates?.[container.type];
+          if (rate) {
+            const cost = parseFloat(rate) * container.count;
+            totalCost += cost;
+          }
+        });
+      });
+      costDetails.push(`港前运价：${selectedPrecarriage.vendor}`);
+    }
+    
+    // 计算尾程费用
+    if (selectedOncarriage && selectedOncarriage.status === '已报价') {
+      selectedOncarriage.rateItems.forEach(item => {
+        containerList.forEach(container => {
+          const rate = item.containerRates?.[container.type];
+          if (rate) {
+            const cost = parseFloat(rate) * container.count;
+            totalCost += cost;
+          }
+        });
+      });
+      costDetails.push(`尾程运价：${selectedOncarriage.agentName}`);
+    }
+
+    const text = `
+【报价单】
+
+报价编号：${basicInfo.quoteNo}
+询价编号：${basicInfo.inquiryNo}
+委托单位：${basicInfo.clientType === '正式客户' ? basicInfo.clientCompany : basicInfo.clientName}
+
+航线信息：
+${cargoInfo.departurePort} → ${cargoInfo.dischargePort}
+船公司：${cargoInfo.shipCompany}
+航线：${cargoInfo.route}
+直达/中转：${cargoInfo.transitType}
+
+箱型箱量：${containerInfo}
+
+运价方案：
+${costDetails.join('\n')}
+
+报价总计：USD ${totalCost.toFixed(2)}
+
+备注：${cargoInfo.remark || '无'}
+
+※ 以上价格仅供参考，实际价格以正式合同为准
+※ 如有任何疑问，请联系我们的客服团队
+    `.trim();
+
+    setQuotationText(text);
+    setExportModalVisible(false);
+    setCopyTextModalVisible(true);
+  };
+
+  // 复制到剪贴板
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(quotationText);
+      Message.success('报价文本已复制到剪贴板');
+      setCopyTextModalVisible(false);
+    } catch (err) {
+      Message.error('复制失败，请手动复制');
+    }
+  };
+
+  // 生成并预览PDF
+  const generatePDF = () => {
+    setExportModalVisible(false);
+    setPdfPreviewVisible(true);
   };
 
   // 获取状态标签颜色
@@ -414,27 +510,40 @@ const ViewQuote: React.FC = () => {
       >
         {/* 基本信息 */}
         <Card className="mb-4" title="基本信息">
-          <Descriptions
-            column={3}
-            data={[
-              { label: '报价编号', value: basicInfo.quoteNo },
-              { label: '询价编号', value: basicInfo.inquiryNo },
-              { label: '报价人', value: basicInfo.quoter },
-              { label: '货盘性质', value: basicInfo.cargoNature },
-              { label: '货好时间', value: basicInfo.cargoReadyTime },
-              { label: '委托单位', value: basicInfo.clientType === '正式客户' ? basicInfo.clientCompany : basicInfo.clientName },
-              ...(basicInfo.loadingPointDetail ? [{ label: '装箱门点', value: basicInfo.loadingPointDetail }] : []),
-              ...(basicInfo.addressType ? [
-                { label: '配送地址类型', value: basicInfo.addressType },
-                ...(basicInfo.addressType === '第三方地址' ? [
-                  { label: '邮编', value: basicInfo.zipCode },
-                  { label: '地址', value: basicInfo.address }
-                ] : [
-                  { label: '仓库代码', value: basicInfo.warehouseCode }
-                ])
-              ] : [])
-            ]}
-          />
+          <Row gutter={[16, 0]}>
+            <Col span={12}>
+              <Descriptions
+                column={1}
+                data={[
+                  { label: '报价编号', value: basicInfo.quoteNo },
+                  { label: '询价编号', value: basicInfo.inquiryNo },
+                  { label: '报价人', value: basicInfo.quoter },
+                  { label: '货盘性质', value: basicInfo.cargoNature },
+                  ...(basicInfo.loadingPointDetail ? [{ label: '装箱门点', value: basicInfo.loadingPointDetail }] : []),
+                  ...(basicInfo.addressType === '第三方地址' ? [
+                    { label: '邮编', value: basicInfo.zipCode },
+                  ] : [])
+                ]}
+              />
+            </Col>
+            <Col span={12}>
+              <Descriptions
+                column={1}
+                data={[
+                  { label: '货好时间', value: basicInfo.cargoReadyTime },
+                  { label: '委托单位', value: basicInfo.clientType === '正式客户' ? basicInfo.clientCompany : basicInfo.clientName },
+                  ...(basicInfo.addressType ? [
+                    { label: '配送地址类型', value: basicInfo.addressType },
+                    ...(basicInfo.addressType === '第三方地址' ? [
+                      { label: '地址', value: basicInfo.address }
+                    ] : [
+                      { label: '仓库代码', value: basicInfo.warehouseCode }
+                    ])
+                  ] : [])
+                ]}
+              />
+            </Col>
+          </Row>
         </Card>
 
         {/* 货物信息 */}
@@ -494,16 +603,11 @@ const ViewQuote: React.FC = () => {
                       {/* 运价内容 */}
                       <div className="flex-1">
                         {/* 基本信息 */}
-                        <div className="flex justify-between items-center mb-4">
-                          <div className="flex items-center gap-4">
-                            <span className="font-medium">船公司：{rate.shipCompany}</span>
-                            <span>有效期：{rate.validPeriod}</span>
-                            <span>直达/中转：{rate.transitType}</span>
-                            <span>航程：{rate.transitTime}</span>
-                          </div>
-                          <Tag color={getStatusColor(rate.status)}>
-                            {rate.status}
-                          </Tag>
+                        <div className="flex items-center gap-4 mb-4">
+                          <span className="font-medium">船公司：{rate.shipCompany}</span>
+                          <span>有效期：{rate.validPeriod}</span>
+                          <span>直达/中转：{rate.transitType}</span>
+                          <span>航程：{rate.transitTime}</span>
                         </div>
                         
                         {/* 免用箱免堆存 */}
@@ -523,9 +627,9 @@ const ViewQuote: React.FC = () => {
           )}
 
           {/* 港前运价 */}
-          {precarriageRates.length > 0 && (
-            <div className="mb-6">
-              <Title heading={6} className="mb-4 text-blue-600">港前运价</Title>
+          <div className="mb-6">
+            <Title heading={6} className="mb-4 text-blue-600">港前运价</Title>
+            {precarriageRates.length > 0 ? (
               <div className="space-y-4">
                 {precarriageRates.map((rate) => (
                   <Card key={rate.id} className="border border-gray-200">
@@ -541,16 +645,11 @@ const ViewQuote: React.FC = () => {
                       {/* 运价内容 */}
                       <div className="flex-1">
                         {/* 基本信息 */}
-                        <div className="flex justify-between items-center mb-4">
-                          <div className="flex items-center gap-4">
-                            <span className="font-medium">类型：{rate.type}</span>
-                            {rate.subType && <span>子类型：{rate.subType}</span>}
-                            <span>供应商：{rate.vendor}</span>
-                            <span>有效期：{rate.validPeriod}</span>
-                          </div>
-                          <Tag color={getStatusColor(rate.status)}>
-                            {rate.status}
-                          </Tag>
+                        <div className="flex items-center gap-4 mb-4">
+                          <span className="font-medium">类型：{rate.type}</span>
+                          {rate.subType && <span>子类型：{rate.subType}</span>}
+                          <span>供应商：{rate.vendor}</span>
+                          <span>有效期：{rate.validPeriod}</span>
                         </div>
                         
                         {/* 费用明细表格 */}
@@ -560,13 +659,18 @@ const ViewQuote: React.FC = () => {
                   </Card>
                 ))}
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="text-center py-8 border border-gray-200 rounded bg-gray-50">
+                <Tag color="orange" className="mb-2">待报价</Tag>
+                <p className="text-gray-500">暂无港前运价方案</p>
+              </div>
+            )}
+          </div>
 
           {/* 尾程运价 */}
-          {oncarriageRates.length > 0 && (
-            <div className="mb-6">
-              <Title heading={6} className="mb-4 text-blue-600">尾程运价</Title>
+          <div className="mb-6">
+            <Title heading={6} className="mb-4 text-blue-600">尾程运价</Title>
+            {oncarriageRates.length > 0 ? (
               <div className="space-y-4">
                 {oncarriageRates.map((rate) => (
                   <Card key={rate.id} className="border border-gray-200">
@@ -582,14 +686,9 @@ const ViewQuote: React.FC = () => {
                       {/* 运价内容 */}
                       <div className="flex-1">
                         {/* 基本信息 */}
-                        <div className="flex justify-between items-center mb-4">
-                          <div className="flex items-center gap-4">
-                            <span className="font-medium">代理名称：{rate.agentName}</span>
-                            <span>有效期：{rate.validPeriod}</span>
-                          </div>
-                          <Tag color={getStatusColor(rate.status)}>
-                            {rate.status}
-                          </Tag>
+                        <div className="flex items-center gap-4 mb-4">
+                          <span className="font-medium">代理名称：{rate.agentName}</span>
+                          <span>有效期：{rate.validPeriod}</span>
                         </div>
                         
                         {/* 费用明细表格 */}
@@ -599,8 +698,13 @@ const ViewQuote: React.FC = () => {
                   </Card>
                 ))}
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="text-center py-8 border border-gray-200 rounded bg-gray-50">
+                <Tag color="red" className="mb-2">拒绝报价</Tag>
+                <p className="text-gray-500">暂无尾程运价方案</p>
+              </div>
+            )}
+          </div>
         </Card>
 
       </Card>
@@ -628,16 +732,161 @@ const ViewQuote: React.FC = () => {
         </div>
       </Modal>
 
-      {/* 导出报价弹窗 - 将在后续步骤实现 */}
+      {/* 导出报价弹窗 */}
       <Modal
         title="导出报价"
         visible={exportModalVisible}
         onCancel={() => setExportModalVisible(false)}
         footer={null}
-        style={{ width: '800px' }}
+        style={{ width: 600 }}
       >
-        <div className="text-center py-8 text-gray-500">
-          导出报价弹窗将在后续步骤实现
+        <div className="space-y-6">
+          {/* 已选择的运价方案 */}
+          <div>
+            <h4 className="text-lg font-medium mb-4">已选择的运价方案</h4>
+            <div className="space-y-2 bg-gray-50 p-4 rounded">
+              {mainlineRates.filter(r => r.selected).map(rate => (
+                <div key={rate.id} className="flex justify-between">
+                  <span>干线运价：{rate.shipCompany}</span>
+                  <Tag color={getStatusColor(rate.status)}>{rate.status}</Tag>
+                </div>
+              ))}
+              {precarriageRates.filter(r => r.selected).map(rate => (
+                <div key={rate.id} className="flex justify-between">
+                  <span>港前运价：{rate.vendor}</span>
+                  <Tag color={getStatusColor(rate.status)}>{rate.status}</Tag>
+                </div>
+              ))}
+              {oncarriageRates.filter(r => r.selected).map(rate => (
+                <div key={rate.id} className="flex justify-between">
+                  <span>尾程运价：{rate.agentName}</span>
+                  <Tag color={getStatusColor(rate.status)}>{rate.status}</Tag>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 操作按钮 */}
+          <div className="flex justify-center gap-4">
+            <Button
+              type="primary"
+              icon={<IconCopy />}
+              onClick={generateQuotationText}
+              size="large"
+            >
+              复制快捷报价文本
+            </Button>
+            <Button
+              type="primary"
+              icon={<IconPrinter />}
+              onClick={generatePDF}
+              size="large"
+            >
+              打印报价单文件
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* 快捷报价文本弹窗 */}
+      <Modal
+        title="快捷报价文本"
+        visible={copyTextModalVisible}
+        onCancel={() => setCopyTextModalVisible(false)}
+        footer={
+          <div className="flex justify-end space-x-2">
+            <Button onClick={() => setCopyTextModalVisible(false)}>
+              关闭
+            </Button>
+            <Button type="primary" icon={<IconCopy />} onClick={copyToClipboard}>
+              复制文本
+            </Button>
+          </div>
+        }
+        style={{ width: 700 }}
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-gray-600">
+            以下是根据您选择的运价方案生成的报价文本，您可以复制后发送给客户：
+          </p>
+          <TextArea
+            value={quotationText}
+            readOnly
+            rows={15}
+            style={{ fontFamily: 'monospace' }}
+          />
+        </div>
+      </Modal>
+
+      {/* PDF预览弹窗 */}
+      <Modal
+        title="报价单预览"
+        visible={pdfPreviewVisible}
+        onCancel={() => setPdfPreviewVisible(false)}
+        footer={
+          <div className="flex justify-end space-x-2">
+            <Button onClick={() => setPdfPreviewVisible(false)}>
+              关闭
+            </Button>
+            <Button type="primary" icon={<IconDownload />}>
+              下载PDF
+            </Button>
+          </div>
+        }
+        style={{ width: 900, top: 20 }}
+      >
+        <div className="space-y-4" style={{ height: '600px', overflow: 'auto' }}>
+          {/* PDF预览内容 */}
+          <div className="bg-white p-8 shadow-sm border" style={{ fontFamily: 'SimSun, serif' }}>
+            <div className="text-center mb-8">
+              <h1 className="text-2xl font-bold mb-2">报价单</h1>
+              <p className="text-gray-600">Quotation</p>
+            </div>
+
+            {/* 基本信息 */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-3 pb-2 border-b">基本信息</h3>
+              <Row gutter={[16, 8]}>
+                <Col span={8}>报价编号：{basicInfo.quoteNo}</Col>
+                <Col span={8}>询价编号：{basicInfo.inquiryNo}</Col>
+                <Col span={8}>报价人：{basicInfo.quoter}</Col>
+                <Col span={8}>委托单位：{basicInfo.clientType === '正式客户' ? basicInfo.clientCompany : basicInfo.clientName}</Col>
+                <Col span={8}>货盘性质：{basicInfo.cargoNature}</Col>
+                <Col span={8}>货好时间：{basicInfo.cargoReadyTime}</Col>
+              </Row>
+            </div>
+
+            {/* 货物信息 */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-3 pb-2 border-b">货物信息</h3>
+              <Row gutter={[16, 8]}>
+                <Col span={8}>起运港：{cargoInfo.departurePort}</Col>
+                <Col span={8}>卸货港：{cargoInfo.dischargePort}</Col>
+                <Col span={8}>船公司：{cargoInfo.shipCompany}</Col>
+                <Col span={8}>航线：{cargoInfo.route}</Col>
+                <Col span={8}>直达/中转：{cargoInfo.transitType}</Col>
+                {cargoInfo.weight && <Col span={8}>重量：{cargoInfo.weight} KGS</Col>}
+              </Row>
+            </div>
+
+            {/* 箱型箱量 */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-3 pb-2 border-b">箱型箱量</h3>
+              <div className="grid grid-cols-3 gap-4">
+                {containerList.map(container => (
+                  <div key={container.id} className="border p-3 text-center">
+                    <div className="font-medium">{container.type}</div>
+                    <div className="text-xl font-bold text-blue-600">{container.count} 箱</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 运价明细 - 后续步骤实现 */}
+            <div className="text-center py-8 text-gray-500">
+              运价明细部分将在后续步骤完善
+            </div>
+          </div>
         </div>
       </Modal>
     </ControlTowerSaasLayout>
