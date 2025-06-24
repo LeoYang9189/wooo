@@ -508,59 +508,57 @@ ${costDetails.join('\n')}
           </div>
         }
       >
-        {/* 基本信息 */}
-        <Card className="mb-4" title="基本信息">
-          <Row gutter={[16, 0]}>
+        {/* 上半部分：基本信息和货物信息并排 */}
+        <Card className="mb-4">
+          <Row gutter={[16, 16]}>
+            {/* 左侧：基本信息 */}
             <Col span={12}>
-              <Descriptions
-                column={1}
-                data={[
-                  { label: '报价编号', value: basicInfo.quoteNo },
-                  { label: '询价编号', value: basicInfo.inquiryNo },
-                  { label: '报价人', value: basicInfo.quoter },
-                  { label: '货盘性质', value: basicInfo.cargoNature },
-                  ...(basicInfo.loadingPointDetail ? [{ label: '装箱门点', value: basicInfo.loadingPointDetail }] : []),
-                  ...(basicInfo.addressType === '第三方地址' ? [
-                    { label: '邮编', value: basicInfo.zipCode },
-                  ] : [])
-                ]}
-              />
+              <div className="border rounded p-4">
+                <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2 mb-4">基本信息</div>
+                <Descriptions
+                  column={1}
+                  data={[
+                    { label: '报价编号', value: basicInfo.quoteNo },
+                    { label: '询价编号', value: basicInfo.inquiryNo },
+                    { label: '报价人', value: basicInfo.quoter },
+                    { label: '货盘性质', value: basicInfo.cargoNature },
+                    { label: '货好时间', value: basicInfo.cargoReadyTime },
+                    { label: '委托单位', value: basicInfo.clientType === '正式客户' ? basicInfo.clientCompany : basicInfo.clientName },
+                    ...(basicInfo.loadingPointDetail ? [{ label: '装箱门点', value: basicInfo.loadingPointDetail }] : []),
+                    ...(basicInfo.addressType ? [
+                      { label: '配送地址类型', value: basicInfo.addressType },
+                      ...(basicInfo.addressType === '第三方地址' ? [
+                        { label: '邮编', value: basicInfo.zipCode },
+                        { label: '地址', value: basicInfo.address }
+                      ] : [
+                        { label: '仓库代码', value: basicInfo.warehouseCode }
+                      ])
+                    ] : [])
+                  ]}
+                />
+              </div>
             </Col>
+            
+            {/* 右侧：货物信息 */}
             <Col span={12}>
-              <Descriptions
-                column={1}
-                data={[
-                  { label: '货好时间', value: basicInfo.cargoReadyTime },
-                  { label: '委托单位', value: basicInfo.clientType === '正式客户' ? basicInfo.clientCompany : basicInfo.clientName },
-                  ...(basicInfo.addressType ? [
-                    { label: '配送地址类型', value: basicInfo.addressType },
-                    ...(basicInfo.addressType === '第三方地址' ? [
-                      { label: '地址', value: basicInfo.address }
-                    ] : [
-                      { label: '仓库代码', value: basicInfo.warehouseCode }
-                    ])
-                  ] : [])
-                ]}
-              />
+              <div className="border rounded p-4">
+                <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2 mb-4">货物信息</div>
+                <Descriptions
+                  column={1}
+                  data={[
+                    { label: '直达/中转', value: cargoInfo.transitType },
+                    { label: '航线', value: cargoInfo.route },
+                    { label: '起运港', value: cargoInfo.departurePort },
+                    { label: '卸货港', value: cargoInfo.dischargePort },
+                    ...(cargoInfo.transitPort ? [{ label: '中转港', value: cargoInfo.transitPort }] : []),
+                    { label: '重量', value: cargoInfo.weight ? `${cargoInfo.weight} KGS` : '' },
+                    { label: '船公司', value: cargoInfo.shipCompany },
+                    { label: '备注', value: cargoInfo.remark }
+                  ]}
+                />
+              </div>
             </Col>
           </Row>
-        </Card>
-
-        {/* 货物信息 */}
-        <Card className="mb-4" title="货物信息">
-          <Descriptions
-            column={3}
-            data={[
-              { label: '直达/中转', value: cargoInfo.transitType },
-              { label: '航线', value: cargoInfo.route },
-              { label: '起运港', value: cargoInfo.departurePort },
-              { label: '卸货港', value: cargoInfo.dischargePort },
-              ...(cargoInfo.transitPort ? [{ label: '中转港', value: cargoInfo.transitPort }] : []),
-              { label: '重量', value: cargoInfo.weight ? `${cargoInfo.weight} KGS` : '' },
-              { label: '船公司', value: cargoInfo.shipCompany },
-              { label: '备注', value: cargoInfo.remark }
-            ]}
-          />
         </Card>
 
         {/* 箱型箱量 */}
