@@ -824,7 +824,7 @@ const FclRates: React.FC = () => {
 
   // 操作处理函数
   const handleViewDetail = (key: string) => {
-    Message.info(`查看详情: ${key}`);
+    navigate(`/controltower/saas/view-fcl-rate/${key}`);
   };
 
   const handleEdit = (key: string) => {

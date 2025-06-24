@@ -42,6 +42,7 @@ import InquiryDetail from './saas/InquiryDetail';
 import ViewPrecarriageRate from './saas/ViewPrecarriageRate';
 import ViewLastMileRate from './saas/ViewLastMileRate';
 import ViewFclRate from './saas/ViewFclRate';
+import ViewQuote from './saas/ViewQuote';
 import CombinationRateQuery from './saas/CombinationRateQuery';
 import QuoteForm from './saas/QuoteForm';
 
@@ -286,6 +287,13 @@ const ControlTowerRoutes: React.FC = () => {
       <Route path="/saas/view-lastmile-rate/:id" element={
         <SaasPageWrapper>
           <ViewLastMileRate />
+        </SaasPageWrapper>
+      } />
+      
+      {/* 查看报价详情页面 */}
+      <Route path="/saas/view-quote/:quoteId" element={
+        <SaasPageWrapper>
+          <ViewQuote />
         </SaasPageWrapper>
       } />
       

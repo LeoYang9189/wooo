@@ -1165,7 +1165,7 @@ const QuoteManagement: React.FC = () => {
             <Button 
               type="text" 
               size="small" 
-              onClick={() => console.log('查看详情', record.quoteNo)}
+              onClick={() => navigate(`/controltower/saas/view-quote/${record.quoteNo}`)}
             >
               详情
             </Button>
