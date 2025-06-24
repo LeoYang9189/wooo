@@ -84,6 +84,16 @@ const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
       { title: '平台运营后台', path: '/platformadmin' }
     ];
 
+    // 处理权限管理编辑页面的特殊情况
+    if (path.startsWith('permission-management/edit/')) {
+      breadcrumbs.push(
+        { title: '系统设置', path: undefined },
+        { title: '权限管理', path: '/platformadmin/permission-management' },
+        { title: '编辑权限', path: undefined }
+      );
+      return breadcrumbs;
+    }
+
     const simplePath = path.replace('/', '');
     switch (simplePath) {
       case '':
@@ -227,16 +237,17 @@ const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
           { title: '员工管理', path: '/platformadmin/staff-management' }
         );
         break;
-      case 'role-management':
-        breadcrumbs.push(
-          { title: '系统设置', path: undefined },
-          { title: '角色管理', path: '/platformadmin/role-management' }
-        );
-        break;
       case 'permission-management':
         breadcrumbs.push(
           { title: '系统设置', path: undefined },
           { title: '权限管理', path: '/platformadmin/permission-management' }
+        );
+        break;
+      case 'permission-management/add':
+        breadcrumbs.push(
+          { title: '系统设置', path: undefined },
+          { title: '权限管理', path: '/platformadmin/permission-management' },
+          { title: '新增权限', path: undefined }
         );
         break;
       default:
@@ -410,9 +421,6 @@ const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
           >
             <MenuItem key="staff-management">
               <span>员工管理</span>
-            </MenuItem>
-            <MenuItem key="role-management">
-              <span>角色管理</span>
             </MenuItem>
             <MenuItem key="permission-management">
               <span>权限管理</span>

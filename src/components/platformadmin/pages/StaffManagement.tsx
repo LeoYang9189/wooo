@@ -1,138 +1,831 @@
-import React from 'react';
-import { Typography } from '@arco-design/web-react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { 
+  Card, 
+  Typography, 
+  Table, 
+  Button, 
+  Input, 
+  Select, 
+  Space, 
+  Tag, 
+  Avatar, 
+  Modal,
+  Message,
+  Dropdown,
+  Menu
+} from '@arco-design/web-react';
+import { 
+  IconSearch, 
+  IconPlus, 
+   
+  IconRefresh,
+  IconUser,
 
-const { Title, Text } = Typography;
+} from '@arco-design/web-react/icon';
+
+const { Text } = Typography;
+const { Option } = Select;
+
+// 统计卡片样式
+const cardStyles = `
+  .stats-card {
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid transparent !important;
+    overflow: hidden;
+  }
+
+  .stats-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(22, 93, 255, 0.1), rgba(22, 93, 255, 0.05));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+  }
+
+  .stats-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(22, 93, 255, 0.15);
+    border-color: rgba(22, 93, 255, 0.3) !important;
+  }
+
+  .stats-card:hover::before {
+    opacity: 1;
+  }
+
+  .stats-card:active {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 4px 15px rgba(22, 93, 255, 0.2);
+  }
+
+  .stats-card.selected {
+    border-color: #165DFF !important;
+    background: linear-gradient(135deg, rgba(22, 93, 255, 0.08), rgba(22, 93, 255, 0.03));
+    box-shadow: 0 6px 20px rgba(22, 93, 255, 0.12);
+    transform: translateY(-2px);
+  }
+
+  .stats-card.selected::before {
+    opacity: 0.7;
+  }
+
+  .stats-card .card-content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .stats-card .stats-number {
+    position: relative;
+    z-index: 2;
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
+
+  .stats-card:hover .stats-number {
+    transform: scale(1.05);
+  }
+
+  .stats-card .stats-label {
+    position: relative;
+    z-index: 2;
+    transition: all 0.3s ease;
+  }
+
+  .stats-card:hover .stats-label {
+    transform: translateY(-1px);
+  }
+`;
+
+// 添加样式到文档
+if (typeof document !== 'undefined') {
+  const styleElement = document.createElement('style');
+  styleElement.textContent = cardStyles;
+  if (!document.head.querySelector('style[data-stats-cards]')) {
+    styleElement.setAttribute('data-stats-cards', 'true');
+    document.head.appendChild(styleElement);
+  }
+}
+
+interface UserData {
+  id: string;
+  username: string;
+  email: string;
+  phone: string;
+  status: 'active' | 'inactive' | 'pending';
+  lastLogin: string;
+  createTime: string;
+  avatar?: string;
+  thirdPartyUserIds?: {
+    [systemName: string]: string;
+  };
+}
 
 const StaffManagement: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const [loading, setLoading] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [selectedCard, setSelectedCard] = useState('total');
+  const [currentUser, setCurrentUser] = useState<UserData | null>(null);
+  const [detailModalVisible, setDetailModalVisible] = useState(false);
+  const [toggleStatusModalVisible, setToggleStatusModalVisible] = useState(false);
+  const [resetConfirmModalVisible, setResetConfirmModalVisible] = useState(false);
+  const navigate = useNavigate();
+
+  // 模拟用户数据
+  const [userData, setUserData] = useState<UserData[]>([
+    {
+      id: 'A3K9M2X7N8Q5',
+      username: '张三',
+      email: 'zhangsan@example.com',
+      phone: '13800138001',
+      status: 'active',
+      lastLogin: '2024-01-15 14:30:25',
+      createTime: '2023-12-01 09:15:30',
+      thirdPartyUserIds: {
+        'CargoWare': 'huh768gh',
+        'eTower': 'ghuhi788'
+      }
+    },
+    {
+      id: 'B7H4P1Y6R9L2',
+      username: '李四',
+      email: 'lisi@example.com',
+      phone: '13800138002',
+      status: 'active',
+      lastLogin: '2024-01-14 16:22:18',
+      createTime: '2023-11-15 11:20:45',
+      thirdPartyUserIds: {
+        'CargoWare': 'sf987xyz',
+        'eTower': 'tower456'
+      }
+    },
+    {
+      id: 'C8F5T3W9E1K4',
+      username: '王五',
+      email: 'wangwu@example.com',
+      phone: '13800138003',
+      status: 'inactive',
+      lastLogin: '2024-01-10 10:15:32',
+      createTime: '2023-10-20 15:30:15',
+      thirdPartyUserIds: {
+        'CargoWare': 'db123qwe',
+        'eTower': 'etw789asd'
+      }
+    },
+    {
+      id: 'D2J6V8S3G7N1',
+      username: '赵六',
+      email: 'zhaoliu@example.com',
+      phone: '13800138004',
+      status: 'pending',
+      lastLogin: '从未登录',
+      createTime: '2023-09-10 14:25:50',
+      thirdPartyUserIds: {
+        'CargoWare': 'zt456def',
+        'eTower': 'ztower123'
+      }
+    },
+    {
+      id: 'E5L9Q2T8K6M3',
+      username: '陈七',
+      email: 'chenqi@example.com',
+      phone: '13800138005',
+      status: 'active',
+      lastLogin: '2024-01-13 09:45:12',
+      createTime: '2023-08-05 16:10:25',
+      thirdPartyUserIds: {
+        'CargoWare': 'hr789ghi',
+        'eTower': 'hrtower456'
+      }
+    },
+    {
+      id: 'F7N4P8R1S9W6',
+      username: '孙八',
+      email: 'sunba@example.com',
+      phone: '13800138006',
+      status: 'active',
+      lastLogin: '2024-01-12 11:30:18',
+      createTime: '2023-07-20 10:55:40',
+      thirdPartyUserIds: {
+        'CargoWare': 'tech123jkl',
+        'eTower': 'techsfexpress'
+      }
+    },
+    {
+      id: 'G1H8J3K5L7M9',
+      username: '周九',
+      email: 'zhoujiu@example.com',
+      phone: '13800138007',
+      status: 'active',
+      lastLogin: '2024-01-11 13:22:45',
+      createTime: '2023-06-15 12:40:30',
+      thirdPartyUserIds: {
+        'CargoWare': 'mkt456nop',
+        'eTower': 'shentongtower'
+      }
+    }
+  ]);
+
+  // 处理从企业管理页面传递过来的筛选条件
+  useEffect(() => {
+    const companyFilter = searchParams.get('company');
+    if (companyFilter) {
+      setSearchKeyword(companyFilter);
+      Message.info(`已自动筛选企业：${companyFilter}`);
+    }
+  }, [searchParams]);
+
+  // 根据当前筛选状态设置选中的卡片
+  useEffect(() => {
+    if (searchKeyword) {
+      setSelectedCard('');
+    } else {
+      switch (statusFilter) {
+        case 'all':
+          setSelectedCard('total');
+          break;
+        case 'active':
+          setSelectedCard('active');
+          break;
+        case 'inactive':
+          setSelectedCard('inactive');
+          break;
+        case 'pending':
+          setSelectedCard('pending');
+          break;
+        default:
+          setSelectedCard('');
+      }
+    }
+  }, [statusFilter, searchKeyword]);
+
+  const handleSearch = () => {
+    setLoading(true);
+    // 模拟搜索延迟
+    setTimeout(() => {
+      setLoading(false);
+      Message.success('搜索完成');
+    }, 800);
+  };
+
+  const handleRefresh = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      Message.success('数据已刷新');
+    }, 500);
+  };
+
+  const handleViewDetail = (user: UserData) => {
+    setCurrentUser(user);
+    setDetailModalVisible(true);
+  };
+
+  const handleEditUser = (user: UserData) => {
+    navigate(`/platformadmin/edit-employee/${user.id}`);
+  };
+
+  const handleToggleStatus = (user: UserData) => {
+    setCurrentUser(user);
+    setToggleStatusModalVisible(true);
+  };
+
+  const confirmToggleStatus = () => {
+    if (currentUser) {
+      const newStatus = currentUser.status === 'active' ? 'inactive' : 'active';
+      const statusText = newStatus === 'active' ? '启用' : '禁用';
+      
+      setUserData(prev => prev.map(user => 
+        user.id === currentUser.id 
+          ? { ...user, status: newStatus as 'active' | 'inactive' | 'pending' }
+          : user
+      ));
+      
+      Message.success(`用户 ${currentUser.username} 已${statusText}`);
+      setToggleStatusModalVisible(false);
+      setCurrentUser(null);
+    }
+  };
+
+  const handleDeleteUser = (userId: string) => {
+    setUserData(prev => prev.filter(u => u.id !== userId));
+    Message.success('用户已删除');
+  };
+
+  const handleResetPassword = (user: UserData) => {
+    setCurrentUser(user);
+    setResetConfirmModalVisible(true);
+  };
+
+  const confirmResetPassword = () => {
+    if (currentUser) {
+      // 生成8位随机密码
+      const generatePassword = () => {
+        const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+        let password = '';
+        for (let i = 0; i < 8; i++) {
+          password += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return password;
+      };
+
+      generatePassword();
+      setCurrentUser(prev => prev ? { ...prev, lastLogin: new Date().toLocaleString() } : null);
+      setResetConfirmModalVisible(false);
+    }
+  };
+
+  const handleCardClick = (cardType: string) => {
+    setSelectedCard(cardType);
+    
+    switch (cardType) {
+      case 'total':
+        setStatusFilter('all');
+        setSearchKeyword('');
+        Message.info('显示全部用户');
+        break;
+      case 'active':
+        setStatusFilter('active');
+        setSearchKeyword('');
+        Message.info('筛选活跃用户');
+        break;
+      case 'inactive':
+        setStatusFilter('inactive');
+        setSearchKeyword('');
+        Message.info('筛选禁用用户');
+        break;
+      case 'pending':
+        setStatusFilter('pending');
+        setSearchKeyword('');
+        Message.info('筛选待激活用户');
+        break;
+    }
+  };
+
+  const getStatusTag = (status: string) => {
+    switch (status) {
+      case 'active':
+        return <Tag color="green">正常</Tag>;
+      case 'inactive':
+        return <Tag color="red">禁用</Tag>;
+      case 'pending':
+        return <Tag color="orange">待激活</Tag>;
+      default:
+        return <Tag color="gray">未知</Tag>;
+    }
+  };
+
+
+
+  const filteredData = userData.filter(user => {
+    const matchesKeyword = !searchKeyword || 
+      user.username.includes(searchKeyword) || 
+      user.email.includes(searchKeyword);
+    const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
+    
+    return matchesKeyword && matchesStatus;
+  });
+
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: '80vh',
-      textAlign: 'center',
-      padding: '40px'
-    }}>
-      {/* 超大可爱小狗 */}
-      <div style={{
-        fontSize: '200px',
-        lineHeight: '1',
-        marginBottom: '30px',
-        filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.1))',
-        animation: 'float 3s ease-in-out infinite'
-      }}>
-        <div style={{
-          position: 'relative',
-          display: 'inline-block'
-        }}>
-          {/* 小狗身体 */}
-          <span style={{
-            background: 'linear-gradient(135deg, #DEB887, #F4A460)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text'
-          }}>
-            🐕
-          </span>
+    <div style={{ padding: '0' }}>
+
+
+      {/* 搜索和筛选区域 */}
+      <Card style={{ marginBottom: '20px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+          <Space size="medium">
+                          <Input
+              style={{ width: 280 }}
+              placeholder="搜索用户名、邮箱"
+              value={searchKeyword}
+              onChange={(value) => setSearchKeyword(value)}
+              prefix={<IconSearch />}
+              allowClear
+            />
+            <Select
+              placeholder="状态筛选"
+              value={statusFilter}
+              onChange={setStatusFilter}
+              style={{ width: 120 }}
+            >
+              <Option value="all">全部状态</Option>
+              <Option value="active">正常</Option>
+              <Option value="inactive">禁用</Option>
+              <Option value="pending">待激活</Option>
+            </Select>
+
+            <Button type="primary" icon={<IconSearch />} onClick={handleSearch}>
+              搜索
+            </Button>
+          </Space>
           
-          {/* 爱心装饰 */}
-          <span style={{
-            position: 'absolute',
-            top: '-20px',
-            right: '-30px',
-            fontSize: '60px',
-            color: '#FF69B4',
-            animation: 'heartbeat 2s ease-in-out infinite'
-          }}>
-            💕
-          </span>
+          <Space>
+            <Button icon={<IconRefresh />} onClick={handleRefresh}>
+              刷新
+            </Button>
+            <Button
+              type="primary"
+              size="large"
+              icon={<IconPlus />}
+              onClick={() => navigate('/platformadmin/add-employee')}
+            >
+              添加用户
+            </Button>
+          </Space>
         </div>
-      </div>
+      </Card>
 
-      {/* 文字内容 */}
-      <div style={{ maxWidth: '600px' }}>
-        <Title 
-          heading={2} 
-          style={{ 
-            marginBottom: '20px',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            fontSize: '36px'
-          }}
+      {/* 用户统计卡片 */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '20px' }}>
+        <Card 
+          className={`stats-card ${selectedCard === 'total' ? 'selected' : ''}`}
+          style={{ textAlign: 'center' }}
+          onClick={() => handleCardClick('total')}
         >
-          员工管理页面先不做哦~
-        </Title>
-        
-        <Text 
-          style={{ 
-            fontSize: '18px',
-            color: '#666',
-            lineHeight: '1.6'
-          }}
+          <div className="card-content">
+            <div className="stats-number" style={{ fontSize: '24px', color: '#165DFF', marginBottom: '8px' }}>
+              {userData.length}
+            </div>
+            <Text type="secondary" className="stats-label">总用户数</Text>
+          </div>
+        </Card>
+        <Card 
+          className={`stats-card ${selectedCard === 'active' ? 'selected' : ''}`}
+          style={{ textAlign: 'center' }}
+          onClick={() => handleCardClick('active')}
         >
-          汪汪~ 主人，员工管理功能还在开发中呢 👷‍♂️<br/>
-          请耐心等待，我们很快就会完成这个功能哒！✨
-        </Text>
+          <div className="card-content">
+            <div className="stats-number" style={{ fontSize: '24px', color: '#00B42A', marginBottom: '8px' }}>
+              {userData.filter(u => u.status === 'active').length}
+            </div>
+            <Text type="secondary" className="stats-label">活跃用户</Text>
+          </div>
+        </Card>
+        <Card 
+          className={`stats-card ${selectedCard === 'inactive' ? 'selected' : ''}`}
+          style={{ textAlign: 'center' }}
+          onClick={() => handleCardClick('inactive')}
+        >
+          <div className="card-content">
+            <div className="stats-number" style={{ fontSize: '24px', color: '#F53F3F', marginBottom: '8px' }}>
+              {userData.filter(u => u.status === 'inactive').length}
+            </div>
+            <Text type="secondary" className="stats-label">禁用用户</Text>
+          </div>
+        </Card>
+        <Card 
+          className={`stats-card ${selectedCard === 'pending' ? 'selected' : ''}`}
+          style={{ textAlign: 'center' }}
+          onClick={() => handleCardClick('pending')}
+        >
+          <div className="card-content">
+            <div className="stats-number" style={{ fontSize: '24px', color: '#FF7D00', marginBottom: '8px' }}>
+              {userData.filter(u => u.status === 'pending').length}
+            </div>
+            <Text type="secondary" className="stats-label">待激活</Text>
+          </div>
+        </Card>
       </div>
 
-      {/* 装饰性元素 */}
-      <div style={{
-        position: 'absolute',
-        top: '20%',
-        left: '10%',
-        fontSize: '40px',
-        opacity: '0.3',
-        animation: 'float 4s ease-in-out infinite reverse'
-      }}>
-        👨‍💼
-      </div>
-      
-      <div style={{
-        position: 'absolute',
-        top: '30%',
-        right: '15%',
-        fontSize: '35px',
-        opacity: '0.3',
-        animation: 'float 3.5s ease-in-out infinite'
-      }}>
-        📋
-      </div>
-      
-      <div style={{
-        position: 'absolute',
-        bottom: '20%',
-        left: '20%',
-        fontSize: '45px',
-        opacity: '0.3',
-        animation: 'float 4.5s ease-in-out infinite reverse'
-      }}>
-        🏢
-      </div>
+      {/* 用户列表表格 */}
+      <Card title={`用户列表 (${filteredData.length})`}>
+        <Table
+          loading={loading}
+          data={filteredData}
+          scroll={{ x: 1100 }}
+          columns={[
+            {
+              title: '用户ID',
+              dataIndex: 'id',
+              key: 'id',
+              width: 150,
+              sorter: true,
+              render: (id) => (
+                <Text 
+                  copyable={{ text: id, icon: null, tooltips: ['复制ID', '已复制'] }}
+                  style={{ fontFamily: 'monospace', fontSize: '12px', whiteSpace: 'nowrap' }}
+                >
+                  {id}
+                </Text>
+              )
+            },
+            {
+              title: '用户信息',
+              dataIndex: 'username',
+              key: 'username',
+              width: 220,
+              sorter: true,
+              render: (_, record) => (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', whiteSpace: 'nowrap' }}>
+                  <Avatar size={40} style={{ backgroundColor: '#165DFF', flexShrink: 0 }}>
+                    <IconUser />
+                  </Avatar>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontWeight: 'bold', fontSize: '14px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {record.username}
+                    </div>
+                    <Text type="secondary" style={{ fontSize: '12px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {record.email}
+                    </Text>
+                  </div>
+                </div>
+              )
+            },
+            {
+              title: '联系方式',
+              dataIndex: 'phone',
+              key: 'phone',
+              width: 140,
+              sorter: true,
+              render: (phone) => (
+                <Text 
+                  copyable={{ text: phone, icon: null, tooltips: ['复制手机号', '已复制'] }}
+                  style={{ whiteSpace: 'nowrap' }}
+                >
+                  {phone}
+                </Text>
+              )
+            },
 
-      <style>
-        {`
-          @keyframes float {
-            0%, 100% {
-              transform: translateY(0px);
+            {
+              title: '状态',
+              dataIndex: 'status',
+              key: 'status',
+              width: 90,
+              sorter: true,
+              render: (status) => (
+                <div style={{ whiteSpace: 'nowrap' }}>
+                  {getStatusTag(status)}
+                </div>
+              )
+            },
+            {
+              title: '最后登录',
+              dataIndex: 'lastLogin',
+              key: 'lastLogin',
+              width: 160,
+              sorter: true,
+              render: (lastLogin) => (
+                <Text style={{ fontSize: '12px', whiteSpace: 'nowrap' }}>
+                  {lastLogin}
+                </Text>
+              )
+            },
+            {
+              title: '创建时间',
+              dataIndex: 'createTime',
+              key: 'createTime',
+              width: 160,
+              sorter: true,
+              render: (createTime) => (
+                <Text style={{ fontSize: '12px', whiteSpace: 'nowrap' }}>
+                  {createTime}
+                </Text>
+              )
+            },
+            {
+              title: '操作',
+              key: 'actions',
+              width: 200,
+              fixed: 'right',
+              render: (_, record) => (
+                <div style={{ whiteSpace: 'nowrap' }}>
+                  <Space>
+                    <Button
+                      type="text"
+                      size="small"
+                      onClick={() => handleViewDetail(record)}
+                    >
+                      详情
+                    </Button>
+                    <Button
+                      type="text"
+                      size="small"
+                      onClick={() => handleEditUser(record)}
+                    >
+                      编辑
+                    </Button>
+                    <Dropdown
+                      droplist={
+                        <Menu>
+                          <Menu.Item
+                            key="toggle"
+                            onClick={() => handleToggleStatus(record)}
+                            style={{ color: '#165DFF' }}
+                          >
+                            {record.status === 'active' ? '禁用用户' : '启用用户'}
+                          </Menu.Item>
+
+                          <Menu.Item
+                            key="resetPassword"
+                            onClick={() => handleResetPassword(record)}
+                            style={{ color: '#FF7D00' }}
+                          >
+                            重置密码
+                          </Menu.Item>
+                          <Menu.Item
+                            key="delete"
+                            onClick={() => {
+                              Modal.confirm({
+                                title: '确定要删除这个用户吗？',
+                                content: `删除后用户 ${record.username} 的所有信息将无法恢复`,
+                                okText: '确定删除',
+                                cancelText: '取消',
+                                onOk: () => handleDeleteUser(record.id)
+                              });
+                            }}
+                            style={{ color: '#F53F3F' }}
+                          >
+                            删除用户
+                          </Menu.Item>
+                        </Menu>
+                      }
+                      position="bottom"
+                      trigger="click"
+                    >
+                      <Button type="text" size="small">
+                        更多
+                      </Button>
+                    </Dropdown>
+                  </Space>
+                </div>
+              )
             }
-            50% {
-              transform: translateY(-10px);
-            }
-          }
-          
-          @keyframes heartbeat {
-            0%, 100% {
-              transform: scale(1);
-            }
-            50% {
-              transform: scale(1.2);
-            }
-          }
-        `}
-      </style>
+          ]}
+                     pagination={{
+             total: filteredData.length,
+             pageSize: 10,
+             showTotal: (total, range) => 
+               `第 ${range[0]}-${range[1]} 条，共 ${total} 条`,
+             showJumper: true,
+             sizeCanChange: true,
+             sizeOptions: [10, 20, 50]
+           }}
+          rowKey="id"
+          stripe
+          border
+        />
+      </Card>
+
+      {/* 用户详情查看模态框 */}
+      <Modal
+        title="用户详情"
+        visible={detailModalVisible}
+        onCancel={() => {
+          setDetailModalVisible(false);
+          setCurrentUser(null);
+        }}
+        footer={
+          <Button type="primary" onClick={() => setDetailModalVisible(false)}>
+            确定
+          </Button>
+        }
+        style={{ width: 600 }}
+      >
+        {currentUser && (
+          <div style={{ padding: '16px 0' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '16px 24px', alignItems: 'center' }}>
+              <Text type="secondary">用户头像：</Text>
+              <div>
+                <Avatar size={60} style={{ backgroundColor: '#165DFF' }}>
+                  <IconUser />
+                </Avatar>
+              </div>
+
+              <Text type="secondary">用户名：</Text>
+              <Text style={{ fontSize: '16px', fontWeight: 'bold' }}>{currentUser.username}</Text>
+
+              <Text type="secondary">邮箱地址：</Text>
+              <Text copyable={{ text: currentUser.email }}>{currentUser.email}</Text>
+
+              <Text type="secondary">手机号：</Text>
+              <Text copyable={{ text: currentUser.phone }}>{currentUser.phone}</Text>
+
+              <Text type="secondary">用户状态：</Text>
+              <div>{getStatusTag(currentUser.status)}</div>
+
+              <Text type="secondary">最后登录：</Text>
+              <Text>{currentUser.lastLogin}</Text>
+
+              <Text type="secondary">创建时间：</Text>
+              <Text>{currentUser.createTime}</Text>
+
+              <Text type="secondary">用户ID：</Text>
+              <Text copyable={{ text: currentUser.id }} style={{ fontFamily: 'monospace' }}>
+                {currentUser.id}
+              </Text>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* 禁用/启用用户确认弹窗 */}
+      <Modal
+        title={currentUser?.status === 'active' ? '禁用用户确认' : '启用用户确认'}
+        visible={toggleStatusModalVisible}
+        onCancel={() => {
+          setToggleStatusModalVisible(false);
+          setCurrentUser(null);
+        }}
+        onOk={confirmToggleStatus}
+        okText="确认"
+        cancelText="取消"
+        style={{ width: 480 }}
+      >
+        {currentUser && (
+          <div style={{ padding: '16px 0' }}>
+            <div style={{ 
+              backgroundColor: currentUser.status === 'active' ? '#FFF2F0' : '#F6FFED', 
+              border: `1px solid ${currentUser.status === 'active' ? '#FFCCC7' : '#B7EB8F'}`, 
+              borderRadius: '6px', 
+              padding: '16px',
+              marginBottom: '16px'
+            }}>
+              <Text style={{ 
+                fontSize: '16px', 
+                color: currentUser.status === 'active' ? '#FF4D4F' : '#52C41A', 
+                fontWeight: 'bold' 
+              }}>
+                {currentUser.status === 'active' ? '⚠️ 禁用确认' : '✅ 启用确认'}
+              </Text>
+            </div>
+            
+            <Text style={{ fontSize: '16px', lineHeight: '24px' }}>
+              {currentUser.status === 'active' 
+                ? <>将会禁用用户 <Text style={{ fontWeight: 'bold', color: '#165DFF' }}>{currentUser.username}</Text>，禁用后该用户将无法登录系统，是否确认？</>
+                : <>将会启用用户 <Text style={{ fontWeight: 'bold', color: '#165DFF' }}>{currentUser.username}</Text>，启用后该用户可正常登录系统，是否确认？</>
+              }
+            </Text>
+            
+            <div style={{ 
+              backgroundColor: '#F6F6F6', 
+              borderRadius: '6px', 
+              padding: '12px',
+              marginTop: '16px'
+            }}>
+              <Text type="secondary" style={{ fontSize: '14px' }}>
+                {currentUser.status === 'active' 
+                  ? '注意：禁用后用户无法访问系统，但用户数据仍会保留'
+                  : '注意：启用后用户将恢复正常的系统访问权限'
+                }
+              </Text>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* 重置密码确认弹窗 */}
+      <Modal
+        title="重置密码确认"
+        visible={resetConfirmModalVisible}
+        onCancel={() => {
+          setResetConfirmModalVisible(false);
+          setCurrentUser(null);
+        }}
+        onOk={confirmResetPassword}
+        okText="确认重置"
+        cancelText="取消"
+        style={{ width: 480 }}
+      >
+        {currentUser && (
+          <div style={{ padding: '16px 0' }}>
+            <div style={{ 
+              backgroundColor: '#FFF7E6', 
+              border: '1px solid #FFD591', 
+              borderRadius: '6px', 
+              padding: '16px',
+              marginBottom: '16px'
+            }}>
+              <Text style={{ fontSize: '16px', color: '#FA8C16', fontWeight: 'bold' }}>
+                ⚠️ 操作确认
+              </Text>
+            </div>
+            
+            <Text style={{ fontSize: '16px', lineHeight: '24px' }}>
+              将会重置用户 <Text style={{ fontWeight: 'bold', color: '#165DFF' }}>{currentUser.username}</Text> 的登录密码，是否确认？
+            </Text>
+            
+            <div style={{ 
+              backgroundColor: '#F6F6F6', 
+              borderRadius: '6px', 
+              padding: '12px',
+              marginTop: '16px'
+            }}>
+              <Text type="secondary" style={{ fontSize: '14px' }}>
+                注意：密码重置后将生成随机8位密码，并自动发送至用户邮箱
+              </Text>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };

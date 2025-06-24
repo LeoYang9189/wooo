@@ -25,8 +25,10 @@ import ChargeManagement from './pages/ChargeManagement';
 import ProductCenter from './pages/ProductCenter';
 import ProductAuthorization from './pages/ProductAuthorization';
 import StaffManagement from './pages/StaffManagement';
-import RoleManagement from './pages/RoleManagement';
+import AddStaff from './pages/AddStaff';
+import EditStaff from './pages/EditStaff';
 import PermissionManagement from './pages/PermissionManagement';
+import PermissionForm from './pages/PermissionForm';
 import PortManagement from './pages/PortManagement';
 import CurrencyManagement from './pages/CurrencyManagement';
 import ExchangeRateManagement from './pages/ExchangeRateManagement';
@@ -61,8 +63,11 @@ const PlatformAdminRoutes: React.FC = () => {
       <Route path="/product-center" element={<ProductCenter />} />
       <Route path="/product-authorization/:productId" element={<ProductAuthorization />} />
       <Route path="/staff-management" element={<StaffManagement />} />
-      <Route path="/role-management" element={<RoleManagement />} />
+      <Route path="/add-employee" element={<AddStaff />} />
+      <Route path="/edit-employee/:id" element={<EditStaff />} />
       <Route path="/permission-management" element={<PermissionManagement />} />
+      <Route path="/permission-management/add" element={<PermissionForm />} />
+      <Route path="/permission-management/edit/:id" element={<PermissionForm />} />
       <Route path="/port-management" element={<PortManagement />} />
       <Route path="/currency-management" element={<CurrencyManagement />} />
       <Route path="/exchange-rate-management" element={<ExchangeRateManagement />} />

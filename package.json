@@ -38,7 +38,7 @@
   "devDependencies": {
     "@amap/amap-jsapi-types": "^0.0.15",
     "@eslint/js": "^9.22.0",
-    "@stagewise-plugins/react": "^0.4.6",
+    "@stagewise-plugins/react": "^0.4.8",
     "@stagewise/toolbar-react": "^0.4.6",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
