@@ -3327,24 +3327,30 @@ const FclRates: React.FC = () => {
           {/* 将被修改的运价列表 */}
           <Card title="将被修改的运价列表" bordered={false} className="bg-gray-50">
             <div className="max-h-60 overflow-y-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm border-collapse">
                 <thead className="bg-gray-100">
                   <tr>
-                    <th className="text-left p-2 border-b">运价号</th>
-                    <th className="text-left p-2 border-b">起运港</th>
-                    <th className="text-left p-2 border-b">目的港</th>
-                    <th className="text-left p-2 border-b">船公司</th>
-                    <th className="text-left p-2 border-b">当前状态</th>
+                    <th className="text-left p-2 border-b border-gray-200">运价号</th>
+                    <th className="text-left p-2 border-b border-gray-200">起运港</th>
+                    <th className="text-left p-2 border-b border-gray-200">目的港</th>
+                    <th className="text-left p-2 border-b border-gray-200">船公司</th>
+                    <th className="text-left p-2 border-b border-gray-200">
+                      {timeChangeTab === 'etd' ? '当前ETD' : timeChangeTab === 'eta' ? '当前ETA' : '当前有效期'}
+                    </th>
+                    <th className="text-left p-2 border-b border-gray-200">状态</th>
                   </tr>
                 </thead>
                 <tbody>
                   {selectedRowKeys.slice(0, 20).map((key) => (
                     <tr key={key} className="hover:bg-gray-50">
-                      <td className="p-2 border-b">FCL{String(key).padStart(8, '0')}</td>
-                      <td className="p-2 border-b">CNSHA | 上海</td>
-                      <td className="p-2 border-b">USLAX | 洛杉矶</td>
-                      <td className="p-2 border-b">COSCO</td>
-                      <td className="p-2 border-b">
+                      <td className="p-2 border-b border-gray-200">FCL{String(key).padStart(8, '0')}</td>
+                      <td className="p-2 border-b border-gray-200">CNSHA | 上海</td>
+                      <td className="p-2 border-b border-gray-200">USLAX | 洛杉矶</td>
+                      <td className="p-2 border-b border-gray-200">COSCO</td>
+                      <td className="p-2 border-b border-gray-200 text-gray-600">
+                        {timeChangeTab === 'etd' ? '2024-01-15' : timeChangeTab === 'eta' ? '2024-01-28' : '2024-01-01 ~ 2024-03-31'}
+                      </td>
+                      <td className="p-2 border-b border-gray-200">
                         <Tag color="green" size="small">正常</Tag>
                       </td>
                     </tr>
@@ -3352,7 +3358,7 @@ const FclRates: React.FC = () => {
                 </tbody>
               </table>
               {selectedRowKeys.length > 20 && (
-                <div className="text-center p-3 text-gray-500 text-sm border-t">
+                <div className="text-center p-3 text-gray-500 text-sm border-t border-gray-200">
                   还有 {selectedRowKeys.length - 20} 条运价未显示...
                 </div>
               )}
