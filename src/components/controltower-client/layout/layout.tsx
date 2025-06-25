@@ -184,7 +184,10 @@ const ControlTowerClientLayout: React.FC<LayoutProps> = ({ children }) => {
         breadcrumbs.push({ title: '仪表盘', path: '/controltower/dashboard' });
         break;
       case 'control-tower-panel':
-        breadcrumbs.push({ title: '控制塔面板', path: '/controltower/control-tower-panel' });
+        breadcrumbs.push({ title: '控制塔面板', path: '/controltower-client/control-tower-panel' });
+        break;
+      case 'control-tower-panel-temp':
+        breadcrumbs.push({ title: '控制塔面板-临时', path: '/controltower-client/control-tower-panel-temp' });
         break;
       case 'schedule-query':
         breadcrumbs.push({ title: '船期查询', path: '/controltower-client/schedule-query' });
@@ -288,10 +291,18 @@ const ControlTowerClientLayout: React.FC<LayoutProps> = ({ children }) => {
             <IconDashboard />
             <span>仪表盘</span>
           </MenuItem>
-          <MenuItem key="control-tower-panel">
-            <IconApps />
-            <span>控制塔面板</span>
-          </MenuItem>
+          <SubMenu
+            key="control-tower"
+            title={
+              <span>
+                <IconApps />
+                <span>控制塔面板</span>
+              </span>
+            }
+          >
+            <MenuItem key="control-tower-panel">控制塔面板</MenuItem>
+            <MenuItem key="control-tower-panel-temp">控制塔面板-临时</MenuItem>
+          </SubMenu>
           <MenuItem key="schedule-query">
             <IconList />
             <span>船期查询</span>
