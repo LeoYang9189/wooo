@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Button, Input } from '@arco-design/web-react';
-import { IconList, IconSync, IconApps, IconFile, IconAttachment } from '@arco-design/web-react/icon';
+import { IconList, IconSync, IconApps, IconFile, IconAttachment, IconEye, IconLocation } from '@arco-design/web-react/icon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRobot } from '@fortawesome/free-solid-svg-icons';
 
@@ -23,7 +23,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ visible, onClose }) => {
     // 模拟AI回复
     setTimeout(() => {
       setAiMessages(prev => [...prev, {
-        text: `我已收到你的问题："${userInput}"。我正在处理中，请稍候...`,
+        text: `我已收到你的问题："${userInput}"。作为客户端智能助手，我正在为你查询处理，请稍候...`,
         isUser: false
       }]);
       setUserInput('');
@@ -83,26 +83,30 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ visible, onClose }) => {
             </div>
             <div className="max-w-[90%]">
               <div className="mb-1">
-                <span className="text-orange-500">👋 你好，我是 AI助手卡卡</span>
+                <span className="text-blue-500">👋 你好，我是智能助手卡卡</span>
               </div>
               <div className="text-gray-700">
-                我可以帮你操作订单、查询运价、跟踪订单等，快和我对话试试吧！
+                我专门为客户设计，可以帮你查询运价、跟踪货物、管理订单、获取物流信息等，让我来为你提供专业服务吧！
               </div>
               
               <div className="mt-6">
-                <div className="font-medium mb-3">你可以这样问</div>
+                <div className="font-medium mb-3">你可以这样问我</div>
                 <div className="space-y-3">
-                  <div className="p-2 text-sm flex items-center cursor-pointer hover:bg-gray-50 rounded-lg transition-all border border-gray-100">
+                  <div className="p-2 text-sm flex items-center cursor-pointer hover:bg-blue-50 rounded-lg transition-all border border-blue-100">
                     <span className="text-blue-500 mr-2">›</span>
-                    给我查一下CT1234567的报价有了没
+                    查询我的订单CT1234567最新状态
                   </div>
-                  <div className="p-2 text-sm flex items-center cursor-pointer hover:bg-gray-50 rounded-lg transition-all border border-gray-100">
+                  <div className="p-2 text-sm flex items-center cursor-pointer hover:bg-blue-50 rounded-lg transition-all border border-blue-100">
                     <span className="text-blue-500 mr-2">›</span>
-                    Shanghai 到 bangkok 下周海运什么价格？
+                    上海到洛杉矶海运费是多少？
                   </div>
-                  <div className="p-2 text-sm flex items-center cursor-pointer hover:bg-gray-50 rounded-lg transition-all border border-gray-100">
+                  <div className="p-2 text-sm flex items-center cursor-pointer hover:bg-blue-50 rounded-lg transition-all border border-blue-100">
                     <span className="text-blue-500 mr-2">›</span>
-                    CT121212货到哪了
+                    我的货物CT121212现在到哪里了？
+                  </div>
+                  <div className="p-2 text-sm flex items-center cursor-pointer hover:bg-blue-50 rounded-lg transition-all border border-blue-100">
+                    <span className="text-blue-500 mr-2">›</span>
+                    帮我创建一个新的运输询价
                   </div>
                 </div>
               </div>
@@ -112,7 +116,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ visible, onClose }) => {
         
         <div className="ai-chat-footer mt-auto border-t border-gray-200 p-4 sticky bottom-0 bg-white">
           <div className="mb-5">
-            <div className="text-sm text-gray-500 mb-3">常用技能：</div>
+            <div className="text-sm text-gray-500 mb-3">常用服务：</div>
             <div className="grid grid-cols-4 gap-2">
               <Button 
                 size="small" 
@@ -120,7 +124,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ visible, onClose }) => {
                 className="text-blue-600 border-blue-200"
                 icon={<IconFile style={{ color: '#1677FF' }} />}
               >
-                订单操作
+                订单查询
               </Button>
               <Button 
                 size="small" 
@@ -128,23 +132,23 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ visible, onClose }) => {
                 className="text-green-600 border-green-200"
                 icon={<IconSync style={{ color: '#00B42A' }} />}
               >
-                智能运价
+                运价查询
               </Button>
               <Button 
                 size="small" 
                 type="outline"
                 className="text-purple-600 border-purple-200"
-                icon={<IconApps style={{ color: '#722ED1' }} />}
+                icon={<IconLocation style={{ color: '#722ED1' }} />}
               >
-                订单跟踪
+                货物追踪
               </Button>
               <Button 
                 size="small" 
                 type="outline"
                 className="text-cyan-600 border-cyan-200"
-                icon={<IconFile style={{ color: '#14C9C9' }} />}
+                icon={<IconEye style={{ color: '#14C9C9' }} />}
               >
-                AI对单
+                状态查看
               </Button>
             </div>
           </div>
@@ -153,13 +157,14 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ visible, onClose }) => {
             <Input
               value={userInput}
               onChange={value => setUserInput(value)}
-              placeholder="需要我帮你做点什么呢？快和我来聊聊吧！"
+              placeholder="需要我帮你查询什么信息呢？"
               className="flex-1"
               style={{ 
-                backgroundColor: '#F5F5F5', 
+                backgroundColor: '#F0F8FF', 
                 borderRadius: '20px', 
                 height: '42px',
-                paddingRight: '100px', // 为回形针和发送按钮留出空间
+                paddingRight: '100px',
+                borderColor: '#91D5FF'
               }}
             />
             <Button

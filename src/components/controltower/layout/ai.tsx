@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Button, Input } from '@arco-design/web-react';
-import { IconList, IconSync, IconApps, IconFile, IconAttachment } from '@arco-design/web-react/icon';
+import { IconList, IconSync, IconApps, IconFile, IconAttachment, IconSettings, IconUser, IconStorage } from '@arco-design/web-react/icon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRobot } from '@fortawesome/free-solid-svg-icons';
 
@@ -23,7 +23,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ visible, onClose }) => {
     // 模拟AI回复
     setTimeout(() => {
       setAiMessages(prev => [...prev, {
-        text: `我已收到你的问题："${userInput}"。我正在处理中，请稍候...`,
+        text: `我已收到你的问题："${userInput}"。作为运营版智能助手，我正在处理中，请稍候...`,
         isUser: false
       }]);
       setUserInput('');
@@ -37,25 +37,25 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ visible, onClose }) => {
           <div className="flex items-center">
             <Button type="text" icon={<IconList />} className="mr-2" />
             <div className="flex items-center">
-              <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600 mr-2 shadow-sm">
+              <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-gradient-to-r from-orange-500 to-red-600 mr-2 shadow-sm">
                 <FontAwesomeIcon icon={faRobot} className="text-white" />
               </div>
-              <span className="text-base font-medium">智能助手卡卡</span>
+              <span className="text-base font-medium">运营智能助手</span>
             </div>
           </div>
           <div className="flex items-center" style={{ marginRight: '50px' }}>
             <Button 
               type="outline" 
-              className="text-blue-600 border-blue-200"
-              icon={<IconSync style={{ color: '#1677FF' }} />}
+              className="text-orange-600 border-orange-200"
+              icon={<IconSync style={{ color: '#FF7D00' }} />}
               style={{ marginRight: '20px' }}
             >
               开启新对话
             </Button>
             <Button 
               type="outline" 
-              className="text-blue-600 border-blue-200"
-              icon={<IconApps style={{ color: '#1677FF' }} />}
+              className="text-orange-600 border-orange-200"
+              icon={<IconApps style={{ color: '#FF7D00' }} />}
             >
               切换全屏模式
             </Button>
@@ -70,7 +70,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ visible, onClose }) => {
       getPopupContainer={() => document.body}
       alignCenter={true}
       modalRender={(modal) => (
-        <div style={{ borderRadius: '12px', overflow: 'hidden', boxShadow: '0 12px 32px rgba(0, 0, 0, 0.1)' }}>
+        <div style={{ borderRadius: '12px', overflow: 'hidden', boxShadow: '0 12px 32px rgba(255, 125, 0, 0.1)' }}>
           {modal}
         </div>
       )}
@@ -78,31 +78,35 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ visible, onClose }) => {
       <div className="ai-chat-container flex flex-col h-full" style={{ height: '650px' }}>
         <div className="ai-chat-messages overflow-y-auto flex-grow p-6 pb-0">
           <div className="flex mb-5">
-            <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600 mr-2 flex-shrink-0 shadow-sm">
+            <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-gradient-to-r from-orange-500 to-red-600 mr-2 flex-shrink-0 shadow-sm">
               <FontAwesomeIcon icon={faRobot} className="text-white" />
             </div>
             <div className="max-w-[90%]">
               <div className="mb-1">
-                <span className="text-orange-500">👋 你好，我是 AI助手卡卡</span>
+                <span className="text-orange-500">👋 你好，我是运营版智能助手</span>
               </div>
               <div className="text-gray-700">
-                我可以帮你操作订单、查询运价、跟踪订单等，快和我对话试试吧！
+                我专门为运营团队设计，可以帮你管理客户、维护基础数据、配置运价、分析业务数据等运营工作，让我们开始对话吧！
               </div>
               
               <div className="mt-6">
-                <div className="font-medium mb-3">你可以这样问</div>
+                <div className="font-medium mb-3">运营专用功能示例</div>
                 <div className="space-y-3">
-                  <div className="p-2 text-sm flex items-center cursor-pointer hover:bg-gray-50 rounded-lg transition-all border border-gray-100">
-                    <span className="text-blue-500 mr-2">›</span>
-                    给我查一下CT1234567的报价有了没
+                  <div className="p-2 text-sm flex items-center cursor-pointer hover:bg-orange-50 rounded-lg transition-all border border-orange-100">
+                    <span className="text-orange-500 mr-2">›</span>
+                    帮我查看今日新增客户数量和注册情况
                   </div>
-                  <div className="p-2 text-sm flex items-center cursor-pointer hover:bg-gray-50 rounded-lg transition-all border border-gray-100">
-                    <span className="text-blue-500 mr-2">›</span>
-                    Shanghai 到 bangkok 下周海运什么价格？
+                  <div className="p-2 text-sm flex items-center cursor-pointer hover:bg-orange-50 rounded-lg transition-all border border-orange-100">
+                    <span className="text-orange-500 mr-2">›</span>
+                    分析本月询价转化率和热门航线
                   </div>
-                  <div className="p-2 text-sm flex items-center cursor-pointer hover:bg-gray-50 rounded-lg transition-all border border-gray-100">
-                    <span className="text-blue-500 mr-2">›</span>
-                    CT121212货到哪了
+                  <div className="p-2 text-sm flex items-center cursor-pointer hover:bg-orange-50 rounded-lg transition-all border border-orange-100">
+                    <span className="text-orange-500 mr-2">›</span>
+                    帮我批量更新Shanghai到Bangkok的运价
+                  </div>
+                  <div className="p-2 text-sm flex items-center cursor-pointer hover:bg-orange-50 rounded-lg transition-all border border-orange-100">
+                    <span className="text-orange-500 mr-2">›</span>
+                    生成客户服务质量分析报告
                   </div>
                 </div>
               </div>
@@ -112,39 +116,39 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ visible, onClose }) => {
         
         <div className="ai-chat-footer mt-auto border-t border-gray-200 p-4 sticky bottom-0 bg-white">
           <div className="mb-5">
-            <div className="text-sm text-gray-500 mb-3">常用技能：</div>
+            <div className="text-sm text-gray-500 mb-3">运营专用技能：</div>
             <div className="grid grid-cols-4 gap-2">
               <Button 
                 size="small" 
                 type="outline"
-                className="text-blue-600 border-blue-200"
-                icon={<IconFile style={{ color: '#1677FF' }} />}
+                className="text-orange-600 border-orange-200"
+                icon={<IconUser style={{ color: '#FF7D00' }} />}
               >
-                订单操作
+                客户管理
               </Button>
               <Button 
                 size="small" 
                 type="outline"
-                className="text-green-600 border-green-200"
-                icon={<IconSync style={{ color: '#00B42A' }} />}
+                className="text-red-600 border-red-200"
+                icon={<IconFile style={{ color: '#F53F3F' }} />}
               >
-                智能运价
+                运价配置
               </Button>
               <Button 
                 size="small" 
                 type="outline"
                 className="text-purple-600 border-purple-200"
-                icon={<IconApps style={{ color: '#722ED1' }} />}
+                icon={<IconStorage style={{ color: '#722ED1' }} />}
               >
-                订单跟踪
+                数据维护
               </Button>
               <Button 
                 size="small" 
                 type="outline"
                 className="text-cyan-600 border-cyan-200"
-                icon={<IconFile style={{ color: '#14C9C9' }} />}
+                icon={<IconSettings style={{ color: '#14C9C9' }} />}
               >
-                AI对单
+                系统配置
               </Button>
             </div>
           </div>
@@ -153,13 +157,14 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ visible, onClose }) => {
             <Input
               value={userInput}
               onChange={value => setUserInput(value)}
-              placeholder="需要我帮你做点什么呢？快和我来聊聊吧！"
+              placeholder="需要我帮你处理什么运营工作呢？"
               className="flex-1"
               style={{ 
-                backgroundColor: '#F5F5F5', 
+                backgroundColor: '#FFF7ED', 
                 borderRadius: '20px', 
                 height: '42px',
-                paddingRight: '100px', // 为回形针和发送按钮留出空间
+                paddingRight: '100px',
+                borderColor: '#FFD4A3'
               }}
             />
             <Button
@@ -179,7 +184,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ visible, onClose }) => {
                 height: '36px',
                 width: '80px',
                 padding: '0 12px',
-                backgroundColor: '#1677FF'
+                backgroundColor: '#FF7D00'
               }}
               onClick={handleSendMessage}
             >
