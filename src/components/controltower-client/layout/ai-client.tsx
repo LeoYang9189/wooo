@@ -21,7 +21,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ visible, onClose }) => {
     // 模拟AI回复
     setTimeout(() => {
       setAiMessages(prev => [...prev, {
-        text: `我已收到你的问题："${userInput}"。作为客户端智能助手，我正在为你查询处理，请稍候...`,
+        text: `我已收到你的问题："${userInput}"。作为自定义名称的AI助手，我正在为你查询处理，请稍候...`,
         isUser: false
       }]);
       setUserInput('');
@@ -62,11 +62,11 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ visible, onClose }) => {
       <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50">
         <div className="flex items-center">
           <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center mr-3 shadow-sm">
-            <img src="/assets/g6qmm-vsolk.gif" alt="智能助手卡卡" className="w-full h-full object-cover" />
+            <img src="/assets/g6qmm-vsolk.gif" alt="自定义名称的AI助手" className="w-full h-full object-cover" />
           </div>
           <div>
-            <div className="text-base font-medium text-gray-800">智能助手卡卡</div>
-            <div className="text-xs text-purple-600">专业客户服务</div>
+            <div className="text-base font-medium text-gray-800">自定义名称的AI助手</div>
+            <div className="text-xs text-purple-600">你的工作，可以更简单</div>
           </div>
         </div>
         <div className="flex items-center space-x-2">
@@ -99,14 +99,14 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ visible, onClose }) => {
       <div className="flex-1 overflow-y-auto p-4 bg-gradient-to-b from-white via-blue-50/30 to-purple-50/20">
         <div className="flex mb-4">
           <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center mr-3 flex-shrink-0 shadow-sm">
-            <img src="/assets/g6qmm-vsolk.gif" alt="智能助手卡卡" className="w-full h-full object-cover" />
+            <img src="/assets/g6qmm-vsolk.gif" alt="自定义名称的AI助手" className="w-full h-full object-cover" />
           </div>
           <div className="flex-1">
             <div className="mb-2">
-              <span className="text-purple-600 font-medium">👋 你好，我是智能助手卡卡</span>
+              <span className="text-purple-600 font-medium">👋 你好，我是自定义名称的AI助手</span>
             </div>
             <div className="text-gray-700 text-sm leading-relaxed">
-              我专门为客户设计，可以帮你查询运价、跟踪货物、管理订单、获取物流信息等，让我来为你提供专业服务吧！
+              你好，我是你的AI助理。我汇集了控制塔各项智能服务，可以帮你处理订单查询、运价查询、货物追踪、状态查看等问题，虽然我初出茅庐，但是我每天都在进步哦！
             </div>
             
             <div className="mt-4">
