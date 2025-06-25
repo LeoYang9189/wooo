@@ -820,6 +820,27 @@ const FclRates: React.FC = () => {
   const [schemeModalVisible, setSchemeModalVisible] = useState(false);
   const [schemeName, setSchemeName] = useState('');
   
+  // 批量改价相关状态
+  const [batchPriceModalVisible, setBatchPriceModalVisible] = useState(false);
+  const [containerTypesModalVisible, setContainerTypesModalVisible] = useState(false);
+  const [priceChangeMode, setPriceChangeMode] = useState<'increase' | 'decrease' | 'fixed'>('increase');
+  const [selectedContainerTypes, setSelectedContainerTypes] = useState<string[]>(['20gp', '40gp', '40hc', '45hc', '40nor']);
+  const [priceValues, setPriceValues] = useState<Record<string, number>>({
+    '20gp': 0,
+    '40gp': 0,
+    '40hc': 0,
+    '45hc': 0,
+    '40nor': 0,
+    '20nor': 0,
+    '20hc': 0,
+    '20tk': 0,
+    '40tk': 0,
+    '20ot': 0,
+    '40ot': 0,
+    '20fr': 0,
+    '40fr': 0
+  });
+  
   const navigate = useNavigate();
 
   // 操作处理函数
@@ -870,8 +891,79 @@ const FclRates: React.FC = () => {
   };
 
   const handleBatchPriceChange = () => {
-    // TODO: 实现批量改价功能
-    Message.info('批量改价功能开发中');
+    setBatchPriceModalVisible(true);
+  };
+
+  // 关闭批量改价弹窗
+  const closeBatchPriceModal = () => {
+    setBatchPriceModalVisible(false);
+    setPriceChangeMode('increase');
+    setPriceValues({
+      '20gp': 0,
+      '40gp': 0,
+      '40hc': 0,
+      '45hc': 0,
+      '40nor': 0,
+      '20nor': 0,
+      '20hc': 0,
+      '20tk': 0,
+      '40tk': 0,
+      '20ot': 0,
+      '40ot': 0,
+      '20fr': 0,
+      '40fr': 0
+    });
+  };
+
+  // 打开箱型设置弹窗
+  const openContainerTypesModal = () => {
+    setContainerTypesModalVisible(true);
+  };
+
+  // 关闭箱型设置弹窗
+  const closeContainerTypesModal = () => {
+    setContainerTypesModalVisible(false);
+  };
+
+  // 应用箱型设置
+  const applyContainerTypes = () => {
+    setContainerTypesModalVisible(false);
+    Message.success('箱型设置已更新');
+  };
+
+  // 切换箱型选择
+  const toggleContainerType = (containerType: string) => {
+    setSelectedContainerTypes(prev => {
+      if (prev.includes(containerType)) {
+        return prev.filter(type => type !== containerType);
+      } else {
+        return [...prev, containerType];
+      }
+    });
+  };
+
+  // 更新价格值
+  const updatePriceValue = (containerType: string, value: number) => {
+    setPriceValues(prev => ({
+      ...prev,
+      [containerType]: value
+    }));
+  };
+
+  // 确认批量改价
+  const confirmBatchPriceChange = () => {
+    const selectedRates = selectedRowKeys.length;
+    const selectedTypes = selectedContainerTypes.length;
+    
+    Modal.confirm({
+      title: '确认批量改价',
+      content: `将对选中的 ${selectedRates} 条运价的 ${selectedTypes} 种箱型进行${priceChangeMode === 'increase' ? '涨价' : priceChangeMode === 'decrease' ? '降价' : '固定金额'}操作，确认继续吗？`,
+      onOk: () => {
+        Message.success(`成功${priceChangeMode === 'increase' ? '涨价' : priceChangeMode === 'decrease' ? '降价' : '设置固定金额'} ${selectedRates} 条运价`);
+        closeBatchPriceModal();
+        setSelectedRowKeys([]);
+      }
+    });
   };
 
   const handleBatchValidityChange = () => {
@@ -2656,6 +2748,196 @@ const FclRates: React.FC = () => {
           />
           <div className="mt-4 text-xs text-gray-500">
             保存后可在"选择方案"下拉中找到此方案
+          </div>
+        </div>
+      </Modal>
+
+            {/* 批量修改运价抽屉 */}
+      <Drawer
+        width={800}
+        title={
+          <div className="flex items-center gap-3">
+            <span className="text-lg font-medium">批量修改运价</span>
+            <Tag color="arcoblue" size="small">
+              已选择 {selectedRowKeys.length} 条运价
+            </Tag>
+          </div>
+        }
+        visible={batchPriceModalVisible}
+        onCancel={closeBatchPriceModal}
+        footer={
+          <div className="flex justify-between items-center py-3">
+            <div className="text-sm text-gray-500">
+              此操作会修改选中运价的海运费金额，请确认数据准确性
+            </div>
+            <Space size="medium">
+              <Button onClick={closeBatchPriceModal}>取消</Button>
+              <Button type="primary" onClick={confirmBatchPriceChange}>确认</Button>
+            </Space>
+          </div>
+        }
+      >
+        <div className="space-y-5">
+          {/* 警告提示 */}
+          <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
+            <div className="flex items-start gap-3">
+              <div className="w-5 h-5 rounded-full bg-yellow-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-white text-xs font-bold">!</span>
+              </div>
+              <div>
+                <div className="font-medium text-yellow-800 mb-2">操作提醒</div>
+                <div className="text-yellow-700 text-sm leading-relaxed">
+                  此操作会修改所有选中运价的海运费金额，请谨慎操作。置空代表该箱型价格不变，原运价如不存在对应箱型价格，则调整不会生效。请先选择涨价还是降价，输入框里永远只输入正整数。
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 选择要修改的箱型 */}
+          <Card title="选择要修改的箱型" bordered={false} className="bg-white">
+            <div className="flex justify-between items-start gap-4">
+              <div className="grid grid-cols-5 gap-4 flex-1">
+                {['20gp', '40gp', '40hc', '45hc', '40nor'].map(type => (
+                  <div key={type} className="flex items-center gap-2 py-1">
+                    <Switch 
+                      checked={selectedContainerTypes.includes(type)}
+                      onChange={() => toggleContainerType(type)}
+                      size="small"
+                    />
+                    <span className="text-sm">{type.toUpperCase()}</span>
+                  </div>
+                ))}
+              </div>
+              <Button 
+                type="outline" 
+                icon={<IconSettings />}
+                onClick={openContainerTypesModal}
+                size="small"
+              >
+                箱型设置
+              </Button>
+            </div>
+          </Card>
+
+          {/* 涨价/降价模式选择 */}
+          <Card title="选择改价模式" bordered={false}>
+            <div className="space-y-3">
+              <div className="flex items-center gap-8">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="priceMode"
+                    value="increase"
+                    checked={priceChangeMode === 'increase'}
+                    onChange={(e) => setPriceChangeMode(e.target.value as 'increase')}
+                  />
+                  <span>涨价</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="priceMode"
+                    value="decrease"
+                    checked={priceChangeMode === 'decrease'}
+                    onChange={(e) => setPriceChangeMode(e.target.value as 'decrease')}
+                  />
+                  <span>降价</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="priceMode"
+                    value="fixed"
+                    checked={priceChangeMode === 'fixed'}
+                    onChange={(e) => setPriceChangeMode(e.target.value as 'fixed')}
+                  />
+                  <span>固定金额</span>
+                </label>
+              </div>
+              <div className="text-sm text-gray-500 bg-gray-50 p-3 rounded-md">
+                {priceChangeMode === 'increase' && '选择涨价模式，输入框中填写涨价金额（正整数）'}
+                {priceChangeMode === 'decrease' && '选择降价模式，输入框中填写降价金额（正整数）'}
+                {priceChangeMode === 'fixed' && '选择固定金额模式，输入框中填写新的价格（正整数）'}
+              </div>
+            </div>
+          </Card>
+
+          {/* 价格输入表格 */}
+          <Card title="设置价格" bordered={false}>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="border border-gray-200 px-4 py-3 text-center text-sm font-semibold text-gray-700 w-32">
+                      箱型
+                    </th>
+                    <th className="border border-gray-200 px-4 py-3 text-center text-sm font-semibold text-gray-700">
+                      {priceChangeMode === 'increase' ? '涨价金额' : priceChangeMode === 'decrease' ? '降价金额' : '固定金额'}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {selectedContainerTypes.map(type => (
+                    <tr key={type} className="hover:bg-gray-50 transition-colors">
+                      <td className="border border-gray-200 px-4 py-4">
+                        <span className="font-medium text-gray-800">{type.toUpperCase()}</span>
+                      </td>
+                      <td className="border border-gray-200 px-4 py-4">
+                        <div className="flex items-center justify-center">
+                          <Input
+                            style={{ width: 140 }}
+                            placeholder={priceChangeMode === 'fixed' ? '新价格' : '金额'}
+                            value={priceValues[type]?.toString() || ''}
+                            onChange={(value) => updatePriceValue(type, Number(value) || 0)}
+                            type="number"
+                            min={0}
+                            suffix="USD"
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {selectedContainerTypes.length === 0 && (
+                <div className="text-center py-12 text-gray-500">
+                  请先选择要修改的箱型
+                </div>
+              )}
+            </div>
+          </Card>
+        </div>
+      </Drawer>
+
+      {/* 箱型设置弹窗 */}
+      <Modal
+        title="箱型设置"
+        visible={containerTypesModalVisible}
+        onCancel={closeContainerTypesModal}
+        footer={
+          <div className="flex justify-end gap-3">
+            <Button onClick={closeContainerTypesModal}>取消</Button>
+            <Button type="primary" onClick={applyContainerTypes}>确定</Button>
+          </div>
+        }
+        style={{ width: 600 }}
+      >
+        <div className="py-4">
+          <div className="mb-5 text-gray-600">选择要在运价表格中显示的箱型</div>
+          <div className="grid grid-cols-3 gap-3">
+            {['20gp', '40gp', '40hc', '45hc', '40nor', '20nor', '20hc', '20tk', '40tk', '20ot', '40ot', '20fr', '40fr'].map(type => (
+              <div key={type} className="flex items-center gap-3 p-3 border rounded-md hover:bg-gray-50 transition-colors">
+                <Switch 
+                  checked={selectedContainerTypes.includes(type)}
+                  onChange={() => toggleContainerType(type)}
+                  size="small"
+                />
+                <span className="text-gray-800">{type.toUpperCase()}</span>
+              </div>
+            ))}
+          </div>
+          <div className="mt-5 p-3 bg-gray-50 rounded-md text-sm text-gray-600">
+            选中的箱型将在批量改价时显示，未选中的箱型不会被修改
           </div>
         </div>
       </Modal>

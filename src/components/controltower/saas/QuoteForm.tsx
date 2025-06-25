@@ -1552,7 +1552,7 @@ const QuoteForm: React.FC = () => {
                                               value={item.containerRates?.[containerType as keyof typeof item.containerRates] || ''}
                                               onChange={(value) => updateContainerRatePrice('precarriage', rate.id, item.id, containerType, value)}
                                             />
-                                          </Col>
+                                        </Col>
                                         ))}
                                       </>
                                     ) : (
@@ -1749,7 +1749,7 @@ const QuoteForm: React.FC = () => {
                                               value={item.containerRates?.[containerType as keyof typeof item.containerRates] || ''}
                                               onChange={(value) => updateContainerRatePrice('oncarriage', rate.id, item.id, containerType, value)}
                                             />
-                                          </Col>
+                                        </Col>
                                         ))}
                                       </>
                                     ) : (
