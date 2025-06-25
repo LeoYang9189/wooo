@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layout, Menu, Button, Avatar, Breadcrumb, Dropdown, Divider } from '@arco-design/web-react';
+import { Layout, Menu, Button, Avatar, Breadcrumb, Dropdown, Divider, AutoComplete } from '@arco-design/web-react';
 import { 
   IconDashboard, 
   IconList, 
@@ -40,10 +40,366 @@ interface LayoutProps {
 const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [aiChatVisible, setAiChatVisible] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
 
   const toggleCollapse = () => setCollapsed(!collapsed);
+
+  // 运营版功能菜单数据
+  const menuItems = [
+    // 工作台
+    { 
+      title: '通用规范约定', 
+      key: 'ui-standards', 
+      path: '/controltower/ui-standards',
+      category: '工作台',
+      icon: <IconBook />
+    },
+    { 
+      title: '仪表盘', 
+      key: 'dashboard', 
+      path: '/controltower',
+      category: '工作台',
+      icon: <IconDashboard />
+    },
+    { 
+      title: '控制塔面板', 
+      key: 'control-tower-panel', 
+      path: '/controltower/control-tower-panel',
+      category: '工作台',
+      icon: <IconApps />
+    },
+    { 
+      title: '控制塔面板-临时', 
+      key: 'control-tower-panel-temp', 
+      path: '/controltower/control-tower-panel-temp',
+      category: '工作台',
+      icon: <IconApps />
+    },
+    { 
+      title: '应用中心', 
+      key: 'application-center', 
+      path: '/controltower/application-center',
+      category: '工作台',
+      icon: <IconApps />
+    },
+    
+    // 超级运价系统
+    { 
+      title: '运价维护', 
+      key: 'saas/fcl-rates', 
+      path: '/controltower/saas/fcl-rates',
+      category: '超级运价',
+      icon: <IconFile />
+    },
+    { 
+      title: '运价查询', 
+      key: 'saas/rate-query', 
+      path: '/controltower/saas/rate-query',
+      category: '超级运价',
+      icon: <IconFile />
+    },
+    { 
+      title: '询价管理', 
+      key: 'saas/inquiry-management', 
+      path: '/controltower/saas/inquiry-management',
+      category: '超级运价-询价报价',
+      icon: <IconFile />
+    },
+    { 
+      title: '报价管理', 
+      key: 'saas/quote-management', 
+      path: '/controltower/saas/quote-management',
+      category: '超级运价-询价报价',
+      icon: <IconFile />
+    },
+    { 
+      title: '舱位查询', 
+      key: 'saas/space-query', 
+      path: '/controltower/saas/space-query',
+      category: '超级运价-舱位管理',
+      icon: <IconFile />
+    },
+    { 
+      title: '舱位预订', 
+      key: 'saas/space-booking', 
+      path: '/controltower/saas/space-booking',
+      category: '超级运价-舱位管理',
+      icon: <IconFile />
+    },
+    { 
+      title: '舱位统计', 
+      key: 'saas/space-statistics', 
+      path: '/controltower/saas/space-statistics',
+      category: '超级运价-舱位管理',
+      icon: <IconFile />
+    },
+    { 
+      title: '合约管理', 
+      key: 'saas/contract-management', 
+      path: '/controltower/saas/contract-management',
+      category: '超级运价',
+      icon: <IconFile />
+    },
+    { 
+      title: '附加费维护', 
+      key: 'saas/surcharge', 
+      path: '/controltower/saas/surcharge',
+      category: '超级运价',
+      icon: <IconFile />
+    },
+    { 
+      title: '加价规则维护', 
+      key: 'saas/pricing-rule-management', 
+      path: '/controltower/saas/pricing-rule-management',
+      category: '超级运价',
+      icon: <IconFile />
+    },
+    
+    // 订单中心
+    { 
+      title: '订单管理', 
+      key: 'order-management', 
+      path: '/controltower/order-management',
+      category: '订单中心',
+      icon: <IconList />
+    },
+    
+    // 船期中心
+    { 
+      title: '航线维护', 
+      key: 'route-maintenance', 
+      path: '/controltower/route-maintenance',
+      category: '船期中心',
+      icon: <FontAwesomeIcon icon={faShip} />
+    },
+    { 
+      title: '船期查询', 
+      key: 'schedule-query', 
+      path: '/controltower/schedule-query',
+      category: '船期中心',
+      icon: <FontAwesomeIcon icon={faShip} />
+    },
+    
+    // 客户中心
+    { 
+      title: '用户管理', 
+      key: 'user-management', 
+      path: '/controltower/user-management',
+      category: '客户中心',
+      icon: <FontAwesomeIcon icon={faUsers} />
+    },
+    { 
+      title: '企业管理', 
+      key: 'company-management', 
+      path: '/controltower/company-management',
+      category: '客户中心',
+      icon: <FontAwesomeIcon icon={faUsers} />
+    },
+    
+    // 用户中心
+    { 
+      title: '个人信息', 
+      key: 'user-profile', 
+      path: '/controltower/user-profile',
+      category: '用户中心',
+      icon: <IconUser />
+    },
+    { 
+      title: '企业信息', 
+      key: 'company-profile', 
+      path: '/controltower/company-profile',
+      category: '用户中心',
+      icon: <IconUser />
+    },
+    
+    // 系统设置
+    { 
+      title: '员工管理', 
+      key: 'employee-management', 
+      path: '/controltower/employee-management',
+      category: '系统设置',
+      icon: <IconSettings />
+    },
+    { 
+      title: '权限管理', 
+      key: 'permission-management', 
+      path: '/controltower/permission-management',
+      category: '系统设置',
+      icon: <IconSettings />
+    },
+    
+    // 基础资料维护
+    { 
+      title: '港口管理', 
+      key: 'port-management', 
+      path: '/controltower/port-management',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '承运人管理', 
+      key: 'carrier-management', 
+      path: '/controltower/carrier-management',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '国家（地区）', 
+      key: 'country-region-management', 
+      path: '/controltower/country-region-management',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '中国行政区划', 
+      key: 'china-administrative', 
+      path: '/controltower/china-administrative',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '海外仓库', 
+      key: 'overseas-warehouse', 
+      path: '/controltower/overseas-warehouse',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '邮编管理', 
+      key: 'zipcode-management', 
+      path: '/controltower/zipcode-management',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '航线管理', 
+      key: 'route-management', 
+      path: '/controltower/route-management',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '集装箱管理', 
+      key: 'container-management', 
+      path: '/controltower/container-management',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '包装单位', 
+      key: 'package-unit', 
+      path: '/controltower/package-unit',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '运输条款', 
+      key: 'transport-terms', 
+      path: '/controltower/transport-terms',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '贸易条款', 
+      key: 'trade-terms', 
+      path: '/controltower/trade-terms',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '币种管理', 
+      key: 'currency-management', 
+      path: '/controltower/currency-management',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '汇率设置', 
+      key: 'exchange-rate-management', 
+      path: '/controltower/exchange-rate-management',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '计费单位', 
+      key: 'calculation-unit', 
+      path: '/controltower/calculation-unit',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '费用管理', 
+      key: 'charge-management', 
+      path: '/controltower/charge-management',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '船舶代理', 
+      key: 'ship-agent', 
+      path: '/controltower/ship-agent',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '船舶资料', 
+      key: 'ship-data', 
+      path: '/controltower/ship-data',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '码头管理', 
+      key: 'terminal-management', 
+      path: '/controltower/terminal-management',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    }
+  ];
+
+  // 搜索过滤逻辑
+  const filterMenuItems = (inputValue: string) => {
+    if (!inputValue) return [];
+    
+    const filtered = menuItems.filter(item => 
+      item.title.toLowerCase().includes(inputValue.toLowerCase()) ||
+      item.category.toLowerCase().includes(inputValue.toLowerCase())
+    );
+    
+    // 返回带父子关系的选项列表
+    return filtered.map(item => {
+      // 构建面包屑路径
+      let breadcrumbPath = '';
+      const categoryParts = item.category.split('-');
+      
+      if (categoryParts.length > 1) {
+        // 如果有子分类（如"超级运价-询价报价"）
+        breadcrumbPath = `${categoryParts[0]} > ${categoryParts[1]} > ${item.title}`;
+      } else {
+        // 普通分类
+        breadcrumbPath = `${item.category} > ${item.title}`;
+      }
+      
+      return {
+        value: item.path,
+        name: breadcrumbPath,
+        label: (
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <span style={{ marginRight: '8px', color: '#1890ff' }}>{item.icon}</span>
+            <span>{breadcrumbPath}</span>
+          </div>
+        )
+      };
+    });
+  };
+
+  // 处理搜索选择
+  const handleSearchSelect = (value: string) => {
+    navigate(value);
+    setSearchValue('');
+  };
 
   // 菜单点击
   const handleMenuItemClick = (key: string) => {
@@ -791,6 +1147,17 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
             </Breadcrumb>
           </div>
           <div className="flex items-center">
+            <AutoComplete
+              className="mr-4"
+              style={{ width: 300 }}
+              placeholder="请输入菜单名称搜索"
+              data={filterMenuItems(searchValue)}
+              value={searchValue}
+              onSearch={setSearchValue}
+              onSelect={handleSearchSelect}
+              allowClear
+              filterOption={false}
+            />
             <Dropdown
               droplist={
                 <Menu>
