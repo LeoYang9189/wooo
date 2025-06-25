@@ -11,14 +11,15 @@
   --dark-text-accent: #00f7ff;
   --dark-grid-color: rgba(0, 247, 255, 0.1);
   
-  /* 浅色主题变量 */
-  --light-bg-primary: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f1f5f9 100%);
-  --light-bg-secondary: rgba(59, 130, 246, 0.08);
-  --light-border-primary: rgba(59, 130, 246, 0.2);
-  --light-text-primary: #1e293b;
-  --light-text-secondary: #475569;
-  --light-text-accent: #3b82f6;
-  --light-grid-color: rgba(59, 130, 246, 0.05);
+  /* 浅色主题变量 - 参考Dashboard风格 */
+  --light-bg-primary: #f8fafc;
+  --light-bg-secondary: #ffffff;
+  --light-border-primary: #e5e7eb;
+  --light-text-primary: #374151;
+  --light-text-secondary: #6b7280;
+  --light-text-accent: #165DFF;
+  --light-grid-color: rgba(229, 231, 235, 0.3);
+  --light-card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
 
 .control-tower-panel {
@@ -53,25 +54,14 @@
   z-index: 0;
 }
 
-/* 浅色主题样式 */
+/* 浅色主题样式 - Dashboard风格 */
 .control-tower-panel.light-theme {
   background: var(--light-bg-primary);
   color: var(--light-text-primary);
 }
 
 .control-tower-panel.light-theme::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: 
-    linear-gradient(var(--light-grid-color) 1px, transparent 1px),
-    linear-gradient(90deg, var(--light-grid-color) 1px, transparent 1px);
-  background-size: 50px 50px;
-  opacity: 0.5;
-  z-index: 0;
+  display: none; /* 移除网格背景，采用简洁的纯色背景 */
 }
 
 /* 主题切换按钮 */
@@ -128,9 +118,9 @@
 }
 
 .light-theme .panel-header {
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.08) 0%, rgba(79, 70, 229, 0.05) 100%);
-  border-bottom-color: rgba(59, 130, 246, 0.2);
-  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.1);
+  background: var(--light-bg-secondary);
+  border-bottom-color: var(--light-border-primary);
+  box-shadow: var(--light-card-shadow);
 }
 
 .panel-title {
@@ -147,8 +137,8 @@
 }
 
 .light-theme .panel-title {
-  color: var(--light-text-accent);
-  text-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+  color: var(--light-text-primary);
+  text-shadow: none;
 }
 
 .title-icon {
@@ -165,7 +155,7 @@
 
 .light-theme .title-icon {
   color: var(--light-text-accent);
-  text-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+  text-shadow: none;
 }
 
 @keyframes pulse {
@@ -191,10 +181,10 @@
 }
 
 .light-theme .current-time {
-  color: var(--light-text-accent);
-  background: rgba(59, 130, 246, 0.08);
-  border-color: rgba(59, 130, 246, 0.2);
-  text-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
+  color: var(--light-text-secondary);
+  background: var(--light-bg-secondary);
+  border-color: var(--light-border-primary);
+  text-shadow: none;
 }
 
 .system-status {
@@ -270,8 +260,9 @@
 }
 
 .light-theme .overview-card {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(79, 70, 229, 0.05) 100%);
-  border-color: rgba(59, 130, 246, 0.2);
+  background: var(--light-bg-secondary);
+  border-color: var(--light-border-primary);
+  box-shadow: var(--light-card-shadow);
 }
 
 .overview-card::before {
@@ -289,7 +280,7 @@
 }
 
 .light-theme .overview-card::before {
-  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.15), transparent);
+  background: none;
 }
 
 .overview-card:hover::before {
@@ -306,8 +297,8 @@
 }
 
 .light-theme .overview-card:hover {
-  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
-  border-color: rgba(59, 130, 246, 0.4);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border-color: var(--light-text-accent);
 }
 
 .card-header {
@@ -328,7 +319,7 @@
 }
 
 .light-theme .card-title {
-  color: #475569;
+  color: var(--light-text-secondary);
 }
 
 .card-header-right {
@@ -396,8 +387,8 @@
 }
 
 .light-theme .value {
-  color: #3b82f6;
-  text-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+  color: var(--light-text-primary);
+  text-shadow: none;
 }
 
 .unit {
@@ -420,9 +411,9 @@
 }
 
 .light-theme .view-button {
-  background: rgba(59, 130, 246, 0.1);
-  border: 1px solid rgba(59, 130, 246, 0.3);
-  color: #3b82f6;
+  background: var(--light-bg-secondary);
+  border: 1px solid var(--light-border-primary);
+  color: var(--light-text-accent);
 }
 
 .view-button:hover {
@@ -433,9 +424,10 @@
 }
 
 .light-theme .view-button:hover {
-  background: rgba(59, 130, 246, 0.2);
-  border-color: rgba(59, 130, 246, 0.5);
-  box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+  background: var(--light-text-accent);
+  border-color: var(--light-text-accent);
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* 任务弹窗样式 */
@@ -1197,8 +1189,9 @@
 }
 
 .light-theme .chart-card {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.06) 0%, rgba(79, 70, 229, 0.03) 100%);
-  border-color: rgba(59, 130, 246, 0.15);
+  background: var(--light-bg-secondary);
+  border-color: var(--light-border-primary);
+  box-shadow: var(--light-card-shadow);
 }
 
 .chart-card::before {
@@ -1226,14 +1219,7 @@
 }
 
 .light-theme .chart-card::before {
-  background: linear-gradient(45deg, 
-    rgba(59, 130, 246, 0.2), 
-    rgba(79, 70, 229, 0.15), 
-    rgba(239, 68, 68, 0.15),
-    rgba(16, 185, 129, 0.2)
-  );
-  background-size: 400% 400%;
-  animation: scan 8s ease-in-out infinite;
+  display: none; /* 移除扫描动画效果 */
 }
 
 @keyframes scan {
@@ -1255,7 +1241,7 @@
 }
 
 .light-theme .chart-title {
-  color: #1e293b;
+  color: var(--light-text-primary);
 }
 
 .chart-title .title-icon {
@@ -1269,7 +1255,7 @@
 }
 
 .light-theme .chart-title .title-icon {
-  color: #3b82f6;
+  color: var(--light-text-accent);
 }
 
 /* 实时订单和任务列表 */
@@ -1353,8 +1339,9 @@
 
 .light-theme .order-item, 
 .light-theme .task-item {
-  background: rgba(59, 130, 246, 0.04);
-  border-color: rgba(59, 130, 246, 0.15);
+  background: var(--light-bg-secondary);
+  border-color: var(--light-border-primary);
+  box-shadow: var(--light-card-shadow);
 }
 
 .order-item:hover, .task-item:hover {
@@ -1369,8 +1356,8 @@
 
 .light-theme .order-item:hover, 
 .light-theme .task-item:hover {
-  border-color: rgba(59, 130, 246, 0.3);
-  box-shadow: 0 5px 15px rgba(59, 130, 246, 0.15);
+  border-color: var(--light-text-accent);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .order-item.new-order, .task-item.new-task {
@@ -1397,7 +1384,7 @@
 
 .light-theme .order-number, 
 .light-theme .task-order-number {
-  color: #3b82f6;
+  color: var(--light-text-accent);
 }
 
 .order-time, .task-time {
