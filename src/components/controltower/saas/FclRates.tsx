@@ -891,10 +891,12 @@ const FclRates: React.FC = () => {
   const confirmBatchOnShelf = () => {
     setBatchOnShelfConfirmModalVisible(false);
     // TODO: 实现批量上架功能
-    Message.success({
-      content: '上架成功',
-      duration: 3000
-    });
+    
+    // 显示成功消息
+    setTimeout(() => {
+      Message.success('上架成功');
+    }, 100);
+    
     setSelectedRowKeys([]);
   };
 
@@ -2971,11 +2973,10 @@ const FclRates: React.FC = () => {
       <Modal
         title="批量上架提示"
         visible={batchOnShelfFirstModalVisible}
-        onCancel={() => setBatchOnShelfFirstModalVisible(false)}
+        onCancel={closeBatchOnShelfFirstModal}
         footer={
           <div className="flex justify-end gap-3">
-            <Button onClick={() => setBatchOnShelfFirstModalVisible(false)}>取消</Button>
-            <Button type="primary" onClick={closeBatchOnShelfFirstModal}>知道了</Button>
+            <Button onClick={closeBatchOnShelfFirstModal}>关闭</Button>
           </div>
         }
         style={{ width: 480 }}
@@ -2992,9 +2993,7 @@ const FclRates: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="bg-gray-50 p-3 rounded-md text-sm text-gray-600">
-            已选择 {selectedRowKeys.length} 条运价，请确认这些运价的状态都为"草稿"状态。
-          </div>
+
         </div>
       </Modal>
 
