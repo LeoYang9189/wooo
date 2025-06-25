@@ -1094,6 +1094,10 @@
   grid-template-columns: 1fr 1fr;
 }
 
+.charts-row.two-column-custom {
+  grid-template-columns: 2fr 1fr;
+}
+
 .charts-row.three-column {
   grid-template-columns: 1fr 2fr 1fr;
 }

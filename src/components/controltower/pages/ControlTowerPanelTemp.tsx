@@ -817,7 +817,7 @@ const ControlTowerPanel: React.FC = () => {
         {/* 图表区域 */}
         <div className="charts-section">
           {/* 询报价趋势图 + 实时任务模块 */}
-          <div className="charts-row two-column">
+          <div className="charts-row two-column-custom">
             <div className="chart-card inquiry-deal-chart">
               <div className="chart-title">
                 <span className="title-icon">◆</span>
