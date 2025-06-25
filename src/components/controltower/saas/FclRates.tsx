@@ -2487,41 +2487,49 @@ const FclRates: React.FC = () => {
                 新增运价
               </Button>
               {selectedRowKeys.length > 0 && (
-                <Space size="medium">
-                  <Button 
-                    type="outline" 
-                    status="success"
-                    onClick={() => handleBatchOnShelf()}
-                  >
-                    批量上架 ({selectedRowKeys.length})
+                <Dropdown
+                  droplist={
+                    <Menu>
+                      <Menu.Item key="batch-on-shelf" onClick={() => handleBatchOnShelf()}>
+                        <div className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                          <span>批量上架</span>
+                        </div>
+                      </Menu.Item>
+                      <Menu.Item key="batch-off-shelf" onClick={() => handleBatchOffShelf()}>
+                        <div className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-orange-500"></span>
+                          <span>批量下架</span>
+                        </div>
+                      </Menu.Item>
+                      <Menu.Item key="batch-price-change" onClick={() => handleBatchPriceChange()}>
+                        <div className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                          <span>批量改价</span>
+                        </div>
+                      </Menu.Item>
+                      <Menu.Item key="batch-validity-change" onClick={() => handleBatchValidityChange()}>
+                        <div className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-purple-500"></span>
+                          <span>批量修改有效期</span>
+                        </div>
+                      </Menu.Item>
+                                             <Menu.Item key="batch-delete" onClick={() => handleBatchDelete()}>
+                        <div className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                          <span className="text-red-600">批量删除</span>
+                        </div>
+                      </Menu.Item>
+                    </Menu>
+                  }
+                  position="bottom"
+                  trigger="click"
+                >
+                  <Button type="outline">
+                    批量操作 ({selectedRowKeys.length})
+                    <IconDown className="ml-1" />
                   </Button>
-                  <Button 
-                    type="outline" 
-                    status="warning"
-                    onClick={() => handleBatchOffShelf()}
-                  >
-                    批量下架 ({selectedRowKeys.length})
-                  </Button>
-                  <Button 
-                    type="outline"
-                    onClick={() => handleBatchPriceChange()}
-                  >
-                    批量改价 ({selectedRowKeys.length})
-                  </Button>
-                  <Button 
-                    type="outline"
-                    onClick={() => handleBatchValidityChange()}
-                  >
-                    批量修改有效期 ({selectedRowKeys.length})
-                  </Button>
-                  <Button 
-                    type="outline" 
-                    status="danger" 
-                    onClick={() => handleBatchDelete()}
-                  >
-                    批量删除 ({selectedRowKeys.length})
-                  </Button>
-                </Space>
+                </Dropdown>
               )}
             </div>
             <Space>
