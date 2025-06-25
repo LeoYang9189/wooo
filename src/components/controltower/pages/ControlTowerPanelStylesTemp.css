@@ -1105,18 +1105,41 @@
 .charts-row.two-column-custom .inquiry-deal-chart {
   width: 100%;
   min-width: 0; /* 防止内容溢出 */
+  height: 480px; /* 统一高度 */
+  display: flex;
+  flex-direction: column;
 }
 
 /* 确保实时任务容器充分利用1/3宽度 */
 .charts-row.two-column-custom .realtime-tasks {
   width: 100%;
   min-width: 0; /* 防止内容溢出 */
+  height: 480px; /* 统一高度 */
+  display: flex;
+  flex-direction: column;
 }
 
 /* 确保ECharts图表响应容器宽度 */
 .charts-row.two-column-custom #inquiry-deal-line-chart {
   width: 100% !important;
-  height: 400px !important;
+  height: 420px !important; /* 调整高度以适应容器 */
+  flex: 1; /* 自动填充剩余空间 */
+}
+
+/* 确保实时任务列表充分利用容器高度 */
+.charts-row.two-column-custom .tasks-list {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 420px;
+}
+
+/* 统一图表标题高度 */
+.charts-row.two-column-custom .chart-title {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-shrink: 0; /* 防止标题被压缩 */
 }
 
 .charts-row.three-column {
