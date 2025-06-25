@@ -278,13 +278,15 @@ const ControlTowerPanel: React.FC = () => {
             color: isDarkTheme ? '#99ccff' : '#475569'
           },
           top: 'top',
-          right: '10%'
+          right: '5%',
+          itemWidth: 14,
+          itemHeight: 10
         },
         grid: {
-          left: '8%',
-          right: '8%',
-          bottom: '15%',
-          top: '20%',
+          left: '5%',
+          right: '5%',
+          bottom: '18%',
+          top: '15%',
           containLabel: true
         },
         xAxis: {
@@ -297,8 +299,10 @@ const ControlTowerPanel: React.FC = () => {
           },
           axisLabel: {
             color: isDarkTheme ? '#99ccff' : '#475569',
-            fontSize: 12,
-            rotate: 45
+            fontSize: 11,
+            rotate: 0,
+            interval: 0,
+            margin: 8
           },
           axisTick: {
             alignWithLabel: true,
