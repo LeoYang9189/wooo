@@ -104,9 +104,9 @@ const ViewLastMileRate: React.FC = () => {
     status: '正常'
   });
 
-  // 返回尾程运价列表页面
+  // 返回运价维护列表页面
   const handleGoBack = () => {
-    navigate('/controltower/saas/rate-query');
+    navigate('/controltower/saas/fcl-rates');
   };
 
   // 地址类型是否为第三方地址
@@ -322,11 +322,11 @@ const ViewLastMileRate: React.FC = () => {
 
   return (
     <ControlTowerSaasLayout 
-      menuSelectedKey="23" 
+      menuSelectedKey="2" 
       breadcrumb={
         <Breadcrumb>
-          <Breadcrumb.Item>门点服务管理</Breadcrumb.Item>
-          <Breadcrumb.Item>尾程运价</Breadcrumb.Item>
+          <Breadcrumb.Item>运价管理</Breadcrumb.Item>
+          <Breadcrumb.Item>运价维护</Breadcrumb.Item>
           <Breadcrumb.Item>查看尾程运价</Breadcrumb.Item>
         </Breadcrumb>
       }

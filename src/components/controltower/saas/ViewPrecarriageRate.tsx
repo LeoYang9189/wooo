@@ -117,9 +117,9 @@ const ViewPrecarriageRate: React.FC = () => {
     status: '正常'
   });
 
-  // 返回港前运价列表页面
+  // 返回运价维护列表页面
   const handleGoBack = () => {
-    navigate('/controltower/saas/rate-query');
+    navigate('/controltower/saas/fcl-rates');
   };
 
 
@@ -350,11 +350,11 @@ const ViewPrecarriageRate: React.FC = () => {
 
   return (
     <ControlTowerSaasLayout 
-      menuSelectedKey="22" 
+      menuSelectedKey="2" 
       breadcrumb={
         <Breadcrumb>
-          <Breadcrumb.Item>门点服务管理</Breadcrumb.Item>
-          <Breadcrumb.Item>港前运价</Breadcrumb.Item>
+          <Breadcrumb.Item>运价管理</Breadcrumb.Item>
+          <Breadcrumb.Item>运价维护</Breadcrumb.Item>
           <Breadcrumb.Item>查看港前运价</Breadcrumb.Item>
         </Breadcrumb>
       }

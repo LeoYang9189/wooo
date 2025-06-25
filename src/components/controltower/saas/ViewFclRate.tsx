@@ -262,9 +262,9 @@ const ViewFclRate: React.FC = () => {
     }
   };
 
-  // 返回列表页
+  // 返回运价维护列表页
   const handleGoBack = () => {
-    navigate('/controltower/saas/rate-query');
+    navigate('/controltower/saas/fcl-rates');
   };
 
   // 导出运价
@@ -400,11 +400,11 @@ const ViewFclRate: React.FC = () => {
 
   return (
     <ControlTowerSaasLayout 
-      menuSelectedKey="3" 
+      menuSelectedKey="2" 
       breadcrumb={
         <Breadcrumb>
           <Breadcrumb.Item>运价管理</Breadcrumb.Item>
-          <Breadcrumb.Item>运价查询</Breadcrumb.Item>
+          <Breadcrumb.Item>运价维护</Breadcrumb.Item>
           <Breadcrumb.Item>查看整箱运价</Breadcrumb.Item>
         </Breadcrumb>
       }

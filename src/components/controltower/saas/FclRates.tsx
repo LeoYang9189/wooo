@@ -861,7 +861,22 @@ const FclRates: React.FC = () => {
 
   // 操作处理函数
   const handleViewDetail = (key: string) => {
-    navigate(`/controltower/saas/view-fcl-rate/${key}`);
+    // 根据当前Tab导航到对应的详情页面
+    switch (activeTab) {
+      case 'fcl':
+      case 'lcl':
+      case 'air':
+        navigate(`/controltower/saas/view-fcl-rate/${key}`);
+        break;
+      case 'precarriage':
+        navigate(`/controltower/saas/view-precarriage-rate/${key}`);
+        break;
+      case 'oncarriage':
+        navigate(`/controltower/saas/view-lastmile-rate/${key}`);
+        break;
+      default:
+        navigate(`/controltower/saas/view-fcl-rate/${key}`);
+    }
   };
 
   const handleEdit = (key: string) => {
