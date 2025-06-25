@@ -140,7 +140,7 @@ const TaskModal: React.FC<{
 
 const ControlTowerPanel: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
-  // 实时订单和任务状态已删除
+  const [realtimeTasks, setRealtimeTasks] = useState<Array<{id: string, task: string, time: string}>>([]);
   
   // 主题状态
   const [isDarkTheme, setIsDarkTheme] = useState(true);
@@ -184,7 +184,38 @@ const ControlTowerPanel: React.FC = () => {
 
   // 实时订单生成已删除
 
-  // 实时任务生成已删除
+  // 实时任务生成
+  useEffect(() => {
+    const tasks = ['待报价', '待确认提单', '待确认账单', '待提交VGM'];
+    
+    const generateTask = () => {
+      const orderNumber = `WO${Date.now().toString().slice(-8)}${Math.floor(Math.random() * 100).toString().padStart(2, '0')}`;
+      const task = tasks[Math.floor(Math.random() * tasks.length)];
+      const time = new Date().toLocaleTimeString('zh-CN');
+      
+      setRealtimeTasks(prev => {
+        const newTasks = [{
+          id: orderNumber,
+          task: task,
+          time: time
+        }, ...prev];
+        // 保持最多15条记录
+        return newTasks.slice(0, 15);
+      });
+    };
+
+    // 初始生成几条任务
+    for (let i = 0; i < 3; i++) {
+      setTimeout(() => generateTask(), i * 800);
+    }
+
+    // 每5-9秒随机生成一条新任务
+    const interval = setInterval(() => {
+      generateTask();
+    }, Math.random() * 4000 + 5000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // 通关异常订单直方图初始化已删除
 
@@ -199,24 +230,24 @@ const ControlTowerPanel: React.FC = () => {
     const generateDateRange = (days: number) => {
       const dates: string[] = [];
       const inquiryData: number[] = [];
-      const dealData: number[] = [];
+      const quoteData: number[] = [];
       
       for (let i = days - 1; i >= 0; i--) {
         const date = new Date();
         date.setDate(date.getDate() - i);
         dates.push(date.toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' }));
         
-        const inquiry = Math.floor(Math.random() * 100) + 50;
-        const deal = Math.floor(inquiry * (0.3 + Math.random() * 0.4));
+        const inquiry = Math.floor(Math.random() * 80) + 40; // 询价单40-120
+        const quote = Math.floor(Math.random() * 60) + 30;   // 报价单30-90
         
         inquiryData.push(inquiry);
-        dealData.push(deal);
+        quoteData.push(quote);
       }
       
-      return { dates, inquiryData, dealData };
+      return { dates, inquiryData, quoteData };
     };
 
-    const { dates, inquiryData, dealData } = generateDateRange(30);
+    const { dates, inquiryData, quoteData } = generateDateRange(30);
 
     const updateChart = () => {
       const option = {
@@ -242,7 +273,7 @@ const ControlTowerPanel: React.FC = () => {
           }
         },
         legend: {
-          data: ['询价数量', '成交数量'],
+          data: ['询价单数量', '报价单数量'],
           textStyle: {
             color: isDarkTheme ? '#99ccff' : '#475569'
           },
@@ -301,7 +332,7 @@ const ControlTowerPanel: React.FC = () => {
         },
         series: [
           {
-            name: '询价数量',
+            name: '询价单数量',
             type: 'line',
             data: inquiryData,
             lineStyle: {
@@ -326,9 +357,9 @@ const ControlTowerPanel: React.FC = () => {
             symbolSize: 6
           },
           {
-            name: '成交数量',
+            name: '报价单数量',
             type: 'line',
-            data: dealData,
+            data: quoteData,
             lineStyle: {
               color: isDarkTheme ? '#00ff88' : '#10b981',
               width: 3,
@@ -363,16 +394,16 @@ const ControlTowerPanel: React.FC = () => {
       // 移除第一个数据点，添加新的数据点
       dates.shift();
       inquiryData.shift();
-      dealData.shift();
+      quoteData.shift();
       
       const today = new Date();
       dates.push(today.toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' }));
       
-      const newInquiry = Math.floor(Math.random() * 100) + 50;
-      const newDeal = Math.floor(newInquiry * (0.3 + Math.random() * 0.4));
+      const newInquiry = Math.floor(Math.random() * 80) + 40; // 询价单40-120
+      const newQuote = Math.floor(Math.random() * 60) + 30;   // 报价单30-90
       
       inquiryData.push(newInquiry);
-      dealData.push(newDeal);
+      quoteData.push(newQuote);
       
       updateChart();
     }, 15000); // 每15秒更新一次
@@ -694,7 +725,23 @@ const ControlTowerPanel: React.FC = () => {
     setTaskModalData([]);
   };
 
-  // 实时任务模态框函数已删除
+  // 在实时任务列表中添加"查看"按钮
+  const openRealtimeTaskModal = (taskId: string) => {
+    const task = realtimeTasks.find(t => t.id === taskId);
+    if (task) {
+      setTaskModalTitle(`任务详情 - ${task.id}`);
+      setTaskModalData([{
+        id: task.id,
+        orderNumber: task.id,
+        taskType: task.task,
+        customerName: '未知客户', // 假设没有客户信息
+        deadline: new Date(), // 假设没有截止时间
+        status: 'pending',
+        priority: 'medium' // 假设中等优先级
+      }]);
+      setIsTaskModalOpen(true);
+    }
+  };
 
   // 主题切换函数
   const toggleTheme = () => {
@@ -769,16 +816,45 @@ const ControlTowerPanel: React.FC = () => {
 
         {/* 图表区域 */}
         <div className="charts-section">
-          {/* 已删除：实时订单列表、全球订单流向图、实时任务列表、通关异常订单统计 */}
-
-          {/* 询价成交趋势图 */}
-          <div className="charts-row single-chart">
+          {/* 询报价趋势图 + 实时任务模块 */}
+          <div className="charts-row two-column">
             <div className="chart-card inquiry-deal-chart">
               <div className="chart-title">
                 <span className="title-icon">◆</span>
-                询价成交趋势
+                询报价趋势
               </div>
               <div id="inquiry-deal-line-chart" style={{ width: '100%', height: '400px' }}></div>
+            </div>
+            
+            {/* 实时任务模块 */}
+            <div className="chart-card realtime-tasks">
+              <div className="chart-title">
+                <span className="title-icon">◆</span>
+                实时任务
+              </div>
+              <div className="tasks-list">
+                {realtimeTasks.map((task, index) => (
+                  <div key={`${task.id}-${task.time}`} className={`task-item ${index === 0 ? 'new-task' : ''}`}>
+                    <div className="task-header">
+                      <span className="task-order-number">{task.id}</span>
+                      <span className="task-time">{task.time}</span>
+                      <button 
+                        className="view-button"
+                        onClick={() => openRealtimeTaskModal(task.id)}
+                        title="查看任务详情"
+                      >
+                        <IconEye />
+                      </button>
+                    </div>
+                    <div className="task-content">
+                      <span className={`task-tag task-${task.task}`}>{task.task}</span>
+                    </div>
+                  </div>
+                ))}
+                {realtimeTasks.length === 0 && (
+                  <div className="no-tasks">暂无实时任务</div>
+                )}
+              </div>
             </div>
           </div>
 
