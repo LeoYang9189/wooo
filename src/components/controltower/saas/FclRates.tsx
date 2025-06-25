@@ -2148,6 +2148,11 @@ const FclRates: React.FC = () => {
           rowKey="key"
           columns={precarriageColumns}
           data={precarriageData}
+          rowSelection={{
+            selectedRowKeys,
+            onChange: onSelectChange,
+            columnWidth: 60
+          }}
           pagination={pagination}
           scroll={{ x: 2010 }}
           border={false}
@@ -2161,6 +2166,11 @@ const FclRates: React.FC = () => {
           rowKey="key"
           columns={oncarriageColumns}
           data={oncarriageData}
+          rowSelection={{
+            selectedRowKeys,
+            onChange: onSelectChange,
+            columnWidth: 60
+          }}
           pagination={pagination}
           scroll={{ x: 2010 }}
           border={false}
@@ -2168,7 +2178,51 @@ const FclRates: React.FC = () => {
         />
       );
     }
-    // 其它Tab保持原有内容
+    if (activeTab === 'lcl') {
+      return (
+        <Table
+          rowKey="key"
+          columns={columns}
+          data={data}
+          rowSelection={{
+            selectedRowKeys,
+            onChange: onSelectChange,
+            columnWidth: 60
+          }}
+          pagination={pagination}
+          scroll={{ x: 3210, y: 'calc(100vh - 400px)' }}
+          border={false}
+          className="mt-4 inquiry-table-nowrap"
+          style={{
+            '--table-row-height': '60px'
+          } as React.CSSProperties & { [key: string]: string }}
+          rowClassName={() => 'table-row-double-height'}
+        />
+      );
+    }
+    if (activeTab === 'air') {
+      return (
+        <Table
+          rowKey="key"
+          columns={columns}
+          data={data}
+          rowSelection={{
+            selectedRowKeys,
+            onChange: onSelectChange,
+            columnWidth: 60
+          }}
+          pagination={pagination}
+          scroll={{ x: 3210, y: 'calc(100vh - 400px)' }}
+          border={false}
+          className="mt-4 inquiry-table-nowrap"
+          style={{
+            '--table-row-height': '60px'
+          } as React.CSSProperties & { [key: string]: string }}
+          rowClassName={() => 'table-row-double-height'}
+        />
+      );
+    }
+    // FCL Tab和其它Tab保持原有内容
     return (
       <Table
         rowKey="key"
@@ -2223,6 +2277,9 @@ const FclRates: React.FC = () => {
     // 初始化筛选字段顺序
     const fields = getFilterFieldsByTab(activeTab);
     setFilterFieldOrder(fields.map(field => field.key));
+    
+    // 切换Tab时重置选中行
+    setSelectedRowKeys([]);
   }, [activeTab]);
 
   // 获取可见的筛选条件（用于渲染）
@@ -3330,14 +3387,14 @@ const FclRates: React.FC = () => {
               <table className="w-full text-sm border-collapse">
                 <thead className="bg-gray-100">
                   <tr>
-                    <th className="text-left p-2 border-b border-gray-200">运价号</th>
-                    <th className="text-left p-2 border-b border-gray-200">起运港</th>
-                    <th className="text-left p-2 border-b border-gray-200">目的港</th>
-                    <th className="text-left p-2 border-b border-gray-200">船公司</th>
-                    <th className="text-left p-2 border-b border-gray-200">
+                    <th className="text-center p-2 border-b border-gray-200">运价号</th>
+                    <th className="text-center p-2 border-b border-gray-200">起运港</th>
+                    <th className="text-center p-2 border-b border-gray-200">目的港</th>
+                    <th className="text-center p-2 border-b border-gray-200">船公司</th>
+                    <th className="text-center p-2 border-b border-gray-200">
                       {timeChangeTab === 'etd' ? '当前ETD' : timeChangeTab === 'eta' ? '当前ETA' : '当前有效期'}
                     </th>
-                    <th className="text-left p-2 border-b border-gray-200">状态</th>
+                    <th className="text-center p-2 border-b border-gray-200">状态</th>
                   </tr>
                 </thead>
                 <tbody>
