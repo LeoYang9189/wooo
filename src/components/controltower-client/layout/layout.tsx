@@ -525,7 +525,7 @@ const ControlTowerClientLayout: React.FC<LayoutProps> = ({ children }) => {
             <AutoComplete
               className="mr-4"
               style={{ width: 300 }}
-              placeholder="请选择功能菜单"
+              placeholder="请输入菜单名称搜索"
               data={filterMenuItems(searchValue)}
               value={searchValue}
               onSearch={setSearchValue}
