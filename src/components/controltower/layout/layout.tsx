@@ -1131,10 +1131,10 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
           <div className="flex items-center">
             <div 
               className="cursor-pointer hover:opacity-80 transition-opacity mr-4"
-              onClick={() => setAiChatVisible(true)}
+              onClick={() => setAiChatVisible(!aiChatVisible)}
               style={{ 
-                width: '72px', 
-                height: '72px',
+                width: '60px', 
+                height: '60px',
                 overflow: 'hidden',
                 borderRadius: '50%'
               }}
