@@ -577,28 +577,28 @@ const ControlTowerPanel: React.FC = () => {
     }
   }, []);
 
-  // 成交订单量客户排行榜初始化
+  // 提交询价单量客户排行榜初始化
   useEffect(() => {
     const contentElement = document.getElementById('customer-orders-ranking-content');
     if (contentElement) {
       
-      // 客户成交订单数据
-      const customerOrdersData = [
-        { company: '华为技术有限公司', orders: 2847, revenue: '¥1.24亿', growth: 15.6, rank: 1 },
-        { company: '阿里巴巴集团', orders: 2156, revenue: '¥9680万', growth: 12.3, rank: 2 },
-        { company: '腾讯科技', orders: 1893, revenue: '¥8520万', growth: 8.9, rank: 3 },
-        { company: '比亚迪股份', orders: 1647, revenue: '¥7410万', growth: 22.1, rank: 4 },
-        { company: '海康威视', orders: 1425, revenue: '¥6380万', growth: -3.2, rank: 5 },
-        { company: '小米集团', orders: 1238, revenue: '¥5560万', growth: 18.7, rank: 6 },
-        { company: '京东集团', orders: 1089, revenue: '¥4890万', growth: 5.4, rank: 7 },
-        { company: '宁德时代', orders: 947, revenue: '¥4250万', growth: 28.9, rank: 8 },
-        { company: '美的集团', orders: 856, revenue: '¥3840万', growth: 7.2, rank: 9 },
-        { company: '格力电器', orders: 723, revenue: '¥3250万', growth: -1.8, rank: 10 }
+      // 客户提交询价单数据
+      const customerInquiryData = [
+        { company: '华为技术有限公司', inquiries: 1847, revenue: '¥1.24亿', growth: 15.6, rank: 1 },
+        { company: '阿里巴巴集团', inquiries: 1456, revenue: '¥9680万', growth: 12.3, rank: 2 },
+        { company: '腾讯科技', inquiries: 1293, revenue: '¥8520万', growth: 8.9, rank: 3 },
+        { company: '比亚迪股份', inquiries: 1147, revenue: '¥7410万', growth: 22.1, rank: 4 },
+        { company: '海康威视', inquiries: 925, revenue: '¥6380万', growth: -3.2, rank: 5 },
+        { company: '小米集团', inquiries: 838, revenue: '¥5560万', growth: 18.7, rank: 6 },
+        { company: '京东集团', inquiries: 789, revenue: '¥4890万', growth: 5.4, rank: 7 },
+        { company: '宁德时代', inquiries: 647, revenue: '¥4250万', growth: 28.9, rank: 8 },
+        { company: '美的集团', inquiries: 556, revenue: '¥3840万', growth: 7.2, rank: 9 },
+        { company: '格力电器', inquiries: 423, revenue: '¥3250万', growth: -1.8, rank: 10 }
       ];
 
-      const renderCustomerOrdersRanking = () => {
-        // 按订单量重新排序
-        const sortedData = [...customerOrdersData].sort((a, b) => b.orders - a.orders);
+      const renderCustomerInquiryRanking = () => {
+        // 按询价单量重新排序
+        const sortedData = [...customerInquiryData].sort((a, b) => b.inquiries - a.inquiries);
         
         const rankingHTML = sortedData.map((item, index) => {
           const rank = index + 1;
@@ -615,12 +615,12 @@ const ControlTowerPanel: React.FC = () => {
               <div class="route-info">
                 <div class="route-name">${item.company}</div>
                 <div class="route-meta">
-                  <span class="inquiry-count">${item.orders} 订单</span>
+                  <span class="inquiry-count">${item.inquiries} 询价单</span>
                   <span class="trend ${trendClass}">${trendIcon} ${Math.abs(item.growth)}%</span>
                 </div>
               </div>
               <div class="ranking-bar">
-                <div class="bar-fill ${rankClass}" style="width: ${(item.orders / sortedData[0].orders) * 100}%"></div>
+                <div class="bar-fill ${rankClass}" style="width: ${(item.inquiries / sortedData[0].inquiries) * 100}%"></div>
               </div>
             </div>
           `;
@@ -630,19 +630,19 @@ const ControlTowerPanel: React.FC = () => {
       };
 
       // 初始渲染
-      renderCustomerOrdersRanking();
+      renderCustomerInquiryRanking();
 
       // 定时更新数据
       const updateInterval = setInterval(() => {
-        // 随机更新客户订单数据
-        customerOrdersData.forEach(customer => {
-          const orderChange = Math.floor(Math.random() * 40) - 20; // -20 到 +20 的变化
-          customer.orders = Math.max(500, customer.orders + orderChange); // 确保最小值为500
+        // 随机更新客户询价单数据
+        customerInquiryData.forEach(customer => {
+          const inquiryChange = Math.floor(Math.random() * 30) - 15; // -15 到 +15 的变化
+          customer.inquiries = Math.max(200, customer.inquiries + inquiryChange); // 确保最小值为200
           const growthChange = (Math.random() - 0.5) * 10; // -5% 到 +5% 的变化
           customer.growth = Math.round((customer.growth + growthChange) * 10) / 10;
         });
         
-        renderCustomerOrdersRanking();
+        renderCustomerInquiryRanking();
       }, 30000); // 每30秒更新一次
 
       return () => {
@@ -886,11 +886,11 @@ const ControlTowerPanel: React.FC = () => {
               </div>
             </div>
 
-            {/* 成交订单量客户排行榜 */}
+            {/* 提交询价单量客户排行榜 */}
             <div className="chart-card customer-orders-ranking">
               <div className="chart-title">
                 <span className="title-icon">◆</span>
-                成交订单量客户排行榜 TOP10
+                提交询价单量客户排行榜 TOP10
               </div>
               <div className="ranking-list">
                 <div id="customer-orders-ranking-content" className="ranking-content">
