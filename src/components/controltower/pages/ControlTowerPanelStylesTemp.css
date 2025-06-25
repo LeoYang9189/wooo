@@ -1095,7 +1095,28 @@
 }
 
 .charts-row.two-column-custom {
+  display: grid;
   grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  width: 100%;
+}
+
+/* 确保询报价趋势图容器充分利用2/3宽度 */
+.charts-row.two-column-custom .inquiry-deal-chart {
+  width: 100%;
+  min-width: 0; /* 防止内容溢出 */
+}
+
+/* 确保实时任务容器充分利用1/3宽度 */
+.charts-row.two-column-custom .realtime-tasks {
+  width: 100%;
+  min-width: 0; /* 防止内容溢出 */
+}
+
+/* 确保ECharts图表响应容器宽度 */
+.charts-row.two-column-custom #inquiry-deal-line-chart {
+  width: 100% !important;
+  height: 400px !important;
 }
 
 .charts-row.three-column {
