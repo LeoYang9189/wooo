@@ -841,6 +841,10 @@ const FclRates: React.FC = () => {
     '40fr': 0
   });
   
+  // 批量上架相关状态
+  const [batchOnShelfFirstModalVisible, setBatchOnShelfFirstModalVisible] = useState(false);
+  const [batchOnShelfConfirmModalVisible, setBatchOnShelfConfirmModalVisible] = useState(false);
+  
   const navigate = useNavigate();
 
   // 操作处理函数
@@ -869,14 +873,29 @@ const FclRates: React.FC = () => {
 
   // 批量操作处理函数
   const handleBatchOnShelf = () => {
-    Modal.confirm({
-      title: '批量上架',
-      content: `确定要将选中的 ${selectedRowKeys.length} 条运价上架吗？`,
-      onOk: () => {
-        Message.success(`成功上架 ${selectedRowKeys.length} 条运价`);
-        setSelectedRowKeys([]);
-      }
+    setBatchOnShelfFirstModalVisible(true);
+  };
+
+  // 关闭第一个提示弹窗，打开确认弹窗
+  const closeBatchOnShelfFirstModal = () => {
+    setBatchOnShelfFirstModalVisible(false);
+    setBatchOnShelfConfirmModalVisible(true);
+  };
+
+  // 关闭确认弹窗
+  const closeBatchOnShelfConfirmModal = () => {
+    setBatchOnShelfConfirmModalVisible(false);
+  };
+
+  // 确认批量上架
+  const confirmBatchOnShelf = () => {
+    setBatchOnShelfConfirmModalVisible(false);
+    // TODO: 实现批量上架功能
+    Message.success({
+      content: '上架成功',
+      duration: 3000
     });
+    setSelectedRowKeys([]);
   };
 
   const handleBatchOffShelf = () => {
@@ -2481,10 +2500,24 @@ const FclRates: React.FC = () => {
         {renderNewFilterArea()}
         
         <Card>
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex items-center space-x-2">
+                    <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center gap-3">
               <Button type="primary" icon={<IconPlus />} onClick={handleAddRate}>
                 新增运价
+              </Button>
+              <Button icon={<IconUpload />} onClick={handleFileUpload}>
+                导入
+              </Button>
+              <Button 
+                icon={<IconRobot />}
+                onClick={openAiModal}
+                style={{
+                  background: 'linear-gradient(45deg, #1890ff, #4dabf5)',
+                  border: 'none',
+                  color: 'white'
+                }}
+              >
+                AI识别
               </Button>
               {selectedRowKeys.length > 0 && (
                 <Dropdown
@@ -2514,7 +2547,7 @@ const FclRates: React.FC = () => {
                           <span>批量修改有效期</span>
                         </div>
                       </Menu.Item>
-                                             <Menu.Item key="batch-delete" onClick={() => handleBatchDelete()}>
+                      <Menu.Item key="batch-delete" onClick={() => handleBatchDelete()}>
                         <div className="flex items-center gap-2">
                           <span className="w-2 h-2 rounded-full bg-red-500"></span>
                           <span className="text-red-600">批量删除</span>
@@ -2532,21 +2565,6 @@ const FclRates: React.FC = () => {
                 </Dropdown>
               )}
             </div>
-            <Space>
-              <Button icon={<IconUpload />} onClick={handleFileUpload}>
-                导入
-              </Button>
-              <Button 
-                icon={<IconRobot />}
-                onClick={openAiModal}
-                style={{
-                  background: 'linear-gradient(45deg, #1890ff, #4dabf5)',
-                  border: 'none',
-                  color: 'white'
-                }}
-              >
-                AI识别
-              </Button>
             <div 
               className="flex items-center text-blue-500 cursor-pointer hover:text-blue-700"
               onClick={openCustomTableModal}
@@ -2554,7 +2572,6 @@ const FclRates: React.FC = () => {
               <IconList className="mr-1" />
               <span>自定义表格</span>
             </div>
-            </Space>
           </div>
           {renderContent()}
           <div className="mt-2 text-gray-500 text-sm">共 9232 条</div>
@@ -2946,6 +2963,71 @@ const FclRates: React.FC = () => {
           </div>
           <div className="mt-5 p-3 bg-gray-50 rounded-md text-sm text-gray-600">
             选中的箱型将在批量改价时显示，未选中的箱型不会被修改
+          </div>
+        </div>
+      </Modal>
+
+      {/* 批量上架第一个提示弹窗 */}
+      <Modal
+        title="批量上架提示"
+        visible={batchOnShelfFirstModalVisible}
+        onCancel={() => setBatchOnShelfFirstModalVisible(false)}
+        footer={
+          <div className="flex justify-end gap-3">
+            <Button onClick={() => setBatchOnShelfFirstModalVisible(false)}>取消</Button>
+            <Button type="primary" onClick={closeBatchOnShelfFirstModal}>知道了</Button>
+          </div>
+        }
+        style={{ width: 480 }}
+      >
+        <div className="py-4">
+          <div className="flex items-start gap-3 mb-4">
+            <div className="w-6 h-6 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0 mt-1">
+              <span className="text-orange-600 text-sm font-bold">!</span>
+            </div>
+            <div>
+              <div className="text-gray-800 font-medium mb-2">操作提示</div>
+              <div className="text-gray-600 leading-relaxed">
+                请只选择状态为草稿的数据进行上架。
+              </div>
+            </div>
+          </div>
+          <div className="bg-gray-50 p-3 rounded-md text-sm text-gray-600">
+            已选择 {selectedRowKeys.length} 条运价，请确认这些运价的状态都为"草稿"状态。
+          </div>
+        </div>
+      </Modal>
+
+      {/* 批量上架确认弹窗 */}
+      <Modal
+        title="确认上架"
+        visible={batchOnShelfConfirmModalVisible}
+        onCancel={closeBatchOnShelfConfirmModal}
+        footer={
+          <div className="flex justify-end gap-3">
+            <Button onClick={closeBatchOnShelfConfirmModal}>取消</Button>
+            <Button type="primary" onClick={confirmBatchOnShelf}>确认上架</Button>
+          </div>
+        }
+        style={{ width: 520 }}
+      >
+        <div className="py-4">
+          <div className="flex items-start gap-3 mb-4">
+            <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-1">
+              <span className="text-blue-600 text-sm font-bold">?</span>
+            </div>
+            <div>
+              <div className="text-gray-800 font-medium mb-2">确认操作</div>
+              <div className="text-gray-600 leading-relaxed">
+                上架后所选运价将可以被内外部人员查询，确认上架？
+              </div>
+            </div>
+          </div>
+          <div className="bg-blue-50 p-3 rounded-md">
+            <div className="text-blue-800 text-sm font-medium mb-1">将要上架的运价</div>
+            <div className="text-blue-700 text-sm">
+              共 {selectedRowKeys.length} 条运价将被设置为可查询状态
+            </div>
           </div>
         </div>
       </Modal>
