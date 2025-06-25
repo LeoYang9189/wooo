@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { Layout, Menu, Button, Avatar, Badge, Breadcrumb, Dropdown, Divider } from '@arco-design/web-react';
+import { Layout, Menu, Button, Avatar, Breadcrumb, Dropdown, Divider } from '@arco-design/web-react';
 import { 
   IconDashboard, 
   IconList, 
   IconApps, 
   IconUser, 
-  IconNotification, 
   IconMenuFold, 
   IconMenuUnfold, 
-  IconMessage, 
   IconDown, 
   IconPoweroff, 
   IconSettings as IconSettingsOutline, 
@@ -420,12 +418,6 @@ const ControlTowerClientLayout: React.FC<LayoutProps> = ({ children }) => {
             </Breadcrumb>
           </div>
           <div className="flex items-center">
-            <Badge count={5} dot>
-              <Button type="text" style={{ margin: '0 8px' }} icon={<IconNotification />} />
-            </Badge>
-            <Badge count={3}>
-              <Button type="text" style={{ margin: '0 8px' }} icon={<IconMessage />} />
-            </Badge>
             <Dropdown
               droplist={
                 <Menu>
