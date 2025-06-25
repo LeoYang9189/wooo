@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layout, Menu, Button, Avatar, Breadcrumb, Dropdown, Divider } from '@arco-design/web-react';
+import { Layout, Menu, Button, Avatar, Breadcrumb, Dropdown, Divider, AutoComplete } from '@arco-design/web-react';
 import { 
   IconDashboard, 
   IconList, 
@@ -38,6 +38,7 @@ interface LayoutProps {
 const ControlTowerClientLayout: React.FC<LayoutProps> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [aiChatVisible, setAiChatVisible] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -52,6 +53,109 @@ const ControlTowerClientLayout: React.FC<LayoutProps> = ({ children }) => {
   }, [location.hash, navigate]);
 
   const toggleCollapse = () => setCollapsed(!collapsed);
+
+  // 功能菜单数据
+  const menuItems = [
+    { 
+      title: '仪表盘', 
+      key: 'dashboard', 
+      path: '/controltower-client/dashboard',
+      category: '工作台',
+      icon: <IconDashboard />
+    },
+    { 
+      title: '控制塔面板', 
+      key: 'control-tower-panel', 
+      path: '/controltower-client/control-tower-panel',
+      category: '工作台',
+      icon: <IconApps />
+    },
+    { 
+      title: '控制塔面板-临时', 
+      key: 'control-tower-panel-temp', 
+      path: '/controltower-client/control-tower-panel-temp',
+      category: '工作台',
+      icon: <IconApps />
+    },
+    { 
+      title: '船期查询', 
+      key: 'schedule-query', 
+      path: '/controltower-client/schedule-query',
+      category: '统计中心',
+      icon: <IconList />
+    },
+    { 
+      title: '运价查询', 
+      key: 'saas/rate-query', 
+      path: '/controltower-client/saas/rate-query',
+      category: '超级运价',
+      icon: <IconFile />
+    },
+    { 
+      title: '询价管理', 
+      key: 'saas/inquiry-management', 
+      path: '/controltower-client/saas/inquiry-management',
+      category: '超级运价',
+      icon: <IconFile />
+    },
+    { 
+      title: '订单管理', 
+      key: 'order-management', 
+      path: '/controltower-client/order-management',
+      category: '订单中心',
+      icon: <IconList />
+    },
+    { 
+      title: '状态追踪', 
+      key: 'order-tracking', 
+      path: '/controltower-client/order-tracking',
+      category: '订单中心',
+      icon: <IconList />
+    },
+    { 
+      title: '个人信息', 
+      key: 'user-profile', 
+      path: '/controltower-client/user-profile',
+      category: '用户中心',
+      icon: <IconUser />
+    },
+    { 
+      title: '企业信息', 
+      key: 'company-profile', 
+      path: '/controltower-client/company-profile',
+      category: '用户中心',
+      icon: <IconUser />
+    }
+  ];
+
+  // 搜索过滤逻辑
+  const filterMenuItems = (inputValue: string) => {
+    if (!inputValue) return [];
+    
+    const filtered = menuItems.filter(item => 
+      item.title.toLowerCase().includes(inputValue.toLowerCase()) ||
+      item.category.toLowerCase().includes(inputValue.toLowerCase())
+    );
+    
+    // 直接返回扁平化的选项列表
+    return filtered.map(item => ({
+      value: item.path,
+      name: item.title,
+      label: (
+        <div className="flex items-center">
+          <span className="mr-2 text-blue-500">{item.icon}</span>
+          <span>{item.title}</span>
+          <span className="ml-auto text-xs text-gray-400">{item.category}</span>
+        </div>
+      )
+    }));
+  };
+
+  // 处理搜索选择
+  const handleSearchSelect = (value: string) => {
+    navigate(value);
+    setSearchValue('');
+  };
 
   // 菜单点击
   const handleMenuItemClick = (key: string) => {
@@ -418,6 +522,17 @@ const ControlTowerClientLayout: React.FC<LayoutProps> = ({ children }) => {
             </Breadcrumb>
           </div>
           <div className="flex items-center">
+            <AutoComplete
+              className="mr-4"
+              style={{ width: 300 }}
+              placeholder="请选择功能菜单"
+              data={filterMenuItems(searchValue)}
+              value={searchValue}
+              onSearch={setSearchValue}
+              onSelect={handleSearchSelect}
+              allowClear
+              filterOption={false}
+            />
             <Dropdown
               droplist={
                 <Menu>
