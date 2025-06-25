@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import ControlTowerPanel from './pages/ControlTowerPanel';
+import ControlTowerPanelTemp from './pages/ControlTowerPanelTemp';
 import ApplicationCenter from './pages/ApplicationCenter';
 // 运价中心相关组件暂时注释
 // import FreightRateQuery from './pages/FreightRateQuery';
@@ -88,6 +89,7 @@ const ControlTowerRoutes: React.FC = () => {
       <Route path="/ui-standards" element={<UIStandards />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/control-tower-panel" element={<ControlTowerPanel />} />
+      <Route path="/control-tower-panel-temp" element={<ControlTowerPanelTemp />} />
       <Route path="/application-center" element={<ApplicationCenter />} />
       {/* 运价中心相关路由已暂时注释
       <Route path="/freight-rate-query" element={<FreightRateQuery />} />

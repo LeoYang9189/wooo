@@ -254,6 +254,9 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
       case 'control-tower-panel':
         breadcrumbs.push({ title: '控制塔面板', path: undefined });
         break;
+      case 'control-tower-panel-temp':
+        breadcrumbs.push({ title: '控制塔面板-临时', path: undefined });
+        break;
       // 运价中心相关页面面包屑已暂时注释
       /*
       case 'freight-rate-query':
@@ -544,6 +547,10 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
           <MenuItem key="control-tower-panel">
             <IconApps />
             <span>控制塔面板</span>
+          </MenuItem>
+          <MenuItem key="control-tower-panel-temp">
+            <IconApps />
+            <span>控制塔面板-临时</span>
           </MenuItem>
           
           {/* 超级运价系统菜单 */}
