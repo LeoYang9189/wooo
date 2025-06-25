@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { IconArrowUp, IconArrowDown, IconEye, IconClose, IconSun, IconMoon, IconArrowRight } from '@arco-design/web-react/icon';
+import { IconArrowUp, IconArrowDown, IconEye, IconClose, IconArrowRight, IconSun, IconMoon } from '@arco-design/web-react/icon';
 import './ControlTowerPanelStylesTemp.css';
 import * as echarts from 'echarts';
 import { useNavigate } from 'react-router-dom';
@@ -99,7 +99,7 @@ const TaskModal: React.FC<{
                       </span>
                     </div>
                   </div>
-                  <div className="task-center">
+                  <div className="task-right">
                     <div className="task-deadline">
                       <span className="deadline-label">截止时间</span>
                       <span className="deadline-time">{formatDeadline(task.deadline)}</span>
@@ -110,12 +110,10 @@ const TaskModal: React.FC<{
                         <span className="overdue-time">{formatOverdueTime(task.overdueHours)}</span>
                       </div>
                     )}
-                  </div>
-                  <div className="task-right">
                     <button 
                       className="view-button"
-                      onClick={() => navigate('/controltower/saas/quote-form/fcl')}
-                      title="编辑报价"
+                      onClick={() => navigate(`/controltower/order-detail/ORD000001`)}
+                      title="查看订单详情"
                     >
                       <IconArrowRight />
                     </button>
@@ -141,7 +139,6 @@ const TaskModal: React.FC<{
 };
 
 const ControlTowerPanel: React.FC = () => {
-  const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [realtimeTasks, setRealtimeTasks] = useState<Array<{id: string, task: string, time: string}>>([]);
   
@@ -189,11 +186,11 @@ const ControlTowerPanel: React.FC = () => {
 
   // 实时任务生成
   useEffect(() => {
-    const tasks = ['待报价']; // 只保留待报价任务
+    const tasks = ['待报价', '待确认提单', '待确认账单', '待提交VGM'];
     
     const generateTask = () => {
       const orderNumber = `WO${Date.now().toString().slice(-8)}${Math.floor(Math.random() * 100).toString().padStart(2, '0')}`;
-      const task = tasks[0]; // 固定为待报价
+      const task = tasks[Math.floor(Math.random() * tasks.length)];
       const time = new Date().toLocaleTimeString('zh-CN');
       
       setRealtimeTasks(prev => {
@@ -278,17 +275,21 @@ const ControlTowerPanel: React.FC = () => {
         legend: {
           data: ['询价单数量', '报价单数量'],
           textStyle: {
-            color: isDarkTheme ? '#99ccff' : '#475569'
+            color: isDarkTheme ? '#99ccff' : '#475569',
+            fontSize: 12
           },
-          top: 'top',
-          right: '10%'
+          top: 5,
+          right: 20,
+          itemWidth: 12,
+          itemHeight: 8,
+          itemGap: 8
         },
         grid: {
-          left: '8%',
-          right: '8%',
-          bottom: '15%',
-          top: '20%',
-          containLabel: true
+          left: 50,
+          right: 20,
+          bottom: 40,
+          top: 40,
+          containLabel: false
         },
         xAxis: {
           type: 'category',
@@ -300,23 +301,27 @@ const ControlTowerPanel: React.FC = () => {
           },
           axisLabel: {
             color: isDarkTheme ? '#99ccff' : '#475569',
-            fontSize: 12,
-            rotate: 45
+            fontSize: 10,
+            rotate: 30,
+            interval: 0,
+            margin: 8
           },
           axisTick: {
             alignWithLabel: true,
             lineStyle: {
               color: isDarkTheme ? '#00f7ff' : '#3b82f6'
             }
-          }
+          },
+          boundaryGap: false
         },
         yAxis: {
           type: 'value',
           name: '数量',
           nameTextStyle: {
             color: isDarkTheme ? '#00f7ff' : '#3b82f6',
-            fontSize: 14
+            fontSize: 12
           },
+          nameGap: 15,
           axisLine: {
             lineStyle: {
               color: isDarkTheme ? '#00f7ff' : '#3b82f6'
@@ -324,7 +329,7 @@ const ControlTowerPanel: React.FC = () => {
           },
           axisLabel: {
             color: isDarkTheme ? '#99ccff' : '#475569',
-            fontSize: 12
+            fontSize: 10
           },
           splitLine: {
             lineStyle: {
@@ -655,7 +660,7 @@ const ControlTowerPanel: React.FC = () => {
 
   // 生成虚拟任务数据
   const generateTaskData = (type: 'pending' | 'overdue', count: number): TaskItem[] => {
-    const taskTypes = ['待报价']; // 只保留待报价任务
+    const taskTypes = ['待报价', '待确认提单', '待确认账单', '待提交VGM', '待上传SI', '待补充文件', '待客户确认', '待海关放行'];
     const customers = ['华为技术有限公司', '阿里巴巴集团', '腾讯科技', '比亚迪股份', '海康威视', '小米集团', '京东集团', '宁德时代'];
     const priorities: ('high' | 'medium' | 'low')[] = ['high', 'medium', 'low'];
     
@@ -663,7 +668,7 @@ const ControlTowerPanel: React.FC = () => {
     
     for (let i = 0; i < count; i++) {
       const now = new Date();
-      const taskType = taskTypes[0]; // 固定为待报价
+      const taskType = taskTypes[Math.floor(Math.random() * taskTypes.length)];
       const customer = customers[Math.floor(Math.random() * customers.length)];
       const priority = priorities[Math.floor(Math.random() * priorities.length)];
       
@@ -728,10 +733,22 @@ const ControlTowerPanel: React.FC = () => {
     setTaskModalData([]);
   };
 
-  // 跳转到报价编辑页面
-  const navigateToQuoteEdit = () => {
-    // 跳转到询报价--报价管理--报价单编辑页面
-    navigate('/controltower/saas/quote-form/fcl');
+  // 在实时任务列表中添加"查看"按钮
+  const openRealtimeTaskModal = (taskId: string) => {
+    const task = realtimeTasks.find(t => t.id === taskId);
+    if (task) {
+      setTaskModalTitle(`任务详情 - ${task.id}`);
+      setTaskModalData([{
+        id: task.id,
+        orderNumber: task.id,
+        taskType: task.task,
+        customerName: '未知客户', // 假设没有客户信息
+        deadline: new Date(), // 假设没有截止时间
+        status: 'pending',
+        priority: 'medium' // 假设中等优先级
+      }]);
+      setIsTaskModalOpen(true);
+    }
   };
 
   // 主题切换函数
@@ -814,7 +831,9 @@ const ControlTowerPanel: React.FC = () => {
                 <span className="title-icon">◆</span>
                 询报价趋势
               </div>
-              <div id="inquiry-deal-line-chart" style={{ width: '100%', height: '400px' }}></div>
+              <div className="chart-content-wrapper">
+                <div id="inquiry-deal-line-chart"></div>
+              </div>
             </div>
             
             {/* 实时任务模块 */}
@@ -831,10 +850,10 @@ const ControlTowerPanel: React.FC = () => {
                       <span className="task-time">{task.time}</span>
                       <button 
                         className="view-button"
-                        onClick={() => navigateToQuoteEdit()}
-                        title="操作"
+                        onClick={() => openRealtimeTaskModal(task.id)}
+                        title="查看任务详情"
                       >
-                        <IconArrowRight />
+                        <IconEye />
                       </button>
                     </div>
                     <div className="task-content">

@@ -463,12 +463,12 @@
 }
 
 .task-modal {
-  width: 85%;
-  max-width: 1000px;
-  max-height: 75vh;
-  border-radius: 12px;
+  width: 95%;
+  max-width: 1200px;
+  max-height: 85vh;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
   animation: modalSlideIn 0.3s ease;
   border: 1px solid;
 }
@@ -500,7 +500,7 @@
 }
 
 .task-modal-header {
-  padding: 15px 20px;
+  padding: 20px 25px;
   border-bottom: 1px solid;
   display: flex;
   justify-content: space-between;
@@ -520,7 +520,7 @@
 
 .task-modal-header h3 {
   margin: 0;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
   transition: all 0.3s ease;
 }
@@ -574,7 +574,7 @@
 
 .task-modal-content {
   padding: 0;
-  max-height: 50vh;
+  max-height: 60vh;
   overflow-y: auto;
 }
 
@@ -626,7 +626,7 @@
 }
 
 .task-modal-footer {
-  padding: 12px 20px;
+  padding: 15px 25px;
   border-top: 1px solid;
   display: flex;
   justify-content: space-between;
@@ -650,7 +650,7 @@
 
 .task-modal-item {
   border-bottom: 1px solid;
-  padding: 45px 15px 15px 45px;
+  padding: 60px 16px 16px 60px;
   position: relative;
   transition: all 0.3s ease;
 }
@@ -682,16 +682,16 @@
 /* 优先级绸带样式 */
 .task-priority-ribbon {
   position: absolute;
-  top: 15px;
-  left: 15px;
-  padding: 3px 10px;
-  border-radius: 0 6px 6px 0;
-  font-size: 11px;
+  top: 20px;
+  left: 20px;
+  padding: 4px 12px;
+  border-radius: 0 8px 8px 0;
+  font-size: 12px;
   font-weight: bold;
   color: white;
-  transform: translateX(-8px);
+  transform: translateX(-10px);
   z-index: 10;
-  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.15);
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .task-priority-ribbon.high {
@@ -716,40 +716,32 @@
   left: 0;
   width: 0;
   height: 0;
-  border-left: 8px solid transparent;
-  border-top: 5px solid rgba(0, 0, 0, 0.2);
+  border-left: 10px solid transparent;
+  border-top: 6px solid rgba(0, 0, 0, 0.2);
 }
 
-/* 任务主要信息布局 - 三列布局 */
+/* 任务主要信息布局 */
 .task-main-info {
-  display: grid;
-  grid-template-columns: 1fr 1fr auto;
-  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   width: 100%;
   gap: 16px;
 }
 
 .task-left {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  min-width: 180px;
-}
-
-.task-center {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  align-items: center;
-  justify-content: center;
-  min-width: 130px;
+  gap: 12px;
 }
 
 .task-right {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 70px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  min-width: 180px;
 }
 
 /* 任务订单信息 */
@@ -760,7 +752,7 @@
 }
 
 .task-order-number {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: bold;
   font-family: 'Courier New', monospace;
 }
@@ -776,7 +768,7 @@
 }
 
 .task-customer {
-  font-size: 13px;
+  font-size: 14px;
   opacity: 0.8;
 }
 
@@ -795,9 +787,9 @@
 
 .task-type-tag {
   display: inline-block;
-  padding: 5px 10px;
-  border-radius: 14px;
-  font-size: 11px;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 12px;
   font-weight: 600;
   border: 1px solid;
   transition: all 0.3s ease;
@@ -814,7 +806,7 @@
 .task-overdue {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-end;
   gap: 2px;
 }
 
@@ -1110,7 +1102,7 @@
   align-items: start; /* 确保顶部对齐 */
 }
 
-/* 确保询报价趋势图容器充分利用2/3宽度 */
+/* 询报价趋势容器样式 - 完全重写 */
 .charts-row.two-column-custom .inquiry-deal-chart {
   width: 100%;
   height: 480px;
@@ -1119,9 +1111,41 @@
   padding: 20px;
   margin: 0;
   box-sizing: border-box;
+  position: relative;
+  overflow: hidden; /* 防止内容溢出 */
 }
 
-/* 确保实时任务容器充分利用1/3宽度 */
+/* 图表标题容器 */
+.charts-row.two-column-custom .inquiry-deal-chart .chart-title {
+  height: 32px;
+  margin-bottom: 15px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* 图表容器包装 */
+.charts-row.two-column-custom .chart-content-wrapper {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  height: calc(100% - 47px); /* 总高度减去标题高度和margin */
+  overflow: hidden;
+}
+
+/* ECharts图表容器 */
+.charts-row.two-column-custom #inquiry-deal-line-chart {
+  width: 100% !important;
+  height: 100% !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* 实时任务容器样式保持不变 */
 .charts-row.two-column-custom .realtime-tasks {
   width: 100%;
   height: 480px;
@@ -1132,18 +1156,11 @@
   box-sizing: border-box;
 }
 
-/* 确保ECharts图表响应容器宽度 */
-.charts-row.two-column-custom #inquiry-deal-line-chart {
-  width: 100% !important;
-  height: 380px !important;
-  flex: 1;
-}
-
 /* 确保实时任务列表充分利用容器高度 */
 .charts-row.two-column-custom .tasks-list {
   flex: 1;
   overflow-y: auto;
-  max-height: 380px;
+  max-height: 380px; /* 减去padding后的高度 */
 }
 
 /* 统一图表标题高度 */
@@ -1151,10 +1168,10 @@
   height: 40px;
   display: flex;
   align-items: center;
-  margin: 0 0 20px 0;
-  padding: 0;
-  flex-shrink: 0;
-  line-height: 1;
+  margin: 0 0 20px 0; /* 统一边距，顶部为0 */
+  padding: 0; /* 重置内边距 */
+  flex-shrink: 0; /* 防止标题被压缩 */
+  line-height: 1; /* 统一行高 */
 }
 
 .charts-row.three-column {
