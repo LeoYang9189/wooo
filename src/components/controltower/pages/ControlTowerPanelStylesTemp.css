@@ -1099,6 +1099,7 @@
   grid-template-columns: 2fr 1fr;
   gap: 20px;
   width: 100%;
+  align-items: start; /* 确保顶部对齐 */
 }
 
 /* 确保询报价趋势图容器充分利用2/3宽度 */
@@ -1108,6 +1109,9 @@
   height: 480px; /* 统一高度 */
   display: flex;
   flex-direction: column;
+  padding: 15px 10px 20px 15px; /* 调整内边距：上15px，右10px，下20px，左15px */
+  margin: 0; /* 重置外边距 */
+  box-sizing: border-box; /* 包含padding在高度内 */
 }
 
 /* 确保实时任务容器充分利用1/3宽度 */
@@ -1117,12 +1121,15 @@
   height: 480px; /* 统一高度 */
   display: flex;
   flex-direction: column;
+  padding: 20px; /* 统一内边距 */
+  margin: 0; /* 重置外边距 */
+  box-sizing: border-box; /* 包含padding在高度内 */
 }
 
 /* 确保ECharts图表响应容器宽度 */
 .charts-row.two-column-custom #inquiry-deal-line-chart {
   width: 100% !important;
-  height: 420px !important; /* 调整高度以适应容器 */
+  height: 385px !important; /* 调整高度以适应新的padding设置 */
   flex: 1; /* 自动填充剩余空间 */
 }
 
@@ -1130,7 +1137,7 @@
 .charts-row.two-column-custom .tasks-list {
   flex: 1;
   overflow-y: auto;
-  max-height: 420px;
+  max-height: 380px; /* 减去padding后的高度 */
 }
 
 /* 统一图表标题高度 */
@@ -1138,8 +1145,10 @@
   height: 40px;
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  margin: 0 0 20px 0; /* 统一边距，顶部为0 */
+  padding: 0; /* 重置内边距 */
   flex-shrink: 0; /* 防止标题被压缩 */
+  line-height: 1; /* 统一行高 */
 }
 
 .charts-row.three-column {
