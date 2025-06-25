@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { IconArrowUp, IconArrowDown, IconEye, IconClose, IconArrowRight, IconSun, IconMoon } from '@arco-design/web-react/icon';
-import LeafletMap from './LeafletMap';
 import './ControlTowerPanelStylesTemp.css';
 import * as echarts from 'echarts';
 import { useNavigate } from 'react-router-dom';
@@ -141,8 +140,7 @@ const TaskModal: React.FC<{
 
 const ControlTowerPanel: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [realtimeOrders, setRealtimeOrders] = useState<Array<{id: string, source: string, time: string}>>([]);
-  const [realtimeTasks, setRealtimeTasks] = useState<Array<{id: string, task: string, time: string}>>([]);
+  // 实时订单和任务状态已删除
   
   // 主题状态
   const [isDarkTheme, setIsDarkTheme] = useState(true);
@@ -184,202 +182,11 @@ const ControlTowerPanel: React.FC = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // 实时订单生成
-  useEffect(() => {
-    const sources = ['创建询价', 'API同步', '创建订舱', 'AI识别'];
-    
-    const generateOrder = () => {
-      const orderNumber = `WO${Date.now().toString().slice(-8)}${Math.floor(Math.random() * 100).toString().padStart(2, '0')}`;
-      const source = sources[Math.floor(Math.random() * sources.length)];
-      const time = new Date().toLocaleTimeString('zh-CN');
-      
-      setRealtimeOrders(prev => {
-        const newOrders = [{
-          id: orderNumber,
-          source: source,
-          time: time
-        }, ...prev];
-        // 保持最多15条记录
-        return newOrders.slice(0, 15);
-      });
-    };
+  // 实时订单生成已删除
 
-    // 初始生成几条订单
-    for (let i = 0; i < 3; i++) {
-      setTimeout(() => generateOrder(), i * 500);
-    }
+  // 实时任务生成已删除
 
-    // 每4-7秒随机生成一条新订单
-    const interval = setInterval(() => {
-      generateOrder();
-    }, Math.random() * 3000 + 4000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  // 实时任务生成
-  useEffect(() => {
-    const tasks = ['待报价', '待确认提单', '待确认账单', '待提交VGM'];
-    
-    const generateTask = () => {
-      const orderNumber = `WO${Date.now().toString().slice(-8)}${Math.floor(Math.random() * 100).toString().padStart(2, '0')}`;
-      const task = tasks[Math.floor(Math.random() * tasks.length)];
-      const time = new Date().toLocaleTimeString('zh-CN');
-      
-      setRealtimeTasks(prev => {
-        const newTasks = [{
-          id: orderNumber,
-          task: task,
-          time: time
-        }, ...prev];
-        // 保持最多15条记录
-        return newTasks.slice(0, 15);
-      });
-    };
-
-    // 初始生成几条任务
-    for (let i = 0; i < 3; i++) {
-      setTimeout(() => generateTask(), i * 800);
-    }
-
-    // 每5-9秒随机生成一条新任务
-    const interval = setInterval(() => {
-      generateTask();
-    }, Math.random() * 4000 + 5000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  // 通关异常订单直方图初始化
-  useEffect(() => {
-    const chartElement = document.getElementById('customs-anomaly-bar-chart');
-    if (!chartElement) return;
-
-    const chart = echarts.init(chartElement);
-    
-    // 生成初始数据
-    const ports = ['上海港', '宁波舟山港', '深圳港', '青岛港', '广州港', '天津港', '厦门港', '大连港'];
-    let anomalyData = ports.map(() => Math.floor(Math.random() * 30) + 5);
-
-    const updateChart = () => {
-      const option = {
-        backgroundColor: 'transparent',
-        title: {
-          show: false
-        },
-        tooltip: {
-          trigger: 'axis',
-          backgroundColor: isDarkTheme ? 'rgba(0, 20, 40, 0.9)' : 'rgba(255, 255, 255, 0.95)',
-          borderColor: isDarkTheme ? '#ff6b6b' : '#ef4444',
-          borderWidth: 1,
-          textStyle: {
-            color: isDarkTheme ? '#ffffff' : '#1e293b'
-          },
-          formatter: (params: unknown) => {
-            const dataArray = Array.isArray(params) ? params : [params];
-            const data = dataArray[0] as { name: string; value: number };
-            return `${data.name}<br/>异常订单: ${data.value} 单`;
-          }
-        },
-        grid: {
-          left: '10%',
-          right: '10%',
-          bottom: '15%',
-          top: '10%',
-          containLabel: true
-        },
-        xAxis: {
-          type: 'category',
-          data: ports,
-          axisLine: {
-            lineStyle: {
-              color: isDarkTheme ? '#ff6b6b' : '#ef4444'
-            }
-          },
-          axisLabel: {
-            color: isDarkTheme ? '#99ccff' : '#475569',
-            fontSize: 12,
-            rotate: 30
-          },
-          axisTick: {
-            alignWithLabel: true,
-            lineStyle: {
-              color: isDarkTheme ? '#ff6b6b' : '#ef4444'
-            }
-          }
-        },
-        yAxis: {
-          type: 'value',
-          name: '异常订单数',
-          nameTextStyle: {
-            color: isDarkTheme ? '#ff6b6b' : '#ef4444',
-            fontSize: 14
-          },
-          axisLine: {
-            lineStyle: {
-              color: isDarkTheme ? '#ff6b6b' : '#ef4444'
-            }
-          },
-          axisLabel: {
-            color: isDarkTheme ? '#99ccff' : '#475569',
-            fontSize: 12
-          },
-          splitLine: {
-            lineStyle: {
-              color: isDarkTheme ? 'rgba(255, 107, 107, 0.2)' : 'rgba(239, 68, 68, 0.2)',
-              type: 'dashed'
-            }
-          }
-        },
-        series: [{
-          type: 'bar',
-          data: anomalyData,
-          itemStyle: {
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              { offset: 0, color: isDarkTheme ? '#ff6b6b' : '#ef4444' },
-              { offset: 1, color: isDarkTheme ? '#ff9999' : '#fca5a5' }
-            ]),
-            borderRadius: [4, 4, 0, 0],
-            shadowColor: isDarkTheme ? 'rgba(255, 107, 107, 0.5)' : 'rgba(239, 68, 68, 0.3)',
-            shadowBlur: 10,
-            shadowOffsetY: 3
-          },
-          emphasis: {
-            itemStyle: {
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: isDarkTheme ? '#ff5555' : '#dc2626' },
-                { offset: 1, color: isDarkTheme ? '#ff8888' : '#f87171' }
-              ])
-            }
-          },
-          animationDelay: (idx: number) => idx * 100,
-          animationEasing: 'elasticOut'
-        }]
-      };
-
-      chart.setOption(option);
-    };
-
-    updateChart();
-
-    // 定时更新数据
-    const updateInterval = setInterval(() => {
-      anomalyData = anomalyData.map(() => Math.floor(Math.random() * 30) + 5);
-      updateChart();
-    }, 10000); // 每10秒更新一次
-
-    // 响应式处理
-    const handleResize = () => {
-      chart.resize();
-    };
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      clearInterval(updateInterval);
-      window.removeEventListener('resize', handleResize);
-      chart.dispose();
-    };
-  }, [isDarkTheme]);
+  // 通关异常订单直方图初始化已删除
 
   // 询价成交趋势折线图初始化
   useEffect(() => {
@@ -807,11 +614,9 @@ const ControlTowerPanel: React.FC = () => {
 
   // 数据总览配置
   const overviewData = [
-    { title: '总订单数', value: 4823, change: 156, trend: 'up', unit: '单' },
-    { title: '在途订单', value: 1247, change: 23, trend: 'up', unit: '单' },
+    { title: '总任务数', value: 104, change: -20, trend: 'down', unit: '个' },
     { title: '待处理任务', value: 89, change: -12, trend: 'down', unit: '个' },
     { title: '逾期任务', value: 15, change: -8, trend: 'down', unit: '个' },
-    { title: '异常预警订单', value: 6, change: 2, trend: 'up', unit: '单' },
   ];
 
   // 生成虚拟任务数据
@@ -889,23 +694,7 @@ const ControlTowerPanel: React.FC = () => {
     setTaskModalData([]);
   };
 
-  // 在实时任务列表中添加"查看"按钮
-  const openRealtimeTaskModal = (taskId: string) => {
-    const task = realtimeTasks.find(t => t.id === taskId);
-    if (task) {
-      setTaskModalTitle(`任务详情 - ${task.id}`);
-      setTaskModalData([{
-        id: task.id,
-        orderNumber: task.id,
-        taskType: task.task,
-        customerName: '未知客户', // 假设没有客户信息
-        deadline: new Date(), // 假设没有截止时间
-        status: 'pending',
-        priority: 'medium' // 假设中等优先级
-      }]);
-      setIsTaskModalOpen(true);
-    }
-  };
+  // 实时任务模态框函数已删除
 
   // 主题切换函数
   const toggleTheme = () => {
@@ -921,7 +710,7 @@ const ControlTowerPanel: React.FC = () => {
         <div className="header-left">
           <div className="panel-title">
             <span className="title-icon">◆</span>
-            <span>Wo AI 控制塔面板</span>
+            <span>XXX公司驾驶舱</span>
           </div>
         </div>
         <div className="header-center">
@@ -941,8 +730,7 @@ const ControlTowerPanel: React.FC = () => {
             {isDarkTheme ? <IconSun /> : <IconMoon />}
           </button>
           <div className="system-status">
-            <span className="status-indicator online"></span>
-            订单流转正常
+
           </div>
         </div>
       </div>
@@ -981,88 +769,20 @@ const ControlTowerPanel: React.FC = () => {
 
         {/* 图表区域 */}
         <div className="charts-section">
-          {/* 三列布局：实时订单列表 + 全球订单流向图 + 实时任务列表 */}
-          <div className="charts-row three-column">
-            {/* 左侧实时订单列表 */}
-            <div className="chart-card realtime-orders">
-              <div className="chart-title">
-                <span className="title-icon">◆</span>
-                实时订单
-              </div>
-              <div className="orders-list">
-                {realtimeOrders.map((order, index) => (
-                  <div key={order.id} className={`order-item ${index === 0 ? 'new-order' : ''}`}>
-                    <div className="order-header">
-                      <span className="order-number">{order.id}</span>
-                      <span className="order-time">{order.time}</span>
-                    </div>
-                    <div className="order-source">
-                      <span className={`source-tag source-${order.source}`}>{order.source}</span>
-                    </div>
-                  </div>
-                ))}
-                {realtimeOrders.length === 0 && (
-                  <div className="no-orders">暂无实时订单</div>
-                )}
-              </div>
-            </div>
-            
-            {/* 中间全球订单流向图 */}
-            <div className="chart-card map-container">
-              <LeafletMap height="600px" isDarkTheme={isDarkTheme} />
-            </div>
+          {/* 已删除：实时订单列表、全球订单流向图、实时任务列表、通关异常订单统计 */}
 
-            {/* 右侧实时任务列表 */}
-            <div className="chart-card realtime-tasks">
-              <div className="chart-title">
-                <span className="title-icon">◆</span>
-                实时任务
-              </div>
-              <div className="tasks-list">
-                {realtimeTasks.map((task, index) => (
-                  <div key={`${task.id}-${task.time}`} className={`task-item ${index === 0 ? 'new-task' : ''}`}>
-                    <div className="task-header">
-                      <span className="task-order-number">{task.id}</span>
-                      <span className="task-time">{task.time}</span>
-                      <button 
-                        className="view-button"
-                        onClick={() => openRealtimeTaskModal(task.id)}
-                        title="查看任务详情"
-                      >
-                        <IconEye />
-                      </button>
-                    </div>
-                    <div className="task-content">
-                      <span className={`task-tag task-${task.task}`}>{task.task}</span>
-                    </div>
-                  </div>
-                ))}
-                {realtimeTasks.length === 0 && (
-                  <div className="no-tasks">暂无实时任务</div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* 通关异常订单直方图 */}
-          <div className="charts-row two-column">
-            <div className="chart-card customs-anomaly-chart">
-              <div className="chart-title">
-                <span className="title-icon">◆</span>
-                通关异常订单统计
-              </div>
-              <div id="customs-anomaly-bar-chart" style={{ width: '100%', height: '300px' }}></div>
-            </div>
-
-            {/* 询价成交趋势折线图 */}
+          {/* 询价成交趋势图 */}
+          <div className="charts-row single-chart">
             <div className="chart-card inquiry-deal-chart">
               <div className="chart-title">
                 <span className="title-icon">◆</span>
                 询价成交趋势
               </div>
-              <div id="inquiry-deal-line-chart" style={{ width: '100%', height: '300px' }}></div>
+              <div id="inquiry-deal-line-chart" style={{ width: '100%', height: '400px' }}></div>
             </div>
           </div>
+
+
 
           {/* 三个排行榜并排布局 */}
           <div className="charts-row three-column-equal">
