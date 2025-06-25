@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import octopusAvatar from '../../assets/octopus-avatar.svg';
 
 interface Props {
   isOpen: boolean;
@@ -135,7 +134,7 @@ const AIWobaoChatbox: React.FC<Props> = ({ isOpen, onClose, variant = 'default' 
         borderBottom: '1px solid #f0f0f0',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <img src={octopusAvatar} alt={config.title} style={{ width: '32px', height: '32px' }} />
+          <img src="/assets/g6qmm-vsolk.gif" alt={config.title} style={{ width: '32px', height: '32px' }} />
           <div style={{ fontSize: '16px', fontWeight: 'bold' }}>{config.title}</div>
         </div>
         <div style={{ marginLeft: 'auto', display: 'flex', gap: '12px' }}>
@@ -305,7 +304,7 @@ const AIWobaoChatbox: React.FC<Props> = ({ isOpen, onClose, variant = 'default' 
             alignItems: 'center',
             justifyContent: 'center',
           }}>
-            <img src={octopusAvatar} alt={config.title} style={{ width: '32px', height: '32px' }} />
+            <img src="/assets/g6qmm-vsolk.gif" alt={config.title} style={{ width: '32px', height: '32px' }} />
           </div>
           <div style={{
             backgroundColor: config.backgroundColor,

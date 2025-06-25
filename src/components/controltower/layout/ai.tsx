@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Button, Input } from '@arco-design/web-react';
 import { IconList, IconSync, IconApps, IconFile, IconAttachment, IconSettings, IconUser, IconStorage } from '@arco-design/web-react/icon';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRobot } from '@fortawesome/free-solid-svg-icons';
 
 interface AIAssistantProps {
   visible: boolean;
@@ -37,8 +35,8 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ visible, onClose }) => {
           <div className="flex items-center">
             <Button type="text" icon={<IconList />} className="mr-2" />
             <div className="flex items-center">
-              <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-gradient-to-r from-orange-500 to-red-600 mr-2 shadow-sm">
-                <FontAwesomeIcon icon={faRobot} className="text-white" />
+              <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center mr-2 shadow-sm">
+                <img src="/assets/g6qmm-vsolk.gif" alt="运营智能助手" className="w-full h-full object-cover" />
               </div>
               <span className="text-base font-medium">运营智能助手</span>
             </div>
@@ -78,8 +76,8 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ visible, onClose }) => {
       <div className="ai-chat-container flex flex-col h-full" style={{ height: '650px' }}>
         <div className="ai-chat-messages overflow-y-auto flex-grow p-6 pb-0">
           <div className="flex mb-5">
-            <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-gradient-to-r from-orange-500 to-red-600 mr-2 flex-shrink-0 shadow-sm">
-              <FontAwesomeIcon icon={faRobot} className="text-white" />
+            <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center mr-2 flex-shrink-0 shadow-sm">
+              <img src="/assets/g6qmm-vsolk.gif" alt="运营智能助手" className="w-full h-full object-cover" />
             </div>
             <div className="max-w-[90%]">
               <div className="mb-1">

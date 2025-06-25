@@ -17,7 +17,7 @@ import {
   IconBook
 } from '@arco-design/web-react/icon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRobot, faUsers, faShip } from '@fortawesome/free-solid-svg-icons';
+import { faUsers, faShip } from '@fortawesome/free-solid-svg-icons';
 // faShip 导入已暂时注释，因为运价中心菜单被注释了
 // import { faShip } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -1093,25 +1093,7 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
             </MenuItem>
           </SubMenu>
         </Menu>
-        <div className="absolute bottom-20 w-full px-4 flex justify-center">
-          <Button 
-            type="outline" 
-            shape="circle"
-            className="flex items-center justify-center ai-assistant-btn shadow-md hover:shadow-lg"
-            icon={<FontAwesomeIcon icon={faRobot} className="text-blue-500 text-xl" />}
-            onClick={() => setAiChatVisible(true)}
-            style={{ 
-              width: '54px', 
-              height: '54px', 
-              background: 'linear-gradient(135deg, #e0f2ff 0%, #d6e8ff 100%)',
-              border: '2px solid #7eb9ff',
-              zIndex: 2
-            }}
-          />
-          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-medium animate-bounce shadow-sm">
-            智能助手
-          </div>
-        </div>
+
         <div className="absolute bottom-5 w-full px-4">
           <Button 
             type="primary" 
@@ -1147,6 +1129,27 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
             </Breadcrumb>
           </div>
           <div className="flex items-center">
+            <div 
+              className="cursor-pointer hover:opacity-80 transition-opacity mr-4"
+              onClick={() => setAiChatVisible(true)}
+              style={{ 
+                width: '72px', 
+                height: '72px',
+                overflow: 'hidden',
+                borderRadius: '50%'
+              }}
+            >
+              <img 
+                src="/assets/g6qmm-vsolk.gif" 
+                alt="智能助手" 
+                style={{ 
+                  width: '100%', 
+                  height: '100%', 
+                  objectFit: 'cover',
+                  borderRadius: '50%'
+                }}
+              />
+            </div>
             <AutoComplete
               className="mr-4"
               style={{ width: 300 }}
