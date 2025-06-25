@@ -185,6 +185,7 @@
   background: var(--light-bg-secondary);
   border-color: var(--light-border-primary);
   text-shadow: none;
+  font-family: inherit; /* 使用默认字体 */
 }
 
 .system-status {
@@ -525,7 +526,7 @@
 
 .light-theme .task-modal-header h3 {
   color: #3b82f6;
-  text-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+  text-shadow: none;
 }
 
 .close-button {
@@ -600,8 +601,8 @@
 }
 
 .light-theme .task-modal-content::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #3b82f6, #1d4ed8);
-  box-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
+  background: #d1d5db; /* 浅灰色 */
+  box-shadow: none;
 }
 
 .task-modal-content::-webkit-scrollbar-thumb:hover {
@@ -614,8 +615,8 @@
 }
 
 .light-theme .task-modal-content::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #2563eb, #1e40af);
-  box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+  background: #9ca3af; /* 深一点的灰色 */
+  box-shadow: none;
 }
 
 .task-modal-footer {
@@ -757,7 +758,7 @@
 
 .light-theme .task-order-number {
   color: #3b82f6;
-  text-shadow: 0 0 5px rgba(59, 130, 246, 0.2);
+  text-shadow: none;
 }
 
 .task-customer {
@@ -994,7 +995,7 @@
 
 .light-theme .ticker-code {
   color: #10b981;
-  text-shadow: 0 0 5px rgba(16, 185, 129, 0.3);
+  text-shadow: none;
 }
 
 .ticker-name {
@@ -1025,7 +1026,7 @@
 
 .light-theme .ticker-value {
   color: #3b82f6;
-  text-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
+  text-shadow: none;
 }
 
 .ticker-change {
@@ -1790,7 +1791,7 @@
 
 .light-theme .hot-inquiry-ranking .ranking-item .rank {
   color: #3b82f6;
-  text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+  text-shadow: none;
 }
 
 .hot-inquiry-ranking .ranking-item.top-1 .rank {
@@ -1800,7 +1801,7 @@
 
 .light-theme .hot-inquiry-ranking .ranking-item.top-1 .rank {
   color: #f59e0b;
-  text-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+  text-shadow: none;
 }
 
 .hot-inquiry-ranking .ranking-item.top-2 .rank {
@@ -1810,7 +1811,7 @@
 
 .light-theme .hot-inquiry-ranking .ranking-item.top-2 .rank {
   color: #6b7280;
-  text-shadow: 0 0 10px rgba(107, 114, 128, 0.5);
+  text-shadow: none;
 }
 
 .hot-inquiry-ranking .ranking-item.top-3 .rank {
@@ -1820,7 +1821,7 @@
 
 .light-theme .hot-inquiry-ranking .ranking-item.top-3 .rank {
   color: #d97706;
-  text-shadow: 0 0 10px rgba(217, 119, 6, 0.5);
+  text-shadow: none;
 }
 
 .hot-inquiry-ranking .ranking-item .route-info {
@@ -1954,7 +1955,7 @@
 
 .light-theme .hot-inquiry-ranking .ranking-item .crown {
   color: #f59e0b;
-  text-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+  text-shadow: none;
 }
 
 .hot-inquiry-ranking .ranking-item.top-1 .bar-fill {
@@ -2340,7 +2341,7 @@
 .light-theme .sales-quote-efficiency-ranking .ranking-item.top-1 .rank,
 .light-theme .customer-orders-ranking .ranking-item.top-1 .rank {
   color: #f59e0b;
-  text-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+  text-shadow: none;
 }
 
 .sales-quote-efficiency-ranking .ranking-item.top-2 .rank,
@@ -2352,7 +2353,7 @@
 .light-theme .sales-quote-efficiency-ranking .ranking-item.top-2 .rank,
 .light-theme .customer-orders-ranking .ranking-item.top-2 .rank {
   color: #6b7280;
-  text-shadow: 0 0 10px rgba(107, 114, 128, 0.5);
+  text-shadow: none;
 }
 
 .sales-quote-efficiency-ranking .ranking-item.top-3 .rank,
@@ -2364,7 +2365,7 @@
 .light-theme .sales-quote-efficiency-ranking .ranking-item.top-3 .rank,
 .light-theme .customer-orders-ranking .ranking-item.top-3 .rank {
   color: #d97706;
-  text-shadow: 0 0 10px rgba(217, 119, 6, 0.5);
+  text-shadow: none;
 }
 
 .sales-quote-efficiency-ranking .ranking-item .crown,
@@ -2555,7 +2556,7 @@
 .light-theme .sales-quote-efficiency-ranking .ranking-item .crown,
 .light-theme .customer-orders-ranking .ranking-item .crown {
   color: #f59e0b;
-  text-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+  text-shadow: none;
 }
 
 @keyframes shine {
@@ -2586,7 +2587,7 @@
 /* 全球订单流向图 - 浅色主题样式 */
 .light-theme .map-container .map-title {
   color: #1e293b !important;
-  text-shadow: 0 0 5px rgba(30, 41, 59, 0.3) !important;
+  text-shadow: none !important;
 }
 
 .light-theme .map-container .leaflet-container {
@@ -2613,4 +2614,11 @@
 
 .light-theme .map-container .leaflet-tooltip-top:before {
   border-top-color: #3b82f6 !important;
+}
+
+/* 浅色模式下移除所有特殊字体，使用默认字体 */
+.light-theme .ticker-value,
+.light-theme .deadline-time,
+.light-theme .overdue-time {
+  font-family: inherit !important;
 } 
