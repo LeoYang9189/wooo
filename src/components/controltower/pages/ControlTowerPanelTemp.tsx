@@ -112,8 +112,8 @@ const TaskModal: React.FC<{
                     )}
                     <button 
                       className="view-button"
-                      onClick={() => navigate(`/controltower/order-detail/ORD000001`)}
-                      title="查看订单详情"
+                      onClick={() => navigate('/controltower/saas/quote-form/fcl/QT2024050001')}
+                      title="去处理"
                     >
                       <IconArrowRight />
                     </button>
@@ -732,10 +732,10 @@ const ControlTowerPanel: React.FC = () => {
     setTaskModalData([]);
   };
 
-  // 跳转到报价管理页面
-  const goToQuoteManagement = (taskId: string) => {
-    // 跳转到询报价--报价管理--编辑报价界面
-    navigate('/controltower/saas/quote-management/edit/' + taskId);
+  // 跳转到报价表单页面
+  const goToQuoteForm = () => {
+    // 跳转到报价表单页面
+    navigate('/controltower/saas/quote-form/fcl/QT2024050001');
   };
 
   // 主题切换函数
@@ -837,7 +837,7 @@ const ControlTowerPanel: React.FC = () => {
                       <span className="task-time">{task.time}</span>
                       <button 
                         className="view-button"
-                        onClick={() => goToQuoteManagement(task.id)}
+                        onClick={() => goToQuoteForm()}
                         title="编辑报价"
                       >
                         <IconArrowRight />
