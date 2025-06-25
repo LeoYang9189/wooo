@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { IconArrowUp, IconArrowDown, IconEye, IconClose, IconSun, IconMoon, IconSettings } from '@arco-design/web-react/icon';
+import { IconArrowUp, IconArrowDown, IconEye, IconClose, IconSun, IconMoon, IconArrowRight } from '@arco-design/web-react/icon';
 import './ControlTowerPanelStylesTemp.css';
 import * as echarts from 'echarts';
 import { useNavigate } from 'react-router-dom';
@@ -99,7 +99,7 @@ const TaskModal: React.FC<{
                       </span>
                     </div>
                   </div>
-                  <div className="task-right">
+                  <div className="task-center">
                     <div className="task-deadline">
                       <span className="deadline-label">截止时间</span>
                       <span className="deadline-time">{formatDeadline(task.deadline)}</span>
@@ -110,12 +110,14 @@ const TaskModal: React.FC<{
                         <span className="overdue-time">{formatOverdueTime(task.overdueHours)}</span>
                       </div>
                     )}
+                  </div>
+                  <div className="task-right">
                     <button 
                       className="view-button"
                       onClick={() => navigate('/controltower/saas/quote-form/fcl')}
                       title="编辑报价"
                     >
-                      <IconSettings />
+                      <IconArrowRight />
                     </button>
                   </div>
                 </div>
@@ -832,7 +834,7 @@ const ControlTowerPanel: React.FC = () => {
                         onClick={() => navigateToQuoteEdit()}
                         title="操作"
                       >
-                        <IconSettings />
+                        <IconArrowRight />
                       </button>
                     </div>
                     <div className="task-content">
