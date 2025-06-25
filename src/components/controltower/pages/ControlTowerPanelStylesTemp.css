@@ -1693,6 +1693,11 @@
   min-height: 75px;
 }
 
+/* 浅色模式下排行榜卡片无圆角 */
+.light-theme .hot-inquiry-ranking .ranking-item {
+  border-radius: 0;
+}
+
 .dark-theme .hot-inquiry-ranking .ranking-item {
   background: rgba(0, 102, 204, 0.1);
   border-color: rgba(0, 153, 255, 0.3);
@@ -1703,17 +1708,17 @@
   border-color: var(--light-border-primary);
 }
 
-/* 只有前三名有背景色 */
+/* 只有前三名有背景色 - 统一黄色 */
 .light-theme .hot-inquiry-ranking .ranking-item.top-1 {
-  background: rgba(255, 215, 0, 0.1); /* 金色背景 */
+  background: rgba(255, 215, 0, 0.1); /* 统一黄色背景 */
 }
 
 .light-theme .hot-inquiry-ranking .ranking-item.top-2 {
-  background: rgba(192, 192, 192, 0.1); /* 银色背景 */
+  background: rgba(255, 215, 0, 0.1); /* 统一黄色背景 */
 }
 
 .light-theme .hot-inquiry-ranking .ranking-item.top-3 {
-  background: rgba(205, 127, 50, 0.1); /* 铜色背景 */
+  background: rgba(255, 215, 0, 0.1); /* 统一黄色背景 */
 }
 
 .hot-inquiry-ranking .ranking-item:hover {
@@ -1741,8 +1746,8 @@
 }
 
 .light-theme .hot-inquiry-ranking .ranking-item.top-1 {
-  background: rgba(245, 158, 11, 0.05);
-  border-color: #f59e0b;
+  background: rgba(255, 215, 0, 0.1); /* 统一黄色背景 */
+  border-color: var(--light-border-primary);
 }
 
 .hot-inquiry-ranking .ranking-item.top-2 {
@@ -1754,8 +1759,8 @@
 }
 
 .light-theme .hot-inquiry-ranking .ranking-item.top-2 {
-  background: rgba(107, 114, 128, 0.05);
-  border-color: #6b7280;
+  background: rgba(255, 215, 0, 0.1); /* 统一黄色背景 */
+  border-color: var(--light-border-primary);
 }
 
 .hot-inquiry-ranking .ranking-item.top-3 {
@@ -1767,8 +1772,8 @@
 }
 
 .light-theme .hot-inquiry-ranking .ranking-item.top-3 {
-  background: rgba(217, 119, 6, 0.05);
-  border-color: #d97706;
+  background: rgba(255, 215, 0, 0.1); /* 统一黄色背景 */
+  border-color: var(--light-border-primary);
 }
 
 .hot-inquiry-ranking .ranking-item .rank {
@@ -1909,7 +1914,7 @@
 }
 
 .light-theme .hot-inquiry-ranking .ranking-item .ranking-bar {
-  background: rgba(59, 130, 246, 0.1);
+  display: none; /* 移除底部线条 */
 }
 
 .hot-inquiry-ranking .ranking-item .bar-fill {
@@ -2241,6 +2246,12 @@
   min-height: 75px;
 }
 
+/* 浅色模式下排行榜卡片无圆角 */
+.light-theme .sales-quote-efficiency-ranking .ranking-item,
+.light-theme .customer-orders-ranking .ranking-item {
+  border-radius: 0;
+}
+
 .dark-theme .sales-quote-efficiency-ranking .ranking-item,
 .dark-theme .customer-orders-ranking .ranking-item {
   background: rgba(0, 102, 204, 0.1);
@@ -2284,8 +2295,8 @@
 
 .light-theme .sales-quote-efficiency-ranking .ranking-item.top-1,
 .light-theme .customer-orders-ranking .ranking-item.top-1 {
-  background: rgba(245, 158, 11, 0.05);
-  border-color: #f59e0b;
+  background: rgba(255, 215, 0, 0.1); /* 统一黄色背景 */
+  border-color: var(--light-border-primary);
 }
 
 .sales-quote-efficiency-ranking .ranking-item.top-2,
@@ -2300,8 +2311,8 @@
 
 .light-theme .sales-quote-efficiency-ranking .ranking-item.top-2,
 .light-theme .customer-orders-ranking .ranking-item.top-2 {
-  background: rgba(107, 114, 128, 0.05);
-  border-color: #6b7280;
+  background: rgba(255, 215, 0, 0.1); /* 统一黄色背景 */
+  border-color: var(--light-border-primary);
 }
 
 .sales-quote-efficiency-ranking .ranking-item.top-3,
@@ -2316,8 +2327,8 @@
 
 .light-theme .sales-quote-efficiency-ranking .ranking-item.top-3,
 .light-theme .customer-orders-ranking .ranking-item.top-3 {
-  background: rgba(217, 119, 6, 0.05);
-  border-color: #d97706;
+  background: rgba(255, 215, 0, 0.1); /* 统一黄色背景 */
+  border-color: var(--light-border-primary);
 }
 
 .sales-quote-efficiency-ranking .ranking-item.top-1 .rank,
@@ -2470,7 +2481,7 @@
 
 .light-theme .sales-quote-efficiency-ranking .ranking-item .ranking-bar,
 .light-theme .customer-orders-ranking .ranking-item .ranking-bar {
-  background: rgba(59, 130, 246, 0.1);
+  display: none; /* 移除底部线条 */
 }
 
 .sales-quote-efficiency-ranking .ranking-item .bar-fill,
