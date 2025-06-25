@@ -3258,7 +3258,7 @@ const FclRates: React.FC = () => {
               <div>
                 <div className="font-medium text-yellow-800 mb-2">操作提醒</div>
                 <div className="text-yellow-700 text-sm leading-relaxed">
-                  此操作会修改所有选中运价的时间信息，请谨慎操作。确保所选日期符合业务规则和运输要求。
+                  此操作会修改所有选中运价的时间信息，请谨慎操作。
                 </div>
               </div>
             </div>
@@ -3288,12 +3288,7 @@ const FclRates: React.FC = () => {
                       format="YYYY-MM-DD"
                     />
                   </div>
-                  <div className="bg-blue-50 p-3 rounded-md text-sm">
-                    <div className="text-blue-800 font-medium mb-1">ETD说明</div>
-                    <div className="text-blue-700">
-                      ETD (Estimated Time of Departure) 是指货物预计从起运港开船的日期，影响整个运输时效安排。
-                    </div>
-                  </div>
+
                 </div>
               )}
               
@@ -3308,12 +3303,7 @@ const FclRates: React.FC = () => {
                       format="YYYY-MM-DD"
                     />
                   </div>
-                  <div className="bg-green-50 p-3 rounded-md text-sm">
-                    <div className="text-green-800 font-medium mb-1">ETA说明</div>
-                    <div className="text-green-700">
-                      ETA (Estimated Time of Arrival) 是指货物预计到达目的港的日期，客户据此安排提货计划。
-                    </div>
-                  </div>
+
                 </div>
               )}
               
@@ -3328,34 +3318,47 @@ const FclRates: React.FC = () => {
                       format="YYYY-MM-DD"
                     />
                   </div>
-                  <div className="bg-purple-50 p-3 rounded-md text-sm">
-                    <div className="text-purple-800 font-medium mb-1">有效期说明</div>
-                    <div className="text-purple-700">
-                      运价有效期是指该运价可用于报价和订舱的时间范围，超出有效期的运价将不可使用。
-                    </div>
-                  </div>
+
                 </div>
               )}
             </div>
           </Card>
 
-          {/* 操作统计 */}
-          <Card title="操作统计" bordered={false} className="bg-gray-50">
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div>
-                <div className="text-2xl font-bold text-blue-600">{selectedRowKeys.length}</div>
-                <div className="text-gray-600 text-sm">选中运价</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-purple-600">
-                  {timeChangeTab === 'etd' ? 'ETD' : timeChangeTab === 'eta' ? 'ETA' : '有效期'}
+          {/* 将被修改的运价列表 */}
+          <Card title="将被修改的运价列表" bordered={false} className="bg-gray-50">
+            <div className="max-h-60 overflow-y-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="text-left p-2 border-b">运价号</th>
+                    <th className="text-left p-2 border-b">起运港</th>
+                    <th className="text-left p-2 border-b">目的港</th>
+                    <th className="text-left p-2 border-b">船公司</th>
+                    <th className="text-left p-2 border-b">当前状态</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {selectedRowKeys.slice(0, 20).map((key) => (
+                    <tr key={key} className="hover:bg-gray-50">
+                      <td className="p-2 border-b">FCL{String(key).padStart(8, '0')}</td>
+                      <td className="p-2 border-b">CNSHA | 上海</td>
+                      <td className="p-2 border-b">USLAX | 洛杉矶</td>
+                      <td className="p-2 border-b">COSCO</td>
+                      <td className="p-2 border-b">
+                        <Tag color="green" size="small">正常</Tag>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {selectedRowKeys.length > 20 && (
+                <div className="text-center p-3 text-gray-500 text-sm border-t">
+                  还有 {selectedRowKeys.length - 20} 条运价未显示...
                 </div>
-                <div className="text-gray-600 text-sm">修改类型</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-green-600">1</div>
-                <div className="text-gray-600 text-sm">批量操作</div>
-              </div>
+              )}
+            </div>
+            <div className="mt-3 text-sm text-gray-600 bg-blue-50 p-2 rounded">
+              共选择 {selectedRowKeys.length} 条运价，将批量修改 {timeChangeTab === 'etd' ? 'ETD' : timeChangeTab === 'eta' ? 'ETA' : '有效期'} 信息
             </div>
           </Card>
         </div>
