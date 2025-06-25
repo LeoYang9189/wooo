@@ -143,8 +143,8 @@ const ControlTowerPanel: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [realtimeTasks, setRealtimeTasks] = useState<Array<{id: string, task: string, time: string}>>([]);
   
-  // 主题状态
-  const [isDarkTheme, setIsDarkTheme] = useState(true);
+  // 主题状态 - 默认浅色模式
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
   
   // 弹窗状态
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
@@ -355,10 +355,12 @@ const ControlTowerPanel: React.FC = () => {
               borderWidth: 2
             },
             areaStyle: {
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: isDarkTheme ? 'rgba(0, 247, 255, 0.3)' : 'rgba(59, 130, 246, 0.3)' },
-                { offset: 1, color: isDarkTheme ? 'rgba(0, 247, 255, 0.05)' : 'rgba(59, 130, 246, 0.05)' }
-              ])
+              color: isDarkTheme 
+                ? new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    { offset: 0, color: 'rgba(0, 247, 255, 0.3)' },
+                    { offset: 1, color: 'rgba(0, 247, 255, 0.05)' }
+                  ])
+                : 'rgba(59, 130, 246, 0.15)' // 浅色模式使用纯色，不用渐变
             },
             smooth: true,
             symbol: 'circle',
@@ -380,10 +382,12 @@ const ControlTowerPanel: React.FC = () => {
               borderWidth: 2
             },
             areaStyle: {
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: isDarkTheme ? 'rgba(0, 255, 136, 0.3)' : 'rgba(16, 185, 129, 0.3)' },
-                { offset: 1, color: isDarkTheme ? 'rgba(0, 255, 136, 0.05)' : 'rgba(16, 185, 129, 0.05)' }
-              ])
+              color: isDarkTheme 
+                ? new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    { offset: 0, color: 'rgba(0, 255, 136, 0.3)' },
+                    { offset: 1, color: 'rgba(0, 255, 136, 0.05)' }
+                  ])
+                : 'rgba(16, 185, 129, 0.15)' // 浅色模式使用纯色，不用渐变
             },
             smooth: true,
             symbol: 'circle',
