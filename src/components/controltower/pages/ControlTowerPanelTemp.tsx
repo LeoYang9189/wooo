@@ -226,7 +226,7 @@ const ControlTowerPanel: React.FC = () => {
 
     const chart = echarts.init(chartElement);
     
-    // 生成过去30天的数据
+    // 生成过去15天的数据
     const generateDateRange = (days: number) => {
       const dates: string[] = [];
       const inquiryData: number[] = [];
@@ -247,7 +247,7 @@ const ControlTowerPanel: React.FC = () => {
       return { dates, inquiryData, quoteData };
     };
 
-    const { dates, inquiryData, quoteData } = generateDateRange(30);
+    const { dates, inquiryData, quoteData } = generateDateRange(15);
 
     const updateChart = () => {
       const option = {
