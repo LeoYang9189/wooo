@@ -845,6 +845,14 @@ const FclRates: React.FC = () => {
   const [batchOnShelfFirstModalVisible, setBatchOnShelfFirstModalVisible] = useState(false);
   const [batchOnShelfConfirmModalVisible, setBatchOnShelfConfirmModalVisible] = useState(false);
   
+  // 批量下架相关状态
+  const [batchOffShelfFirstModalVisible, setBatchOffShelfFirstModalVisible] = useState(false);
+  const [batchOffShelfConfirmModalVisible, setBatchOffShelfConfirmModalVisible] = useState(false);
+  
+  // 批量删除相关状态
+  const [batchDeleteFirstModalVisible, setBatchDeleteFirstModalVisible] = useState(false);
+  const [batchDeleteConfirmModalVisible, setBatchDeleteConfirmModalVisible] = useState(false);
+  
   const navigate = useNavigate();
 
   // 操作处理函数
@@ -901,14 +909,31 @@ const FclRates: React.FC = () => {
   };
 
   const handleBatchOffShelf = () => {
-    Modal.confirm({
-      title: '批量下架',
-      content: `确定要将选中的 ${selectedRowKeys.length} 条运价下架吗？`,
-      onOk: () => {
-        Message.success(`成功下架 ${selectedRowKeys.length} 条运价`);
-        setSelectedRowKeys([]);
-      }
-    });
+    setBatchOffShelfFirstModalVisible(true);
+  };
+
+  // 关闭批量下架第一个提示弹窗，打开确认弹窗
+  const closeBatchOffShelfFirstModal = () => {
+    setBatchOffShelfFirstModalVisible(false);
+    setBatchOffShelfConfirmModalVisible(true);
+  };
+
+  // 关闭批量下架确认弹窗
+  const closeBatchOffShelfConfirmModal = () => {
+    setBatchOffShelfConfirmModalVisible(false);
+  };
+
+  // 确认批量下架
+  const confirmBatchOffShelf = () => {
+    setBatchOffShelfConfirmModalVisible(false);
+    // TODO: 实现批量下架功能
+    
+    // 显示成功消息
+    setTimeout(() => {
+      Message.success('下架成功');
+    }, 100);
+    
+    setSelectedRowKeys([]);
   };
 
   const handleBatchPriceChange = () => {
@@ -993,14 +1018,31 @@ const FclRates: React.FC = () => {
   };
 
   const handleBatchDelete = () => {
-    Modal.confirm({
-      title: '批量删除',
-      content: `确定要删除选中的 ${selectedRowKeys.length} 条运价吗？此操作不可恢复。`,
-      onOk: () => {
-        Message.success(`成功删除 ${selectedRowKeys.length} 条运价`);
-        setSelectedRowKeys([]);
-      }
-    });
+    setBatchDeleteFirstModalVisible(true);
+  };
+
+  // 关闭批量删除第一个提示弹窗，打开确认弹窗
+  const closeBatchDeleteFirstModal = () => {
+    setBatchDeleteFirstModalVisible(false);
+    setBatchDeleteConfirmModalVisible(true);
+  };
+
+  // 关闭批量删除确认弹窗
+  const closeBatchDeleteConfirmModal = () => {
+    setBatchDeleteConfirmModalVisible(false);
+  };
+
+  // 确认批量删除
+  const confirmBatchDelete = () => {
+    setBatchDeleteConfirmModalVisible(false);
+    // TODO: 实现批量删除功能
+    
+    // 显示成功消息
+    setTimeout(() => {
+      Message.success('删除成功');
+    }, 100);
+    
+    setSelectedRowKeys([]);
   };
 
   // 打开AI识别弹窗
@@ -3026,6 +3068,128 @@ const FclRates: React.FC = () => {
             <div className="text-blue-800 text-sm font-medium mb-1">将要上架的运价</div>
             <div className="text-blue-700 text-sm">
               共 {selectedRowKeys.length} 条运价将被设置为可查询状态
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+      {/* 批量下架第一个提示弹窗 */}
+      <Modal
+        title="批量下架提示"
+        visible={batchOffShelfFirstModalVisible}
+        onCancel={closeBatchOffShelfFirstModal}
+        footer={
+          <div className="flex justify-end gap-3">
+            <Button onClick={closeBatchOffShelfFirstModal}>关闭</Button>
+          </div>
+        }
+        style={{ width: 480 }}
+      >
+        <div className="py-4">
+          <div className="flex items-start gap-3">
+            <div className="w-6 h-6 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0 mt-1">
+              <span className="text-orange-600 text-sm font-bold">!</span>
+            </div>
+            <div>
+              <div className="text-gray-800 font-medium mb-2">操作提示</div>
+              <div className="text-gray-600 leading-relaxed">
+                请只选择状态为正常的运价进行下架。
+              </div>
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+      {/* 批量下架确认弹窗 */}
+      <Modal
+        title="确认下架"
+        visible={batchOffShelfConfirmModalVisible}
+        onCancel={closeBatchOffShelfConfirmModal}
+        footer={
+          <div className="flex justify-end gap-3">
+            <Button onClick={closeBatchOffShelfConfirmModal}>取消</Button>
+            <Button type="primary" onClick={confirmBatchOffShelf}>确认下架</Button>
+          </div>
+        }
+        style={{ width: 520 }}
+      >
+        <div className="py-4">
+          <div className="flex items-start gap-3 mb-4">
+            <div className="w-6 h-6 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0 mt-1">
+              <span className="text-orange-600 text-sm font-bold">?</span>
+            </div>
+            <div>
+              <div className="text-gray-800 font-medium mb-2">确认操作</div>
+              <div className="text-gray-600 leading-relaxed">
+                下架之后，其他人无法继续查看该运价，确认下架？
+              </div>
+            </div>
+          </div>
+          <div className="bg-orange-50 p-3 rounded-md">
+            <div className="text-orange-800 text-sm font-medium mb-1">将要下架的运价</div>
+            <div className="text-orange-700 text-sm">
+              共 {selectedRowKeys.length} 条运价将被设置为不可查看状态
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+      {/* 批量删除第一个提示弹窗 */}
+      <Modal
+        title="批量删除提示"
+        visible={batchDeleteFirstModalVisible}
+        onCancel={closeBatchDeleteFirstModal}
+        footer={
+          <div className="flex justify-end gap-3">
+            <Button onClick={closeBatchDeleteFirstModal}>关闭</Button>
+          </div>
+        }
+        style={{ width: 480 }}
+      >
+        <div className="py-4">
+          <div className="flex items-start gap-3">
+            <div className="w-6 h-6 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0 mt-1">
+              <span className="text-orange-600 text-sm font-bold">!</span>
+            </div>
+            <div>
+              <div className="text-gray-800 font-medium mb-2">操作提示</div>
+              <div className="text-gray-600 leading-relaxed">
+                请只选择状态为草稿的运价进行删除。
+              </div>
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+      {/* 批量删除确认弹窗 */}
+      <Modal
+        title="确认删除"
+        visible={batchDeleteConfirmModalVisible}
+        onCancel={closeBatchDeleteConfirmModal}
+        footer={
+          <div className="flex justify-end gap-3">
+            <Button onClick={closeBatchDeleteConfirmModal}>取消</Button>
+            <Button type="primary" status="danger" onClick={confirmBatchDelete}>确认删除</Button>
+          </div>
+        }
+        style={{ width: 520 }}
+      >
+        <div className="py-4">
+          <div className="flex items-start gap-3 mb-4">
+            <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 mt-1">
+              <span className="text-red-600 text-sm font-bold">!</span>
+            </div>
+            <div>
+              <div className="text-gray-800 font-medium mb-2">危险操作</div>
+              <div className="text-gray-600 leading-relaxed">
+                运价删除不可恢复，确认删除？
+              </div>
+            </div>
+          </div>
+          <div className="bg-red-50 p-3 rounded-md">
+            <div className="text-red-800 text-sm font-medium mb-1">将要删除的运价</div>
+            <div className="text-red-700 text-sm">
+              共 {selectedRowKeys.length} 条运价将被永久删除，此操作不可恢复
             </div>
           </div>
         </div>
