@@ -853,6 +853,10 @@ const FclRates: React.FC = () => {
   const [batchDeleteFirstModalVisible, setBatchDeleteFirstModalVisible] = useState(false);
   const [batchDeleteConfirmModalVisible, setBatchDeleteConfirmModalVisible] = useState(false);
   
+  // 批量改时间相关状态
+  const [batchTimeModalVisible, setBatchTimeModalVisible] = useState(false);
+  const [timeChangeTab, setTimeChangeTab] = useState<'etd' | 'eta' | 'validity'>('etd');
+  
   const navigate = useNavigate();
 
   // 操作处理函数
@@ -1012,9 +1016,33 @@ const FclRates: React.FC = () => {
     });
   };
 
-  const handleBatchValidityChange = () => {
-    // TODO: 实现批量修改有效期功能
-    Message.info('批量修改有效期功能开发中');
+  const handleBatchTimeChange = () => {
+    setBatchTimeModalVisible(true);
+  };
+
+  // 关闭批量改时间抽屉
+  const closeBatchTimeModal = () => {
+    setBatchTimeModalVisible(false);
+    setTimeChangeTab('etd');
+  };
+
+  // 确认批量改时间
+  const confirmBatchTimeChange = () => {
+    setBatchTimeModalVisible(false);
+    // TODO: 实现批量改时间功能
+    
+    const timeTypeMap = {
+      etd: 'ETD',
+      eta: 'ETA', 
+      validity: '有效期'
+    };
+    
+    // 显示成功消息
+    setTimeout(() => {
+      Message.success(`${timeTypeMap[timeChangeTab]}修改成功`);
+    }, 100);
+    
+    setSelectedRowKeys([]);
   };
 
   const handleBatchDelete = () => {
@@ -2585,10 +2613,10 @@ const FclRates: React.FC = () => {
                           <span>批量改价</span>
                         </div>
                       </Menu.Item>
-                      <Menu.Item key="batch-validity-change" onClick={() => handleBatchValidityChange()}>
+                      <Menu.Item key="batch-time-change" onClick={() => handleBatchTimeChange()}>
                         <div className="flex items-center gap-2">
                           <span className="w-2 h-2 rounded-full bg-purple-500"></span>
-                          <span>批量修改有效期</span>
+                          <span>批量改时间</span>
                         </div>
                       </Menu.Item>
                       <Menu.Item key="batch-delete" onClick={() => handleBatchDelete()}>
@@ -3194,6 +3222,144 @@ const FclRates: React.FC = () => {
           </div>
         </div>
       </Modal>
+
+      {/* 批量改时间抽屉 */}
+      <Drawer
+        width={800}
+        title={
+          <div className="flex items-center gap-3">
+            <span className="text-lg font-medium">批量改时间</span>
+            <Tag color="arcoblue" size="small">
+              已选择 {selectedRowKeys.length} 条运价
+            </Tag>
+          </div>
+        }
+        visible={batchTimeModalVisible}
+        onCancel={closeBatchTimeModal}
+        footer={
+          <div className="flex justify-between items-center py-3">
+            <div className="text-sm text-gray-500">
+              此操作会修改选中运价的时间信息，请确认数据准确性
+            </div>
+            <Space size="medium">
+              <Button onClick={closeBatchTimeModal}>取消</Button>
+              <Button type="primary" onClick={confirmBatchTimeChange}>确认</Button>
+            </Space>
+          </div>
+        }
+      >
+        <div className="space-y-5">
+          {/* 警告提示 */}
+          <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
+            <div className="flex items-start gap-3">
+              <div className="w-5 h-5 rounded-full bg-yellow-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-white text-xs font-bold">!</span>
+              </div>
+              <div>
+                <div className="font-medium text-yellow-800 mb-2">操作提醒</div>
+                <div className="text-yellow-700 text-sm leading-relaxed">
+                  此操作会修改所有选中运价的时间信息，请谨慎操作。确保所选日期符合业务规则和运输要求。
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Tab切换 */}
+          <Card bordered={false} className="bg-white">
+            <Tabs 
+              activeTab={timeChangeTab} 
+              onChange={(key) => setTimeChangeTab(key as 'etd' | 'eta' | 'validity')}
+              className="time-change-tabs"
+            >
+              <Tabs.TabPane key="etd" title="ETD (预计开船日)" />
+              <Tabs.TabPane key="eta" title="ETA (预计到港日)" />
+              <Tabs.TabPane key="validity" title="有效期" />
+            </Tabs>
+
+            <div className="mt-6">
+              {timeChangeTab === 'etd' && (
+                <div className="space-y-4">
+                  <div className="text-gray-800 font-medium mb-4">设置新的ETD (预计开船日)</div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-gray-600 min-w-[80px]">新ETD：</span>
+                    <DatePicker 
+                      style={{ width: 200 }}
+                      placeholder="选择预计开船日"
+                      format="YYYY-MM-DD"
+                    />
+                  </div>
+                  <div className="bg-blue-50 p-3 rounded-md text-sm">
+                    <div className="text-blue-800 font-medium mb-1">ETD说明</div>
+                    <div className="text-blue-700">
+                      ETD (Estimated Time of Departure) 是指货物预计从起运港开船的日期，影响整个运输时效安排。
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {timeChangeTab === 'eta' && (
+                <div className="space-y-4">
+                  <div className="text-gray-800 font-medium mb-4">设置新的ETA (预计到港日)</div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-gray-600 min-w-[80px]">新ETA：</span>
+                    <DatePicker 
+                      style={{ width: 200 }}
+                      placeholder="选择预计到港日"
+                      format="YYYY-MM-DD"
+                    />
+                  </div>
+                  <div className="bg-green-50 p-3 rounded-md text-sm">
+                    <div className="text-green-800 font-medium mb-1">ETA说明</div>
+                    <div className="text-green-700">
+                      ETA (Estimated Time of Arrival) 是指货物预计到达目的港的日期，客户据此安排提货计划。
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {timeChangeTab === 'validity' && (
+                <div className="space-y-4">
+                  <div className="text-gray-800 font-medium mb-4">设置新的有效期</div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-gray-600 min-w-[80px]">有效期：</span>
+                    <RangePicker 
+                      style={{ width: 300 }}
+                      placeholder={['开始日期', '结束日期']}
+                      format="YYYY-MM-DD"
+                    />
+                  </div>
+                  <div className="bg-purple-50 p-3 rounded-md text-sm">
+                    <div className="text-purple-800 font-medium mb-1">有效期说明</div>
+                    <div className="text-purple-700">
+                      运价有效期是指该运价可用于报价和订舱的时间范围，超出有效期的运价将不可使用。
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </Card>
+
+          {/* 操作统计 */}
+          <Card title="操作统计" bordered={false} className="bg-gray-50">
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div>
+                <div className="text-2xl font-bold text-blue-600">{selectedRowKeys.length}</div>
+                <div className="text-gray-600 text-sm">选中运价</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-purple-600">
+                  {timeChangeTab === 'etd' ? 'ETD' : timeChangeTab === 'eta' ? 'ETA' : '有效期'}
+                </div>
+                <div className="text-gray-600 text-sm">修改类型</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-green-600">1</div>
+                <div className="text-gray-600 text-sm">批量操作</div>
+              </div>
+            </div>
+          </Card>
+        </div>
+      </Drawer>
 
       {/* AI识别弹窗 */}
       <Modal
