@@ -283,8 +283,8 @@ const ControlTowerPanel: React.FC = () => {
           itemHeight: 10
         },
         grid: {
-          left: '3%',
-          right: '3%',
+          left: '8%',
+          right: '8%',
           bottom: '15%',
           top: '12%',
           containLabel: true

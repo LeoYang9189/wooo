@@ -1128,9 +1128,10 @@
 
 /* 确保ECharts图表响应容器宽度 */
 .charts-row.two-column-custom #inquiry-deal-line-chart {
-  width: 100% !important;
+  width: calc(100% - 20px) !important; /* 减少宽度，给右边留空间 */
   height: 385px !important; /* 调整高度以适应新的padding设置 */
   flex: 1; /* 自动填充剩余空间 */
+  margin-right: 20px; /* 右边距确保不被截断 */
 }
 
 /* 确保实时任务列表充分利用容器高度 */
