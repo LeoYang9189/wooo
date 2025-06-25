@@ -25,7 +25,7 @@ import {
   IconEye,
   IconPlus
 } from '@arco-design/web-react/icon';
-import AIAssistant from '../layout/ai';
+import AIAssistant from '../layout/ai-client';
 import { useNavigate } from 'react-router-dom';
 
 const { Row, Col } = Grid;

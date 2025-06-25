@@ -20,7 +20,7 @@ import { faRobot } from '@fortawesome/free-solid-svg-icons';
 // import { faShip } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../ControlTowerClientStyles.css';
-import AIAssistant from './ai';
+import AIAssistant from './ai-client';
 
 const { Header, Sider, Content } = Layout;
 const MenuItem = Menu.Item;
