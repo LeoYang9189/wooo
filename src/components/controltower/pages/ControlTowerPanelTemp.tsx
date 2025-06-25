@@ -139,6 +139,7 @@ const TaskModal: React.FC<{
 };
 
 const ControlTowerPanel: React.FC = () => {
+  const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [realtimeTasks, setRealtimeTasks] = useState<Array<{id: string, task: string, time: string}>>([]);
   
@@ -186,11 +187,9 @@ const ControlTowerPanel: React.FC = () => {
 
   // 实时任务生成
   useEffect(() => {
-    const tasks = ['待报价', '待确认提单', '待确认账单', '待提交VGM'];
-    
     const generateTask = () => {
       const orderNumber = `WO${Date.now().toString().slice(-8)}${Math.floor(Math.random() * 100).toString().padStart(2, '0')}`;
-      const task = tasks[Math.floor(Math.random() * tasks.length)];
+      const task = '待报价';
       const time = new Date().toLocaleTimeString('zh-CN');
       
       setRealtimeTasks(prev => {
@@ -276,13 +275,14 @@ const ControlTowerPanel: React.FC = () => {
           data: ['询价单数量', '报价单数量'],
           textStyle: {
             color: isDarkTheme ? '#99ccff' : '#475569',
-            fontSize: 12
+            fontSize: 11
           },
-          top: 5,
-          right: 20,
-          itemWidth: 12,
-          itemHeight: 8,
-          itemGap: 8
+          top: 8,
+          right: 10,
+          itemWidth: 10,
+          itemHeight: 6,
+          itemGap: 6,
+          orient: 'horizontal'
         },
         grid: {
           left: 50,
@@ -660,7 +660,6 @@ const ControlTowerPanel: React.FC = () => {
 
   // 生成虚拟任务数据
   const generateTaskData = (type: 'pending' | 'overdue', count: number): TaskItem[] => {
-    const taskTypes = ['待报价', '待确认提单', '待确认账单', '待提交VGM', '待上传SI', '待补充文件', '待客户确认', '待海关放行'];
     const customers = ['华为技术有限公司', '阿里巴巴集团', '腾讯科技', '比亚迪股份', '海康威视', '小米集团', '京东集团', '宁德时代'];
     const priorities: ('high' | 'medium' | 'low')[] = ['high', 'medium', 'low'];
     
@@ -668,7 +667,7 @@ const ControlTowerPanel: React.FC = () => {
     
     for (let i = 0; i < count; i++) {
       const now = new Date();
-      const taskType = taskTypes[Math.floor(Math.random() * taskTypes.length)];
+      const taskType = '待报价';
       const customer = customers[Math.floor(Math.random() * customers.length)];
       const priority = priorities[Math.floor(Math.random() * priorities.length)];
       
@@ -733,22 +732,10 @@ const ControlTowerPanel: React.FC = () => {
     setTaskModalData([]);
   };
 
-  // 在实时任务列表中添加"查看"按钮
-  const openRealtimeTaskModal = (taskId: string) => {
-    const task = realtimeTasks.find(t => t.id === taskId);
-    if (task) {
-      setTaskModalTitle(`任务详情 - ${task.id}`);
-      setTaskModalData([{
-        id: task.id,
-        orderNumber: task.id,
-        taskType: task.task,
-        customerName: '未知客户', // 假设没有客户信息
-        deadline: new Date(), // 假设没有截止时间
-        status: 'pending',
-        priority: 'medium' // 假设中等优先级
-      }]);
-      setIsTaskModalOpen(true);
-    }
+  // 跳转到报价管理页面
+  const goToQuoteManagement = (taskId: string) => {
+    // 跳转到询报价--报价管理--编辑报价界面
+    navigate('/controltower/saas/quote-management/edit/' + taskId);
   };
 
   // 主题切换函数
@@ -850,10 +837,10 @@ const ControlTowerPanel: React.FC = () => {
                       <span className="task-time">{task.time}</span>
                       <button 
                         className="view-button"
-                        onClick={() => openRealtimeTaskModal(task.id)}
-                        title="查看任务详情"
+                        onClick={() => goToQuoteManagement(task.id)}
+                        title="编辑报价"
                       >
-                        <IconEye />
+                        <IconArrowRight />
                       </button>
                     </div>
                     <div className="task-content">
