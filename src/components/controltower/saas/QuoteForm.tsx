@@ -352,11 +352,12 @@ const QuoteForm: React.FC = () => {
   };
 
   // 更新港前运价字段
-  const updatePrecarriageRateField = (rateId: number, field: string, value: any) => {
-    setPrecarriageRates(precarriageRates.map(rate => 
-      rate.id === rateId ? { ...rate, [field]: value } : rate
-    ));
-  };
+  // 更新港前运价字段 - 暂时保留，后续可能使用
+  // const updatePrecarriageRateField = (rateId: number, field: string, value: any) => {
+  //   setPrecarriageRates(precarriageRates.map(rate => 
+  //     rate.id === rateId ? { ...rate, [field]: value } : rate
+  //   ));
+  // };
 
   // 更新尾程运价字段
   const updateOncarriageRateField = (rateId: number, field: string, value: any) => {

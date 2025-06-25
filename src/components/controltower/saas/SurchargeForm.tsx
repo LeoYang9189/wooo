@@ -100,12 +100,12 @@ const chargeTypeOptions = [
   { value: '码头费', label: '码头费', currency: 'USD' }
 ];
 
-// 币种选项
-const currencyOptions = [
-  { value: 'CNY', label: 'CNY' },
-  { value: 'USD', label: 'USD' },
-  { value: 'EUR', label: 'EUR' }
-];
+// 币种选项 - 暂时保留，后续可能使用
+// const currencyOptions = [
+//   { value: 'CNY', label: 'CNY' },
+//   { value: 'USD', label: 'USD' },
+//   { value: 'EUR', label: 'EUR' }
+// ];
 
 // 计费单位选项
 const unitOptions = [
@@ -376,7 +376,7 @@ const SurchargeForm: React.FC = () => {
       dataIndex: 'currency',
       key: 'currency',
       width: 100,
-      render: (value: string, record: ContainerSurchargeDetail) => (
+      render: (value: string, _record: ContainerSurchargeDetail) => (
         isViewing ? (
           <span>{value}</span>
         ) : (
@@ -551,7 +551,7 @@ const SurchargeForm: React.FC = () => {
       dataIndex: 'currency',
       key: 'currency',
       width: 100,
-      render: (value: string, record: NonContainerSurchargeDetail) => (
+      render: (value: string, _record: NonContainerSurchargeDetail) => (
         isViewing ? (
           <span>{value}</span>
         ) : (

@@ -89,11 +89,11 @@ const containerTypeOptions = [
   { value: '40FR', label: '40FR' }
 ];
 
-// 币种选项
-const currencyOptions = [
-  { value: 'USD', label: 'USD' },
-  { value: 'CNY', label: 'CNY' }
-];
+// 币种选项 - 暂时保留，后续可能使用
+// const currencyOptions = [
+//   { value: 'USD', label: 'USD' },
+//   { value: 'CNY', label: 'CNY' }
+// ];
 
 // 船公司选项
 const shippingCompanyOptions = [
