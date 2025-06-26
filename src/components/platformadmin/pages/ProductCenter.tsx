@@ -34,27 +34,27 @@ const ProductCenter: React.FC = () => {
       name: '控制塔',
       description: '全方位物流监控和管理平台，提供可视化运输跟踪和异常预警',
       icon: <IconSettings style={{ fontSize: 24, color: '#00B42A' }} />,
-      enabled: false,
+      enabled: true,
       features: ['运输监控', '异常预警', '数据分析', '报表生成'],
-      status: 'inactive'
+      status: 'active'
     },
     {
       id: 'smart-container',
       name: '智慧箱管',
       description: '智能集装箱管理系统，实现箱源调配、状态跟踪和成本控制',
       icon: <IconRobot style={{ fontSize: 24, color: '#FF7D00' }} />,
-      enabled: false,
+      enabled: true,
       features: ['箱源管理', '状态跟踪', '智能调配', '成本分析'],
-      status: 'inactive'
+      status: 'active'
     },
     {
       id: 'ai-assistant',
       name: 'AI助手',
       description: '智能AI助理系统，提供24小时在线咨询、智能问答和业务辅助服务',
       icon: <IconMessage style={{ fontSize: 24, color: '#722ED1' }} />,
-      enabled: false,
+      enabled: true,
       features: ['智能问答', '业务咨询', '数据分析', '自动化处理'],
-      status: 'inactive'
+      status: 'active'
     }
   ]);
 
@@ -118,6 +118,10 @@ const ProductCenter: React.FC = () => {
 
   const handleAuthorizeCompanies = (productId: string) => {
     navigate(`/platformadmin/product-authorization/${productId}`);
+  };
+
+  const handleProductConfig = (productId: string) => {
+    navigate(`/platformadmin/product-config/${productId}`);
   };
 
   return (
@@ -191,14 +195,24 @@ const ProductCenter: React.FC = () => {
 
                 {/* 操作按钮 */}
                 <div style={{ marginTop: 'auto' }}>
-                  <Button 
-                    type="primary" 
-                    size="small"
-                    disabled={!product.enabled}
-                    onClick={() => handleAuthorizeCompanies(product.id)}
-                  >
-                    授权企业
-                  </Button>
+                  <Space>
+                    <Button 
+                      type="primary" 
+                      size="small"
+                      disabled={!product.enabled}
+                      onClick={() => handleAuthorizeCompanies(product.id)}
+                    >
+                      授权企业
+                    </Button>
+                    <Button 
+                      type="outline" 
+                      size="small"
+                      disabled={!product.enabled}
+                      onClick={() => handleProductConfig(product.id)}
+                    >
+                      产品配置
+                    </Button>
+                  </Space>
                 </div>
               </div>
             </Card>

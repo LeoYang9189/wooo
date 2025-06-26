@@ -24,6 +24,7 @@ import CalculationUnitManagement from './pages/CalculationUnitManagement';
 import ChargeManagement from './pages/ChargeManagement';
 import ProductCenter from './pages/ProductCenter';
 import ProductAuthorization from './pages/ProductAuthorization';
+import ProductConfig from './pages/ProductConfig';
 import StaffManagement from './pages/StaffManagement';
 import AddStaff from './pages/AddStaff';
 import EditStaff from './pages/EditStaff';
@@ -62,6 +63,7 @@ const PlatformAdminRoutes: React.FC = () => {
       <Route path="/charge-management" element={<ChargeManagement />} />
       <Route path="/product-center" element={<ProductCenter />} />
       <Route path="/product-authorization/:productId" element={<ProductAuthorization />} />
+      <Route path="/product-config/:productId" element={<ProductConfig />} />
       <Route path="/staff-management" element={<StaffManagement />} />
       <Route path="/add-employee" element={<AddStaff />} />
       <Route path="/edit-employee/:id" element={<EditStaff />} />

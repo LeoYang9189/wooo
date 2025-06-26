@@ -333,6 +333,17 @@ const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
       return breadcrumbs;
     }
 
+    // 处理产品配置页面的特殊情况
+    if (path.startsWith('product-config/')) {
+      const productId = path.split('/')[1];
+      const productName = productNames[productId] || '未知产品';
+      breadcrumbs.push(
+        { title: '产品中心', path: '/platformadmin/product-center' },
+        { title: `${productName} - 产品配置`, path: undefined }
+      );
+      return breadcrumbs;
+    }
+
     // 处理权限管理编辑页面的特殊情况
     if (path.startsWith('permission-management/edit/')) {
       breadcrumbs.push(
