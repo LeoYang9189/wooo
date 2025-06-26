@@ -214,6 +214,29 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
       icon: <IconUser />
     },
     
+    // 运营管理
+    { 
+      title: '资讯中心管理', 
+      key: 'news-management', 
+      path: '/controltower/news-management',
+      category: '运营管理',
+      icon: <IconApps />
+    },
+    { 
+      title: '业务介绍管理', 
+      key: 'business-management', 
+      path: '/controltower/business-management',
+      category: '运营管理',
+      icon: <IconApps />
+    },
+    { 
+      title: '关于我们管理', 
+      key: 'about-management', 
+      path: '/controltower/about-management',
+      category: '运营管理',
+      icon: <IconApps />
+    },
+    
     // 系统设置
     { 
       title: '员工管理', 
@@ -226,6 +249,13 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
       title: '权限管理', 
       key: 'permission-management', 
       path: '/controltower/permission-management',
+      category: '系统设置',
+      icon: <IconSettings />
+    },
+    { 
+      title: '个性化配置', 
+      key: 'personalization-config', 
+      path: '/controltower/personalization-config',
       category: '系统设置',
       icon: <IconSettings />
     },
@@ -686,6 +716,30 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
           { title: '权限管理', path: '/controltower/permission-management' }
         );
         break;
+      case 'personalization-config':
+        breadcrumbs.push(
+          { title: '系统设置', path: undefined },
+          { title: '个性化配置', path: '/controltower/personalization-config' }
+        );
+        break;
+      case 'news-management':
+        breadcrumbs.push(
+          { title: '运营管理', path: undefined },
+          { title: '资讯中心管理', path: '/controltower/news-management' }
+        );
+        break;
+      case 'business-management':
+        breadcrumbs.push(
+          { title: '运营管理', path: undefined },
+          { title: '业务介绍管理', path: '/controltower/business-management' }
+        );
+        break;
+      case 'about-management':
+        breadcrumbs.push(
+          { title: '运营管理', path: undefined },
+          { title: '关于我们管理', path: '/controltower/about-management' }
+        );
+        break;
       case 'add-employee':
         breadcrumbs.push(
           { title: '系统设置', path: undefined },
@@ -1013,6 +1067,21 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
             <span>应用中心</span>
           </MenuItem>
 
+          {/* 运营管理 */}
+          <SubMenu
+            key="operation-management"
+            title={
+              <span>
+                <IconApps />
+                <span>运营管理</span>
+              </span>
+            }
+          >
+            <MenuItem key="news-management">资讯中心管理</MenuItem>
+            <MenuItem key="business-management">业务介绍管理</MenuItem>
+            <MenuItem key="about-management">关于我们管理</MenuItem>
+          </SubMenu>
+
           {/* 系统设置 */}
           <SubMenu
             key="system-settings"
@@ -1025,6 +1094,7 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
           >
             <MenuItem key="employee-management">员工管理</MenuItem>
             <MenuItem key="permission-management">权限管理</MenuItem>
+            <MenuItem key="personalization-config">个性化配置</MenuItem>
           </SubMenu>
 
           {/* 基础资料维护 */}

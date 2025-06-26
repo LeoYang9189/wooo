@@ -80,6 +80,10 @@ import ScheduleQuery from './pages/ScheduleQuery';
 import UIStandards from './pages/UIStandards';
 import CurrencyManagement from './pages/CurrencyManagement';
 import ExchangeRateManagement from './pages/ExchangeRateManagement';
+import PersonalizationConfig from './pages/PersonalizationConfig';
+import NewsManagement from './pages/NewsManagement';
+import BusinessManagement from './pages/BusinessManagement';
+import AboutManagement from './pages/AboutManagement';
 // --- 结束 ---
 
 const ControlTowerRoutes: React.FC = () => {
@@ -339,6 +343,14 @@ const ControlTowerRoutes: React.FC = () => {
       <Route path="/schedule-query" element={<ScheduleQuery />} />
       <Route path="/currency-management" element={<CurrencyManagement />} />
       <Route path="/exchange-rate-management" element={<ExchangeRateManagement />} />
+      
+      {/* 个性化配置 */}
+      <Route path="/personalization-config" element={<PersonalizationConfig />} />
+      
+      {/* 运营管理 */}
+      <Route path="/news-management" element={<NewsManagement />} />
+      <Route path="/business-management" element={<BusinessManagement />} />
+      <Route path="/about-management" element={<AboutManagement />} />
       {/* --- 结束 --- */}
     </Routes>
   );
