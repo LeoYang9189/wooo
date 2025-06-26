@@ -1,8 +1,16 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faWeixin } from '@fortawesome/free-brands-svg-icons';
-import { faMusic, faBookOpen } from '@fortawesome/free-solid-svg-icons';
+import { 
+  faWeixin, 
+  faTiktok, 
+  faFacebook, 
+  faInstagram, 
+  faYoutube, 
+  faLinkedin, 
+  faXTwitter 
+} from '@fortawesome/free-brands-svg-icons';
+import { faBookOpen } from '@fortawesome/free-solid-svg-icons';
 
 const PortalFooter = () => {
   const navigate = useNavigate();
@@ -56,7 +64,7 @@ const PortalFooter = () => {
             <p className="text-gray-600 text-sm mb-4">
               为全球国际物流提供智能化解决方案
             </p>
-            <div className="flex space-x-4">
+            <div className="flex space-x-3 flex-wrap gap-y-2">
               {/* 微信 */}
               <div 
                 className="relative"
@@ -66,43 +74,43 @@ const PortalFooter = () => {
                 <button className="text-gray-400 hover:text-green-500 transition-colors duration-300" title="微信" aria-label="关注我们的微信">
                   <FontAwesomeIcon icon={faWeixin} className="h-5 w-5" />
                 </button>
-                                 {hoveredSocial === 'wechat' && (
-                   <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-50">
-                     <div className="text-center">
-                       <img 
-                         src="/WX20250623-164557@2x.png" 
-                         alt="微信二维码" 
-                         className="w-32 h-32 mx-auto object-contain rounded-lg"
-                       />
-                       <p className="text-xs text-gray-600 mt-3">扫码关注微信公众号</p>
-                     </div>
-                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-white"></div>
-                   </div>
-                 )}
+                {hoveredSocial === 'wechat' && (
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-50">
+                    <div className="text-center">
+                      <img 
+                        src="/WX20250623-164557@2x.png" 
+                        alt="微信二维码" 
+                        className="w-32 h-32 mx-auto object-contain rounded-lg"
+                      />
+                      <p className="text-xs text-gray-600 mt-3">扫码关注微信公众号</p>
+                    </div>
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-white"></div>
+                  </div>
+                )}
               </div>
 
-              {/* 抖音 */}
+              {/* 抖音/TikTok */}
               <div 
                 className="relative"
-                onMouseEnter={() => setHoveredSocial('douyin')}
+                onMouseEnter={() => setHoveredSocial('tiktok')}
                 onMouseLeave={() => setHoveredSocial(null)}
               >
-                <button className="text-gray-400 hover:text-pink-500 transition-colors duration-300" title="抖音" aria-label="关注我们的抖音">
-                  <FontAwesomeIcon icon={faMusic} className="h-5 w-5" />
+                <button className="text-gray-400 hover:text-pink-500 transition-colors duration-300" title="抖音/TikTok" aria-label="关注我们的抖音">
+                  <FontAwesomeIcon icon={faTiktok} className="h-5 w-5" />
                 </button>
-                                 {hoveredSocial === 'douyin' && (
-                   <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-50">
-                     <div className="text-center">
-                       <img 
-                         src="/WX20250623-164557@2x.png" 
-                         alt="微信二维码" 
-                         className="w-32 h-32 mx-auto object-contain rounded-lg"
-                       />
-                       <p className="text-xs text-gray-600 mt-3">扫码关注微信公众号</p>
-                     </div>
-                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-white"></div>
-                   </div>
-                 )}
+                {hoveredSocial === 'tiktok' && (
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-50">
+                    <div className="text-center">
+                      <img 
+                        src="/assets/qrcodes/douyin-qr.svg" 
+                        alt="抖音二维码" 
+                        className="w-32 h-32 mx-auto object-contain rounded-lg"
+                      />
+                      <p className="text-xs text-gray-600 mt-3">扫码关注我们的抖音</p>
+                    </div>
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-white"></div>
+                  </div>
+                )}
               </div>
 
               {/* 小红书 */}
@@ -114,19 +122,89 @@ const PortalFooter = () => {
                 <button className="text-gray-400 hover:text-red-500 transition-colors duration-300" title="小红书" aria-label="关注我们的小红书">
                   <FontAwesomeIcon icon={faBookOpen} className="h-5 w-5" />
                 </button>
-                                 {hoveredSocial === 'xiaohongshu' && (
-                   <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-50">
-                     <div className="text-center">
-                       <img 
-                         src="/WX20250623-164557@2x.png" 
-                         alt="微信二维码" 
-                         className="w-32 h-32 mx-auto object-contain rounded-lg"
-                       />
-                       <p className="text-xs text-gray-600 mt-3">扫码关注微信公众号</p>
-                     </div>
-                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-white"></div>
-                   </div>
-                 )}
+                {hoveredSocial === 'xiaohongshu' && (
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-50">
+                    <div className="text-center">
+                      <img 
+                        src="/assets/qrcodes/xiaohongshu-qr.svg" 
+                        alt="小红书二维码" 
+                        className="w-32 h-32 mx-auto object-contain rounded-lg"
+                      />
+                      <p className="text-xs text-gray-600 mt-3">扫码关注我们的小红书</p>
+                    </div>
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-white"></div>
+                  </div>
+                )}
+              </div>
+
+              {/* Facebook */}
+              <div className="relative">
+                <a 
+                  href="https://facebook.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-blue-600 transition-colors duration-300" 
+                  title="Facebook" 
+                  aria-label="关注我们的Facebook"
+                >
+                  <FontAwesomeIcon icon={faFacebook} className="h-5 w-5" />
+                </a>
+              </div>
+
+              {/* Instagram */}
+              <div className="relative">
+                <a 
+                  href="https://instagram.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-pink-600 transition-colors duration-300" 
+                  title="Instagram" 
+                  aria-label="关注我们的Instagram"
+                >
+                  <FontAwesomeIcon icon={faInstagram} className="h-5 w-5" />
+                </a>
+              </div>
+
+              {/* YouTube */}
+              <div className="relative">
+                <a 
+                  href="https://youtube.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-red-600 transition-colors duration-300" 
+                  title="YouTube" 
+                  aria-label="关注我们的YouTube"
+                >
+                  <FontAwesomeIcon icon={faYoutube} className="h-5 w-5" />
+                </a>
+              </div>
+
+              {/* LinkedIn */}
+              <div className="relative">
+                <a 
+                  href="https://linkedin.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-blue-700 transition-colors duration-300" 
+                  title="LinkedIn" 
+                  aria-label="关注我们的LinkedIn"
+                >
+                  <FontAwesomeIcon icon={faLinkedin} className="h-5 w-5" />
+                </a>
+              </div>
+
+              {/* X (Twitter) */}
+              <div className="relative">
+                <a 
+                  href="https://x.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-black transition-colors duration-300" 
+                  title="X (Twitter)" 
+                  aria-label="关注我们的X"
+                >
+                  <FontAwesomeIcon icon={faXTwitter} className="h-5 w-5" />
+                </a>
               </div>
             </div>
           </div>

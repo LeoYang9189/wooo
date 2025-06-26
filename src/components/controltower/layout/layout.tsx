@@ -23,6 +23,7 @@ import { faUsers, faShip } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../ControlTowerStyles.css';
 import AIAssistant from './ai';
+import AIFullscreen from './AIFullscreen';
 
 const { Header, Sider, Content } = Layout;
 const MenuItem = Menu.Item;
@@ -40,6 +41,7 @@ interface LayoutProps {
 const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [aiChatVisible, setAiChatVisible] = useState(false);
+  const [aiFullscreenVisible, setAiFullscreenVisible] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
@@ -1292,7 +1294,22 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
           {children}
         </Content>
       </Layout>
-      <AIAssistant visible={aiChatVisible} onClose={() => setAiChatVisible(false)} />
+      <AIAssistant 
+        visible={aiChatVisible} 
+        onClose={() => setAiChatVisible(false)} 
+        onFullscreen={() => {
+          setAiChatVisible(false);
+          setAiFullscreenVisible(true);
+        }}
+      />
+      <AIFullscreen 
+        visible={aiFullscreenVisible} 
+        onClose={() => setAiFullscreenVisible(false)} 
+        onExitFullscreen={() => {
+          setAiFullscreenVisible(false);
+          setAiChatVisible(true);
+        }}
+      />
     </Layout>
   );
 };

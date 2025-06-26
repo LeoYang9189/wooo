@@ -5,9 +5,10 @@ import { IconSync, IconApps, IconFile, IconAttachment, IconClose, IconSearch, Ic
 interface AIAssistantProps {
   visible: boolean;
   onClose: () => void;
+  onFullscreen?: () => void;
 }
 
-const AIAssistant: React.FC<AIAssistantProps> = ({ visible, onClose }) => {
+const AIAssistant: React.FC<AIAssistantProps> = ({ visible, onClose, onFullscreen }) => {
   const [aiMessages, setAiMessages] = useState<{text: string, isUser: boolean}[]>([]);
   const [userInput, setUserInput] = useState('');
   const [skillPrefix, setSkillPrefix] = useState('');
@@ -145,6 +146,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ visible, onClose }) => {
             className="text-purple-600"
             icon={<IconApps style={{ color: '#7C3AED' }} />}
             title="全屏模式"
+            onClick={onFullscreen}
           />
           <Button 
             type="text" 
