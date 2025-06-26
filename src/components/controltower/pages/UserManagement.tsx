@@ -146,6 +146,13 @@ const UserManagement: React.FC = () => {
   const [targetUser, setTargetUser] = useState<UserData | null>(null);
   const [selectedCard, setSelectedCard] = useState<string>('');
   const [newPassword, setNewPassword] = useState<string>('');
+  const [addUserSuccessModalVisible, setAddUserSuccessModalVisible] = useState(false);
+  const [newUserInfo, setNewUserInfo] = useState<UserData | null>(null);
+  const [newUserPassword, setNewUserPassword] = useState<string>('');
+  const [countryCode, setCountryCode] = useState<string>('+86');
+  const [emailSampleModalVisible, setEmailSampleModalVisible] = useState(false);
+  const [bindConfirmModalVisible, setBindConfirmModalVisible] = useState(false);
+  const [targetCompanyValue, setTargetCompanyValue] = useState<string>('');
   const [form] = Form.useForm();
   const [bindCompanyForm] = Form.useForm();
 
@@ -313,17 +320,35 @@ const UserManagement: React.FC = () => {
 
   const handleEditUser = (user: UserData) => {
     setCurrentUser(user);
-    form.setFieldsValue(user);
+    
+    // 解析手机号中的国家区号
+    const phoneRegex = /^(\+\d{1,4})\s(.+)$/;
+    const phoneMatch = user.phone.match(phoneRegex);
+    
+    if (phoneMatch) {
+      const [, extractedCountryCode, phoneNumber] = phoneMatch;
+      setCountryCode(extractedCountryCode);
+      form.setFieldsValue({
+        username: user.username,
+        email: user.email,
+        phone: phoneNumber // 只设置手机号部分，不包含国家区号
+      });
+    } else {
+      // 如果没有匹配到国家区号，使用默认的中国区号
+      setCountryCode('+86');
+      form.setFieldsValue({
+        username: user.username,
+        email: user.email,
+        phone: user.phone
+      });
+    }
+    
     setEditModalVisible(true);
   };
 
   const handleBindCompany = (user: UserData) => {
     setCurrentUser(user);
     bindCompanyForm.resetFields();
-    // 设置默认值
-    bindCompanyForm.setFieldsValue({
-      targetRole: 'user' // 默认选中普通员工
-    });
     setBindCompanyModalVisible(true);
   };
 
@@ -370,6 +395,17 @@ const UserManagement: React.FC = () => {
       setNewPassword(newPwd);
       setResetConfirmModalVisible(false);
       setResetPasswordModalVisible(true);
+    }
+  };
+
+  const confirmBindCompany = () => {
+    if (currentUser && targetCompanyValue) {
+      Message.success(`已成功为用户 ${currentUser.username} 绑定企业：${targetCompanyValue}`);
+      setBindConfirmModalVisible(false);
+      setBindCompanyModalVisible(false);
+      setCurrentUser(null);
+      setTargetCompanyValue('');
+      bindCompanyForm.resetFields();
     }
   };
 
@@ -491,6 +527,7 @@ const UserManagement: React.FC = () => {
               onClick={() => {
                 setCurrentUser(null);
                 form.resetFields();
+                setCountryCode('+86'); // 重置为默认中国区号
                 setEditModalVisible(true);
               }}
             >
@@ -759,14 +796,20 @@ const UserManagement: React.FC = () => {
           setEditModalVisible(false);
           setCurrentUser(null);
           form.resetFields();
+          setCountryCode('+86'); // 重置为默认中国区号
         }}
         onOk={() => {
           form.validate().then((values) => {
             if (currentUser) {
-              // 编辑用户
+              // 编辑用户 - 保持公司信息不变
               setUserData(prev => prev.map(user => 
                 user.id === currentUser.id 
-                  ? { ...user, ...values }
+                  ? { 
+                      ...user, 
+                      ...values, 
+                      phone: `${countryCode} ${values.phone}`,
+                      company: currentUser.company // 保持原有公司信息
+                    }
                   : user
               ));
               Message.success('用户信息已更新');
@@ -781,19 +824,39 @@ const UserManagement: React.FC = () => {
                 return result;
               };
 
-              // 添加新用户
+              // 生成8位初始密码
+              const generateInitialPassword = () => {
+                const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+                let password = '';
+                for (let i = 0; i < 8; i++) {
+                  password += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                return password;
+              };
+
+              const initialPassword = generateInitialPassword();
+
+              // 添加新用户 - 设置默认值
               const newUser: UserData = {
                 id: generateRandomId(),
                 ...values,
+                phone: `${countryCode} ${values.phone}`, // 保存完整的手机号（包含国家区号）
+                role: 'user', // 默认角色为普通用户
+                status: 'active', // 默认状态为正常
                 createTime: new Date().toLocaleString(),
                 lastLogin: '从未登录'
               };
               setUserData(prev => [...prev, newUser]);
-              Message.success('用户已添加');
+              
+              // 设置新用户信息并显示成功弹窗
+              setNewUserInfo(newUser);
+              setNewUserPassword(initialPassword);
+              setAddUserSuccessModalVisible(true);
             }
             setEditModalVisible(false);
             setCurrentUser(null);
             form.resetFields();
+            setCountryCode('+86'); // 重置为默认中国区号
           }).catch((error) => {
             console.error('表单验证失败:', error);
           });
@@ -807,6 +870,30 @@ const UserManagement: React.FC = () => {
           layout="vertical"
           autoComplete="off"
         >
+          {/* 编辑模式下显示只读的用户角色、状态和所属公司信息 */}
+          {currentUser && (
+            <div style={{ 
+              padding: '16px', 
+              backgroundColor: '#F7F8FA', 
+              borderRadius: '6px', 
+              marginBottom: '20px',
+              border: '1px solid #E5E6EB'
+            }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '12px', alignItems: 'center' }}>
+                <Text type="secondary">用户角色：</Text>
+                <div>{getRoleTag(currentUser.role)}</div>
+                
+                <Text type="secondary">用户状态：</Text>
+                <div>{getStatusTag(currentUser.status)}</div>
+                
+                <Text type="secondary">所属公司：</Text>
+                <div>
+                  <Text style={{ fontSize: '14px', color: '#333' }}>{currentUser.company}</Text>
+                </div>
+              </div>
+            </div>
+          )}
+
           <Form.Item
             label="用户名"
             field="username"
@@ -839,8 +926,37 @@ const UserManagement: React.FC = () => {
               { required: true, message: '请输入手机号' },
               {
                 validator: (value, callback) => {
-                  if (value && !/^1[3-9]\d{9}$/.test(value)) {
-                    callback('请输入有效的手机号');
+                  // 根据国家区号调整验证规则
+                  if (value) {
+                    if (countryCode === '+86') {
+                      // 中国手机号验证
+                      if (!/^1[3-9]\d{9}$/.test(value)) {
+                        callback('请输入有效的中国手机号');
+                      } else {
+                        callback();
+                      }
+                    } else if (countryCode === '+1') {
+                      // 美国/加拿大手机号验证 (10位数字)
+                      if (!/^\d{10}$/.test(value)) {
+                        callback('请输入有效的美国/加拿大手机号');
+                      } else {
+                        callback();
+                      }
+                    } else if (countryCode === '+44') {
+                      // 英国手机号验证
+                      if (!/^7\d{9}$/.test(value)) {
+                        callback('请输入有效的英国手机号');
+                      } else {
+                        callback();
+                      }
+                    } else {
+                      // 其他国家基本验证(5-15位数字)
+                      if (!/^\d{5,15}$/.test(value)) {
+                        callback('请输入有效的手机号');
+                      } else {
+                        callback();
+                      }
+                    }
                   } else {
                     callback();
                   }
@@ -848,45 +964,90 @@ const UserManagement: React.FC = () => {
               }
             ]}
           >
-            <Input placeholder="请输入手机号" />
+            <Input 
+              placeholder="请输入手机号" 
+              addBefore={
+                <Select
+                  value={countryCode}
+                  onChange={setCountryCode}
+                  style={{ width: 100 }}
+                  showSearch
+                  placeholder="区号"
+                >
+                  <Option value="+86">🇨🇳 +86</Option>
+                  <Option value="+1">🇺🇸 +1</Option>
+                  <Option value="+44">🇬🇧 +44</Option>
+                  <Option value="+33">🇫🇷 +33</Option>
+                  <Option value="+49">🇩🇪 +49</Option>
+                  <Option value="+81">🇯🇵 +81</Option>
+                  <Option value="+82">🇰🇷 +82</Option>
+                  <Option value="+65">🇸🇬 +65</Option>
+                  <Option value="+852">🇭🇰 +852</Option>
+                  <Option value="+853">🇲🇴 +853</Option>
+                  <Option value="+886">🇹🇼 +886</Option>
+                  <Option value="+60">🇲🇾 +60</Option>
+                  <Option value="+66">🇹🇭 +66</Option>
+                  <Option value="+84">🇻🇳 +84</Option>
+                  <Option value="+62">🇮🇩 +62</Option>
+                  <Option value="+63">🇵🇭 +63</Option>
+                  <Option value="+91">🇮🇳 +91</Option>
+                  <Option value="+61">🇦🇺 +61</Option>
+                  <Option value="+64">🇳🇿 +64</Option>
+                  <Option value="+7">🇷🇺 +7</Option>
+                  <Option value="+39">🇮🇹 +39</Option>
+                  <Option value="+34">🇪🇸 +34</Option>
+                  <Option value="+31">🇳🇱 +31</Option>
+                  <Option value="+46">🇸🇪 +46</Option>
+                  <Option value="+47">🇳🇴 +47</Option>
+                  <Option value="+45">🇩🇰 +45</Option>
+                  <Option value="+358">🇫🇮 +358</Option>
+                  <Option value="+41">🇨🇭 +41</Option>
+                  <Option value="+43">🇦🇹 +43</Option>
+                  <Option value="+32">🇧🇪 +32</Option>
+                  <Option value="+351">🇵🇹 +351</Option>
+                  <Option value="+48">🇵🇱 +48</Option>
+                  <Option value="+420">🇨🇿 +420</Option>
+                  <Option value="+36">🇭🇺 +36</Option>
+                  <Option value="+30">🇬🇷 +30</Option>
+                  <Option value="+90">🇹🇷 +90</Option>
+                  <Option value="+972">🇮🇱 +972</Option>
+                  <Option value="+966">🇸🇦 +966</Option>
+                  <Option value="+971">🇦🇪 +971</Option>
+                  <Option value="+20">🇪🇬 +20</Option>
+                  <Option value="+27">🇿🇦 +27</Option>
+                  <Option value="+55">🇧🇷 +55</Option>
+                  <Option value="+52">🇲🇽 +52</Option>
+                  <Option value="+54">🇦🇷 +54</Option>
+                  <Option value="+56">🇨🇱 +56</Option>
+                  <Option value="+57">🇨🇴 +57</Option>
+                </Select>
+              }
+            />
           </Form.Item>
 
-          <Form.Item
-            label="所属公司"
-            field="company"
-            rules={[
-              { required: true, message: '请输入所属公司' }
-            ]}
-          >
-            <Input placeholder="请输入所属公司" />
-          </Form.Item>
-
-          <Form.Item
-            label="用户角色"
-            field="role"
-            rules={[
-              { required: true, message: '请选择用户角色' }
-            ]}
-          >
-            <Select placeholder="请选择用户角色">
-              <Option value="super_admin">超级管理员</Option>
-              <Option value="user">普通用户</Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-            label="用户状态"
-            field="status"
-            rules={[
-              { required: true, message: '请选择用户状态' }
-            ]}
-          >
-            <Select placeholder="请选择用户状态">
-              <Option value="active">正常</Option>
-              <Option value="inactive">禁用</Option>
-              <Option value="pending">待激活</Option>
-            </Select>
-          </Form.Item>
+          {/* 添加用户模式下的所属公司选择 */}
+          {!currentUser && (
+            <Form.Item
+              label="所属公司"
+              field="company"
+              rules={[
+                { required: true, message: '请选择所属公司' }
+              ]}
+            >
+              <Select placeholder="请选择所属公司">
+                <Option value="货拉拉物流科技有限公司">货拉拉物流科技有限公司</Option>
+                <Option value="顺丰速运集团">顺丰速运集团</Option>
+                <Option value="德邦物流股份有限公司">德邦物流股份有限公司</Option>
+                <Option value="中通快递股份有限公司">中通快递股份有限公司</Option>
+                <Option value="申通快递有限公司">申通快递有限公司</Option>
+                <Option value="圆通速递股份有限公司">圆通速递股份有限公司</Option>
+                <Option value="韵达速递股份有限公司">韵达速递股份有限公司</Option>
+                <Option value="百世快递有限公司">百世快递有限公司</Option>
+                <Option value="京东物流集团">京东物流集团</Option>
+                <Option value="菜鸟网络科技有限公司">菜鸟网络科技有限公司</Option>
+              </Select>
+            </Form.Item>
+          )}
         </Form>
       </Modal>
 
@@ -959,11 +1120,18 @@ const UserManagement: React.FC = () => {
         }}
         onOk={() => {
           bindCompanyForm.validate().then((values) => {
-            const roleText = values.targetRole === 'super_admin' ? '超级管理员' : '普通员工';
-            Message.success(`已成功为用户 ${currentUser?.username} 绑定企业：${values.targetCompany}，角色：${roleText}`);
-            setBindCompanyModalVisible(false);
-            setCurrentUser(null);
-            bindCompanyForm.resetFields();
+            // 检查当前用户是否为超级管理员
+            if (currentUser?.role === 'super_admin') {
+              // 保存目标企业值并显示确认弹窗
+              setTargetCompanyValue(values.targetCompany);
+              setBindConfirmModalVisible(true);
+            } else {
+              // 非超级管理员直接绑定
+              Message.success(`已成功为用户 ${currentUser?.username} 绑定企业：${values.targetCompany}`);
+              setBindCompanyModalVisible(false);
+              setCurrentUser(null);
+              bindCompanyForm.resetFields();
+            }
           }).catch((error) => {
             console.error('表单验证失败:', error);
           });
@@ -1003,19 +1171,6 @@ const UserManagement: React.FC = () => {
                 <Option value="中通快递股份有限公司">中通快递股份有限公司</Option>
                 <Option value="申通快递有限公司">申通快递有限公司</Option>
                 <Option value="圆通速递股份有限公司">圆通速递股份有限公司</Option>
-              </Select>
-            </Form.Item>
-
-            <Form.Item
-              label="目标角色"
-              field="targetRole"
-              rules={[
-                { required: true, message: '请选择目标角色' }
-              ]}
-            >
-              <Select placeholder="请选择目标角色">
-                <Option value="super_admin">超级管理员</Option>
-                <Option value="user">普通员工</Option>
               </Select>
             </Form.Item>
           </Form>
@@ -1236,6 +1391,345 @@ const UserManagement: React.FC = () => {
             }}>
               <Text style={{ fontSize: '14px', color: '#52C41A' }}>
                 ✅ 密码重置信息已自动发送至用户邮箱 {currentUser.email}
+              </Text>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* 添加用户成功提示弹窗 */}
+      <Modal
+        title="用户添加成功"
+        visible={addUserSuccessModalVisible}
+        onCancel={() => {
+          setAddUserSuccessModalVisible(false);
+          setNewUserInfo(null);
+          setNewUserPassword('');
+        }}
+        footer={
+          <Button type="primary" onClick={() => {
+            setAddUserSuccessModalVisible(false);
+            setEmailSampleModalVisible(true); // 显示邮件样例弹窗
+          }}>
+            关闭
+          </Button>
+        }
+        style={{ width: 600 }}
+      >
+        {newUserInfo && (
+          <div style={{ padding: '16px 0' }}>
+            <div style={{ 
+              backgroundColor: '#F6FFED', 
+              border: '1px solid #B7EB8F', 
+              borderRadius: '6px', 
+              padding: '16px',
+              marginBottom: '20px'
+            }}>
+              <Text style={{ fontSize: '16px', color: '#52C41A', fontWeight: 'bold' }}>
+                ✅ 账号信息与初始密码已经发送至对应邮箱，请提醒客户及时查看。
+              </Text>
+            </div>
+            
+            <div style={{ marginBottom: '16px' }}>
+              <Text style={{ fontSize: '16px', fontWeight: 'bold', color: '#165DFF' }}>
+                用户信息如下：
+              </Text>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: '100px 1fr', 
+                gap: '12px', 
+                alignItems: 'center',
+                padding: '12px',
+                backgroundColor: '#F7F8FA',
+                borderRadius: '6px',
+                border: '1px solid #E5E6EB'
+              }}>
+                <Text type="secondary">用户名：</Text>
+                <Text 
+                  copyable={{ text: newUserInfo.username }} 
+                  style={{ fontWeight: 'bold', fontSize: '15px' }}
+                >
+                  {newUserInfo.username}
+                </Text>
+                
+                <Text type="secondary">手机号：</Text>
+                <Text 
+                  copyable={{ text: newUserInfo.phone }} 
+                  style={{ fontFamily: 'monospace', fontSize: '15px' }}
+                >
+                  {newUserInfo.phone}
+                </Text>
+                
+                <Text type="secondary">邮箱：</Text>
+                <Text 
+                  copyable={{ text: newUserInfo.email }} 
+                  style={{ fontSize: '15px' }}
+                >
+                  {newUserInfo.email}
+                </Text>
+                
+                <Text type="secondary">初始密码：</Text>
+                <Text 
+                  copyable={{ text: newUserPassword }} 
+                  style={{ 
+                    fontFamily: 'monospace', 
+                    fontSize: '16px', 
+                    backgroundColor: '#FFF1F0',
+                    padding: '6px 12px',
+                    borderRadius: '4px',
+                    fontWeight: 'bold',
+                    color: '#F5222D',
+                    border: '1px solid #FFD6D6'
+                  }}
+                >
+                  {newUserPassword}
+                </Text>
+                
+                <Text type="secondary">所属企业：</Text>
+                <Text 
+                  copyable={{ text: newUserInfo.company }} 
+                  style={{ fontSize: '15px' }}
+                >
+                  {newUserInfo.company}
+                </Text>
+              </div>
+            </div>
+
+            <div style={{ 
+              backgroundColor: '#FFF7E6', 
+              border: '1px solid #FFD591', 
+              borderRadius: '6px', 
+              padding: '12px',
+              marginTop: '16px'
+            }}>
+              <Text style={{ fontSize: '14px', color: '#FA8C16' }}>
+                💡 提示：所有信息已自动发送至用户邮箱 <Text style={{ fontWeight: 'bold' }}>{newUserInfo.email}</Text>，请提醒客户查收邮件并妥善保管登录信息。
+              </Text>
+            </div>
+                     </div>
+         )}
+       </Modal>
+
+      {/* 邮件样例弹窗 */}
+      <Modal
+        title="只是显示邮件样例给开发参考，不需要真的做这个弹窗！！！！"
+        visible={emailSampleModalVisible}
+        onCancel={() => {
+          setEmailSampleModalVisible(false);
+          setNewUserInfo(null);
+          setNewUserPassword('');
+        }}
+        footer={
+          <Button type="primary" onClick={() => {
+            setEmailSampleModalVisible(false);
+            setNewUserInfo(null);
+            setNewUserPassword('');
+          }}>
+            关闭
+          </Button>
+        }
+        style={{ width: 700 }}
+      >
+        {newUserInfo && (
+          <div style={{ padding: '16px 0' }}>
+            <div style={{ 
+              backgroundColor: '#F8F9FA', 
+              border: '1px solid #E9ECEF', 
+              borderRadius: '8px', 
+              padding: '20px',
+              fontFamily: 'Arial, sans-serif',
+              lineHeight: '1.6'
+            }}>
+              {/* 邮件头部 */}
+              <div style={{ borderBottom: '2px solid #165DFF', paddingBottom: '16px', marginBottom: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ 
+                    width: '48px', 
+                    height: '48px', 
+                    backgroundColor: '#165DFF', 
+                    borderRadius: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    fontSize: '20px',
+                    fontWeight: 'bold'
+                  }}>
+                    W
+                  </div>
+                  <div>
+                    <h3 style={{ margin: '0', color: '#165DFF', fontSize: '18px' }}>XXX公司物流控制塔系统</h3>
+                    <p style={{ margin: '0', color: '#666', fontSize: '14px' }}>logistics@controltower.com</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 邮件正文 */}
+              <div style={{ color: '#333' }}>
+                <p style={{ fontSize: '16px', margin: '0 0 16px 0' }}>
+                  尊敬的 <strong>{newUserInfo.username}</strong>，您好！
+                </p>
+                
+                <p style={{ margin: '0 0 16px 0' }}>
+                  欢迎加入XXX公司物流控制塔系统！您的账户已经成功创建，以下是您的登录信息：
+                </p>
+
+                <div style={{ 
+                  backgroundColor: '#F0F9FF', 
+                  border: '1px solid #BAE7FF', 
+                  borderRadius: '6px', 
+                  padding: '16px',
+                  margin: '20px 0'
+                }}>
+                  <h4 style={{ color: '#1890FF', margin: '0 0 12px 0', fontSize: '16px' }}>📋 账户信息</h4>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <tr>
+                      <td style={{ padding: '8px 0', color: '#666', width: '80px' }}>用户名：</td>
+                      <td style={{ padding: '8px 0', fontWeight: 'bold' }}>{newUserInfo.username}</td>
+                    </tr>
+                    <tr>
+                      <td style={{ padding: '8px 0', color: '#666' }}>邮箱：</td>
+                      <td style={{ padding: '8px 0', fontFamily: 'monospace' }}>{newUserInfo.email}</td>
+                    </tr>
+                    <tr>
+                      <td style={{ padding: '8px 0', color: '#666' }}>手机号：</td>
+                      <td style={{ padding: '8px 0', fontFamily: 'monospace' }}>{newUserInfo.phone}</td>
+                    </tr>
+                    <tr>
+                      <td style={{ padding: '8px 0', color: '#666' }}>初始密码：</td>
+                      <td style={{ 
+                        padding: '8px 12px', 
+                        fontFamily: 'monospace', 
+                        backgroundColor: '#FFF2F0',
+                        color: '#F5222D',
+                        borderRadius: '4px',
+                        fontWeight: 'bold',
+                        border: '1px solid #FFD6D6',
+                        fontSize: '16px'
+                      }}>{newUserPassword}</td>
+                    </tr>
+                    <tr>
+                      <td style={{ padding: '8px 0', color: '#666' }}>所属企业：</td>
+                      <td style={{ padding: '8px 0' }}>{newUserInfo.company}</td>
+                    </tr>
+                  </table>
+                </div>
+
+                <div style={{ 
+                  backgroundColor: '#FFF7E6', 
+                  border: '1px solid #FFD591', 
+                  borderRadius: '6px', 
+                  padding: '16px',
+                  margin: '20px 0'
+                }}>
+                  <h4 style={{ color: '#FA8C16', margin: '0 0 12px 0', fontSize: '16px' }}>🔐 安全提醒</h4>
+                  <ul style={{ margin: '0', paddingLeft: '20px', color: '#666' }}>
+                    <li>请妥善保管您的登录密码，切勿泄露给他人</li>
+                    <li>首次登录后，建议您立即修改初始密码</li>
+                    <li>如有任何问题，请及时联系系统管理员</li>
+                  </ul>
+                </div>
+
+                <div style={{ 
+                  backgroundColor: '#F6FFED', 
+                  border: '1px solid #B7EB8F', 
+                  borderRadius: '6px', 
+                  padding: '16px',
+                  margin: '20px 0'
+                }}>
+                  <h4 style={{ color: '#52C41A', margin: '0 0 12px 0', fontSize: '16px' }}>🚀 开始使用</h4>
+                  <p style={{ margin: '0 0 8px 0', color: '#666' }}>
+                    登录地址：<a href="#" style={{ color: '#165DFF' }}>https://controltower.logistics.com</a>
+                  </p>
+                  <p style={{ margin: '0', color: '#666' }}>
+                    请使用上述账户信息登录系统，开始体验我们的服务！
+                  </p>
+                </div>
+
+                <hr style={{ border: 'none', borderTop: '1px solid #E9ECEF', margin: '24px 0' }} />
+
+                <p style={{ color: '#666', fontSize: '14px', margin: '0' }}>
+                  此邮件由XXX公司物流控制塔系统自动发送，请勿回复。<br/>
+                  如有疑问，请联系技术支持：support@controltower.com<br/>
+                  <br/>
+                  © 2024 XXX公司物流控制塔系统 版权所有
+                </p>
+              </div>
+            </div>
+                     </div>
+         )}
+       </Modal>
+
+      {/* 绑定企业确认弹窗 */}
+      <Modal
+        title="绑定企业确认"
+        visible={bindConfirmModalVisible}
+        onCancel={() => {
+          setBindConfirmModalVisible(false);
+          setTargetCompanyValue('');
+        }}
+        onOk={confirmBindCompany}
+        okText="确认绑定"
+        cancelText="取消"
+        style={{ width: 500 }}
+      >
+        {currentUser && (
+          <div style={{ padding: '16px 0' }}>
+            <div style={{ 
+              backgroundColor: '#FFF7E6', 
+              border: '1px solid #FFD591', 
+              borderRadius: '6px', 
+              padding: '16px',
+              marginBottom: '16px'
+            }}>
+              <Text style={{ fontSize: '16px', color: '#FA8C16', fontWeight: 'bold' }}>
+                ⚠️ 重要提醒
+              </Text>
+            </div>
+            
+            <div style={{ lineHeight: '24px', marginBottom: '16px' }}>
+              <Text style={{ fontSize: '16px' }}>
+                该用户在当前企业「<Text style={{ fontWeight: 'bold', color: '#165DFF' }}>{currentUser.company}</Text>」为超级管理员，移除后「<Text style={{ fontWeight: 'bold', color: '#165DFF' }}>{currentUser.company}</Text>」将无超级管理员用户，确认？
+              </Text>
+            </div>
+
+            <div style={{ 
+              backgroundColor: '#F6F6F6', 
+              borderRadius: '6px', 
+              padding: '12px',
+              marginBottom: '16px'
+            }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Text type="secondary">用户名称：</Text>
+                  <Text style={{ fontWeight: 'bold' }}>{currentUser.username}</Text>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Text type="secondary">当前企业：</Text>
+                  <Text>{currentUser.company}</Text>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Text type="secondary">当前角色：</Text>
+                  {getRoleTag(currentUser.role)}
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Text type="secondary">目标企业：</Text>
+                  <Text style={{ fontWeight: 'bold', color: '#52C41A' }}>{targetCompanyValue}</Text>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ 
+              backgroundColor: '#FFF2F0', 
+              border: '1px solid #FFB3B3', 
+              borderRadius: '6px', 
+              padding: '12px'
+            }}>
+              <Text style={{ fontSize: '14px', color: '#F5222D' }}>
+                注意：绑定后，原企业可能需要重新指定超级管理员用户。
               </Text>
             </div>
           </div>
