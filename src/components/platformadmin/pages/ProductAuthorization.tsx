@@ -12,8 +12,7 @@ import {
   DatePicker, 
   Message,
   Input,
-  Select,
-  Breadcrumb
+  Select
 } from '@arco-design/web-react';
 import { 
   IconArrowLeft, 
@@ -332,17 +331,6 @@ const ProductAuthorization: React.FC = () => {
 
   return (
     <div style={{ padding: '0' }}>
-      {/* 面包屑导航 */}
-      <Breadcrumb style={{ marginBottom: '16px' }}>
-        <Breadcrumb.Item 
-          onClick={() => navigate('/platformadmin/product-center')}
-          style={{ cursor: 'pointer' }}
-        >
-          产品中心
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>{productNames[productId || ''] || '未知产品'} - 授权企业</Breadcrumb.Item>
-      </Breadcrumb>
-
       {/* 页面标题 */}
       <div style={{ marginBottom: '24px' }}>
         <Space>

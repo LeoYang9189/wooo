@@ -306,6 +306,14 @@ const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
     }
   };
 
+  // 产品名称映射
+  const productNames: { [key: string]: string } = {
+    'super-freight': '超级运价',
+    'control-tower': '控制塔',
+    'smart-container': '智慧箱管',
+    'ai-assistant': 'AI助手'
+  };
+
   // 根据当前路由生成面包屑
   const getBreadcrumbs = (): BreadcrumbItem[] => {
     const path = location.pathname.replace('/platformadmin/', '');
@@ -313,6 +321,17 @@ const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
       { title: '首页', path: '/platformadmin' },
       { title: '平台运营后台', path: '/platformadmin' }
     ];
+
+    // 处理产品授权页面的特殊情况
+    if (path.startsWith('product-authorization/')) {
+      const productId = path.split('/')[1];
+      const productName = productNames[productId] || '未知产品';
+      breadcrumbs.push(
+        { title: '产品中心', path: '/platformadmin/product-center' },
+        { title: `${productName} - 授权企业`, path: undefined }
+      );
+      return breadcrumbs;
+    }
 
     // 处理权限管理编辑页面的特殊情况
     if (path.startsWith('permission-management/edit/')) {
