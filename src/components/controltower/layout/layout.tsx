@@ -216,6 +216,13 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
     
     // 运营管理
     { 
+      title: '首页管理', 
+      key: 'home-management', 
+      path: '/controltower/home-management',
+      category: '运营管理',
+      icon: <IconApps />
+    },
+    { 
       title: '资讯中心管理', 
       key: 'news-management', 
       path: '/controltower/news-management',
@@ -722,6 +729,12 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
           { title: '个性化配置', path: '/controltower/personalization-config' }
         );
         break;
+      case 'home-management':
+        breadcrumbs.push(
+          { title: '运营管理', path: undefined },
+          { title: '首页管理', path: '/controltower/home-management' }
+        );
+        break;
       case 'news-management':
         breadcrumbs.push(
           { title: '运营管理', path: undefined },
@@ -1077,6 +1090,7 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
               </span>
             }
           >
+            <MenuItem key="home-management">首页管理</MenuItem>
             <MenuItem key="news-management">资讯中心管理</MenuItem>
             <MenuItem key="business-management">业务介绍管理</MenuItem>
             <MenuItem key="about-management">关于我们管理</MenuItem>

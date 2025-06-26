@@ -84,6 +84,7 @@ import PersonalizationConfig from './pages/PersonalizationConfig';
 import NewsManagement from './pages/NewsManagement';
 import BusinessManagement from './pages/BusinessManagement';
 import AboutManagement from './pages/AboutManagement';
+import HomeManagement from './pages/HomeManagement';
 // --- 结束 ---
 
 const ControlTowerRoutes: React.FC = () => {
@@ -348,6 +349,7 @@ const ControlTowerRoutes: React.FC = () => {
       <Route path="/personalization-config" element={<PersonalizationConfig />} />
       
       {/* 运营管理 */}
+      <Route path="/home-management" element={<HomeManagement />} />
       <Route path="/news-management" element={<NewsManagement />} />
       <Route path="/business-management" element={<BusinessManagement />} />
       <Route path="/about-management" element={<AboutManagement />} />
