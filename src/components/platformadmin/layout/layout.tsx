@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { Layout, Menu, Button, Avatar, Badge, Breadcrumb, Dropdown, Divider } from '@arco-design/web-react';
+import { Layout, Menu, Button, Avatar, Breadcrumb, Dropdown, Divider, AutoComplete } from '@arco-design/web-react';
 import { 
   IconDashboard, 
   IconApps, 
   IconUser, 
-  IconNotification, 
   IconMenuFold, 
   IconMenuUnfold, 
-  IconMessage, 
   IconDown, 
   IconPoweroff, 
   IconSettings as IconSettingsOutline, 
@@ -22,6 +20,7 @@ import { faUsers } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Message } from '@arco-design/web-react';
 import '../PlatformAdminStyles.css';
+import AIPlatformAssistant from './ai-platform';
 
 const { Header, Sider, Content } = Layout;
 const MenuItem = Menu.Item;
@@ -38,10 +37,241 @@ interface LayoutProps {
 
 const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
+  const [aiChatVisible, setAiChatVisible] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
 
   const toggleCollapse = () => setCollapsed(!collapsed);
+
+  // 平台管理端功能菜单数据
+  const menuItems = [
+    // 控制台
+    { 
+      title: '控制台', 
+      key: 'dashboard', 
+      path: '/platformadmin',
+      category: '工作台',
+      icon: <IconDashboard />
+    },
+    
+    // 客户中心
+    { 
+      title: '用户管理', 
+      key: 'user-management', 
+      path: '/platformadmin/user-management',
+      category: '客户中心',
+      icon: <FontAwesomeIcon icon={faUsers} />
+    },
+    { 
+      title: '企业管理', 
+      key: 'company-management', 
+      path: '/platformadmin/company-management',
+      category: '客户中心',
+      icon: <FontAwesomeIcon icon={faUsers} />
+    },
+    
+    // 运营管理
+    { 
+      title: '船东维护', 
+      key: 'carrier-management', 
+      path: '/platformadmin/carrier-management',
+      category: '运营管理',
+      icon: <IconSettings />
+    },
+    { 
+      title: '公告板管理', 
+      key: 'announcement-management', 
+      path: '/platformadmin/announcement-management',
+      category: '运营管理',
+      icon: <IconSettings />
+    },
+    
+    // 产品中心
+    { 
+      title: '产品中心', 
+      key: 'product-center', 
+      path: '/platformadmin/product-center',
+      category: '产品中心',
+      icon: <IconApps />
+    },
+    
+    // 基础资料维护
+    { 
+      title: '港口管理', 
+      key: 'port-management', 
+      path: '/platformadmin/port-management',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '承运人管理', 
+      key: 'carrier-management-basic', 
+      path: '/platformadmin/carrier-management-basic',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '国家（地区）', 
+      key: 'country-region-management', 
+      path: '/platformadmin/country-region-management',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '中国行政区划', 
+      key: 'china-administrative', 
+      path: '/platformadmin/china-administrative',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '海外仓库', 
+      key: 'overseas-warehouse', 
+      path: '/platformadmin/overseas-warehouse',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '邮编管理', 
+      key: 'zipcode-management', 
+      path: '/platformadmin/zipcode-management',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '航线管理', 
+      key: 'route-management', 
+      path: '/platformadmin/route-management',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '集装箱管理', 
+      key: 'container-management', 
+      path: '/platformadmin/container-management',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '包装单位', 
+      key: 'package-unit', 
+      path: '/platformadmin/package-unit',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '运输条款', 
+      key: 'transport-terms', 
+      path: '/platformadmin/transport-terms',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '贸易条款', 
+      key: 'trade-terms', 
+      path: '/platformadmin/trade-terms',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '计费单位', 
+      key: 'calculation-unit', 
+      path: '/platformadmin/calculation-unit',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '费用管理', 
+      key: 'charge-management', 
+      path: '/platformadmin/charge-management',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '船舶代理', 
+      key: 'ship-agent', 
+      path: '/platformadmin/ship-agent',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '船舶资料', 
+      key: 'ship-data', 
+      path: '/platformadmin/ship-data',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '码头管理', 
+      key: 'terminal-management', 
+      path: '/platformadmin/terminal-management',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '币种管理', 
+      key: 'currency-management', 
+      path: '/platformadmin/currency-management',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    { 
+      title: '汇率设置', 
+      key: 'exchange-rate-management', 
+      path: '/platformadmin/exchange-rate-management',
+      category: '基础资料维护',
+      icon: <IconStorage />
+    },
+    
+    // 系统设置
+    { 
+      title: '员工管理', 
+      key: 'staff-management', 
+      path: '/platformadmin/staff-management',
+      category: '系统设置',
+      icon: <IconTool />
+    },
+    { 
+      title: '权限管理', 
+      key: 'permission-management', 
+      path: '/platformadmin/permission-management',
+      category: '系统设置',
+      icon: <IconTool />
+    }
+  ];
+
+  // 搜索过滤逻辑
+  const filterMenuItems = (inputValue: string) => {
+    if (!inputValue) return [];
+    
+    const filtered = menuItems.filter(item => 
+      item.title.toLowerCase().includes(inputValue.toLowerCase()) ||
+      item.category.toLowerCase().includes(inputValue.toLowerCase())
+    );
+    
+    // 返回带父子关系的选项列表
+    return filtered.map(item => {
+      const breadcrumbPath = `${item.category} > ${item.title}`;
+      
+      return {
+        value: item.path,
+        name: breadcrumbPath,
+        label: (
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <span style={{ marginRight: '8px', color: '#1890ff' }}>{item.icon}</span>
+            <span>{breadcrumbPath}</span>
+          </div>
+        )
+      };
+    });
+  };
+
+  // 处理搜索选择
+  const handleSearchSelect = (value: string) => {
+    navigate(value);
+    setSearchValue('');
+  };
 
   // 菜单点击
   const handleMenuItemClick = (key: string) => {
@@ -451,12 +681,38 @@ const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
             </Breadcrumb>
           </div>
           <div className="flex items-center">
-            <Badge count={5} dot>
-              <Button type="text" style={{ margin: '0 8px' }} icon={<IconNotification />} />
-            </Badge>
-            <Badge count={3}>
-              <Button type="text" style={{ margin: '0 8px' }} icon={<IconMessage />} />
-            </Badge>
+            <div 
+              className="cursor-pointer hover:opacity-80 transition-opacity mr-4"
+              onClick={() => setAiChatVisible(!aiChatVisible)}
+              style={{ 
+                width: '60px', 
+                height: '60px',
+                overflow: 'hidden',
+                borderRadius: '50%'
+              }}
+            >
+              <img 
+                src="/assets/g6qmm-vsolk.gif" 
+                alt="智能助手" 
+                style={{ 
+                  width: '100%', 
+                  height: '100%', 
+                  objectFit: 'cover',
+                  borderRadius: '50%'
+                }}
+              />
+            </div>
+            <AutoComplete
+              className="mr-4"
+              style={{ width: 300 }}
+              placeholder="请输入菜单名称搜索"
+              data={filterMenuItems(searchValue)}
+              value={searchValue}
+              onSearch={setSearchValue}
+              onSelect={handleSearchSelect}
+              allowClear
+              filterOption={false}
+            />
             <Dropdown
               droplist={
                 <Menu>
@@ -492,6 +748,7 @@ const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
           {children}
         </Content>
       </Layout>
+      <AIPlatformAssistant visible={aiChatVisible} onClose={() => setAiChatVisible(false)} />
     </Layout>
   );
 };
