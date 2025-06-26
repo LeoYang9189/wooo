@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Card, Typography, Switch, Tag, Space, Button, Grid, Modal, Message } from '@arco-design/web-react';
-import { IconSettings, IconThunderbolt, IconRobot, IconExclamationCircle } from '@arco-design/web-react/icon';
+import { IconSettings, IconThunderbolt, IconRobot, IconExclamationCircle, IconMessage } from '@arco-design/web-react/icon';
 import { useNavigate } from 'react-router-dom';
 
 const { Row, Col } = Grid;
@@ -45,6 +45,15 @@ const ProductCenter: React.FC = () => {
       icon: <IconRobot style={{ fontSize: 24, color: '#FF7D00' }} />,
       enabled: false,
       features: ['箱源管理', '状态跟踪', '智能调配', '成本分析'],
+      status: 'inactive'
+    },
+    {
+      id: 'ai-assistant',
+      name: 'AI助手',
+      description: '智能AI助理系统，提供24小时在线咨询、智能问答和业务辅助服务',
+      icon: <IconMessage style={{ fontSize: 24, color: '#722ED1' }} />,
+      enabled: false,
+      features: ['智能问答', '业务咨询', '数据分析', '自动化处理'],
       status: 'inactive'
     }
   ]);

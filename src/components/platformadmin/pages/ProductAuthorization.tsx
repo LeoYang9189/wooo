@@ -61,7 +61,8 @@ const ProductAuthorization: React.FC = () => {
   const productNames: { [key: string]: string } = {
     'super-freight': '超级运价',
     'control-tower': '控制塔',
-    'smart-container': '智慧箱管'
+    'smart-container': '智慧箱管',
+    'ai-assistant': 'AI助手'
   };
 
   // 可选择的企业列表（只显示active状态的企业）
