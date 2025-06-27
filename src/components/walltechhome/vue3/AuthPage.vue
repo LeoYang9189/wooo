@@ -147,13 +147,13 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuthState } from './composables/useAuthState'
 import { useUser } from './composables/useUser'
 import LoginForm from './components/LoginForm.vue'
 import RegisterForm from './components/RegisterForm.vue'
 import PolicyModal from './components/PolicyModal.vue'
-import '../PortalStyles.css'
+import './PortalStyles.css'
 
 // 使用状态管理
 const {

@@ -169,7 +169,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUser } from './composables/useUser'
-import '../PortalStyles.css'
+import './PortalStyles.css'
 
 interface AuthFormData {
   username: string

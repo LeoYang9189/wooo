@@ -20,7 +20,7 @@ import PortalFeatures from './PortalFeatures.vue'
 import PortalFeatureDetail from './PortalFeatureDetail.vue'
 import PortalTechSpecs from './PortalTechSpecs.vue'
 import PortalCTA from './PortalCTA.vue'
-import '../PortalStyles.css'
+import './PortalStyles.css'
 
 // Vue3 Portal组件，对应React版本的Portal.tsx
 </script>
