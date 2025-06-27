@@ -22,7 +22,7 @@
         <!-- 左侧文字内容 -->
         <div class="lg:pr-8">
           <div class="mb-6">
-            <span class="inline-flex items-center px-6 py-2 text-base bg-blue-500 text-white rounded-full">
+            <span class="inline-flex items-center px-6 py-2 text-base bg-white text-blue-600 rounded-full font-medium shadow-lg">
               WallTech 控制塔系统
             </span>
           </div>
@@ -101,12 +101,12 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
-import { ref } from 'vue'
+// @ts-ignore
+import { reactive } from 'vue'
 
 // 优势指标数据
-const advantages = ref([
+const advantages = reactive([
   {
     text: "提升运营效率 80%+",
     icon: "fas fa-chart-line",
