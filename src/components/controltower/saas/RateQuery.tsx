@@ -30,6 +30,8 @@ import {
 } from '@arco-design/web-react/icon';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ControlTowerSaasLayout from "./ControlTowerSaasLayout";
+import SchemeSelect from './SchemeSelect';
+import SchemeManagementModal, { SchemeData } from './SchemeManagementModal';
 import './InquiryManagement.css';
 
 const Option = Select.Option;
@@ -776,6 +778,10 @@ const RateQuery: React.FC = () => {
   const [filterConditions, setFilterConditions] = useState<FilterCondition[]>([]);
   const [filterSchemes, setFilterSchemes] = useState<FilterScheme[]>([]);
   const [currentSchemeId, setCurrentSchemeId] = useState<string>('default');
+  
+  // 方案管理相关状态
+  const [schemeManagementModalVisible, setSchemeManagementModalVisible] = useState(false);
+  const [allSchemes, setAllSchemes] = useState<SchemeData[]>([]);
 
   // 拖拽状态
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
@@ -807,6 +813,70 @@ const RateQuery: React.FC = () => {
     const defaultScheme = initializeDefaultScheme(activeTab);
     setFilterSchemes([defaultScheme]);
   }, [activeTab]);
+
+  // 初始化方案数据
+  useEffect(() => {
+    const defaultScheme: SchemeData = {
+      id: 'default',
+      name: '系统默认方案',
+      isDefault: true,
+      createTime: new Date().toISOString(),
+      conditions: []
+    };
+    
+    const customScheme1: SchemeData = {
+      id: 'custom1',
+      name: '常用查询',
+      isDefault: false,
+      createTime: new Date(Date.now() - 86400000).toISOString(),
+      conditions: []
+    };
+    
+    const customScheme2: SchemeData = {
+      id: 'custom2',
+      name: '欧线查询',
+      isDefault: false,
+      createTime: new Date(Date.now() - 172800000).toISOString(),
+      conditions: []
+    };
+    
+    setAllSchemes([defaultScheme, customScheme1, customScheme2]);
+  }, []);
+
+  // 方案管理相关函数
+  const openSchemeManagementModal = () => {
+    setSchemeManagementModalVisible(true);
+  };
+
+  const closeSchemeManagementModal = () => {
+    setSchemeManagementModalVisible(false);
+  };
+
+  const handleDeleteScheme = (id: string) => {
+    setAllSchemes(prev => prev.filter(scheme => scheme.id !== id));
+    // 如果删除的是当前选中的方案，切换到默认方案
+    if (currentSchemeId === id) {
+      setCurrentSchemeId('default');
+    }
+  };
+
+  const handleSetDefaultScheme = (id: string) => {
+    setAllSchemes(prev => 
+      prev.map(scheme => ({
+        ...scheme,
+        isDefault: scheme.id === id
+      }))
+    );
+    setCurrentSchemeId(id);
+  };
+
+  const handleRenameScheme = (id: string, newName: string) => {
+    setAllSchemes(prev => 
+      prev.map(scheme => 
+        scheme.id === id ? { ...scheme, name: newName } : scheme
+      )
+    );
+  };
 
   // 切换筛选区收起/展开
 
@@ -2523,7 +2593,17 @@ const RateQuery: React.FC = () => {
       conditions: [...filterConditions]
     };
     
+    const newSchemeData: SchemeData = {
+      id: newScheme.id,
+      name: newScheme.name,
+      isDefault: false,
+      createTime: new Date().toISOString(),
+      conditions: newScheme.conditions
+    };
+    
+    // 同时更新两个状态
     setFilterSchemes(prev => [...prev, newScheme]);
+    setAllSchemes(prev => [...prev, newSchemeData]);
     setCurrentSchemeId(newScheme.id);
     closeSchemeModal();
     Message.success('方案保存成功');
@@ -2641,19 +2721,15 @@ const RateQuery: React.FC = () => {
             {/* 选择方案下拉 */}
             <div className="flex items-center gap-2">
               <span className="text-gray-500 text-sm">方案:</span>
-              <Select
+              <SchemeSelect
                 value={currentSchemeId}
                 onChange={applyFilterScheme}
-                style={{ width: '140px' }}
+                schemes={allSchemes}
+                onSchemeManagement={openSchemeManagementModal}
                 placeholder="选择方案"
+                style={{ width: '180px' }}
                 size="small"
-              >
-                {filterSchemes.map(scheme => (
-                  <Option key={scheme.id} value={scheme.id}>
-                    {scheme.name}
-                  </Option>
-                ))}
-              </Select>
+              />
             </div>
             
             {/* 所有操作按钮 */}
@@ -3066,6 +3142,16 @@ const RateQuery: React.FC = () => {
           </div>
         </div>
       </Modal>
+
+      {/* 方案管理弹窗 */}
+      <SchemeManagementModal
+        visible={schemeManagementModalVisible}
+        onCancel={closeSchemeManagementModal}
+        schemes={allSchemes}
+        onDeleteScheme={handleDeleteScheme}
+        onSetDefault={handleSetDefaultScheme}
+        onRenameScheme={handleRenameScheme}
+      />
     </ControlTowerSaasLayout>
   );
 };

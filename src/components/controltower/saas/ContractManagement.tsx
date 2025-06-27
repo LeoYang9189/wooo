@@ -27,6 +27,8 @@ import {
   IconSettings
 } from '@arco-design/web-react/icon';
 import { useNavigate } from 'react-router-dom';
+import SchemeSelect from './SchemeSelect';
+import SchemeManagementModal, { SchemeData } from './SchemeManagementModal';
 
 const { Option } = Select;
 const RangePicker = DatePicker.RangePicker;
@@ -189,6 +191,10 @@ const ContractManagement: React.FC = () => {
   const [filterFieldModalVisible, setFilterFieldModalVisible] = useState(false);
   const [schemeModalVisible, setSchemeModalVisible] = useState(false);
   const [newSchemeName, setNewSchemeName] = useState('');
+  
+  // 方案管理相关状态
+  const [schemeManagementModalVisible, setSchemeManagementModalVisible] = useState(false);
+  const [allSchemes, setAllSchemes] = useState<SchemeData[]>([]);
 
   // 筛选字段拖拽状态
   const [filterFieldOrder, setFilterFieldOrder] = useState<string[]>([]);
@@ -296,7 +302,17 @@ const ContractManagement: React.FC = () => {
       isDefault: false
     };
 
+    const newSchemeData: SchemeData = {
+      id: newScheme.id,
+      name: newScheme.name,
+      isDefault: false,
+      createTime: new Date().toISOString(),
+      conditions: newScheme.conditions
+    };
+
+    // 同时更新两个状态
     setFilterSchemes(prev => [...prev, newScheme]);
+    setAllSchemes(prev => [...prev, newSchemeData]);
     closeSchemeModal();
     Message.success('筛选方案保存成功');
   };
@@ -524,19 +540,15 @@ const ContractManagement: React.FC = () => {
             {/* 选择方案下拉 */}
             <div className="flex items-center gap-2">
               <span className="text-gray-500 text-sm">方案:</span>
-              <Select
+              <SchemeSelect
                 value={currentSchemeId}
                 onChange={applyFilterScheme}
-                style={{ width: '140px' }}
+                schemes={allSchemes}
+                onSchemeManagement={openSchemeManagementModal}
                 placeholder="选择方案"
+                style={{ width: '180px' }}
                 size="small"
-              >
-                {filterSchemes.map(scheme => (
-                  <Option key={scheme.id} value={scheme.id}>
-                    {scheme.name}
-                  </Option>
-                ))}
-              </Select>
+              />
             </div>
             
             {/* 所有操作按钮 */}
@@ -650,6 +662,36 @@ const ContractManagement: React.FC = () => {
     );
   };
 
+  // 方案管理相关函数
+  const openSchemeManagementModal = () => {
+    setSchemeManagementModalVisible(true);
+  };
+
+  const closeSchemeManagementModal = () => {
+    setSchemeManagementModalVisible(false);
+  };
+
+  const handleDeleteScheme = (id: string) => {
+    setAllSchemes(prev => prev.filter(scheme => scheme.id !== id));
+    // 如果删除的是当前选中的方案，切换到默认方案
+    if (currentSchemeId === id) {
+      setCurrentSchemeId('default');
+    }
+  };
+
+  const handleSetDefaultScheme = (id: string) => {
+    setAllSchemes(prev => prev.map(scheme => ({
+      ...scheme,
+      isDefault: scheme.id === id
+    })));
+  };
+
+  const handleRenameScheme = (id: string, newName: string) => {
+    setAllSchemes(prev => prev.map(scheme => 
+      scheme.id === id ? { ...scheme, name: newName } : scheme
+    ));
+  };
+
   // 初始化筛选条件和方案
   useEffect(() => {
     const defaultConditions = initializeDefaultConditions();
@@ -662,6 +704,35 @@ const ContractManagement: React.FC = () => {
     // 初始化筛选字段顺序
     const allFields = getFilterFields();
     setFilterFieldOrder(allFields.map(field => field.key));
+  }, []);
+
+  // 初始化方案数据
+  useEffect(() => {
+    const defaultScheme: SchemeData = {
+      id: 'default',
+      name: '系统默认方案',
+      isDefault: true,
+      createTime: new Date().toISOString(),
+      conditions: []
+    };
+    
+    const customScheme1: SchemeData = {
+      id: 'custom1',
+      name: '常用合约筛选',
+      isDefault: false,
+      createTime: new Date(Date.now() - 86400000).toISOString(),
+      conditions: []
+    };
+    
+    const customScheme2: SchemeData = {
+      id: 'custom2',
+      name: 'MSC合约',
+      isDefault: false,
+      createTime: new Date(Date.now() - 172800000).toISOString(),
+      conditions: []
+    };
+    
+    setAllSchemes([defaultScheme, customScheme1, customScheme2]);
   }, []);
 
   // 初始化示例数据（更新数据结构）
@@ -1398,6 +1469,16 @@ const ContractManagement: React.FC = () => {
           />
         </div>
       </Modal>
+
+      {/* 方案管理弹窗 */}
+      <SchemeManagementModal
+        visible={schemeManagementModalVisible}
+        onCancel={closeSchemeManagementModal}
+        schemes={allSchemes}
+        onDeleteScheme={handleDeleteScheme}
+        onSetDefault={handleSetDefaultScheme}
+        onRenameScheme={handleRenameScheme}
+      />
     </Card>
   );
 };

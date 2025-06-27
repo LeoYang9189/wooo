@@ -106,6 +106,8 @@ if (typeof document !== 'undefined') {
 }
 import { useNavigate } from 'react-router-dom';
 import ControlTowerSaasLayout from "./ControlTowerSaasLayout";
+import SchemeSelect from './SchemeSelect';
+import SchemeManagementModal, { SchemeData } from './SchemeManagementModal';
 
 const Title = Typography.Title;
 const Option = Select.Option;
@@ -820,6 +822,10 @@ const FclRates: React.FC = () => {
   const [schemeModalVisible, setSchemeModalVisible] = useState(false);
   const [schemeName, setSchemeName] = useState('');
   
+  // 方案管理相关状态
+  const [schemeManagementModalVisible, setSchemeManagementModalVisible] = useState(false);
+  const [allSchemes, setAllSchemes] = useState<SchemeData[]>([]);
+  
   // 批量改价相关状态
   const [batchPriceModalVisible, setBatchPriceModalVisible] = useState(false);
   const [containerTypesModalVisible, setContainerTypesModalVisible] = useState(false);
@@ -858,6 +864,70 @@ const FclRates: React.FC = () => {
   const [timeChangeTab, setTimeChangeTab] = useState<'etd' | 'eta' | 'validity'>('etd');
   
   const navigate = useNavigate();
+
+  // 初始化方案数据
+  useEffect(() => {
+    const defaultScheme: SchemeData = {
+      id: 'default',
+      name: '系统默认方案',
+      isDefault: true,
+      createTime: new Date().toISOString(),
+      conditions: []
+    };
+    
+    const customScheme1: SchemeData = {
+      id: 'custom1',
+      name: '常用筛选',
+      isDefault: false,
+      createTime: new Date(Date.now() - 86400000).toISOString(),
+      conditions: []
+    };
+    
+    const customScheme2: SchemeData = {
+      id: 'custom2',
+      name: '美线方案',
+      isDefault: false,
+      createTime: new Date(Date.now() - 172800000).toISOString(),
+      conditions: []
+    };
+    
+    setAllSchemes([defaultScheme, customScheme1, customScheme2]);
+  }, []);
+
+  // 方案管理相关函数
+  const openSchemeManagementModal = () => {
+    setSchemeManagementModalVisible(true);
+  };
+
+  const closeSchemeManagementModal = () => {
+    setSchemeManagementModalVisible(false);
+  };
+
+  const handleDeleteScheme = (id: string) => {
+    setAllSchemes(prev => prev.filter(scheme => scheme.id !== id));
+    // 如果删除的是当前选中的方案，切换到默认方案
+    if (currentSchemeId === id) {
+      setCurrentSchemeId('default');
+    }
+  };
+
+  const handleSetDefaultScheme = (id: string) => {
+    setAllSchemes(prev => 
+      prev.map(scheme => ({
+        ...scheme,
+        isDefault: scheme.id === id
+      }))
+    );
+    setCurrentSchemeId(id);
+  };
+
+  const handleRenameScheme = (id: string, newName: string) => {
+    setAllSchemes(prev => 
+      prev.map(scheme => 
+        scheme.id === id ? { ...scheme, name: newName } : scheme
+      )
+    );
+  };
 
   // 操作处理函数
   const handleViewDetail = (key: string) => {
@@ -2378,7 +2448,17 @@ const FclRates: React.FC = () => {
       isDefault: false
     };
     
+    const newSchemeData: SchemeData = {
+      id: newScheme.id,
+      name: newScheme.name,
+      isDefault: false,
+      createTime: new Date().toISOString(),
+      conditions: newScheme.conditions
+    };
+    
+    // 同时更新两个状态
     setFilterSchemes(prev => [...prev, newScheme]);
+    setAllSchemes(prev => [...prev, newSchemeData]);
     setCurrentSchemeId(newScheme.id);
     closeSchemeModal();
     Message.success('筛选方案保存成功');
@@ -2498,19 +2578,15 @@ const FclRates: React.FC = () => {
             {/* 选择方案下拉 */}
             <div className="flex items-center gap-2">
               <span className="text-gray-500 text-sm">方案:</span>
-              <Select
+              <SchemeSelect
                 value={currentSchemeId}
                 onChange={applyFilterScheme}
-                style={{ width: '140px' }}
+                schemes={allSchemes}
+                onSchemeManagement={openSchemeManagementModal}
                 placeholder="选择方案"
+                style={{ width: '180px' }}
                 size="small"
-              >
-                {filterSchemes.map(scheme => (
-                  <Option key={scheme.id} value={scheme.id}>
-                    {scheme.name}
-                  </Option>
-                ))}
-              </Select>
+              />
             </div>
             
             {/* 所有操作按钮 */}
@@ -3772,6 +3848,16 @@ const FclRates: React.FC = () => {
         {/* 添加与模态框匹配的动画样式 */}
         <style dangerouslySetInnerHTML={{ __html: waveAnimation }} />
       </Modal>
+
+      {/* 方案管理弹窗 */}
+      <SchemeManagementModal
+        visible={schemeManagementModalVisible}
+        onCancel={closeSchemeManagementModal}
+        schemes={allSchemes}
+        onDeleteScheme={handleDeleteScheme}
+        onSetDefault={handleSetDefaultScheme}
+        onRenameScheme={handleRenameScheme}
+      />
     </ControlTowerSaasLayout>
   );
 };
