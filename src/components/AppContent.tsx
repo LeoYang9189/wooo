@@ -17,6 +17,9 @@ const CookieSettings = lazy(() => import('./pages/CookieSettings'));
 const FMCQualification = lazy(() => import('./pages/FMCQualification'));
 const SuperFreight = lazy(() => import('./pages/SuperFreight'));
 const Portal = lazy(() => import('./portalhome/Portal'));
+const WallTechPortal = lazy(() => import('./walltechhome/Portal'));
+const VuePortalBridge = lazy(() => import('./walltechhome/VuePortalBridge'));
+const VueAuthBridge = lazy(() => import('./walltechhome/VueAuthBridge'));
 const NewsListPage = lazy(() => import('./portalhome/NewsListPage'));
 const NewsDetailPage = lazy(() => import('./portalhome/NewsDetailPage'));
 const BusinessServicesPage = lazy(() => import('./portalhome/BusinessServicesPage'));
@@ -62,6 +65,11 @@ const AppContent = ({}: AppContentProps) => {
         <Route path="/fmc-qualification" element={<FMCQualification />} />
         <Route path="/super-freight" element={<SuperFreight />} />
         <Route path="/portal" element={<Portal />} />
+        <Route path="/walltech" element={<WallTechPortal />} />
+        <Route path="/walltech-vue3" element={<VuePortalBridge />} />
+        <Route path="/walltech-vue3-sso-etower" element={<VueAuthBridge authType="sso" provider="etower" />} />
+        <Route path="/walltech-vue3-sso-cargoware" element={<VueAuthBridge authType="sso" provider="cargoware" />} />
+        <Route path="/walltech-vue3-auth" element={<VueAuthBridge authType="auth" />} />
         <Route path="/portal/news" element={<NewsListPage />} />
         <Route path="/portal/news/:id" element={<NewsDetailPage />} />
         <Route path="/portal/business-services" element={<BusinessServicesPage />} />

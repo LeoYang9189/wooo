@@ -64,7 +64,7 @@ const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
       icon: <FontAwesomeIcon icon={faUsers} />
     },
     { 
-      title: '企业管理', 
+      title: '租户管理', 
       key: 'company-management', 
       path: '/platformadmin/company-management',
       category: '客户中心',
@@ -369,7 +369,7 @@ const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
       case 'company-management':
         breadcrumbs.push(
           { title: '客户中心', path: undefined },
-          { title: '企业管理', path: '/platformadmin/company-management' }
+          { title: '租户管理', path: '/platformadmin/company-management' }
         );
         break;
       case 'carrier-management':
@@ -576,7 +576,7 @@ const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
             }
           >
             <MenuItem key="user-management">用户管理</MenuItem>
-            <MenuItem key="company-management">企业管理</MenuItem>
+            <MenuItem key="company-management">租户管理</MenuItem>
           </SubMenu>
           
           {/* 运营管理 */}

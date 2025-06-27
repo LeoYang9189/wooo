@@ -17,6 +17,9 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
 
+    /* Vue3 support */
+    "types": ["vite/client"],
+
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
@@ -24,5 +27,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": ["src", "src/vue-shims.d.ts"]
 }

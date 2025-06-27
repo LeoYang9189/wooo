@@ -359,7 +359,7 @@ const Hero = () => {
             }}
             className="w-full max-w-6xl mx-auto mb-16"
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
               {[
                 {
                   title: "租户Portal",
@@ -456,6 +456,32 @@ const Hero = () => {
                   ),
                   gradient: "from-amber-500 to-amber-700",
                   hoverGradient: "from-amber-600 to-amber-800"
+                },
+                {
+                  title: "WallTech首页",
+                  description: "WallTech产品展示首页",
+                  path: "/walltech",
+                  icon: (
+                    <svg viewBox="0 0 64 64" className="w-12 h-12">
+                      <defs>
+                        <linearGradient id="walltech-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="#EC4899" />
+                          <stop offset="100%" stopColor="#BE185D" />
+                        </linearGradient>
+                      </defs>
+                      <rect x="8" y="16" width="48" height="32" rx="6" fill="url(#walltech-gradient)" />
+                      <rect x="12" y="20" width="40" height="24" rx="4" fill="white" opacity="0.2" />
+                      <circle cx="32" cy="32" r="8" fill="white" opacity="0.9" />
+                      <path d="M32 26l3 3-3 3-3-3 3-3z" fill="url(#walltech-gradient)" />
+                      <path d="M32 34l3 3-3 3-3-3 3-3z" fill="url(#walltech-gradient)" />
+                      <rect x="16" y="24" width="8" height="2" rx="1" fill="white" opacity="0.6" />
+                      <rect x="40" y="24" width="8" height="2" rx="1" fill="white" opacity="0.6" />
+                      <rect x="16" y="38" width="8" height="2" rx="1" fill="white" opacity="0.6" />
+                      <rect x="40" y="38" width="8" height="2" rx="1" fill="white" opacity="0.6" />
+                    </svg>
+                  ),
+                  gradient: "from-pink-500 to-pink-700",
+                  hoverGradient: "from-pink-600 to-pink-800"
                 }
               ].map((system, index) => (
                 <motion.button

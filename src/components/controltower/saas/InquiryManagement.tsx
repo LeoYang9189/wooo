@@ -483,7 +483,7 @@ const InquiryManagement: React.FC = () => {
       name: newSchemeName,
       conditions: [...filterConditions]
     };
-
+    
     const newSchemeData: SchemeData = {
       id: newScheme.id,
       name: newScheme.name,
