@@ -63,7 +63,7 @@
               立即体验
             </button>
             <button 
-              class="h-10 md:h-12 px-6 md:px-8 border-2 border-white text-white hover:bg-white hover:text-blue-600 transition-all"
+              class="h-10 md:h-12 px-6 md:px-8 border-2 border-white text-white text-base md:text-lg hover:bg-white hover:text-blue-600 transition-all"
               @click="handleDemo"
             >
               预约演示
