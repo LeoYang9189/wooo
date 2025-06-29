@@ -6,97 +6,142 @@
         <p class="text-xl text-gray-600">强大的功能模块，全面提升物流管理效率</p>
       </div>
       
-      <!-- 小卡片网格 -->
-      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 mb-12">
-        <div
-          v-for="feature in features"
-          :key="feature.id"
-          @click="selectFeature(feature.id)"
+      <!-- 8个功能卡片 - 一行展示 -->
+      <div class="grid grid-cols-4 lg:grid-cols-8 gap-4 max-w-6xl mx-auto">
+        <div 
+          v-for="(feature, index) in features" 
+          :key="index"
+          @click="selectFeature(index)"
           :class="[
-            'group relative p-6 text-center cursor-pointer transition-all duration-300 transform',
-            'bg-gradient-to-br from-blue-50/80 via-white to-purple-50/80',
-            'border border-gray-200/50 backdrop-blur-sm',
-            'hover:scale-105 hover:shadow-xl hover:shadow-blue-500/25',
-            'before:absolute before:inset-0 before:bg-gradient-to-r before:from-blue-400/10 before:to-purple-400/10 before:opacity-0 before:transition-opacity before:duration-300',
-            'hover:before:opacity-100',
-            selectedFeatureId === feature.id ? 'ring-2 ring-blue-500 shadow-lg shadow-blue-500/30' : ''
+            'group relative bg-white rounded-2xl p-4 cursor-pointer transition-all duration-300 hover:scale-105',
+            selectedFeature === index 
+              ? 'shadow-xl ring-2 ring-blue-500 bg-gradient-to-br from-blue-50 to-white' 
+              : 'shadow-lg hover:shadow-2xl'
           ]"
         >
-          <!-- 移除图标的方形底框，直接显示图标 -->
-          <div class="mb-4 flex justify-center">
-            <i :class="feature.icon" class="text-3xl text-blue-600"></i>
-          </div>
-          <h3 class="text-sm font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
-            {{ feature.title }}
-          </h3>
+          <!-- 装饰性背景 -->
+          <div 
+            :class="[
+              'absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300',
+              selectedFeature === index ? 'opacity-100' : 'group-hover:opacity-50'
+            ]"
+            :style="{
+              background: selectedFeature === index 
+                ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 197, 253, 0.05) 100%)'
+                : 'linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(147, 197, 253, 0.02) 100%)'
+            }"
+          ></div>
           
-          <!-- 微光动画效果 -->
-          <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 animate-shimmer"></div>
+          <div class="relative z-10 text-center">
+            <!-- 只保留纯icon -->
+            <i 
+              :class="`${feature.icon} text-lg transition-colors duration-300 mb-3`"
+              :style="{ 
+                color: selectedFeature === index ? '#2563eb' : '#3B82F6',
+                textShadow: selectedFeature === index ? '0 0 10px rgba(59,130,246,0.15)' : 'none'
+              }"
+            ></i>
+            
+            <!-- 标题 -->
+            <h3 
+              :class="[
+                'text-sm font-bold leading-tight transition-colors duration-300',
+                selectedFeature === index ? 'text-blue-600' : 'text-gray-900 group-hover:text-blue-600'
+              ]"
+            >
+              {{ feature.title }}
+            </h3>
+            
+            <!-- 选中指示器 -->
+            <div 
+              :class="[
+                'w-1 h-1 mx-auto mt-2 rounded-full transition-all duration-300',
+                selectedFeature === index ? 'bg-blue-500 scale-150' : 'bg-transparent'
+              ]"
+            ></div>
           </div>
+          
+          <!-- 悬浮时的微光效果 -->
+          <div class="shimmer-effect"></div>
         </div>
       </div>
       
-      <!-- 大卡片详细展示 -->
-      <div v-if="selectedFeature" class="relative">
-        <!-- 添加装饰性背景元素 -->
-        <div class="absolute -top-4 -left-4 w-24 h-24 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-xl"></div>
-        <div class="absolute -bottom-4 -right-4 w-32 h-32 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-xl"></div>
-        
-        <div class="relative bg-white rounded-2xl border border-gray-200 shadow-xl overflow-hidden">
-          <!-- 装饰性顶部条纹 -->
-          <div class="h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
-          
-          <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 p-8">
-            <!-- 左侧内容区 (2/5) -->
-            <div class="lg:col-span-2 space-y-6">
-              <!-- 移除图标的方形底框 -->
-              <div class="flex items-center space-x-4">
-                <i :class="selectedFeature.icon" class="text-4xl text-blue-600"></i>
-                <h3 class="text-2xl font-bold text-gray-900">{{ selectedFeature.title }}</h3>
-              </div>
-              
-              <p class="text-gray-600 leading-relaxed">{{ selectedFeature.description }}</p>
-              
-              <div class="space-y-3">
-                <h4 class="font-semibold text-gray-900 flex items-center">
-                  <i class="fas fa-star text-yellow-500 mr-2"></i>
-                  核心特性
-                </h4>
-                <ul class="space-y-2">
-                  <li v-for="point in selectedFeature.keyPoints" :key="point" 
-                      class="flex items-start space-x-3 text-sm text-gray-600">
-                    <i class="fas fa-check-circle text-green-500 mt-1 flex-shrink-0"></i>
-                    <span>{{ point }}</span>
-                  </li>
-                </ul>
-              </div>
-              
-              <!-- 修改按钮：去掉圆角，删除了解更多按钮 -->
-              <div class="pt-4">
-                <button
-                  @click="openLeadForm"
-                  class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 font-semibold transition-colors shadow-lg hover:shadow-xl"
-                >
-                  立即体验
-                </button>
+      <!-- 详细展示大卡片 -->
+      <div 
+        v-if="selectedFeature !== null" 
+        class="mt-12 bg-white rounded-2xl shadow-xl overflow-hidden transition-all duration-500 animate-slideUp max-w-6xl mx-auto relative"
+      >
+        <!-- 左上蓝色渐变圆形光斑 -->
+        <div class="absolute -left-16 -top-16 w-40 h-40 rounded-full bg-gradient-to-br from-blue-400 via-blue-200 to-transparent opacity-30 z-0"></div>
+        <!-- 右下淡蓝色圆形光斑 -->
+        <div class="absolute -right-16 -bottom-16 w-32 h-32 rounded-full bg-gradient-to-tl from-blue-100 via-cyan-100 to-transparent opacity-40 z-0"></div>
+        <div class="grid grid-cols-1 lg:grid-cols-7">
+          <!-- 左侧文字内容 -->
+          <div class="lg:col-span-3 p-6 lg:p-8">
+            <div class="flex items-center mb-4">
+              <!-- 只保留纯icon -->
+              <i :class="`${features[selectedFeature].icon} text-xl text-blue-600 mr-3`"></i>
+              <div>
+                <h3 class="text-2xl font-bold text-gray-900">{{ features[selectedFeature].title }}</h3>
+                <p class="text-blue-600 font-medium text-sm">{{ features[selectedFeature].category }}</p>
               </div>
             </div>
             
-            <!-- 右侧视频区 (3/5) -->
-            <div class="lg:col-span-3">
-              <div class="relative bg-white rounded-xl overflow-hidden shadow-lg border border-gray-100">
-                <video
-                  :src="selectedFeature.videoUrl"
-                  class="w-full h-auto"
-                  controls
+            <p class="text-base text-gray-600 mb-6 leading-relaxed">
+              {{ features[selectedFeature].detailDescription }}
+            </p>
+            
+                        <!-- 关键特性列表 -->
+            <div class="space-y-3">
+              <h4 class="text-lg font-bold text-gray-900 mb-3">核心特性</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div 
+                  v-for="(highlight, index) in features[selectedFeature].highlights" 
+                  :key="index"
+                  class="flex items-start"
+                >
+                  <div class="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                  <span class="text-gray-700 text-sm">{{ highlight }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 行动按钮 -->
+            <div class="mt-6 flex gap-3">
+              <button 
+                @click="emit('openLeadForm')"
+                class="bg-blue-600 text-white px-5 py-2.5 hover:bg-blue-700 transition-colors font-medium text-sm border-0 rounded-none"
+              >
+                立即体验
+              </button>
+            </div>
+          </div>
+          
+          <!-- 右侧视频区域 -->
+          <div class="lg:col-span-4 flex items-center justify-center p-6 lg:p-8 bg-white">
+            <div class="w-full">
+              <!-- 视频播放器 -->
+              <div class="relative bg-white rounded-xl overflow-hidden aspect-video">
+                <video 
+                  v-if="features[selectedFeature].videoUrl"
+                  :src="features[selectedFeature].videoUrl"
                   autoplay
-                  muted
                   loop
-                  :poster="selectedFeature.posterUrl"
+                  muted
+                  playsinline
+                  class="w-full h-full object-cover"
+                  :poster="features[selectedFeature].videoPoster"
                 >
                   您的浏览器不支持视频播放。
                 </video>
+                
+                <!-- 视频占位符 -->
+                <div v-else class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                  <div class="text-center text-gray-600">
+                    <i class="fas fa-play-circle text-5xl mb-3 opacity-70"></i>
+                    <p class="text-gray-500 text-sm">演示视频即将上线</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -114,144 +159,160 @@
 
 <script setup lang="ts">
 // @ts-ignore
-import { ref, computed } from 'vue'
+import { ref, nextTick } from 'vue'
+
+const selectedFeature = ref<number | null>(0) // 默认展开第一个BI面板
 
 // 定义emit
-const emit = defineEmits(['openLeadForm'])
+const emit = defineEmits<{
+  openLeadForm: []
+}>()
 
-// 选中的功能ID
-const selectedFeatureId = ref<number>(1)
-
-// 8大核心功能数据
-const features = [
+const features = ref([
+  // 1. 智能BI面板
   {
-    id: 1,
-    title: 'BI面板',
-    icon: 'fas fa-chart-line',
-    description: '全方位数据可视化，实时掌握业务动态，智能分析助力决策优化。',
-    keyPoints: [
-      '实时数据监控与分析',
-      '多维度业务指标展示',
-      '智能预警与异常检测',
-      '自定义报表与图表'
+    title: "智能BI面板",
+    description: "实时数据分析与可视化",
+    icon: "fas fa-chart-bar",
+    category: "数据分析",
+    detailDescription: "基于AI技术的智能商业智能面板，提供实时数据监控、趋势分析和预测功能。通过直观的图表和仪表板，帮助管理者快速了解业务状况，做出数据驱动的决策。支持自定义报表、数据钻取和多维分析。",
+    highlights: [
+      "实时数据监控和告警",
+      "智能趋势分析和预测",
+      "可视化图表和仪表板",
+      "自定义报表生成",
+      "多维数据钻取分析"
     ],
-    videoUrl: '/qrcodes/video/BI.mp4',
-    posterUrl: '/assets/v2_snyjmq-Lh_sDSg4.png'
+    videoUrl: "/qrcodes/video/BI.mp4",
+    videoPoster: "/assets/video-poster-bi.jpg"
   },
+  // 2. AI智能助手
   {
-    id: 2,
-    title: '询价管理',
-    icon: 'fas fa-file-invoice-dollar',
-    description: '智能询价系统，快速响应客户需求，提升报价效率和准确性。',
-    keyPoints: [
-      '一键智能询价',
-      '多供应商比价',
-      '历史价格分析',
-      '自动报价生成'
+    title: "AI智能助手",
+    description: "24/7在线智能解答",
+    icon: "fas fa-robot",
+    category: "人工智能",
+    detailDescription: "基于大语言模型的智能助手，提供24小时不间断的专业咨询服务。能够理解自然语言查询，提供准确的业务解答，协助处理日常操作，大幅提升工作效率。",
+    highlights: [
+      "自然语言对话交互",
+      "专业业务知识问答",
+      "智能操作指导",
+      "多语言支持",
+      "学习用户习惯优化服务"
     ],
-    videoUrl: '/qrcodes/video/BI.mp4',
-    posterUrl: '/assets/v2_snyjmq-Lh_sDSg4.png'
+    videoUrl: "/qrcodes/video/AI.mp4",
+    videoPoster: ""
   },
+  // 3. 询价报价
   {
-    id: 3,
-    title: '订单管理',
-    icon: 'fas fa-clipboard-list',
-    description: '全生命周期订单跟踪，从下单到交付的完整流程管理。',
-    keyPoints: [
-      '订单全程跟踪',
-      '状态实时更新',
-      '异常自动提醒',
-      '批量操作处理'
+    title: "询价报价",
+    description: "功能齐全的报价管理系统",
+    icon: "fas fa-calculator",
+    category: "业务管理",
+    detailDescription: "完整的询价报价管理流程，支持多渠道询价、智能报价推荐、价格比较分析。内置费用计算引擎，支持复杂的费用结构和计费规则。",
+    highlights: [
+      "多渠道询价管理",
+      "智能报价推荐",
+      "费用自动计算",
+      "价格比较分析",
+      "报价版本管理"
     ],
-    videoUrl: '/qrcodes/video/BI.mp4',
-    posterUrl: '/assets/v2_snyjmq-Lh_sDSg4.png'
+    videoUrl: "",
+    videoPoster: ""
   },
+  // 4. 订单协作
   {
-    id: 4,
-    title: '船期查询',
-    icon: 'fas fa-ship',
-    description: '实时船期信息查询，精准掌握货物运输时间安排。',
-    keyPoints: [
-      '全球船期实时查询',
-      '多航线对比分析',
-      '延误预警通知',
-      '最优路线推荐'
+    title: "订单协作",
+    description: "高度协同的订单履约管理",
+    icon: "fas fa-handshake",
+    category: "协作管理",
+    detailDescription: "端到端的订单履约管理平台，支持多方协作、实时状态跟踪、自动化流程处理。提供可视化的订单进度监控，确保订单按时交付。",
+    highlights: [
+      "端到端订单跟踪",
+      "多方协作平台",
+      "自动化流程引擎",
+      "实时状态更新",
+      "异常预警处理"
     ],
-    videoUrl: '/qrcodes/video/BI.mp4',
-    posterUrl: '/assets/v2_snyjmq-Lh_sDSg4.png'
+    videoUrl: "",
+    videoPoster: ""
   },
+  // 5. API整合
   {
-    id: 5,
-    title: '费率查询',
-    icon: 'fas fa-calculator',
-    description: '透明费率体系，快速查询各项费用，成本控制更精准。',
-    keyPoints: [
-      '实时费率查询',
-      '多币种支持',
-      '费用明细展示',
-      '成本分析报告'
+    title: "API整合",
+    description: "完善第三方系统对接",
+    icon: "fas fa-plug",
+    category: "系统集成",
+    detailDescription: "提供完善的API接口和SDK，支持与ERP、WMS、TMS等系统无缝集成。标准化的接口设计，简化系统对接流程，实现数据互通和业务协同。",
+    highlights: [
+      "RESTful API接口",
+      "多种SDK支持",
+      "标准化数据格式",
+      "实时数据同步",
+      "接口监控和管理"
     ],
-    videoUrl: '/qrcodes/video/BI.mp4',
-    posterUrl: '/assets/v2_snyjmq-Lh_sDSg4.png'
+    videoUrl: "",
+    videoPoster: ""
   },
+  // 6. AI识别
   {
-    id: 6,
-    title: '报关管理',
-    icon: 'fas fa-file-alt',
-    description: '智能报关流程，简化手续办理，提升通关效率。',
-    keyPoints: [
-      '智能报关单生成',
-      '合规性自动检查',
-      '进度实时跟踪',
-      '文档电子化管理'
+    title: "AI识别",
+    description: "强大文档识别与数据提取",
+    icon: "fas fa-eye",
+    category: "智能识别",
+    detailDescription: "基于深度学习的文档识别技术，支持发票、提单、报关单等物流单据的自动识别和数据提取。大幅减少人工录入工作，提高数据准确性。",
+    highlights: [
+      "多种单据类型识别",
+      "高精度数据提取",
+      "自动数据校验",
+      "批量处理能力",
+      "识别结果可追溯"
     ],
-    videoUrl: '/qrcodes/video/BI.mp4',
-    posterUrl: '/assets/v2_snyjmq-Lh_sDSg4.png'
+    videoUrl: "",
+    videoPoster: ""
   },
+  // 7. 权限体系
   {
-    id: 7,
-    title: '财务管理',
-    icon: 'fas fa-coins',
-    description: '完整财务解决方案，从开票到收付款的全流程管理。',
-    keyPoints: [
-      '自动化账单生成',
-      '多币种结算',
-      '应收应付管理',
-      '财务报表分析'
+    title: "权限体系",
+    description: "完整组织架构权限管理",
+    icon: "fas fa-users-cog",
+    category: "安全管理",
+    detailDescription: "企业级权限管理系统，支持复杂组织架构和角色权限配置。提供细粒度的功能权限控制，确保数据安全和操作合规。支持SSO单点登录和多因子认证。",
+    highlights: [
+      "多级组织架构支持",
+      "细粒度权限控制",
+      "角色权限管理",
+      "SSO单点登录",
+      "审计日志追踪"
     ],
-    videoUrl: '/qrcodes/video/BI.mp4',
-    posterUrl: '/assets/v2_snyjmq-Lh_sDSg4.png'
+    videoUrl: "",
+    videoPoster: ""
   },
+  // 8. 灵活部署
   {
-    id: 8,
-    title: '客户管理',
-    icon: 'fas fa-users',
-    description: '360度客户视图，深度了解客户需求，提升服务质量。',
-    keyPoints: [
-      '客户档案管理',
-      '服务历史跟踪',
-      '需求分析预测',
-      '满意度调查'
+    title: "灵活部署",
+    description: "云端和本地部署支持",
+    icon: "fas fa-cloud",
+    category: "基础架构",
+    detailDescription: "支持公有云、私有云、混合云等多种部署模式，满足不同企业的安全和合规要求。提供Docker容器化部署，支持自动扩缩容，确保系统高可用性。",
+    highlights: [
+      "多云环境支持",
+      "容器化部署",
+      "自动扩缩容",
+      "高可用架构",
+      "灾备方案"
     ],
-    videoUrl: '/qrcodes/video/BI.mp4',
-    posterUrl: '/assets/v2_snyjmq-Lh_sDSg4.png'
+    videoUrl: "",
+    videoPoster: ""
   }
-]
+])
 
-// 计算当前选中的功能
-const selectedFeature = computed(() => {
-  return features.find(f => f.id === selectedFeatureId.value) || null
-})
-
-// 选择功能
-const selectFeature = (id: number) => {
-  selectedFeatureId.value = id
+const selectFeature = (index: number) => {
+  selectedFeature.value = index
 }
 
-// 打开留资表单
-const openLeadForm = () => {
-  emit('openLeadForm')
-}
+// 选择功能处理
+// 移除了滚动相关代码，因为现在是固定网格布局
 </script>
 
 <style scoped>
