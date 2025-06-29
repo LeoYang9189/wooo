@@ -6,58 +6,73 @@
         <p class="text-xl text-gray-600">强大的功能模块，全面提升物流管理效率</p>
       </div>
       
-      <!-- 8个功能卡片 - 横向滚动 -->
-      <div class="relative">
-        <div class="flex gap-4 overflow-x-auto scrollbar-hide pb-4 snap-x snap-mandatory">
+      <!-- 8个功能卡片 - 一行展示 -->
+      <div class="grid grid-cols-4 lg:grid-cols-8 gap-4 max-w-6xl mx-auto">
+        <div 
+          v-for="(feature, index) in features" 
+          :key="index"
+          @click="selectFeature(index)"
+          :class="[
+            'group relative bg-white rounded-2xl p-4 cursor-pointer transition-all duration-300 hover:scale-105',
+            selectedFeature === index 
+              ? 'shadow-xl ring-2 ring-blue-500 bg-gradient-to-br from-blue-50 to-white' 
+              : 'shadow-lg hover:shadow-2xl'
+          ]"
+        >
+          <!-- 装饰性背景 -->
           <div 
-            v-for="(feature, index) in features" 
-            :key="index"
-            @click="selectFeature(index)"
             :class="[
-              'flex-shrink-0 w-48 bg-white rounded-xl p-6 cursor-pointer transition-all duration-300 snap-start',
-              selectedFeature === index 
-                ? 'shadow-xl ring-2 ring-blue-500 bg-blue-50' 
-                : 'shadow-lg hover:shadow-xl hover:scale-105'
+              'absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300',
+              selectedFeature === index ? 'opacity-100' : 'group-hover:opacity-50'
             ]"
-          >
-            <div class="text-center">
-              <div 
-                :class="[
-                  'w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center transition-colors',
-                  selectedFeature === index ? 'bg-blue-500' : 'bg-blue-100'
-                ]"
-              >
-                <i 
-                  :class="`${feature.icon} text-2xl`"
-                  :style="{ color: selectedFeature === index ? 'white' : '#3B82F6' }"
-                ></i>
-              </div>
-              <h3 
-                :class="[
-                  'text-lg font-bold mb-2 transition-colors',
-                  selectedFeature === index ? 'text-blue-600' : 'text-gray-900'
-                ]"
-              >
-                {{ feature.title }}
-              </h3>
-              <p class="text-sm text-gray-600">{{ feature.description }}</p>
+            :style="{
+              background: selectedFeature === index 
+                ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 197, 253, 0.05) 100%)'
+                : 'linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(147, 197, 253, 0.02) 100%)'
+            }"
+          ></div>
+          
+          <div class="relative z-10 text-center">
+            <!-- 图标容器 -->
+            <div 
+              :class="[
+                'w-12 h-12 mx-auto mb-3 rounded-xl flex items-center justify-center transition-all duration-300 transform',
+                selectedFeature === index 
+                  ? 'bg-blue-500 scale-110' 
+                  : 'bg-gradient-to-br from-blue-100 to-blue-50 group-hover:scale-105 group-hover:bg-blue-200'
+              ]"
+            >
+              <i 
+                :class="`${feature.icon} text-lg transition-colors duration-300`"
+                :style="{ 
+                  color: selectedFeature === index ? 'white' : '#3B82F6',
+                  textShadow: selectedFeature === index ? '0 0 10px rgba(255,255,255,0.3)' : 'none'
+                }"
+              ></i>
             </div>
+            
+            <!-- 标题 -->
+            <h3 
+              :class="[
+                'text-sm font-bold leading-tight transition-colors duration-300',
+                selectedFeature === index ? 'text-blue-600' : 'text-gray-900 group-hover:text-blue-600'
+              ]"
+            >
+              {{ feature.title }}
+            </h3>
+            
+            <!-- 选中指示器 -->
+            <div 
+              :class="[
+                'w-1 h-1 mx-auto mt-2 rounded-full transition-all duration-300',
+                selectedFeature === index ? 'bg-blue-500 scale-150' : 'bg-transparent'
+              ]"
+            ></div>
           </div>
+          
+          <!-- 悬浮时的微光效果 -->
+          <div class="shimmer-effect"></div>
         </div>
-        
-        <!-- 左右滚动按钮 -->
-        <button 
-          @click="scrollLeft"
-          class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-10 h-10 bg-white rounded-full shadow-lg hover:shadow-xl flex items-center justify-center transition-all"
-        >
-          <i class="fas fa-chevron-left text-gray-600"></i>
-        </button>
-        <button 
-          @click="scrollRight"
-          class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-10 h-10 bg-white rounded-full shadow-lg hover:shadow-xl flex items-center justify-center transition-all"
-        >
-          <i class="fas fa-chevron-right text-gray-600"></i>
-        </button>
       </div>
       
       <!-- 详细展示大卡片 -->
@@ -308,34 +323,12 @@ const selectFeature = (index: number) => {
   selectedFeature.value = index
 }
 
-// 滚动控制
-const scrollContainer = ref<HTMLElement>()
-
-const scrollLeft = () => {
-  const container = document.querySelector('.overflow-x-auto')
-  if (container) {
-    container.scrollBy({ left: -200, behavior: 'smooth' })
-  }
-}
-
-const scrollRight = () => {
-  const container = document.querySelector('.overflow-x-auto')
-  if (container) {
-    container.scrollBy({ left: 200, behavior: 'smooth' })
-  }
-}
+// 选择功能处理
+// 移除了滚动相关代码，因为现在是固定网格布局
 </script>
 
 <style scoped>
 /* PortalFeatures特定样式 */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
 .animate-slideUp {
   animation: slideUp 0.5s ease-out;
 }
@@ -348,6 +341,71 @@ const scrollRight = () => {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* 微光效果动画 */
+.shimmer-effect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 1rem;
+  background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.2) 50%, transparent 70%);
+  opacity: 0;
+  transform: translateX(-100%);
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  animation: shimmer 2s infinite;
+}
+
+.group:hover .shimmer-effect {
+  opacity: 1;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* 卡片悬浮阴影优化 */
+.group:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 
+              0 10px 10px -5px rgba(0, 0, 0, 0.04),
+              0 0 0 1px rgba(59, 130, 246, 0.05);
+}
+
+/* 选中状态的特殊效果 */
+.group.ring-2 {
+  box-shadow: 0 25px 50px -12px rgba(59, 130, 246, 0.25),
+              0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+/* 响应式优化 */
+@media (max-width: 1024px) {
+  .grid-cols-4 {
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .grid-cols-4 .group {
+    padding: 0.75rem;
+  }
+  
+  .grid-cols-4 h3 {
+    font-size: 0.75rem;
+    line-height: 1;
+  }
+  
+  .grid-cols-4 .w-12 {
+    width: 2.5rem;
+    height: 2.5rem;
   }
 }
 </style> 
