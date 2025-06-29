@@ -78,11 +78,11 @@
       <!-- 详细展示大卡片 -->
       <div 
         v-if="selectedFeature !== null" 
-        class="mt-12 bg-white rounded-2xl shadow-xl overflow-hidden transition-all duration-500 animate-slideUp max-w-5xl mx-auto"
+        class="mt-12 bg-white rounded-2xl shadow-xl overflow-hidden transition-all duration-500 animate-slideUp max-w-6xl mx-auto"
       >
-        <div class="grid grid-cols-1 lg:grid-cols-5">
+        <div class="grid grid-cols-1 lg:grid-cols-7">
           <!-- 左侧文字内容 -->
-          <div class="lg:col-span-2 p-6 lg:p-8">
+          <div class="lg:col-span-3 p-6 lg:p-8">
             <div class="flex items-center mb-4">
               <div class="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center mr-3">
                 <i :class="`${features[selectedFeature].icon} text-xl text-white`"></i>
@@ -97,16 +97,18 @@
               {{ features[selectedFeature].detailDescription }}
             </p>
             
-            <!-- 关键特性列表 -->
+                        <!-- 关键特性列表 -->
             <div class="space-y-3">
               <h4 class="text-lg font-bold text-gray-900 mb-3">核心特性</h4>
-                            <div 
-                v-for="(highlight, index) in features[selectedFeature].highlights" 
-                :key="index"
-                class="flex items-start"
-              >
-                <div class="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                <span class="text-gray-700 text-sm">{{ highlight }}</span>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div 
+                  v-for="(highlight, index) in features[selectedFeature].highlights" 
+                  :key="index"
+                  class="flex items-start"
+                >
+                  <div class="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                  <span class="text-gray-700 text-sm">{{ highlight }}</span>
+                </div>
               </div>
             </div>
             
@@ -128,7 +130,7 @@
           </div>
           
           <!-- 右侧视频区域 -->
-          <div class="lg:col-span-3 bg-gray-900 flex items-center justify-center p-6 lg:p-8">
+          <div class="lg:col-span-4 bg-gradient-to-br from-gray-50 to-white flex items-center justify-center p-6 lg:p-8">
             <div class="w-full">
               <!-- 视频播放器 -->
               <div class="relative bg-black rounded-xl overflow-hidden aspect-video">
@@ -146,17 +148,17 @@
                 </video>
                 
                 <!-- 视频占位符 -->
-                <div v-else class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
-                  <div class="text-center text-white">
-                    <i class="fas fa-play-circle text-5xl mb-3 opacity-50"></i>
-                    <p class="text-gray-300 text-sm">演示视频即将上线</p>
+                <div v-else class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                  <div class="text-center text-gray-600">
+                    <i class="fas fa-play-circle text-5xl mb-3 opacity-70"></i>
+                    <p class="text-gray-500 text-sm">演示视频即将上线</p>
                   </div>
                 </div>
               </div>
               
               <!-- 视频描述 -->
               <div class="mt-3 text-center">
-                <p class="text-gray-400 text-xs">{{ features[selectedFeature].videoDescription }}</p>
+                <p class="text-gray-600 text-xs">{{ features[selectedFeature].videoDescription }}</p>
               </div>
             </div>
           </div>
