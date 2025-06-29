@@ -78,64 +78,67 @@
       <!-- 详细展示大卡片 -->
       <div 
         v-if="selectedFeature !== null" 
-        class="mt-16 bg-white rounded-2xl shadow-xl overflow-hidden transition-all duration-500 animate-slideUp"
+        class="mt-12 bg-white rounded-2xl shadow-xl overflow-hidden transition-all duration-500 animate-slideUp max-w-5xl mx-auto"
       >
-        <div class="grid grid-cols-1 lg:grid-cols-2">
+        <div class="grid grid-cols-1 lg:grid-cols-5">
           <!-- 左侧文字内容 -->
-          <div class="p-8 lg:p-12">
-            <div class="flex items-center mb-6">
-              <div class="w-16 h-16 bg-blue-500 rounded-2xl flex items-center justify-center mr-4">
-                <i :class="`${features[selectedFeature].icon} text-2xl text-white`"></i>
+          <div class="lg:col-span-2 p-6 lg:p-8">
+            <div class="flex items-center mb-4">
+              <div class="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center mr-3">
+                <i :class="`${features[selectedFeature].icon} text-xl text-white`"></i>
               </div>
               <div>
-                <h3 class="text-3xl font-bold text-gray-900">{{ features[selectedFeature].title }}</h3>
-                <p class="text-blue-600 font-medium">{{ features[selectedFeature].category }}</p>
+                <h3 class="text-2xl font-bold text-gray-900">{{ features[selectedFeature].title }}</h3>
+                <p class="text-blue-600 font-medium text-sm">{{ features[selectedFeature].category }}</p>
               </div>
             </div>
             
-            <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+            <p class="text-base text-gray-600 mb-6 leading-relaxed">
               {{ features[selectedFeature].detailDescription }}
             </p>
             
             <!-- 关键特性列表 -->
-            <div class="space-y-4">
-              <h4 class="text-xl font-bold text-gray-900 mb-4">核心特性</h4>
-              <div 
+            <div class="space-y-3">
+              <h4 class="text-lg font-bold text-gray-900 mb-3">核心特性</h4>
+                            <div 
                 v-for="(highlight, index) in features[selectedFeature].highlights" 
                 :key="index"
                 class="flex items-start"
               >
-                <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                <span class="text-gray-700">{{ highlight }}</span>
+                <div class="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                <span class="text-gray-700 text-sm">{{ highlight }}</span>
               </div>
             </div>
             
-                         <!-- 行动按钮 -->
-             <div class="mt-8 flex gap-4">
-               <button 
-                 @click="emit('openLeadForm')"
-                 class="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-colors font-medium"
-               >
-                 立即体验
-               </button>
-               <button 
-                 @click="emit('openLeadForm')"
-                 class="border border-gray-300 text-gray-700 px-6 py-3 rounded-xl hover:bg-gray-50 transition-colors"
-               >
-                 了解更多
-               </button>
-             </div>
+            <!-- 行动按钮 -->
+            <div class="mt-6 flex gap-3">
+              <button 
+                @click="emit('openLeadForm')"
+                class="bg-blue-600 text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
+              >
+                立即体验
+              </button>
+              <button 
+                @click="emit('openLeadForm')"
+                class="border border-gray-300 text-gray-700 px-5 py-2.5 rounded-lg hover:bg-gray-50 transition-colors text-sm"
+              >
+                了解更多
+              </button>
+            </div>
           </div>
           
           <!-- 右侧视频区域 -->
-          <div class="bg-gray-900 flex items-center justify-center p-8 lg:p-12">
-            <div class="w-full max-w-md">
+          <div class="lg:col-span-3 bg-gray-900 flex items-center justify-center p-6 lg:p-8">
+            <div class="w-full">
               <!-- 视频播放器 -->
               <div class="relative bg-black rounded-xl overflow-hidden aspect-video">
                 <video 
                   v-if="features[selectedFeature].videoUrl"
                   :src="features[selectedFeature].videoUrl"
-                  controls
+                  autoplay
+                  loop
+                  muted
+                  playsinline
                   class="w-full h-full object-cover"
                   :poster="features[selectedFeature].videoPoster"
                 >
@@ -143,17 +146,17 @@
                 </video>
                 
                 <!-- 视频占位符 -->
-                <div v-else class="w-full h-full flex items-center justify-center">
+                <div v-else class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
                   <div class="text-center text-white">
-                    <i class="fas fa-play-circle text-6xl mb-4 opacity-50"></i>
-                    <p class="text-gray-300">演示视频即将上线</p>
+                    <i class="fas fa-play-circle text-5xl mb-3 opacity-50"></i>
+                    <p class="text-gray-300 text-sm">演示视频即将上线</p>
                   </div>
                 </div>
               </div>
               
               <!-- 视频描述 -->
-              <div class="mt-4 text-center">
-                <p class="text-gray-300 text-sm">{{ features[selectedFeature].videoDescription }}</p>
+              <div class="mt-3 text-center">
+                <p class="text-gray-400 text-xs">{{ features[selectedFeature].videoDescription }}</p>
               </div>
             </div>
           </div>
@@ -173,7 +176,7 @@
 // @ts-ignore
 import { ref, nextTick } from 'vue'
 
-const selectedFeature = ref<number | null>(null)
+const selectedFeature = ref<number | null>(0) // 默认展开第一个BI面板
 
 // 定义emit
 const emit = defineEmits<{
