@@ -3,7 +3,7 @@
     <PortalHeader />
     <main>
       <PortalHero @open-lead-form="showLeadForm = true" />
-      <PortalFeatures />
+      <PortalFeatures @open-lead-form="showLeadForm = true" />
       <PortalFeatureDetail />
       <PortalTechSpecs />
       <PortalCTA />

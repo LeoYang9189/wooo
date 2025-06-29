@@ -6,70 +6,348 @@
         <p class="text-xl text-gray-600">强大的功能模块，全面提升物流管理效率</p>
       </div>
       
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        <div 
-          v-for="(feature, index) in features" 
-          :key="index"
-          class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow"
-        >
-          <div class="text-center">
-            <i :class="`${feature.icon} text-4xl text-blue-600 mb-4`"></i>
-            <h3 class="text-xl font-bold text-gray-900 mb-2">{{ feature.title }}</h3>
-            <p class="text-gray-600">{{ feature.description }}</p>
+      <!-- 8个功能卡片 - 横向滚动 -->
+      <div class="relative">
+        <div class="flex gap-4 overflow-x-auto scrollbar-hide pb-4 snap-x snap-mandatory">
+          <div 
+            v-for="(feature, index) in features" 
+            :key="index"
+            @click="selectFeature(index)"
+            :class="[
+              'flex-shrink-0 w-48 bg-white rounded-xl p-6 cursor-pointer transition-all duration-300 snap-start',
+              selectedFeature === index 
+                ? 'shadow-xl ring-2 ring-blue-500 bg-blue-50' 
+                : 'shadow-lg hover:shadow-xl hover:scale-105'
+            ]"
+          >
+            <div class="text-center">
+              <div 
+                :class="[
+                  'w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center transition-colors',
+                  selectedFeature === index ? 'bg-blue-500' : 'bg-blue-100'
+                ]"
+              >
+                <i 
+                  :class="`${feature.icon} text-2xl`"
+                  :style="{ color: selectedFeature === index ? 'white' : '#3B82F6' }"
+                ></i>
+              </div>
+              <h3 
+                :class="[
+                  'text-lg font-bold mb-2 transition-colors',
+                  selectedFeature === index ? 'text-blue-600' : 'text-gray-900'
+                ]"
+              >
+                {{ feature.title }}
+              </h3>
+              <p class="text-sm text-gray-600">{{ feature.description }}</p>
+            </div>
           </div>
         </div>
+        
+        <!-- 左右滚动按钮 -->
+        <button 
+          @click="scrollLeft"
+          class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-10 h-10 bg-white rounded-full shadow-lg hover:shadow-xl flex items-center justify-center transition-all"
+        >
+          <i class="fas fa-chevron-left text-gray-600"></i>
+        </button>
+        <button 
+          @click="scrollRight"
+          class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-10 h-10 bg-white rounded-full shadow-lg hover:shadow-xl flex items-center justify-center transition-all"
+        >
+          <i class="fas fa-chevron-right text-gray-600"></i>
+        </button>
+      </div>
+      
+      <!-- 详细展示大卡片 -->
+      <div 
+        v-if="selectedFeature !== null" 
+        class="mt-16 bg-white rounded-2xl shadow-xl overflow-hidden transition-all duration-500 animate-slideUp"
+      >
+        <div class="grid grid-cols-1 lg:grid-cols-2">
+          <!-- 左侧文字内容 -->
+          <div class="p-8 lg:p-12">
+            <div class="flex items-center mb-6">
+              <div class="w-16 h-16 bg-blue-500 rounded-2xl flex items-center justify-center mr-4">
+                <i :class="`${features[selectedFeature].icon} text-2xl text-white`"></i>
+              </div>
+              <div>
+                <h3 class="text-3xl font-bold text-gray-900">{{ features[selectedFeature].title }}</h3>
+                <p class="text-blue-600 font-medium">{{ features[selectedFeature].category }}</p>
+              </div>
+            </div>
+            
+            <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+              {{ features[selectedFeature].detailDescription }}
+            </p>
+            
+            <!-- 关键特性列表 -->
+            <div class="space-y-4">
+              <h4 class="text-xl font-bold text-gray-900 mb-4">核心特性</h4>
+              <div 
+                v-for="(highlight, index) in features[selectedFeature].highlights" 
+                :key="index"
+                class="flex items-start"
+              >
+                <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                <span class="text-gray-700">{{ highlight }}</span>
+              </div>
+            </div>
+            
+                         <!-- 行动按钮 -->
+             <div class="mt-8 flex gap-4">
+               <button 
+                 @click="emit('openLeadForm')"
+                 class="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-colors font-medium"
+               >
+                 立即体验
+               </button>
+               <button 
+                 @click="emit('openLeadForm')"
+                 class="border border-gray-300 text-gray-700 px-6 py-3 rounded-xl hover:bg-gray-50 transition-colors"
+               >
+                 了解更多
+               </button>
+             </div>
+          </div>
+          
+          <!-- 右侧视频区域 -->
+          <div class="bg-gray-900 flex items-center justify-center p-8 lg:p-12">
+            <div class="w-full max-w-md">
+              <!-- 视频播放器 -->
+              <div class="relative bg-black rounded-xl overflow-hidden aspect-video">
+                <video 
+                  v-if="features[selectedFeature].videoUrl"
+                  :src="features[selectedFeature].videoUrl"
+                  controls
+                  class="w-full h-full object-cover"
+                  :poster="features[selectedFeature].videoPoster"
+                >
+                  您的浏览器不支持视频播放。
+                </video>
+                
+                <!-- 视频占位符 -->
+                <div v-else class="w-full h-full flex items-center justify-center">
+                  <div class="text-center text-white">
+                    <i class="fas fa-play-circle text-6xl mb-4 opacity-50"></i>
+                    <p class="text-gray-300">演示视频即将上线</p>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- 视频描述 -->
+              <div class="mt-4 text-center">
+                <p class="text-gray-300 text-sm">{{ features[selectedFeature].videoDescription }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 默认提示 -->
+      <div v-else class="mt-16 text-center py-12">
+        <i class="fas fa-mouse-pointer text-4xl text-gray-400 mb-4"></i>
+        <p class="text-xl text-gray-500">点击上方功能卡片查看详细介绍</p>
       </div>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+// @ts-ignore
+import { ref, nextTick } from 'vue'
+
+const selectedFeature = ref<number | null>(null)
+
+// 定义emit
+const emit = defineEmits<{
+  openLeadForm: []
+}>()
 
 const features = ref([
   {
     title: "智能BI面板",
     description: "实时数据分析与可视化",
-    icon: "fas fa-chart-bar"
+    icon: "fas fa-chart-bar",
+    category: "数据分析",
+    detailDescription: "基于AI技术的智能商业智能面板，提供实时数据监控、趋势分析和预测功能。通过直观的图表和仪表板，帮助管理者快速了解业务状况，做出数据驱动的决策。支持自定义报表、数据钻取和多维分析。",
+    highlights: [
+      "实时数据监控和告警",
+      "智能趋势分析和预测",
+      "可视化图表和仪表板",
+      "自定义报表生成",
+      "多维数据钻取分析"
+    ],
+    videoUrl: "/qrcodes/video/BI.mp4",
+    videoPoster: "/assets/video-poster-bi.jpg",
+    videoDescription: "观看BI面板实时演示"
   },
   {
     title: "AI智能助手",
     description: "24/7在线智能解答",
-    icon: "fas fa-robot"
+    icon: "fas fa-robot",
+    category: "人工智能",
+    detailDescription: "基于大语言模型的智能助手，提供24小时不间断的专业咨询服务。能够理解自然语言查询，提供准确的业务解答，协助处理日常操作，大幅提升工作效率。",
+    highlights: [
+      "自然语言对话交互",
+      "专业业务知识问答",
+      "智能操作指导",
+      "多语言支持",
+      "学习用户习惯优化服务"
+    ],
+    videoUrl: "",
+    videoPoster: "",
+    videoDescription: "AI助手功能演示"
   },
   {
     title: "灵活部署",
     description: "云端和本地部署支持",
-    icon: "fas fa-cloud"
+    icon: "fas fa-cloud",
+    category: "基础架构",
+    detailDescription: "支持公有云、私有云、混合云等多种部署模式，满足不同企业的安全和合规要求。提供Docker容器化部署，支持自动扩缩容，确保系统高可用性。",
+    highlights: [
+      "多云环境支持",
+      "容器化部署",
+      "自动扩缩容",
+      "高可用架构",
+      "灾备方案"
+    ],
+    videoUrl: "",
+    videoPoster: "",
+    videoDescription: "部署架构演示"
   },
   {
     title: "权限体系",
     description: "完整组织架构权限管理",
-    icon: "fas fa-users-cog"
+    icon: "fas fa-users-cog",
+    category: "安全管理",
+    detailDescription: "企业级权限管理系统，支持复杂组织架构和角色权限配置。提供细粒度的功能权限控制，确保数据安全和操作合规。支持SSO单点登录和多因子认证。",
+    highlights: [
+      "多级组织架构支持",
+      "细粒度权限控制",
+      "角色权限管理",
+      "SSO单点登录",
+      "审计日志追踪"
+    ],
+    videoUrl: "",
+    videoPoster: "",
+    videoDescription: "权限管理演示"
   },
   {
     title: "API整合",
     description: "完善第三方系统对接",
-    icon: "fas fa-plug"
+    icon: "fas fa-plug",
+    category: "系统集成",
+    detailDescription: "提供完善的API接口和SDK，支持与ERP、WMS、TMS等系统无缝集成。标准化的接口设计，简化系统对接流程，实现数据互通和业务协同。",
+    highlights: [
+      "RESTful API接口",
+      "多种SDK支持",
+      "标准化数据格式",
+      "实时数据同步",
+      "接口监控和管理"
+    ],
+    videoUrl: "",
+    videoPoster: "",
+    videoDescription: "API集成演示"
   },
   {
     title: "AI识别",
     description: "强大文档识别与数据提取",
-    icon: "fas fa-eye"
+    icon: "fas fa-eye",
+    category: "智能识别",
+    detailDescription: "基于深度学习的文档识别技术，支持发票、提单、报关单等物流单据的自动识别和数据提取。大幅减少人工录入工作，提高数据准确性。",
+    highlights: [
+      "多种单据类型识别",
+      "高精度数据提取",
+      "自动数据校验",
+      "批量处理能力",
+      "识别结果可追溯"
+    ],
+    videoUrl: "",
+    videoPoster: "",
+    videoDescription: "AI识别功能演示"
   },
   {
     title: "询价报价",
     description: "功能齐全的报价管理系统",
-    icon: "fas fa-calculator"
+    icon: "fas fa-calculator",
+    category: "业务管理",
+    detailDescription: "完整的询价报价管理流程，支持多渠道询价、智能报价推荐、价格比较分析。内置费用计算引擎，支持复杂的费用结构和计费规则。",
+    highlights: [
+      "多渠道询价管理",
+      "智能报价推荐",
+      "费用自动计算",
+      "价格比较分析",
+      "报价版本管理"
+    ],
+    videoUrl: "",
+    videoPoster: "",
+    videoDescription: "询价报价系统演示"
   },
   {
     title: "订单协作",
     description: "高度协同的订单履约管理",
-    icon: "fas fa-handshake"
+    icon: "fas fa-handshake",
+    category: "协作管理",
+    detailDescription: "端到端的订单履约管理平台，支持多方协作、实时状态跟踪、自动化流程处理。提供可视化的订单进度监控，确保订单按时交付。",
+    highlights: [
+      "端到端订单跟踪",
+      "多方协作平台",
+      "自动化流程引擎",
+      "实时状态更新",
+      "异常预警处理"
+    ],
+    videoUrl: "",
+    videoPoster: "",
+    videoDescription: "订单协作演示"
   }
 ])
+
+const selectFeature = (index: number) => {
+  selectedFeature.value = index
+}
+
+// 滚动控制
+const scrollContainer = ref<HTMLElement>()
+
+const scrollLeft = () => {
+  const container = document.querySelector('.overflow-x-auto')
+  if (container) {
+    container.scrollBy({ left: -200, behavior: 'smooth' })
+  }
+}
+
+const scrollRight = () => {
+  const container = document.querySelector('.overflow-x-auto')
+  if (container) {
+    container.scrollBy({ left: 200, behavior: 'smooth' })
+  }
+}
 </script>
 
 <style scoped>
 /* PortalFeatures特定样式 */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.animate-slideUp {
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 </style> 
