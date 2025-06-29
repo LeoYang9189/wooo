@@ -57,13 +57,13 @@
 
           <div class="flex flex-wrap gap-4 mb-10">
             <button 
-              class="h-12 md:h-14 px-6 md:px-8 bg-gradient-to-r from-blue-600 to-indigo-600 border-0 text-base md:text-lg shadow-lg hover:shadow-xl transition-all text-white"
+              class="h-10 md:h-12 px-6 md:px-8 bg-gradient-to-r from-blue-600 to-indigo-600 border-0 text-base md:text-lg shadow-lg hover:shadow-xl transition-all text-white"
               @click="handleExperience"
             >
               立即体验
             </button>
             <button 
-              class="h-12 md:h-14 px-6 md:px-8 border-2 border-white text-white hover:bg-white hover:text-blue-600 transition-all"
+              class="h-10 md:h-12 px-6 md:px-8 border-2 border-white text-white hover:bg-white hover:text-blue-600 transition-all"
               @click="handleDemo"
             >
               预约演示
@@ -129,15 +129,18 @@ const advantages = reactive([
   }
 ])
 
+// 定义emit
+const emit = defineEmits<{
+  openLeadForm: []
+}>()
+
 // 事件处理函数
 const handleExperience = () => {
-  console.log('立即体验')
-  // 这里可以添加具体的跳转逻辑
+  emit('openLeadForm')
 }
 
 const handleDemo = () => {
-  console.log('观看演示')
-  // 这里可以添加具体的演示逻辑
+  emit('openLeadForm')
 }
 </script>
 

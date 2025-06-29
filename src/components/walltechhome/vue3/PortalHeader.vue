@@ -20,7 +20,7 @@
         <!-- 右侧按钮 -->
         <div class="flex items-center space-x-4">
           <button 
-            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 transition-colors"
             @click="handleLogin"
           >
             登录/注册
