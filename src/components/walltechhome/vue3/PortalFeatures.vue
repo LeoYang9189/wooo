@@ -234,7 +234,7 @@ const features = ref([
       "实时状态更新",
       "异常预警处理"
     ],
-    videoUrl: "",
+    videoUrl: "/qrcodes/video/doc.mp4",
     videoPoster: ""
   },
   // 5. API整合
@@ -251,7 +251,7 @@ const features = ref([
       "实时数据同步",
       "接口监控和管理"
     ],
-    videoUrl: "",
+    videoUrl: "/qrcodes/video/api.mp4",
     videoPoster: ""
   },
   // 6. AI识别
