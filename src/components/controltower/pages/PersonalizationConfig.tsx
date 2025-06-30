@@ -10,13 +10,15 @@ import {
   Switch,
   Radio,
   Upload,
-  Typography
+  Typography,
+  Modal
 } from '@arco-design/web-react';
 import { 
   IconSave,
   IconRefresh,
   IconUpload,
-  IconPlus
+  IconPlus,
+  IconEdit
 } from '@arco-design/web-react/icon';
 
 const { Text } = Typography;
@@ -28,6 +30,14 @@ const PersonalizationConfig: React.FC = () => {
   const [form] = Form.useForm();
   const [logoFileList, setLogoFileList] = useState<any[]>([]);
   const [footerLogoFileList, setFooterLogoFileList] = useState<any[]>([]);
+  
+  // 自定义域名相关状态
+  const [customDomain, setCustomDomain] = useState('abc123def456'); // 默认10位随机域名前缀
+  const [domainEditing, setDomainEditing] = useState(false);
+  const [tempDomain, setTempDomain] = useState('');
+  const [domainWarningVisible, setDomainWarningVisible] = useState(false);
+  const [domainCheckVisible, setDomainCheckVisible] = useState(false);
+  const [domainAvailable, setDomainAvailable] = useState(false);
   
   // 社交媒体配置状态
   const [socialMediaSettings, setSocialMediaSettings] = useState({
@@ -72,6 +82,67 @@ const PersonalizationConfig: React.FC = () => {
         [field]: value
       }
     }));
+  };
+
+  // 域名相关处理函数
+  const handleDomainEdit = () => {
+    setDomainWarningVisible(true);
+  };
+
+  const handleDomainWarningConfirm = () => {
+    setDomainWarningVisible(false);
+    setTempDomain(customDomain);
+    setDomainEditing(true);
+  };
+
+  const handleDomainWarningCancel = () => {
+    setDomainWarningVisible(false);
+  };
+
+  const validateDomain = (domain: string) => {
+    // 域名前缀校验规则：至少4位字符，只能字母和数字组合
+    const regex = /^[a-zA-Z0-9]{4,}$/;
+    return regex.test(domain);
+  };
+
+  const handleDomainCheck = () => {
+    if (!validateDomain(tempDomain)) {
+      Message.error('域名前缀至少4位字符，只能包含字母和数字');
+      return;
+    }
+
+    // 模拟域名可用性检查
+    const isAvailable = Math.random() > 0.5; // 50%概率可用
+    setDomainAvailable(isAvailable);
+    setDomainCheckVisible(true);
+  };
+
+  const handleDomainCheckClose = () => {
+    setDomainCheckVisible(false);
+    if (domainAvailable) {
+      // 如果域名可用，显示确认弹窗
+      setTimeout(() => {
+        Modal.confirm({
+          title: '确认修改域名',
+          content: '恭喜您，域名可用，确认修改？',
+          onOk: () => {
+            setCustomDomain(tempDomain);
+            setDomainEditing(false);
+            setTempDomain('');
+            Message.success('域名修改成功！');
+          },
+          onCancel: () => {
+            setDomainEditing(false);
+            setTempDomain('');
+          }
+        });
+      }, 100);
+    }
+  };
+
+  const handleDomainCancel = () => {
+    setDomainEditing(false);
+    setTempDomain('');
   };
 
   const renderSocialMediaItem = (platform: string, label: string) => {
@@ -160,6 +231,55 @@ const PersonalizationConfig: React.FC = () => {
 
             {/* 基础信息设置 */}
             <Card size="small" title="基础信息设置" style={{ marginBottom: 16 }}>
+              {/* 自定义域名设置 */}
+              <Form.Item label="自定义域名设置">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                  {domainEditing ? (
+                    <>
+                      <Input
+                        value={tempDomain}
+                        onChange={setTempDomain}
+                        placeholder="请输入域名前缀"
+                        style={{ width: 200 }}
+                        maxLength={20}
+                      />
+                      <span style={{ color: '#666' }}>.walltechsystem.com</span>
+                      <Button 
+                        type="outline" 
+                        size="small"
+                        onClick={handleDomainCheck}
+                        disabled={!tempDomain || !validateDomain(tempDomain)}
+                      >
+                        校验可用性
+                      </Button>
+                      <Button 
+                        size="small"
+                        onClick={handleDomainCancel}
+                      >
+                        取消
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <span style={{ fontFamily: 'monospace', background: '#f5f5f5', padding: '4px 8px', borderRadius: 4 }}>
+                        {customDomain}.walltechsystem.com
+                      </span>
+                      <Button 
+                        type="text" 
+                        size="small" 
+                        icon={<IconEdit />}
+                        onClick={handleDomainEdit}
+                      >
+                        编辑
+                      </Button>
+                    </>
+                  )}
+                </div>
+                <Text type="secondary" style={{ fontSize: 12 }}>
+                  控制塔系统支持使用您自有域名，如有需要，请联系客服支持人员。
+                </Text>
+              </Form.Item>
+
               <Form.Item field="siteName" label="网站名称">
                 <Input placeholder="请输入网站名称" />
               </Form.Item>
@@ -347,6 +467,59 @@ const PersonalizationConfig: React.FC = () => {
           </TabPane>
         </Tabs>
       </Card>
+
+      {/* 域名修改警告弹窗 */}
+      <Modal
+        title="域名修改提醒"
+        visible={domainWarningVisible}
+        onOk={handleDomainWarningConfirm}
+        onCancel={handleDomainWarningCancel}
+        okText="确认"
+        cancelText="取消"
+      >
+        <div style={{ padding: '16px 0' }}>
+          <p style={{ color: '#faad14', marginBottom: 16 }}>
+            ⚠️ 域名每6个月仅可修改一次，请慎重操作
+          </p>
+          <p style={{ color: '#666', marginBottom: 0 }}>
+            确认要修改域名吗？修改后将立即生效。
+          </p>
+        </div>
+      </Modal>
+
+      {/* 域名可用性检查结果弹窗 */}
+      <Modal
+        title="域名可用性检查"
+        visible={domainCheckVisible}
+        onOk={handleDomainCheckClose}
+        onCancel={handleDomainCheckClose}
+        okText="关闭"
+        cancelButtonProps={{ style: { display: 'none' } }}
+      >
+        <div style={{ padding: '16px 0' }}>
+          {domainAvailable ? (
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 48, color: '#52c41a', marginBottom: 16 }}>✓</div>
+              <p style={{ color: '#52c41a', fontSize: 16, fontWeight: 500, marginBottom: 8 }}>
+                恭喜您，域名可用！
+              </p>
+              <p style={{ color: '#666', marginBottom: 0 }}>
+                域名 <strong>{tempDomain}.walltechsystem.com</strong> 可以使用
+              </p>
+            </div>
+          ) : (
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 48, color: '#ff4d4f', marginBottom: 16 }}>✗</div>
+              <p style={{ color: '#ff4d4f', fontSize: 16, fontWeight: 500, marginBottom: 8 }}>
+                抱歉，该域名已被人使用
+              </p>
+              <p style={{ color: '#666', marginBottom: 0 }}>
+                请尝试其他域名前缀
+              </p>
+            </div>
+          )}
+        </div>
+      </Modal>
     </div>
   );
 };
