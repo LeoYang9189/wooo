@@ -2,7 +2,7 @@
   <section class="py-20 bg-gradient-to-r from-blue-600 to-indigo-600">
     <div class="container mx-auto px-4 text-center">
       <h2 class="text-4xl font-bold text-white mb-4">准备开始您的智能物流之旅？</h2>
-      <p class="text-xl text-blue-100 mb-8">立即体验WallTech控制塔系统，感受AI赋能的物流管理</p>
+      <p class="text-xl text-blue-100 mb-8">立即体验WallTech控制塔系统，感受AI带来的变革</p>
       
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
         <button 

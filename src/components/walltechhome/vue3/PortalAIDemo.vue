@@ -76,18 +76,18 @@
              </div>
 
             <!-- 对话消息 -->
-            <div v-for="(message, index) in messages" :key="index" :class="['flex mb-4', message.isUser ? 'justify-end' : 'justify-start']">
-              <div v-if="!message.isUser" class="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center mr-3 flex-shrink-0 shadow-sm">
-                <img src="/assets/g6qmm-vsolk.gif" alt="AI" class="w-full h-full object-cover" />
-              </div>
-              <div :class="['max-w-[80%]', message.isUser ? 'flex justify-end' : '']">
+                         <div v-for="(message, index) in messages" :key="index" :class="['flex mb-4', message.isUser ? 'justify-end' : 'justify-start']">
+               <div v-if="!message.isUser" class="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center mr-3 flex-shrink-0 shadow-sm">
+                 <img src="/assets/g6qmm-vsolk.gif" alt="AI" class="w-full h-full object-cover" />
+               </div>
+               <div :class="[message.isUser ? 'max-w-[70%]' : 'flex-1 mr-4', message.isUser ? 'flex justify-end' : '']">
                 <div :class="[
                   'px-4 py-3 rounded-2xl',
                   message.isUser 
                     ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-br-md' 
                     : 'bg-white text-gray-700 border border-gray-200 rounded-bl-md shadow-sm'
                 ]">
-                  <div v-if="message.type === 'price-list'" class="space-y-3">
+                  <div v-if="message.type === 'price-list'" class="space-y-3 w-full">
                     <div class="font-medium mb-3">为您找到以下运价选项：</div>
                                          <div v-for="(price, idx) in message.priceData" :key="idx" class="bg-blue-50 rounded-lg p-3 border border-blue-200">
                        <div class="flex justify-between items-start mb-3">
@@ -116,7 +116,7 @@
                        </div>
                      </div>
                   </div>
-                                     <div v-else-if="message.type === 'inquiry-form'" class="space-y-3">
+                                     <div v-else-if="message.type === 'inquiry-form'" class="space-y-3 w-full">
                      <div class="font-medium mb-3">{{ message.text }}</div>
                      <div class="bg-green-50 rounded-lg p-4 border border-green-200">
                        <div class="text-green-800 font-medium mb-2">
@@ -130,7 +130,7 @@
                        </div>
                      </div>
                    </div>
-                   <div v-else-if="message.type === 'task-list'" class="space-y-3">
+                   <div v-else-if="message.type === 'task-list'" class="space-y-3 w-full">
                      <div class="font-medium mb-3">{{ message.text }}</div>
                      <div class="space-y-3">
                        <div class="bg-orange-50 rounded-lg p-3 border border-orange-200">
@@ -159,7 +159,7 @@
                        </div>
                      </div>
                    </div>
-                   <div v-else-if="message.type === 'operation-result'" class="space-y-3">
+                   <div v-else-if="message.type === 'operation-result'" class="space-y-3 w-full">
                      <div class="font-medium mb-3">{{ message.text }}</div>
                      <div class="space-y-3">
                        <div class="bg-green-50 rounded-lg p-3 border border-green-200">
@@ -182,7 +182,7 @@
                        </div>
                      </div>
                    </div>
-                   <div v-else-if="message.type === 'pending-release'" class="space-y-3">
+                   <div v-else-if="message.type === 'pending-release'" class="space-y-3 w-full">
                      <div class="font-medium mb-3">{{ message.text }}</div>
                      <div class="bg-yellow-50 rounded-lg p-3 border border-yellow-200">
                        <div class="text-yellow-800 font-medium mb-2">
@@ -193,7 +193,7 @@
                        </div>
                      </div>
                    </div>
-                   <div v-else-if="message.type === 'batch-return'" class="space-y-3">
+                   <div v-else-if="message.type === 'batch-return'" class="space-y-3 w-full">
                      <div class="font-medium mb-3">{{ message.text }}</div>
                      <div class="bg-red-50 rounded-lg p-3 border border-red-200">
                        <div class="text-red-800 font-medium mb-2">
@@ -207,6 +207,81 @@
                        </div>
                      </div>
                    </div>
+                   <div v-else-if="message.type === 'file-upload'" class="space-y-3 w-full">
+                     <div class="font-medium mb-3">{{ message.text }}</div>
+                     <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                       <div class="text-blue-800 font-medium mb-2">
+                         <i class="fas fa-file-upload mr-2"></i>文件上传
+                       </div>
+                       <div class="text-sm space-y-2">
+                         <div><span class="font-medium text-blue-700">文件名：</span><span class="font-bold text-blue-700">{{ message.fileName }}</span></div>
+                       </div>
+                     </div>
+                   </div>
+                   <div v-else-if="message.type === 'diff-list'" class="space-y-3 w-full">
+                     <div class="font-medium mb-3">{{ message.text }}</div>
+                     <div class="bg-green-50 rounded-lg p-4 border border-green-200">
+                       <div class="text-green-800 font-medium mb-2">
+                         <i class="fas fa-list mr-2"></i>差异项
+                       </div>
+                       <div class="text-sm space-y-2">
+                         <div v-for="(diff, idx) in message.diffData" :key="idx" class="flex justify-between items-start">
+                           <div class="font-medium text-gray-800">{{ diff.field }}</div>
+                           <div class="text-right">
+                             <div class="text-xs text-gray-500">旧值：{{ diff.old }}</div>
+                             <div class="text-xs text-gray-500">新值：{{ diff.new }}</div>
+                           </div>
+                         </div>
+                       </div>
+                     </div>
+                   </div>
+                   <div v-else-if="message.type === 'update-list'" class="space-y-3 w-full">
+                     <div class="font-medium mb-3">{{ message.text }}</div>
+                     <div class="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
+                       <div class="text-yellow-800 font-medium mb-2">
+                         <i class="fas fa-update mr-2"></i>数据更新
+                       </div>
+                       <div class="text-sm space-y-2">
+                         <div v-for="(update, idx) in message.updateData" :key="idx" class="flex justify-between items-start">
+                           <div class="font-medium text-gray-800">{{ update.field }}</div>
+                           <div class="text-right">
+                             <div class="text-xs text-gray-500">旧值：{{ update.old }}</div>
+                             <div class="text-xs text-gray-500">新值：{{ update.value }}</div>
+                           </div>
+                         </div>
+                       </div>
+                     </div>
+                   </div>
+                   <div v-else-if="message.type === 'tracking-info'" class="space-y-3 w-full">
+                     <div class="font-medium mb-3">{{ message.text }}</div>
+                     <div class="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
+                       <div class="text-yellow-800 font-medium mb-2">
+                         <i class="fas fa-info-circle mr-2"></i>物流节点信息
+                       </div>
+                       <div class="text-sm space-y-2">
+                         <div v-for="(event, idx) in message.trackingData.events" :key="idx" class="flex justify-between items-start">
+                           <div class="font-medium text-gray-800">{{ event.port }}</div>
+                           <div class="text-right">
+                             <div v-for="(node, idx) in event.nodes" :key="idx" class="text-xs text-gray-500">{{ node.label }} - {{ node.time }}</div>
+                           </div>
+                         </div>
+                       </div>
+                     </div>
+                   </div>
+                                       <div v-else-if="message.type === 'chart'" class="space-y-3 w-full">
+                      <div class="font-medium mb-3">{{ message.text }}</div>
+                      <div class="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+                        <div :ref="(el: any) => setChartRef(el, `chart-${index}`)" style="width: 100%; height: 300px;"></div>
+                      </div>
+                    </div>
+                    <div v-else-if="message.type === 'multi-chart'" class="space-y-3 w-full">
+                      <div class="font-medium mb-3">{{ message.text }}</div>
+                      <div class="space-y-4">
+                        <div v-for="(chart, idx) in message.charts" :key="idx" class="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+                          <div :ref="(el: any) => setChartRef(el, `multi-chart-${index}-${idx}`)" style="width: 100%; height: 280px;"></div>
+                        </div>
+                      </div>
+                    </div>
                                      <div v-else>
                      {{ message.text }}
                      <span v-if="message.isTyping" class="typing-cursor">|</span>
@@ -238,7 +313,8 @@
 
 <script setup lang="ts">
 // @ts-ignore
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, nextTick } from 'vue'
+import * as echarts from 'echarts'
 
 // Tab配置
 const tabs = ref([
@@ -280,6 +356,8 @@ const isPlaying = ref(false)
 const isTyping = ref(false)
 const currentTypingText = ref('')
 const typingMessageIndex = ref(-1)
+const chartRefs = ref<Record<string, any>>({})
+const chartInstances = ref<Record<string, any>>({})
 
 // 智能运价演示对话数据
 const smartPricingDemo = [
@@ -403,6 +481,153 @@ const orderManagementDemo = [
   }
 ]
 
+// AI识别演示对话数据
+const aiRecognitionDemo = [
+  {
+    isUser: true,
+    type: 'file-upload',
+    fileName: 'SHSE123456 SI 补料.pdf',
+    text: '上传文件：SHSE123456 SI 补料.pdf'
+  },
+  {
+    isUser: false,
+    text: '已收到文件"SHSE123456 SI 补料.pdf"，正在识别...'
+  },
+  {
+    isUser: false,
+    text: '识别文件类型为"提单补料"，是否开启对单？'
+  },
+  {
+    isUser: true,
+    text: '是'
+  },
+  {
+    isUser: false,
+    type: 'diff-list',
+    text: '已完成对单，以下为差异项：',
+    diffData: [
+      { field: '箱号', old: '空值', new: 'TCNU1122330' },
+      { field: '品名', old: 'General Cargo', new: 'Chair、Table' },
+      { field: '件数', old: '10', new: '12' },
+      { field: '毛重', old: '8000kg', new: '8200kg' },
+      { field: '唛头', old: 'N/M', new: 'WOOO' }
+    ]
+  },
+  {
+    isUser: false,
+    text: '是否覆盖系统数据？'
+  },
+  {
+    isUser: true,
+    text: '确认'
+  },
+  {
+    isUser: false,
+    type: 'update-list',
+    text: '以下数据已更新：',
+    updateData: [
+      { field: '箱号', value: 'TCNU1122330' },
+      { field: '品名', value: 'Chair、Table' },
+      { field: '件数', value: '12' },
+      { field: '毛重', value: '8200kg' },
+      { field: '唛头', value: 'WOOO' }
+    ]
+  }
+]
+
+// 运单跟踪演示对话数据
+const trackingDemo = [
+  {
+    isUser: true,
+    text: 'SHSE11122223'
+  },
+  {
+    isUser: false,
+    type: 'tracking-info',
+    text: '已为您查询到运单【SHSE11122223】的最新物流节点信息：',
+    trackingData: {
+      containerNo: 'A14FX01920',
+      origin: 'HONG KONG, CHINA',
+      destination: 'SINGAPORE',
+      events: [
+        { port: 'HONG KONG, CHINA', nodes: [
+          { label: '提空箱', time: '2025-05-28 14:56' },
+          { label: '进场', time: '2025-05-28 19:53' },
+          { label: '驶船装船', time: '2025-05-29 09:50' },
+          { label: '驶船离港', time: '2025-05-29 17:37' }
+        ]},
+        { port: 'SINGAPORE', nodes: [
+          { label: '抵港', time: '2025-06-02 23:38' },
+          { label: '靠泊', time: '2025-06-03 00:12' },
+          { label: '卸船', time: '2025-06-03 05:34' },
+          { label: '提柜(货)', time: '2025-06-03 19:08' },
+          { label: '还空箱', time: '2025-06-06 13:59' }
+        ]}
+      ],
+      vessel: {
+        name: 'WAN HAI 370',
+        voyage: 'S016',
+        mmsi: '563220900',
+        imo: '9958092'
+      }
+    }
+  }
+]
+
+// ChatBI演示对话数据
+const chatBIDemo = [
+  {
+    isUser: true,
+    text: '查一下这个月的订单，美线的业务，做成柱形图。'
+  },
+  {
+    isUser: false,
+    type: 'chart',
+    text: '已为您生成本月美线订单柱形图：',
+    chartData: {
+      type: 'bar',
+      title: '2024年12月美线订单统计',
+      data: [
+        { label: '美西基本港', value: 156 },
+        { label: '美东基本港', value: 89 },
+        { label: '美西偏港', value: 45 },
+        { label: '美东偏港', value: 32 }
+      ]
+    }
+  },
+  {
+    isUser: true,
+    text: '5月份每个销售的业务利润率和目标达成率，分别做成折线图'
+  },
+  {
+    isUser: false,
+    type: 'multi-chart',
+    text: '已为您生成5月份销售业绩分析图表：',
+    charts: [
+      {
+        type: 'line',
+        title: '5月份销售业务利润率',
+        data: [
+          { label: 'James Liu', values: [12, 15, 18, 16, 20] },
+          { label: 'Sarah Chen', values: [10, 13, 14, 17, 19] },
+          { label: 'Mike Wang', values: [8, 11, 13, 15, 16] },
+          { label: 'Lisa Zhang', values: [14, 16, 15, 18, 22] }
+        ]
+      },
+      {
+        type: 'line',
+        title: '5月份销售目标达成率',
+        data: [
+          { label: 'James Liu', values: [85, 90, 95, 92, 98] },
+          { label: 'Sarah Chen', values: [80, 88, 92, 96, 102] },
+          { label: 'Mike Wang', values: [75, 82, 87, 90, 94] },
+          { label: 'Lisa Zhang', values: [90, 95, 93, 98, 105] }
+        ]
+      }
+    ]
+  }
+]
+
 // 切换Tab
 const selectTab = async (index: number) => {
   selectedTab.value = index
@@ -425,6 +650,15 @@ const startDemo = async () => {
   } else if (selectedTab.value === 1) {
     // 订单管理演示
     await playOrderManagementDemo()
+  } else if (selectedTab.value === 2) {
+    // AI识别演示
+    await playAiRecognitionDemo()
+  } else if (selectedTab.value === 3) {
+    // 运单跟踪演示
+    await playTrackingDemo()
+  } else if (selectedTab.value === 4) {
+    // ChatBI演示
+    await playChatBIDemo()
   }
   
   isPlaying.value = false
@@ -485,6 +719,99 @@ const playOrderManagementDemo = async () => {
   }
 }
 
+// 播放AI识别演示
+const playAiRecognitionDemo = async () => {
+  for (let i = 0; i < aiRecognitionDemo.length; i++) {
+    const message = aiRecognitionDemo[i]
+    
+    if (message.isUser) {
+      // 用户消息直接显示
+      await delay(1000)
+      messages.value.push(message)
+    } else {
+      // AI消息需要显示打字效果
+      await delay(800)
+      
+      if (message.type === 'file-upload' || message.type === 'diff-list' || message.type === 'update-list') {
+        // 特殊类型消息直接显示
+        isTyping.value = true
+        await delay(1500)
+        isTyping.value = false
+        messages.value.push(message)
+      } else {
+        // 普通文本消息使用打字机效果
+        await typewriterEffect(message.text, i)
+      }
+    }
+  }
+}
+
+// 播放运单跟踪演示
+const playTrackingDemo = async () => {
+  for (let i = 0; i < trackingDemo.length; i++) {
+    const message = trackingDemo[i]
+    
+    if (message.isUser) {
+      // 用户消息直接显示
+      await delay(1000)
+      messages.value.push(message)
+    } else {
+      // AI消息需要显示打字效果
+      await delay(800)
+      
+      if (message.type === 'tracking-info') {
+        // 特殊类型消息直接显示
+        isTyping.value = true
+        await delay(1500)
+        isTyping.value = false
+        messages.value.push(message)
+      } else {
+        // 普通文本消息使用打字机效果
+        await typewriterEffect(message.text, i)
+      }
+    }
+  }
+}
+
+// 播放ChatBI演示
+const playChatBIDemo = async () => {
+  for (let i = 0; i < chatBIDemo.length; i++) {
+    const message = chatBIDemo[i]
+    
+    if (message.isUser) {
+      // 用户消息直接显示
+      await delay(1000)
+      messages.value.push(message)
+    } else {
+      // AI消息需要显示打字效果
+      await delay(800)
+      
+      if (message.type === 'chart' || message.type === 'multi-chart') {
+        // 特殊类型消息直接显示
+        isTyping.value = true
+        await delay(1500)
+        isTyping.value = false
+        messages.value.push(message)
+        
+        // 渲染图表
+        await nextTick()
+        if (message.type === 'chart') {
+          const chartKey = `chart-${messages.value.length - 1}`
+          await renderBarChart(message.chartData, chartKey)
+        } else if (message.type === 'multi-chart' && message.charts) {
+          for (let j = 0; j < message.charts.length; j++) {
+            const chartKey = `multi-chart-${messages.value.length - 1}-${j}`
+            await renderLineChart(message.charts[j], chartKey)
+          }
+        }
+      } else {
+        // 普通文本消息使用打字机效果
+        await typewriterEffect(message.text, i)
+      }
+    }
+  }
+}
+
 // 打字机效果
 const typewriterEffect = async (text: string, messageIndex: number) => {
   typingMessageIndex.value = messageIndex
@@ -524,10 +851,144 @@ const delay = (ms: number) => {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
+// 设置图表引用
+const setChartRef = (el: any, key: string) => {
+  if (el) {
+    chartRefs.value[key] = el
+  }
+}
+
+// 渲染柱形图
+const renderBarChart = async (chartData: any, key: string) => {
+  await nextTick()
+  const dom = chartRefs.value[key]
+  if (!dom) return
+  
+  const myChart = echarts.init(dom)
+  chartInstances.value[key] = myChart
+  
+  const option = {
+    title: {
+      text: chartData.title,
+      left: 'center',
+      top: 10,
+      textStyle: {
+        fontSize: 16,
+        fontWeight: 'bold'
+      }
+    },
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow'
+      }
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      data: chartData.data.map((item: any) => item.label),
+      axisLabel: {
+        interval: 0,
+        rotate: 30
+      }
+    },
+    yAxis: {
+      type: 'value',
+      name: '订单数量'
+    },
+    series: [{
+      data: chartData.data.map((item: any) => item.value),
+      type: 'bar',
+      itemStyle: {
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          { offset: 0, color: '#3B82F6' },
+          { offset: 1, color: '#1E40AF' }
+        ])
+      },
+      label: {
+        show: true,
+        position: 'top',
+        formatter: '{c}'
+      }
+    }]
+  }
+  
+  myChart.setOption(option)
+}
+
+// 渲染折线图
+const renderLineChart = async (chartData: any, key: string) => {
+  await nextTick()
+  const dom = chartRefs.value[key]
+  if (!dom) return
+  
+  const myChart = echarts.init(dom)
+  chartInstances.value[key] = myChart
+  
+  const option = {
+    title: {
+      text: chartData.title,
+      left: 'center',
+      top: 10,
+      textStyle: {
+        fontSize: 16,
+        fontWeight: 'bold'
+      }
+    },
+    tooltip: {
+      trigger: 'axis'
+    },
+    legend: {
+      data: chartData.data.map((item: any) => item.label),
+      bottom: 10
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '15%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: ['第1周', '第2周', '第3周', '第4周', '第5周']
+    },
+    yAxis: {
+      type: 'value',
+      name: chartData.title.includes('利润率') ? '利润率(%)' : '达成率(%)'
+    },
+    series: chartData.data.map((item: any) => ({
+      name: item.label,
+      type: 'line',
+      smooth: true,
+      data: item.values,
+      lineStyle: {
+        width: 2
+      },
+      symbol: 'circle',
+      symbolSize: 8
+    }))
+  }
+  
+  myChart.setOption(option)
+}
+
 // 组件挂载时自动开始演示
 onMounted(async () => {
   await delay(500)
   startDemo()
+  
+  // 监听窗口大小变化，调整图表大小
+  window.addEventListener('resize', () => {
+    Object.values(chartInstances.value).forEach((chart: any) => {
+      chart.resize()
+    })
+  })
 })
 </script>
 
