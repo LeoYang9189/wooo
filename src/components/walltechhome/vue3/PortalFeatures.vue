@@ -268,7 +268,7 @@ const features = ref([
       "批量处理能力",
       "识别结果可追溯"
     ],
-    videoUrl: "",
+    videoUrl: "/qrcodes/video/scan.mp4",
     videoPoster: ""
   },
   // 7. 权限体系
@@ -285,7 +285,7 @@ const features = ref([
       "SSO单点登录",
       "审计日志追踪"
     ],
-    videoUrl: "",
+    videoUrl: "/qrcodes/video/per.mp4",
     videoPoster: ""
   },
   // 8. 灵活部署
@@ -302,7 +302,7 @@ const features = ref([
       "高可用架构",
       "灾备方案"
     ],
-    videoUrl: "",
+    videoUrl: "/qrcodes/video/yun.mp4",
     videoPoster: ""
   }
 ])
