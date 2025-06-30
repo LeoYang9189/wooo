@@ -450,13 +450,23 @@ const ViewFclRate: React.FC = () => {
             layout="vertical"
             data={[
               { label: '航线', value: rateData.routeLine || '美加线' },
+              { label: '航线代码', value: rateData.lineCode || '-' },
+              { label: '收货地', value: rateData.placeOfReceipt || '-' },
               { label: '起运港', value: rateData.departurePort },
-              { label: '目的港', value: rateData.dischargePort },
+              { label: '卸货港', value: rateData.dischargePort || '-' },
+              { label: '目的港', value: rateData.finalDestination },
               { label: '直达/中转', value: rateData.transitType },
               { label: '船名', value: rateData.shipName },
               { label: '航次', value: rateData.voyageNumber },
               { label: '船期', value: rateData.vesselSchedule?.join(', ') },
               { label: '航程', value: `${rateData.voyage} 天` },
+              { label: 'ETD', value: rateData.etd || '-' },
+              { label: 'ETA', value: rateData.eta || '-' },
+              ...(rateData.transitType === '中转' ? [
+                { label: '中转港 (1st)', value: rateData.transitPort1st || '-' },
+                { label: '中转港 (2nd)', value: rateData.transitPort2nd || '-' },
+                { label: '中转港 (3rd)', value: rateData.transitPort3rd || '-' },
+              ] : [])
             ]}
           />
         </Card>

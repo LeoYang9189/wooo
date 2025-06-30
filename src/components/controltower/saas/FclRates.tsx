@@ -222,15 +222,61 @@ const getFilterFieldsByTab = (activeTab: string): FilterFieldConfig[] => {
           placeholder: '请选择直达/中转'
         },
         {
-          key: 'transitPort',
-          label: '中转港',
+          key: 'placeOfReceipt',
+          label: '收货地',
+          type: 'select',
+          options: [
+            { label: 'CNSHA', value: 'CNSHA' },
+            { label: 'CNNGB', value: 'CNNGB' },
+            { label: 'CNQIN', value: 'CNQIN' },
+            { label: 'CNYTN', value: 'CNYTN' }
+          ],
+          placeholder: '请选择收货地'
+        },
+        {
+          key: 'dischargePort',
+          label: '卸货港',
+          type: 'select',
+          options: [
+            { label: 'USLAX', value: 'USLAX' },
+            { label: 'USNYC', value: 'USNYC' },
+            { label: 'USLGB', value: 'USLGB' },
+            { label: 'USOAK', value: 'USOAK' }
+          ],
+          placeholder: '请选择卸货港'
+        },
+        {
+          key: 'transitPort1',
+          label: '中转港(1st)',
           type: 'select',
           options: [
             { label: 'SINGAPORE', value: 'SINGAPORE' },
             { label: 'HONG KONG', value: 'HONG KONG' },
             { label: 'KRPUS', value: 'KRPUS' }
           ],
-          placeholder: '请选择中转港'
+          placeholder: '请选择第一中转港'
+        },
+        {
+          key: 'transitPort2',
+          label: '中转港(2nd)',
+          type: 'select',
+          options: [
+            { label: 'SINGAPORE', value: 'SINGAPORE' },
+            { label: 'HONG KONG', value: 'HONG KONG' },
+            { label: 'KRPUS', value: 'KRPUS' }
+          ],
+          placeholder: '请选择第二中转港'
+        },
+        {
+          key: 'transitPort3',
+          label: '中转港(3rd)',
+          type: 'select',
+          options: [
+            { label: 'SINGAPORE', value: 'SINGAPORE' },
+            { label: 'HONG KONG', value: 'HONG KONG' },
+            { label: 'KRPUS', value: 'KRPUS' }
+          ],
+          placeholder: '请选择第三中转港'
         },
         {
           key: 'transitType',
@@ -411,6 +457,35 @@ const getFilterFieldsByTab = (activeTab: string): FilterFieldConfig[] => {
           label: '修改日期',
           type: 'dateRange',
           placeholder: '请选择修改日期范围'
+        },
+        {
+          key: 'lane',
+          label: '航线',
+          type: 'select',
+          options: [
+            { label: '中美线', value: '中美线' },
+            { label: '中欧线', value: '中欧线' },
+            { label: '美加线', value: '美加线' },
+            { label: '欧地线', value: '欧地线' },
+            { label: '亚洲线', value: '亚洲线' },
+            { label: '澳新线', value: '澳新线' },
+            { label: '中东线', value: '中东线' },
+            { label: '非洲线', value: '非洲线' },
+            { label: '南美线', value: '南美线' },
+            { label: '中日线', value: '中日线' },
+            { label: '中韩线', value: '中韩线' },
+            { label: '东南亚线', value: '东南亚线' },
+            { label: '印巴线', value: '印巴线' },
+            { label: '红海线', value: '红海线' },
+            { label: '波斯湾线', value: '波斯湾线' }
+          ],
+          placeholder: '请选择航线'
+        },
+        {
+          key: 'lineCode',
+          label: '航线代码',
+          type: 'text',
+          placeholder: '请输入航线代码'
         }
       ];
     case 'precarriage':
@@ -505,6 +580,18 @@ const getFilterFieldsByTab = (activeTab: string): FilterFieldConfig[] => {
           placeholder: '请选择修改日期范围'
         },
         {
+          key: 'etd',
+          label: 'ETD',
+          type: 'dateRange',
+          placeholder: '请选择ETD范围'
+        },
+        {
+          key: 'eta',
+          label: 'ETA',
+          type: 'dateRange',
+          placeholder: '请选择ETA范围'
+        },
+        {
           key: 'entryPerson',
           label: '创建人',
           type: 'text',
@@ -588,6 +675,18 @@ const getFilterFieldsByTab = (activeTab: string): FilterFieldConfig[] => {
             { label: '下架', value: '下架' }
           ],
           placeholder: '请选择状态'
+        },
+        {
+          key: 'etd',
+          label: 'ETD',
+          type: 'dateRange',
+          placeholder: '请选择ETD范围'
+        },
+        {
+          key: 'eta',
+          label: 'ETA',
+          type: 'dateRange',
+          placeholder: '请选择ETA范围'
         }
       ];
     default:
@@ -601,6 +700,11 @@ interface DataItem {
   departurePort: string; // 起运港
   dischargePort: string; // 目的港
   transitPort: string; // 中转港
+  transitPort1: string; // 中转港(1st)
+  transitPort2: string; // 中转港(2nd)
+  transitPort3: string; // 中转港(3rd)
+  placeOfReceipt: string; // 收货地
+  lineCode: string; // 航线代码
   spaceStatus: string; // 舱位状态
   priceStatus: string; // 价格趋势
   containerType: string; // 箱种
@@ -649,7 +753,6 @@ interface DataItem {
   portOfLoading: string; // 装货港
   portOfDischarge: string; // 卸货港
   finalDestination: string; // 最终目的地
-  placeOfReceipt: string; // 收货地
   placeOfDelivery: string; // 交货地
   shippingTerms: string; // 贸易条款
   freightTerms: string; // 运费条款
@@ -808,7 +911,13 @@ const FclRates: React.FC = () => {
     entryPerson: false,
     createDate: false,
     rateModifier: false,
-    modifyDate: false
+    modifyDate: false,
+    placeOfReceipt: false,
+    transitPort1: false,
+    transitPort2: false,
+    transitPort3: false,
+    lane: false,
+    lineCode: false
   });
   const [columnOrder, setColumnOrder] = useState([
     'routeCode', 'rateType', 'departurePort', 'dischargePort', 'transitPort',
@@ -816,7 +925,7 @@ const FclRates: React.FC = () => {
     '20gp', '40gp', '40hc', '20nor', '40nor', '45hc', '20hc', '20tk', '40tk', '20ot', '40ot', '20fr', '40fr',
     'vesselSchedule', 'voyage', 'freeContainerDays', 'freeStorageDays', 'chargeSpecialNote', 'nac',
     'overweightNote', 'notes', 'validPeriod', 'etd', 'eta', 'vesselName', 'voyageNo',
-          'entryPerson', 'createDate', 'rateModifier', 'modifyDate'
+          'entryPerson', 'createDate', 'rateModifier', 'modifyDate', 'placeOfReceipt', 'transitPort1', 'transitPort2', 'transitPort3', 'lane', 'lineCode'
   ]);
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const [dragOverItem, setDragOverItem] = useState<string | null>(null);
@@ -1303,7 +1412,13 @@ const FclRates: React.FC = () => {
       entryPerson: false,
       createDate: false,
       rateModifier: false,
-      modifyDate: false
+      modifyDate: false,
+      placeOfReceipt: false,
+      transitPort1: false,
+      transitPort2: false,
+      transitPort3: false,
+      lane: false,
+      lineCode: false
     });
   };
 
@@ -1716,6 +1831,54 @@ const FclRates: React.FC = () => {
       resizable: true,
     },
     {
+      title: '收货地',
+      dataIndex: 'placeOfReceipt',
+      width: 120,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
+      sorter: true,
+      resizable: true,
+    },
+    {
+      title: '中转港(1st)',
+      dataIndex: 'transitPort1',
+      width: 140,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
+      sorter: true,
+      resizable: true,
+    },
+    {
+      title: '中转港(2nd)',
+      dataIndex: 'transitPort2',
+      width: 140,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
+      sorter: true,
+      resizable: true,
+    },
+    {
+      title: '中转港(3rd)',
+      dataIndex: 'transitPort3',
+      width: 140,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
+      sorter: true,
+      resizable: true,
+    },
+    {
+      title: '航线',
+      dataIndex: 'lane',
+      width: 120,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
+      sorter: true,
+      resizable: true,
+    },
+    {
+      title: '航线代码',
+      dataIndex: 'lineCode',
+      width: 120,
+      render: (value: string) => <Tooltip content={value} mini><span className="no-ellipsis">{value}</span></Tooltip>,
+      sorter: true,
+      resizable: true,
+    },
+    {
       title: '操作',
       dataIndex: 'actions',
       width: 210,
@@ -1844,7 +2007,11 @@ const FclRates: React.FC = () => {
       portOfLoading: Math.random() > 0.5 ? '上海' : '宁波',
       portOfDischarge: Math.random() > 0.5 ? '洛杉矶' : '纽约',
       finalDestination: Math.random() > 0.5 ? '美国' : '欧洲',
+      transitPort1: Math.random() > 0.5 ? '新加坡' : '香港',
+      transitPort2: Math.random() > 0.7 ? '釜山' : '',
+      transitPort3: Math.random() > 0.9 ? '东京' : '',
       placeOfReceipt: Math.random() > 0.5 ? '上海' : '宁波',
+      lineCode: ['US001', 'EU002', 'AS003', 'ME004'][Math.floor(Math.random() * 4)],
       placeOfDelivery: Math.random() > 0.5 ? '上海' : '宁波',
       shippingTerms: ['FOB', 'CIF', 'CFR'][Math.floor(Math.random() * 3)],
       freightTerms: ['LCL', 'FCL', '拼箱'][Math.floor(Math.random() * 3)],
@@ -2041,7 +2208,13 @@ const FclRates: React.FC = () => {
       entryPerson: '创建人',
       createDate: '创建日期',
       rateModifier: '运价修改人',
-      modifyDate: '修改日期'
+      modifyDate: '修改日期',
+      placeOfReceipt: '收货地',
+      transitPort1: '中转港(1st)',
+      transitPort2: '中转港(2nd)',
+      transitPort3: '中转港(3rd)',
+      lane: '航线',
+      lineCode: '航线代码'
     };
     return columnLabels[columnKey] || columnKey;
   };
@@ -2066,6 +2239,100 @@ const FclRates: React.FC = () => {
         return changeValue;
       default:
         return originalPrice;
+    }
+  };
+
+  // 根据运价类型获取批量改价表格的表头配置
+  const getBatchPriceTableHeaders = (rateType: string) => {
+    switch (rateType) {
+      case 'fcl':
+      case 'lcl':
+        return [
+          { key: 'routeCode', label: '运价号', width: '120px' },
+          { key: 'departurePort', label: '起运港', width: '150px' },
+          { key: 'dischargePort', label: '目的港', width: '150px' },
+          { key: 'shipCompany', label: '船公司', width: '120px' },
+          { key: 'status', label: '状态', width: '100px' }
+        ];
+      case 'air':
+        return [
+          { key: 'routeCode', label: '运价号', width: '120px' },
+          { key: 'departurePort', label: '出发地', width: '150px' },
+          { key: 'dischargePort', label: '目的地', width: '150px' },
+          { key: 'shipCompany', label: '航空公司', width: '120px' },
+          { key: 'status', label: '状态', width: '100px' }
+        ];
+      case 'precarriage':
+        return [
+          { key: 'routeCode', label: '运价号', width: '120px' },
+          { key: 'origin', label: '起运地', width: '150px' },
+          { key: 'departurePort', label: '起运港', width: '150px' },
+          { key: 'vendor', label: '供应商', width: '120px' },
+          { key: 'status', label: '状态', width: '100px' }
+        ];
+             case 'lastmile':
+         return [
+           { key: 'routeCode', label: '运价号', width: '120px' },
+           { key: 'dischargePort', label: '目的港', width: '150px' },
+           { key: 'address', label: '配送地址', width: '150px' },
+           { key: 'agentName', label: '代理', width: '120px' },
+           { key: 'status', label: '状态', width: '100px' }
+         ];
+      default:
+        return [
+          { key: 'routeCode', label: '运价号', width: '120px' },
+          { key: 'departurePort', label: '起运港', width: '150px' },
+          { key: 'dischargePort', label: '目的港', width: '150px' },
+          { key: 'shipCompany', label: '船公司', width: '120px' },
+          { key: 'status', label: '状态', width: '100px' }
+        ];
+    }
+  };
+
+  // 根据运价类型获取模拟数据
+  const getBatchPriceTableData = (rateType: string, key: string | number, _index: number) => {
+    const baseData = {
+      routeCode: `${rateType.toUpperCase()}${String(key).padStart(8, '0')}`,
+      status: '正常'
+    };
+
+    switch (rateType) {
+      case 'fcl':
+      case 'lcl':
+        return {
+          ...baseData,
+          departurePort: 'CNSHA | 上海',
+          dischargePort: 'USLAX | 洛杉矶',
+          shipCompany: 'COSCO'
+        };
+      case 'air':
+        return {
+          ...baseData,
+          departurePort: 'PVG | 上海浦东',
+          dischargePort: 'LAX | 洛杉矶',
+          shipCompany: '中国东航'
+        };
+      case 'precarriage':
+        return {
+          ...baseData,
+          origin: '浙江省杭州市萧山区',
+          departurePort: 'CNSHA | 上海',
+          vendor: '安吉物流'
+        };
+             case 'lastmile':
+         return {
+           ...baseData,
+           dischargePort: 'USLAX | 洛杉矶',
+           address: 'San Diego, CA 92101',
+           agentName: 'XPO TRUCK LLC'
+         };
+      default:
+        return {
+          ...baseData,
+          departurePort: 'CNSHA | 上海',
+          dischargePort: 'USLAX | 洛杉矶',
+          shipCompany: 'COSCO'
+        };
     }
   };
 
@@ -2256,6 +2523,14 @@ const FclRates: React.FC = () => {
   const handleAddRate = () => {
     if (activeTab === 'fcl') {
       navigate('/controltower/saas/create-fcl-rate');
+      return;
+    }
+    if (activeTab === 'lcl') {
+      navigate('/controltower/saas/create-fcl-rate?type=lcl');
+      return;
+    }
+    if (activeTab === 'air') {
+      navigate('/controltower/saas/create-fcl-rate?type=air');
       return;
     }
     if (activeTab === 'precarriage') {
@@ -3242,11 +3517,11 @@ const FclRates: React.FC = () => {
                   }} />
                   <thead className="bg-gray-100 sticky top-0">
                     <tr>
-                      <th className="text-center p-3 border-b border-gray-200 min-w-[120px]">运价号</th>
-                      <th className="text-center p-3 border-b border-gray-200 min-w-[150px]">起运港</th>
-                      <th className="text-center p-3 border-b border-gray-200 min-w-[150px]">目的港</th>
-                      <th className="text-center p-3 border-b border-gray-200 min-w-[120px]">船公司</th>
-                      <th className="text-center p-3 border-b border-gray-200 min-w-[100px]">状态</th>
+                      {getBatchPriceTableHeaders(activeTab).map(header => (
+                        <th key={header.key} className="text-center p-3 border-b border-gray-200" style={{ minWidth: header.width }}>
+                          {header.label}
+                        </th>
+                      ))}
                       {selectedFeeType && selectedContainerTypes.map(type => (
                         <th key={type} className="text-center p-3 border-b border-gray-200 min-w-[100px]">
                           {type.toUpperCase()}
@@ -3276,25 +3551,28 @@ const FclRates: React.FC = () => {
                         '40fr': 3000 + index * 35
                       };
 
+                      const rowData = getBatchPriceTableData(activeTab, key, index);
+                      const headers = getBatchPriceTableHeaders(activeTab);
+                      
                       return (
                         <tr key={key} className="hover:bg-gray-50 transition-colors">
-                          <td className="p-3 border-b border-gray-200 text-center">
-                            FCL{String(key).padStart(8, '0')}
-                          </td>
-                          <td className="p-3 border-b border-gray-200 text-center">
-                            <div className="text-xs">CNSHA</div>
-                            <div className="text-xs text-gray-500">上海</div>
-                          </td>
-                          <td className="p-3 border-b border-gray-200 text-center">
-                            <div className="text-xs">USLAX</div>
-                            <div className="text-xs text-gray-500">洛杉矶</div>
-                          </td>
-                          <td className="p-3 border-b border-gray-200 text-center">
-                            <div className="text-xs">COSCO</div>
-                          </td>
-                          <td className="p-3 border-b border-gray-200 text-center">
-                            <Tag color="green" size="small">正常</Tag>
-                          </td>
+                          {headers.map(header => {
+                            const value = (rowData as any)[header.key];
+                            return (
+                              <td key={header.key} className="p-3 border-b border-gray-200 text-center">
+                                {header.key === 'status' ? (
+                                  <Tag color="green" size="small">{value}</Tag>
+                                ) : header.key === 'departurePort' || header.key === 'dischargePort' ? (
+                                  <div>
+                                    <div className="text-xs">{value?.split(' | ')[0]}</div>
+                                    <div className="text-xs text-gray-500">{value?.split(' | ')[1]}</div>
+                                  </div>
+                                ) : (
+                                  <div className="text-xs">{value}</div>
+                                )}
+                              </td>
+                            );
+                          })}
                           {selectedFeeType && selectedContainerTypes.map(type => {
                             const originalPrice = currentFeeValues[type];
                             const newPrice = calculateNewPrice(originalPrice, type);
@@ -3684,31 +3962,43 @@ const FclRates: React.FC = () => {
               <table className="w-full text-sm border-collapse">
                 <thead className="bg-gray-100">
                   <tr>
-                    <th className="text-center p-2 border-b border-gray-200">运价号</th>
-                    <th className="text-center p-2 border-b border-gray-200">起运港</th>
-                    <th className="text-center p-2 border-b border-gray-200">目的港</th>
-                    <th className="text-center p-2 border-b border-gray-200">船公司</th>
+                    {getBatchPriceTableHeaders(activeTab).map(header => (
+                      <th key={header.key} className="text-center p-2 border-b border-gray-200">
+                        {header.label}
+                      </th>
+                    ))}
                     <th className="text-center p-2 border-b border-gray-200">
                       {timeChangeTab === 'etd' ? '当前ETD' : timeChangeTab === 'eta' ? '当前ETA' : '当前有效期'}
                     </th>
-                    <th className="text-center p-2 border-b border-gray-200">状态</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {selectedRowKeys.slice(0, 20).map((key) => (
-                    <tr key={key} className="hover:bg-gray-50">
-                      <td className="p-2 border-b border-gray-200">FCL{String(key).padStart(8, '0')}</td>
-                      <td className="p-2 border-b border-gray-200">CNSHA | 上海</td>
-                      <td className="p-2 border-b border-gray-200">USLAX | 洛杉矶</td>
-                      <td className="p-2 border-b border-gray-200">COSCO</td>
-                      <td className="p-2 border-b border-gray-200 text-gray-600">
-                        {timeChangeTab === 'etd' ? '2024-01-15' : timeChangeTab === 'eta' ? '2024-01-28' : '2024-01-01 ~ 2024-03-31'}
-                      </td>
-                      <td className="p-2 border-b border-gray-200">
-                        <Tag color="green" size="small">正常</Tag>
-                      </td>
-                    </tr>
-                  ))}
+                  {selectedRowKeys.slice(0, 20).map((key, index) => {
+                    const rowData = getBatchPriceTableData(activeTab, key, index);
+                    const headers = getBatchPriceTableHeaders(activeTab);
+                    
+                    return (
+                      <tr key={key} className="hover:bg-gray-50">
+                        {headers.map(header => {
+                          const value = (rowData as any)[header.key];
+                          return (
+                            <td key={header.key} className="p-2 border-b border-gray-200">
+                              {header.key === 'status' ? (
+                                <Tag color="green" size="small">{value}</Tag>
+                              ) : header.key === 'departurePort' || header.key === 'dischargePort' ? (
+                                value?.split(' | ').join(' | ')
+                              ) : (
+                                value
+                              )}
+                            </td>
+                          );
+                        })}
+                        <td className="p-2 border-b border-gray-200 text-gray-600">
+                          {timeChangeTab === 'etd' ? '2024-01-15' : timeChangeTab === 'eta' ? '2024-01-28' : '2024-01-01 ~ 2024-03-31'}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
               {selectedRowKeys.length > 20 && (

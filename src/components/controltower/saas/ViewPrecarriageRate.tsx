@@ -62,6 +62,8 @@ interface FormStateType {
   destination: string;
   terminal: string;
   vendor: string;
+  etd?: string;
+  eta?: string;
   validDateRange: string[];
   remark: string;
   status: string;
@@ -403,6 +405,8 @@ const ViewPrecarriageRate: React.FC = () => {
             { label: '起运港', value: formState.destination },
             { label: '码头', value: formState.terminal },
             { label: '供应商', value: formState.vendor },
+            { label: 'ETD', value: formState.etd || '-' },
+            { label: 'ETA', value: formState.eta || '-' },
             { label: '备注', value: formState.remark },
           ]}
         />

@@ -1104,6 +1104,28 @@ const CreatePrecarriageRate: React.FC = () => {
                   </Col>
                   
                   <Col span={24}>
+                    <FormItem label="ETD" field="etd">
+                      <DatePicker 
+                        placeholder="请选择预计开船日" 
+                        style={{ width: '100%' }}
+                        onChange={(value) => handleFormChange('etd', value)}
+                        allowClear
+                      />
+                    </FormItem>
+                  </Col>
+                  
+                  <Col span={24}>
+                    <FormItem label="ETA" field="eta">
+                      <DatePicker 
+                        placeholder="请选择预计到港日" 
+                        style={{ width: '100%' }}
+                        onChange={(value) => handleFormChange('eta', value)}
+                        allowClear
+                      />
+                    </FormItem>
+                  </Col>
+                  
+                  <Col span={24}>
                     <FormItem label="有效期" field="validDateRange" rules={[{ required: true, message: '请选择有效期' }]}>
                       <RangePicker 
                         style={{ width: '100%' }} 

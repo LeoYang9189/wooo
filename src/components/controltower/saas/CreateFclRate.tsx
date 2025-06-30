@@ -573,6 +573,17 @@ const CreateFclRate: React.FC = () => {
             <Card title="航线信息" className="mb-6">
               <Row gutter={24}>
                 <Col span={6}>
+                  <FormItem label="收货地" field="placeOfReceipt">
+                    <Select placeholder="请选择收货地" showSearch allowClear>
+                      <Option value="CNSHA">CNSHA | 上海</Option>
+                      <Option value="CNNGB">CNNGB | 宁波</Option>
+                      <Option value="CNYTN">CNYTN | 烟台</Option>
+                      <Option value="CNQIN">CNQIN | 青岛</Option>
+                      <Option value="CNTAO">CNTAO | 青岛</Option>
+                    </Select>
+                  </FormItem>
+                </Col>
+                <Col span={6}>
                   <FormItem label="起运港" field="departurePort" required>
                     <Select placeholder="请选择起运港" showSearch>
                       <Option value="CNSHA">CNSHA | 上海</Option>
@@ -584,7 +595,18 @@ const CreateFclRate: React.FC = () => {
                   </FormItem>
                 </Col>
                 <Col span={6}>
-                  <FormItem label="目的港" field="dischargePort" required>
+                  <FormItem label="卸货港" field="dischargePort">
+                    <Select placeholder="请选择卸货港" showSearch allowClear>
+                      <Option value="USLAX">USLAX | 洛杉矶</Option>
+                      <Option value="USNYC">USNYC | 纽约</Option>
+                      <Option value="USLGB">USLGB | 长滩</Option>
+                      <Option value="USOAK">USOAK | 奥克兰</Option>
+                      <Option value="USSAT">USSAT | 萨凡纳</Option>
+                    </Select>
+                  </FormItem>
+                </Col>
+                <Col span={6}>
+                  <FormItem label="目的港" field="finalDestination" required>
                     <Select placeholder="请选择目的港" showSearch>
                       <Option value="USLAX">USLAX | 洛杉矶</Option>
                       <Option value="USNYC">USNYC | 纽约</Option>
@@ -592,6 +614,35 @@ const CreateFclRate: React.FC = () => {
                       <Option value="USOAK">USOAK | 奥克兰</Option>
                       <Option value="USSAT">USSAT | 萨凡纳</Option>
                     </Select>
+                  </FormItem>
+                </Col>
+              </Row>
+              
+              <Row gutter={24}>
+                <Col span={6}>
+                  <FormItem label="航线" field="routeLine">
+                    <Select placeholder="请选择航线" showSearch allowClear>
+                      <Option value="中美线">中美线</Option>
+                      <Option value="中欧线">中欧线</Option>
+                      <Option value="美加线">美加线</Option>
+                      <Option value="欧地线">欧地线</Option>
+                      <Option value="亚洲线">亚洲线</Option>
+                      <Option value="澳新线">澳新线</Option>
+                      <Option value="中东线">中东线</Option>
+                      <Option value="非洲线">非洲线</Option>
+                      <Option value="南美线">南美线</Option>
+                      <Option value="中日线">中日线</Option>
+                      <Option value="中韩线">中韩线</Option>
+                      <Option value="东南亚线">东南亚线</Option>
+                      <Option value="印巴线">印巴线</Option>
+                      <Option value="红海线">红海线</Option>
+                      <Option value="波斯湾线">波斯湾线</Option>
+                    </Select>
+                  </FormItem>
+                </Col>
+                <Col span={6}>
+                  <FormItem label="航线代码" field="lineCode">
+                    <Input placeholder="请输入航线代码" allowClear />
                   </FormItem>
                 </Col>
                 <Col span={6}>
@@ -603,21 +654,32 @@ const CreateFclRate: React.FC = () => {
                   </FormItem>
                 </Col>
                 <Col span={6}>
-                  <FormItem label="船名" field="shipName">
-                    <Input placeholder="请输入船名" />
+                  <FormItem label={type === 'air' ? "航空公司" : "船名"} field="shipName">
+                    {type === 'air' ? (
+                      <Select placeholder="请选择航空公司" showSearch>
+                        <Option value="CA">中国国际航空</Option>
+                        <Option value="MU">中国东方航空</Option>
+                        <Option value="CZ">中国南方航空</Option>
+                        <Option value="HU">海南航空</Option>
+                        <Option value="9C">春秋航空</Option>
+                        <Option value="GJ">长龙航空</Option>
+                      </Select>
+                    ) : (
+                      <Input placeholder="请输入船名" />
+                    )}
                   </FormItem>
                 </Col>
               </Row>
               
               <Row gutter={24}>
                 <Col span={6}>
-                  <FormItem label="航次" field="voyageNumber">
-                    <Input placeholder="请输入航次" />
+                  <FormItem label={type === 'air' ? "航班号" : "航次"} field="voyageNumber">
+                    <Input placeholder={type === 'air' ? "请输入航班号" : "请输入航次"} />
                   </FormItem>
                 </Col>
                 <Col span={6}>
-                  <FormItem label="船期" field="vesselSchedule">
-                    <Select placeholder="请选择船期" mode="multiple">
+                  <FormItem label={type === 'air' ? "班期" : "船期"} field="vesselSchedule">
+                    <Select placeholder={type === 'air' ? "请选择班期" : "请选择船期"} mode="multiple">
                       <Option value="周一">周一</Option>
                       <Option value="周二">周二</Option>
                       <Option value="周三">周三</Option>
@@ -633,16 +695,56 @@ const CreateFclRate: React.FC = () => {
                     <InputNumber placeholder="请输入航程(天)" min={0} />
                   </FormItem>
                 </Col>
+                <Col span={6}>
+                  <FormItem label="ETD" field="etd">
+                    <DatePicker placeholder="请选择预计开船日" style={{ width: '100%' }} />
+                  </FormItem>
+                </Col>
+              </Row>
+              
+              <Row gutter={24}>
+                <Col span={6}>
+                  <FormItem label="ETA" field="eta">
+                    <DatePicker placeholder="请选择预计到港日" style={{ width: '100%' }} />
+                  </FormItem>
+                </Col>
               </Row>
               
               {transitType === '中转' && (
                 <Row gutter={24}>
                   <Col span={6}>
-                    <FormItem label="中转港" field="transitPort">
-                      <Select placeholder="请选择中转港" showSearch>
+                    <FormItem label="中转港 (1st)" field="transitPort1st" required>
+                      <Select placeholder="请选择第一中转港" showSearch>
                         <Option value="KRPUS">KRPUS | 釜山</Option>
                         <Option value="SGSIN">SGSIN | 新加坡</Option>
                         <Option value="HKHKG">HKHKG | 香港</Option>
+                        <Option value="JPYOK">JPYOK | 横滨</Option>
+                        <Option value="JPKOB">JPKOB | 神户</Option>
+                        <Option value="MYTPP">MYTPP | 巴生港</Option>
+                      </Select>
+                    </FormItem>
+                  </Col>
+                  <Col span={6}>
+                    <FormItem label="中转港 (2nd)" field="transitPort2nd">
+                      <Select placeholder="请选择第二中转港" showSearch allowClear>
+                        <Option value="KRPUS">KRPUS | 釜山</Option>
+                        <Option value="SGSIN">SGSIN | 新加坡</Option>
+                        <Option value="HKHKG">HKHKG | 香港</Option>
+                        <Option value="JPYOK">JPYOK | 横滨</Option>
+                        <Option value="JPKOB">JPKOB | 神户</Option>
+                        <Option value="MYTPP">MYTPP | 巴生港</Option>
+                      </Select>
+                    </FormItem>
+                  </Col>
+                  <Col span={6}>
+                    <FormItem label="中转港 (3rd)" field="transitPort3rd">
+                      <Select placeholder="请选择第三中转港" showSearch allowClear>
+                        <Option value="KRPUS">KRPUS | 釜山</Option>
+                        <Option value="SGSIN">SGSIN | 新加坡</Option>
+                        <Option value="HKHKG">HKHKG | 香港</Option>
+                        <Option value="JPYOK">JPYOK | 横滨</Option>
+                        <Option value="JPKOB">JPKOB | 神户</Option>
+                        <Option value="MYTPP">MYTPP | 巴生港</Option>
                       </Select>
                     </FormItem>
                   </Col>

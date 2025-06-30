@@ -53,6 +53,8 @@ interface FormStateType {
   address: string;
   warehouseCode: string | null;
   agentName: string;
+  etd?: string;
+  eta?: string;
   validDateRange: string[];
   remark: string;
   status: string;
@@ -359,6 +361,8 @@ const ViewLastMileRate: React.FC = () => {
             { label: '尾程运价编号', value: formState.code },
             { label: '目的港', value: formState.origin },
             { label: '配送地址类型', value: formState.addressType },
+            { label: 'ETD', value: formState.etd || '-' },
+            { label: 'ETA', value: formState.eta || '-' },
             { label: '状态', value: getStatusTag(formState.status) },
           ]}
         />

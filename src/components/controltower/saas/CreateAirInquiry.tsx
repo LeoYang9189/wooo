@@ -129,9 +129,17 @@ const CreateAirInquiry: React.FC = () => {
     warehouseCode: '',
     transitType: '不指定',
     route: '中美航线',
+    lineCode: '',
+    placeOfReceipt: '',
     departurePort: 'PVG | Shanghai Pudong',
-    dischargePort: 'LAX | Los Angeles',
+    dischargePort: '',
+    finalDestination: 'LAX | Los Angeles',
     transitPort: '',
+    transitPort1st: '',
+    transitPort2nd: '',
+    transitPort3rd: '',
+    etd: '',
+    eta: '',
     goodsType: '普货',
     dangerLevel: '',
     unNo: '',
@@ -514,7 +522,7 @@ const CreateAirInquiry: React.FC = () => {
                     </FormItem>
                   </Col>
                   
-                  <Col span={24}>
+                  <Col span={12}>
                     <FormItem label="航线" field="route">
                       <Select
                         placeholder="请选择航线" 
@@ -522,21 +530,62 @@ const CreateAirInquiry: React.FC = () => {
                         onChange={(value) => handleFormChange('route', value)}
                         style={{ width: '100%' }}
                         showSearch
+                        allowClear
                       >
-                        <Option value="中美航线">中美航线</Option>
-                        <Option value="中欧航线">中欧航线</Option>
-                        <Option value="亚太航线">亚太航线</Option>
-                        <Option value="中东航线">中东航线</Option>
-                        <Option value="非洲航线">非洲航线</Option>
-                        <Option value="南美航线">南美航线</Option>
+                        <Option value="中美线">中美线</Option>
+                        <Option value="中欧线">中欧线</Option>
+                        <Option value="美加线">美加线</Option>
+                        <Option value="欧地线">欧地线</Option>
+                        <Option value="亚洲线">亚洲线</Option>
+                        <Option value="澳新线">澳新线</Option>
+                        <Option value="中东线">中东线</Option>
+                        <Option value="非洲线">非洲线</Option>
+                        <Option value="南美线">南美线</Option>
+                        <Option value="中日线">中日线</Option>
+                        <Option value="中韩线">中韩线</Option>
+                        <Option value="东南亚线">东南亚线</Option>
+                        <Option value="印巴线">印巴线</Option>
+                        <Option value="红海线">红海线</Option>
+                        <Option value="波斯湾线">波斯湾线</Option>
+                      </Select>
+                    </FormItem>
+                  </Col>
+                  
+                  <Col span={12}>
+                    <FormItem label="航线代码" field="lineCode">
+                      <Input
+                        placeholder="请输入航线代码" 
+                        value={formState.lineCode}
+                        onChange={(value) => handleFormChange('lineCode', value)}
+                        style={{ width: '100%' }}
+                        allowClear
+                      />
+                    </FormItem>
+                  </Col>
+                  
+                  <Col span={24}>
+                    <FormItem label="收货地" field="placeOfReceipt">
+                      <Select
+                        placeholder="请选择收货地" 
+                        value={formState.placeOfReceipt}
+                        onChange={(value) => handleFormChange('placeOfReceipt', value)}
+                        style={{ width: '100%' }}
+                        showSearch
+                        allowClear
+                      >
+                        <Option value="PVG | Shanghai Pudong">PVG | Shanghai Pudong</Option>
+                        <Option value="PEK | Beijing Capital">PEK | Beijing Capital</Option>
+                        <Option value="CAN | Guangzhou Baiyun">CAN | Guangzhou Baiyun</Option>
+                        <Option value="SZX | Shenzhen Baoan">SZX | Shenzhen Baoan</Option>
+                        <Option value="CTU | Chengdu Shuangliu">CTU | Chengdu Shuangliu</Option>
                       </Select>
                     </FormItem>
                   </Col>
                   
                   <Col span={24}>
-                    <FormItem label="始发港" field="departurePort">
+                    <FormItem label="起运港" field="departurePort" rules={[{ required: true, message: '请选择起运港' }]}>
                       <Select
-                        placeholder="请选择始发港" 
+                        placeholder="请选择起运港" 
                         value={formState.departurePort || 'PVG | Shanghai Pudong'}
                         onChange={(value) => handleFormChange('departurePort', value)}
                         style={{ width: '100%' }}
@@ -552,11 +601,30 @@ const CreateAirInquiry: React.FC = () => {
                   </Col>
                   
                   <Col span={24}>
-                    <FormItem label="目的港" field="dischargePort">
+                    <FormItem label="卸货港" field="dischargePort">
+                      <Select
+                        placeholder="请选择卸货港" 
+                        value={formState.dischargePort}
+                        onChange={(value) => handleFormChange('dischargePort', value)}
+                        style={{ width: '100%' }}
+                        showSearch
+                        allowClear
+                      >
+                        <Option value="LAX | Los Angeles">LAX | Los Angeles</Option>
+                        <Option value="JFK | New York">JFK | New York</Option>
+                        <Option value="FRA | Frankfurt">FRA | Frankfurt</Option>
+                        <Option value="LHR | London Heathrow">LHR | London Heathrow</Option>
+                        <Option value="CDG | Paris Charles de Gaulle">CDG | Paris Charles de Gaulle</Option>
+                      </Select>
+                    </FormItem>
+                  </Col>
+                  
+                  <Col span={24}>
+                    <FormItem label="目的港" field="finalDestination" rules={[{ required: true, message: '请选择目的港' }]}>
                       <Select
                         placeholder="请选择目的港" 
-                        value={formState.dischargePort || 'LAX | Los Angeles'}
-                        onChange={(value) => handleFormChange('dischargePort', value)}
+                        value={formState.finalDestination || 'LAX | Los Angeles'}
+                        onChange={(value) => handleFormChange('finalDestination', value)}
                         style={{ width: '100%' }}
                         showSearch
                       >
@@ -571,23 +639,66 @@ const CreateAirInquiry: React.FC = () => {
                   
                   {/* 中转港字段 - 仅在选择中转时显示 */}
                   {formState.transitType === '中转' && (
-                    <Col span={24}>
-                      <FormItem label="中转港" field="transitPort">
-                        <Select
-                          placeholder="请选择中转港" 
-                          value={formState.transitPort}
-                          onChange={(value) => handleFormChange('transitPort', value)}
-                          style={{ width: '100%' }}
-                          showSearch
-                        >
-                          <Option value="ICN | Seoul Incheon">ICN | Seoul Incheon</Option>
-                          <Option value="NRT | Tokyo Narita">NRT | Tokyo Narita</Option>
-                          <Option value="HKG | Hong Kong">HKG | Hong Kong</Option>
-                          <Option value="SIN | Singapore">SIN | Singapore</Option>
-                          <Option value="DXB | Dubai">DXB | Dubai</Option>
-                        </Select>
-                      </FormItem>
-                    </Col>
+                    <>
+                      <Col span={24}>
+                        <FormItem label="中转港 (1st)" field="transitPort1st" rules={[{ required: true, message: '请选择第一中转港' }]}>
+                          <Select
+                            placeholder="请选择第一中转港" 
+                            value={formState.transitPort1st}
+                            onChange={(value) => handleFormChange('transitPort1st', value)}
+                            style={{ width: '100%' }}
+                            showSearch
+                          >
+                            <Option value="ICN | Seoul Incheon">ICN | Seoul Incheon</Option>
+                            <Option value="NRT | Tokyo Narita">NRT | Tokyo Narita</Option>
+                            <Option value="HKG | Hong Kong">HKG | Hong Kong</Option>
+                            <Option value="SIN | Singapore">SIN | Singapore</Option>
+                            <Option value="DXB | Dubai">DXB | Dubai</Option>
+                            <Option value="AMS | Amsterdam">AMS | Amsterdam</Option>
+                          </Select>
+                        </FormItem>
+                      </Col>
+                      
+                      <Col span={24}>
+                        <FormItem label="中转港 (2nd)" field="transitPort2nd">
+                          <Select
+                            placeholder="请选择第二中转港" 
+                            value={formState.transitPort2nd}
+                            onChange={(value) => handleFormChange('transitPort2nd', value)}
+                            style={{ width: '100%' }}
+                            showSearch
+                            allowClear
+                          >
+                            <Option value="ICN | Seoul Incheon">ICN | Seoul Incheon</Option>
+                            <Option value="NRT | Tokyo Narita">NRT | Tokyo Narita</Option>
+                            <Option value="HKG | Hong Kong">HKG | Hong Kong</Option>
+                            <Option value="SIN | Singapore">SIN | Singapore</Option>
+                            <Option value="DXB | Dubai">DXB | Dubai</Option>
+                            <Option value="AMS | Amsterdam">AMS | Amsterdam</Option>
+                          </Select>
+                        </FormItem>
+                      </Col>
+                      
+                      <Col span={24}>
+                        <FormItem label="中转港 (3rd)" field="transitPort3rd">
+                          <Select
+                            placeholder="请选择第三中转港" 
+                            value={formState.transitPort3rd}
+                            onChange={(value) => handleFormChange('transitPort3rd', value)}
+                            style={{ width: '100%' }}
+                            showSearch
+                            allowClear
+                          >
+                            <Option value="ICN | Seoul Incheon">ICN | Seoul Incheon</Option>
+                            <Option value="NRT | Tokyo Narita">NRT | Tokyo Narita</Option>
+                            <Option value="HKG | Hong Kong">HKG | Hong Kong</Option>
+                            <Option value="SIN | Singapore">SIN | Singapore</Option>
+                            <Option value="DXB | Dubai">DXB | Dubai</Option>
+                            <Option value="AMS | Amsterdam">AMS | Amsterdam</Option>
+                          </Select>
+                        </FormItem>
+                      </Col>
+                    </>
                   )}
                   
                   <Col span={24}>
@@ -679,6 +790,30 @@ const CreateAirInquiry: React.FC = () => {
                   </Col>
                   
                   {/* 航空公司字段 */}
+                  <Col span={12}>
+                    <FormItem label="ETD" field="etd">
+                      <DatePicker 
+                        placeholder="请选择预计起飞日" 
+                        style={{ width: '100%' }}
+                        value={formState.etd}
+                        onChange={(value) => handleFormChange('etd', value)}
+                        allowClear
+                      />
+                    </FormItem>
+                  </Col>
+                  
+                  <Col span={12}>
+                    <FormItem label="ETA" field="eta">
+                      <DatePicker 
+                        placeholder="请选择预计到达日" 
+                        style={{ width: '100%' }}
+                        value={formState.eta}
+                        onChange={(value) => handleFormChange('eta', value)}
+                        allowClear
+                      />
+                    </FormItem>
+                  </Col>
+                  
                   <Col span={24}>
                     <FormItem label="航空公司" field="shipCompany">
                       <Select 
