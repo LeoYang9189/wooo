@@ -12,13 +12,15 @@ import {
   Checkbox,
   Radio, 
   // Tooltip, 删除未使用的导入
-  Divider,
-  Table,
   Message,
   Modal,
-  DatePicker
+  DatePicker,
+  Table,
+  Tag
 } from '@arco-design/web-react';
-import { IconSave, IconDelete, IconUpload, /* IconEye, */ IconPlus, IconMinus, IconRobot } from '@arco-design/web-react/icon';
+
+const { TextArea } = Input;
+import { IconSave, IconDelete, IconUpload, /* IconEye, */ IconPlus, IconMinus, IconRobot, IconDownload, IconCopy, IconPrinter } from '@arco-design/web-react/icon';
 import { useNavigate } from 'react-router-dom';
 import ControlTowerSaasLayout from "./ControlTowerSaasLayout";
 import './CreateFclInquiry.css';
@@ -28,6 +30,7 @@ const { Row, Col } = Grid;
 const FormItem = Form.Item;
 const Option = Select.Option;
 const RadioGroup = Radio.Group;
+
 
 // 省份数据
 const provinceOptions = [
@@ -144,6 +147,61 @@ const zipCodeAddressMap: Record<string, string> = {
   '37201': 'Nashville, TN'
 };
 
+// 运价条目接口
+interface RateItem {
+  id: number;
+  feeType: string; // 费用类型
+  feeName: string; // 费用名称
+  currency: string; // 币种
+  unit: string; // 计费单位
+  remark: string; // 备注
+  // 箱型计费
+  containerRates?: {
+    '20GP'?: string;
+    '40GP'?: string;
+    '40HC'?: string;
+    '45HC'?: string;
+    '20NOR'?: string;
+    '40NOR'?: string;
+    [key: string]: string | undefined;
+  };
+  // 非箱型计费
+  unitPrice?: string; // 单价
+}
+
+// 干线运价接口
+interface MainlineRateDetail {
+  id: number;
+  certNo?: string; // 运价编号（新增时为空）
+  shipCompany: string; // 船公司
+  validPeriod: string[]; // 有效期区间
+  transitType: string; // 直达/中转
+  transitTime: string; // 航程
+  freeBox: string; // 免用箱
+  freeStorage: string; // 免堆存
+  rateItems: RateItem[]; // 费用明细
+}
+
+// 港前运价接口
+interface PrecarriageRateDetail {
+  id: number;
+  certNo?: string; // 运价编号（新增时为空）
+  type: string; // 类型：直达、支线、海铁
+  subType?: string; // 子类型：支线类型/海铁类型
+  vendor: string; // 供应商
+  validPeriod: string[]; // 有效期区间
+  rateItems: RateItem[]; // 费用明细
+}
+
+// 尾程运价接口
+interface OncarriageRateDetail {
+  id: number;
+  certNo?: string; // 运价编号（新增时为空）
+  agentName: string; // 代理名称
+  validPeriod: string[]; // 有效期区间
+  rateItems: RateItem[]; // 费用明细
+}
+
 /**
  * 整箱询价表单组件
  */
@@ -169,7 +227,7 @@ const CreateFclInquiry: React.FC = () => {
     transitType: '不指定',     // 直达/中转，默认不指定
     route: '跨太平洋东行',      // 航线，默认为跨太平洋东行
     departurePort: 'CNSHA | Shanghai',    // 起运港
-    dischargePort: 'USLAX | Los Angeles', // 卸货港
+    dischargePort: 'USLAX | Los Angeles', // 目的港
     transitPort: '',           // 中转港
     cargoQuality: '实单',      // 货盘性质
     shipCompany: '不指定',     // 船公司，默认为不指定
@@ -230,6 +288,20 @@ const CreateFclInquiry: React.FC = () => {
     return containerList.map(item => item.type);
   }, [containerList]);
 
+  // 运价明细数据
+  const [mainlineRates, setMainlineRates] = useState<MainlineRateDetail[]>([]);
+  const [precarriageRates, setPrecarriageRates] = useState<PrecarriageRateDetail[]>([]);
+  const [oncarriageRates, setOncarriageRates] = useState<OncarriageRateDetail[]>([]);
+
+  // AI识别相关状态
+  const [loadingPointAiModalVisible, setLoadingPointAiModalVisible] = useState(false);
+  const [loadingPointAddressText, setLoadingPointAddressText] = useState('');
+  
+  const [deliveryAiModalVisible, setDeliveryAiModalVisible] = useState(false);
+  const [deliveryAddressText, setDeliveryAddressText] = useState('');
+
+
+
   // 添加新的箱型
   const addContainerItem = () => {
     // 如果已经有5个箱型，则不允许再添加
@@ -262,28 +334,6 @@ const CreateFclInquiry: React.FC = () => {
       Message.warning('至少需要保留一个箱型');
     }
   };
-
-  // 表格选择状态
-  const [selectedMainlineRate, setSelectedMainlineRate] = useState<string>('');
-  const [selectedPrecarriageRate, setSelectedPrecarriageRate] = useState<string>('');
-  const [selectedOncarriageRates, setSelectedOncarriageRates] = useState<string[]>([]);
-  
-  // 负责人选择弹窗状态
-  const [managerSelectVisible, setManagerSelectVisible] = useState(false);
-  const [selectedLastMileManager, setSelectedLastMileManager] = useState<string>(''); // 尾程负责人
-  const [selectedMainlineManager, setSelectedMainlineManager] = useState<string>(''); // 干线负责人
-  
-  // 运价详情弹窗状态
-  const [rateDetailVisible, setRateDetailVisible] = useState(false);
-  const [currentRateDetail, setCurrentRateDetail] = useState<string>('');
-  const [currentRateType, setCurrentRateType] = useState<'mainline' | 'precarriage' | 'oncarriage'>('mainline');
-
-  // AI识别相关状态
-  const [loadingPointAiModalVisible, setLoadingPointAiModalVisible] = useState(false);
-  const [loadingPointAddressText, setLoadingPointAddressText] = useState('');
-  
-  const [deliveryAiModalVisible, setDeliveryAiModalVisible] = useState(false);
-  const [deliveryAddressText, setDeliveryAddressText] = useState('');
 
   // 更新保存表单状态
   const handleFormChange = (key: string, value: any) => {
@@ -369,11 +419,6 @@ const CreateFclInquiry: React.FC = () => {
     const formData = {
       ...formState,
       status: 'draft', // 标记为草稿状态
-      selectedRates: {
-        mainlineRate: selectedMainlineRate,
-        precarriageRate: selectedPrecarriageRate,
-        oncarriageRates: selectedOncarriageRates
-      },
       containers: containerList,
       loadingPoints: formState.precarriageChecked ? areaList : [], // 保存装箱门点数据
       deliveryAddress: formState.lastmileChecked ? {
@@ -381,7 +426,10 @@ const CreateFclInquiry: React.FC = () => {
         zipCode: formState.zipCode,
         address: formState.address,
         warehouseCode: formState.warehouseCode
-      } : null // 保存尾程送货地址数据
+      } : null, // 保存尾程送货地址数据
+      mainlineRates,
+      precarriageRates,
+      oncarriageRates
     };
     
     console.log('保存草稿数据:', formData);
@@ -389,35 +437,20 @@ const CreateFclInquiry: React.FC = () => {
     navigate('/controltower/saas/inquiry-management');
   };
 
-  // 显示负责人选择弹窗
-
-  // 确认选择负责人并提交
-  const confirmManagerSelect = () => {
-    // 验证每个表格至少选择了一个负责人
-    if (!selectedLastMileManager && !selectedMainlineManager) {
-      Message.error('请至少选择一位负责人');
-      return;
-    }
-
+  // 提交询价
+  const handleSubmit = () => {
     // 整合所有状态
     const formData = {
       ...formState,
       status: 'submitted', // 标记为已提交状态
-      selectedRates: {
-        mainlineRate: selectedMainlineRate,
-        precarriageRate: selectedPrecarriageRate,
-        oncarriageRates: selectedOncarriageRates
-      },
-      selectedManagers: {
-        lastMile: selectedLastMileManager,
-        mainline: selectedMainlineManager
-      },
-      containers: containerList
+      containers: containerList,
+      mainlineRates,
+      precarriageRates,
+      oncarriageRates
     };
     
     console.log('提交表单数据:', formData);
     Message.success('询价单提交成功');
-    setManagerSelectVisible(false);
     navigate('/controltower/saas/inquiry-management');
   };
 
@@ -426,674 +459,146 @@ const CreateFclInquiry: React.FC = () => {
     navigate('/controltower/saas/inquiry-management');
   };
 
-  // 航线负责人表格数据
-  const _routeManagersData = [
-    {
-      key: '1',
-      route: '美加线',
-      departurePort: 'CNSHA | Shanghai',
-      destinationPort: 'USLAX | Los Angeles',
-      manager: '王五'
-    },
-    {
-      key: '2',
-      route: '美加线',
-      departurePort: 'CNSHA | Shanghai',
-      destinationPort: 'USLAX | Los Angeles',
-      manager: '李四'
-    }
-  ];
-
-  // 干线运价负责人数据
-  const _mainlineManagersData = [
-    {
-      key: '3',
-      route: '美加线',
-      departurePort: 'CNSHA | Shanghai',
-      destinationPort: 'USLAX | Los Angeles',
-      manager: '张三'
-    },
-    {
-      key: '4',
-      route: '美加线',
-      departurePort: 'CNSHA | Shanghai',
-      destinationPort: 'USLAX | Los Angeles',
-      manager: '赵六'
-    }
-  ];
-
-  // 航线负责人表格列定义
-
-  // 打开运价详情弹窗
-  const showRateDetail = (rateId: string, type: 'mainline' | 'precarriage' | 'oncarriage' = 'mainline') => {
-    setCurrentRateDetail(rateId);
-    setCurrentRateType(type);
-    setRateDetailVisible(true);
+  // 获取当前可用的箱型列表（基于基本信息模块中设置的箱型，过滤掉空值）
+  const getAvailableContainerTypes = () => {
+    return containerList.map(container => container.type).filter(type => type !== '');
   };
 
-  // 关闭运价详情弹窗
-  const closeRateDetail = () => {
-    setRateDetailVisible(false);
-  };
-
-  // 运价表格数据接口
-  interface RateData {
-    certNo: string;
-    departurePort: string;
-    destinationPort: string; // 改为目的港
-    shipCompany: string;
-    validPeriod: string; // 修改为有效期
-    transitPort: string;
-    transitType: string;
-    '20GP': string;
-    '40GP': string;
-    '40HC': string;
-    '45HC': string;
-    '20NOR': string;
-    '40NOR': string;
-    etd: string;
-    eta: string;
-    transitTime: string;
-    freeBox: string; // 免用箱天数
-    freeStorage: string; // 免堆存天数
-  }
-  
-  // 港前运价表格数据接口
-  interface PrecarriageRateData {
-    id: string;
-    certNo: string; // 运价编号
-    type: string;
-    origin: string;
-    destination: string;
-    vendor: string;
-    currency: string;
-    '20GP': string;
-    '40GP': string;
-    '40HC': string;
-    validDate: string;
-    etd?: string; // 港前运价ETD
-    eta?: string; // 港前运价ETA
-  }
-  
-  // 尾程运价表格数据接口
-  interface OncarriageRateData {
-    id: string;
-    certNo: string; // 运价编号
-    origin: string; // 目的港
-    addressType: '第三方地址' | '亚马逊仓库' | '易仓'; // 配送地址类型
-    zipCode: string; // 邮编
-    address: string; // 地址
-    warehouseCode: string | null; // 仓库代码
-    agentName: string; // 代理名称
-    validDateRange: string; // 有效期区间
-    remark: string; // 备注
-    status: '正常' | '过期' | '下架'; // 状态，保留字段但不显示在表格中
-    etd?: string; // 尾程运价ETD
-    eta?: string; // 尾程运价ETA
-  }
-  
-
-
-  // 运价表格数据
-  const rateTableData: RateData[] = [
-    {
-      certNo: 'M001',
-      departurePort: 'CNSHA | Shanghai',
-      destinationPort: 'USLAX | Los Angeles', // 改为目的港
-      shipCompany: '地中海',
-      validPeriod: '2024-06-01 ~ 2024-07-01',
-      transitPort: '-',
-      transitType: '直达',
-      '20GP': '1500.00',
-      '40GP': '2800.00',
-      '40HC': '2900.00',
-      '45HC': '3100.00',
-      '20NOR': '1400.00',
-      '40NOR': '2700.00',
-      etd: '2024-07-10',
-      eta: '2024-07-24',
-      transitTime: '14天',
-      freeBox: '14天',
-      freeStorage: '7天',
-    },
-    {
-      certNo: 'M002',
-      departurePort: 'CNSHA | Shanghai',
-      destinationPort: 'USLAX | Los Angeles', // 改为目的港
-      shipCompany: '马士基',
-      validPeriod: '2024-07-01 ~ 2024-08-01',
-      transitPort: 'KRPUS | Busan',
-      transitType: '中转',
-      '20GP': '1450.00',
-      '40GP': '2750.00',
-      '40HC': '2850.00',
-      '45HC': '3050.00',
-      '20NOR': '1350.00',
-      '40NOR': '2650.00',
-      etd: '2024-08-08',
-      eta: '2024-08-24',
-      transitTime: '16天',
-      freeBox: '21天',
-      freeStorage: '10天',
-    },
-    {
-      certNo: 'M003',
-      departurePort: 'CNSHA | Shanghai',
-      destinationPort: 'USLAX | Los Angeles', // 改为目的港
-      shipCompany: '长荣',
-      validPeriod: '2024-06-15 ~ 2024-07-15',
-      transitPort: '-',
-      transitType: '直达',
-      '20GP': '1550.00',
-      '40GP': '2880.00',
-      '40HC': '2980.00',
-      '45HC': '3180.00',
-      '20NOR': '1480.00',
-      '40NOR': '2780.00',
-      etd: '2024-07-16',
-      eta: '2024-07-29',
-      transitTime: '13天',
-      freeBox: '14天',
-      freeStorage: '7天',
-    },
-  ];
-
-  // 港前运价表格数据
-  const precarriageRateData: PrecarriageRateData[] = [
-    {
-      id: '1',
-      certNo: 'P001',
-      type: '直达',
-      origin: '苏州工业园区',
-      destination: '洋山港',
-      vendor: '德邦专线',
-      currency: 'CNY',
-      '20GP': '800.00',
-      '40GP': '1200.00',
-      '40HC': '1300.00',
-      validDate: '2024-12-31',
-      etd: '2024-07-08',
-      eta: '2024-07-10',
-    },
-    {
-      id: '2',
-      certNo: 'P002',
-      type: '支线',
-      origin: '太仓港',
-      destination: '洋山港',
-      vendor: '速航65号',
-      currency: 'CNY',
-      '20GP': '400.00',
-      '40GP': '700.00',
-      '40HC': '750.00',
-      validDate: '2024-11-30',
-      etd: '2024-07-09',
-      eta: '2024-07-10',
-    }
-  ];
-
-  // 尾程运价表格数据
-  const oncarriageRateData: OncarriageRateData[] = [
-    {
-      id: '1',
-      certNo: 'O001',
-      origin: 'USLAX | LOS ANGELES',
-      addressType: '第三方地址',
-      zipCode: '92101',
-      address: 'San Diego, CA',
-      warehouseCode: null,
-      agentName: 'XPO TRUCK LLC',
-      validDateRange: '2024-05-01 至 2024-12-31',
-      remark: '',
-      status: '正常',
-      etd: '2024-07-25',
-      eta: '2024-07-27',
-    },
-    {
-      id: '2',
-      certNo: 'O002',
-      origin: 'USNYC | NEW YORK',
-      addressType: '亚马逊仓库',
-      zipCode: '',
-      address: '',
-      warehouseCode: 'ONT8',
-      agentName: 'DRAYEASY INC',
-      validDateRange: '2024-05-15 至 2024-11-30',
-      remark: '',
-      status: '正常',
-      etd: '2024-07-26',
-      eta: '2024-07-28',
-    },
-    {
-      id: '3',
-      certNo: 'O003',
-      origin: 'DEHAM | HAMBURG',
-      addressType: '易仓',
-      zipCode: '',
-      address: '',
-      warehouseCode: 'LAX203',
-      agentName: 'AMERICAN FREIGHT SOLUTIONS',
-      validDateRange: '2024-04-01 至 2024-12-15',
-      remark: '需提前24小时预约',
-      status: '正常',
-      etd: '2024-07-27',
-      eta: '2024-07-29',
-    },
-    {
-      id: '4',
-      certNo: 'O004',
-      origin: 'NLRTM | ROTTERDAM',
-      addressType: '第三方地址',
-      zipCode: '96001',
-      address: 'Redding, CA',
-      warehouseCode: null,
-      agentName: 'WEST COAST CARRIERS LLC',
-      validDateRange: '2024-03-01 至 2024-05-31',
-      remark: '',
-      status: '过期',
-      etd: '2024-07-28',
-      eta: '2024-07-30',
-    }
-  ];
-
-  // 费用明细数据接口
-  interface FeeDetail {
-    key: string;
-    name: string;
-    price: string;
-    currency: string;
-    unit: string;
-    remark: string;
-    type: 'basic' | 'origin' | 'destination'; // 费用类型：基础运费、起运港附加费、目的港附加费
-    feeType?: 'container' | 'non-container'; // 计费类型：按箱型计费、非按箱型计费
-    containerRates?: {
-      '20GP'?: string;
-      '40GP'?: string;
-      '40HC'?: string;
-      '45HC'?: string;
-      '20NOR'?: string;
-      '40NOR'?: string;
-    };
-  }
-
-  // 获取运价详情数据 - 参考QuoteForm.tsx的运价结构
-  const getRateDetail = (rateId: string, type: 'mainline' | 'precarriage' | 'oncarriage' = 'mainline'): { basic: FeeDetail[], origin: FeeDetail[], destination: FeeDetail[] } => {
-    // 根据不同的运价类型返回不同的数据
-    if (type === 'precarriage') {
-      // 港前运价详情
-      switch(rateId) {
-        case 'P001':
-          return {
-            basic: [
-              { 
-                key: '1', 
-                name: '拖车费', 
-                price: '', 
-                currency: 'CNY', 
-                unit: '箱', 
-                remark: '', 
-                type: 'basic',
-                feeType: 'container',
-                containerRates: {
-                  '20GP': '800.00',
-                  '40GP': '1200.00',
-                  '40HC': '1300.00',
-                  '45HC': '',
-                  '20NOR': '',
-                  '40NOR': ''
-                }
-              }
-            ],
-            origin: [
-              { key: '2', name: '装柜费', price: '200.00', currency: 'CNY', unit: '箱', remark: '', type: 'origin', feeType: 'non-container' },
-              { key: '3', name: '单证费', price: '100.00', currency: 'CNY', unit: '票', remark: '', type: 'origin', feeType: 'non-container' }
-            ],
-            destination: []
-          };
-        case 'P002':
-          return {
-            basic: [
-              { 
-                key: '1', 
-                name: '驳船费', 
-                price: '', 
-                currency: 'CNY', 
-                unit: '箱', 
-                remark: '', 
-                type: 'basic',
-                feeType: 'container',
-                containerRates: {
-                  '20GP': '400.00',
-                  '40GP': '700.00',
-                  '40HC': '750.00',
-                  '45HC': '',
-                  '20NOR': '',
-                  '40NOR': ''
-                }
-              }
-            ],
-            origin: [
-              { key: '2', name: '出港费', price: '150.00', currency: 'CNY', unit: '箱', remark: '', type: 'origin', feeType: 'non-container' },
-              { key: '3', name: '单证费', price: '80.00', currency: 'CNY', unit: '票', remark: '', type: 'origin', feeType: 'non-container' }
-            ],
-            destination: []
-          };
-        default:
-          return {
-            basic: [],
-            origin: [],
-            destination: []
-          };
-      }
-    } else if (type === 'oncarriage') {
-      // 尾程运价详情
-      switch(rateId) {
-        case 'O001':
-          return {
-            basic: [
-              { key: '1', name: 'ISF CHARGE', price: '50.00', currency: 'USD', unit: 'B/L', remark: '', type: 'basic', feeType: 'non-container' },
-              { 
-                key: '2', 
-                name: '配送费', 
-                price: '', 
-                currency: 'USD', 
-                unit: '箱', 
-                remark: '', 
-                type: 'basic',
-                feeType: 'container',
-                containerRates: {
-                  '20GP': '350.00',
-                  '40GP': '450.00',
-                  '40HC': '450.00',
-                  '45HC': '',
-                  '20NOR': '',
-                  '40NOR': ''
-                }
-              }
-            ],
-            origin: [],
-            destination: []
-          };
-        case 'O002':
-          return {
-            basic: [
-              { key: '1', name: '清关费', price: '100.00', currency: 'USD', unit: 'B/L', remark: '', type: 'basic', feeType: 'non-container' },
-              { 
-                key: '2', 
-                name: '配送费', 
-                price: '', 
-                currency: 'USD', 
-                unit: '箱', 
-                remark: '', 
-                type: 'basic',
-                feeType: 'container',
-                containerRates: {
-                  '20GP': '400.00',
-                  '40GP': '500.00',
-                  '40HC': '500.00',
-                  '45HC': '',
-                  '20NOR': '',
-                  '40NOR': ''
-                }
-              }
-            ],
-            origin: [],
-            destination: []
-          };
-        case 'O003':
-          return {
-            basic: [
-              { key: '1', name: '文件费', price: '100.00', currency: 'USD', unit: 'B/L', remark: '', type: 'basic', feeType: 'non-container' },
-              { 
-                key: '2', 
-                name: '仓储费', 
-                price: '', 
-                currency: 'USD', 
-                unit: '箱', 
-                remark: '', 
-                type: 'basic',
-                feeType: 'container',
-                containerRates: {
-                  '20GP': '200.00',
-                  '40GP': '300.00',
-                  '40HC': '300.00',
-                  '45HC': '',
-                  '20NOR': '',
-                  '40NOR': ''
-                }
-              }
-            ],
-            origin: [],
-            destination: []
-          };
-        case 'O004':
-          return {
-            basic: [
-              { key: '1', name: 'BOND', price: '100.00', currency: 'USD', unit: 'B/L', remark: '', type: 'basic', feeType: 'non-container' }
-            ],
-            origin: [],
-            destination: []
-          };
-        default:
-          return {
-            basic: [],
-            origin: [],
-            destination: []
-          };
-      }
+  // 导出运价
+  const handleExportRate = () => {
+    // 检查运价完整性
+    const incompleteRates = checkRateCompleteness();
+    
+    if (incompleteRates.length > 0) {
+      setIncompleteModalVisible(true);
     } else {
-      // 干线运价详情 (参考QuoteForm.tsx的结构)
-      switch(rateId) {
-        case 'M001':
-          return {
-            basic: [
-              { 
-                key: '1', 
-                name: '海运费', 
-                price: '', 
-                currency: 'USD', 
-                unit: '箱', 
-                remark: '', 
-                type: 'basic',
-                feeType: 'container',
-                containerRates: {
-                  '20GP': '1500.00',
-                  '40GP': '2800.00',
-                  '40HC': '2900.00',
-                  '45HC': '3100.00',
-                  '20NOR': '1400.00',
-                  '40NOR': '2700.00'
-                }
-              }
-            ],
-            origin: [
-              { key: '2', name: '文件费', price: '500.00', currency: 'CNY', unit: '票', remark: '', type: 'origin', feeType: 'non-container' },
-              { key: '3', name: '电放费', price: '300.00', currency: 'CNY', unit: '票', remark: '', type: 'origin', feeType: 'non-container' },
-              { 
-                key: '4', 
-                name: '港杂费', 
-                price: '', 
-                currency: 'CNY', 
-                unit: '箱', 
-                remark: '', 
-                type: 'origin',
-                feeType: 'container',
-                containerRates: {
-                  '20GP': '1200.00',
-                  '40GP': '1800.00',
-                  '40HC': '1800.00',
-                  '45HC': '',
-                  '20NOR': '',
-                  '40NOR': ''
-                }
-              }
-            ],
-            destination: [
-              { key: '5', name: 'PSS', price: '200.00', currency: 'USD', unit: '箱', remark: '', type: 'destination', feeType: 'non-container' },
-              { key: '6', name: '码头操作费', price: '150.00', currency: 'USD', unit: '箱', remark: '', type: 'destination', feeType: 'non-container' },
-              { 
-                key: '7', 
-                name: '燃油附加费', 
-                price: '', 
-                currency: 'USD', 
-                unit: '箱', 
-                remark: '', 
-                type: 'destination',
-                feeType: 'container',
-                containerRates: {
-                  '20GP': '350.00',
-                  '40GP': '700.00',
-                  '40HC': '700.00',
-                  '45HC': '',
-                  '20NOR': '',
-                  '40NOR': ''
-                }
-              }
-            ]
-          };
-        case 'M002':
-          return {
-            basic: [
-              { 
-                key: '1', 
-                name: '海运费', 
-                price: '', 
-                currency: 'USD', 
-                unit: '箱', 
-                remark: '', 
-                type: 'basic',
-                feeType: 'container',
-                containerRates: {
-                  '20GP': '1450.00',
-                  '40GP': '2750.00',
-                  '40HC': '2850.00',
-                  '45HC': '3050.00',
-                  '20NOR': '1350.00',
-                  '40NOR': '2650.00'
-                }
-              }
-            ],
-            origin: [
-              { key: '2', name: '文件费', price: '500.00', currency: 'CNY', unit: '票', remark: '', type: 'origin', feeType: 'non-container' },
-              { key: '3', name: '电放费', price: '300.00', currency: 'CNY', unit: '票', remark: '', type: 'origin', feeType: 'non-container' },
-              { 
-                key: '4', 
-                name: '港杂费', 
-                price: '', 
-                currency: 'CNY', 
-                unit: '箱', 
-                remark: '', 
-                type: 'origin',
-                feeType: 'container',
-                containerRates: {
-                  '20GP': '1200.00',
-                  '40GP': '1800.00',
-                  '40HC': '1800.00',
-                  '45HC': '',
-                  '20NOR': '',
-                  '40NOR': ''
-                }
-              }
-            ],
-            destination: [
-              { key: '5', name: 'PSS', price: '200.00', currency: 'USD', unit: '箱', remark: '', type: 'destination', feeType: 'non-container' },
-              { key: '6', name: '码头操作费', price: '150.00', currency: 'USD', unit: '箱', remark: '', type: 'destination', feeType: 'non-container' },
-              { 
-                key: '7', 
-                name: '燃油附加费', 
-                price: '', 
-                currency: 'USD', 
-                unit: '箱', 
-                remark: '', 
-                type: 'destination',
-                feeType: 'container',
-                containerRates: {
-                  '20GP': '350.00',
-                  '40GP': '700.00',
-                  '40HC': '700.00',
-                  '45HC': '',
-                  '20NOR': '',
-                  '40NOR': ''
-                }
-              }
-            ]
-          };
-        case 'M003':
-          return {
-            basic: [
-              { 
-                key: '1', 
-                name: '海运费', 
-                price: '', 
-                currency: 'USD', 
-                unit: '箱', 
-                remark: '', 
-                type: 'basic',
-                feeType: 'container',
-                containerRates: {
-                  '20GP': '1550.00',
-                  '40GP': '2880.00',
-                  '40HC': '2980.00',
-                  '45HC': '3180.00',
-                  '20NOR': '1480.00',
-                  '40NOR': '2780.00'
-                }
-              }
-            ],
-            origin: [
-              { key: '2', name: '文件费', price: '500.00', currency: 'CNY', unit: '票', remark: '', type: 'origin', feeType: 'non-container' },
-              { key: '3', name: '电放费', price: '300.00', currency: 'CNY', unit: '票', remark: '', type: 'origin', feeType: 'non-container' },
-              { 
-                key: '4', 
-                name: '港杂费', 
-                price: '', 
-                currency: 'CNY', 
-                unit: '箱', 
-                remark: '', 
-                type: 'origin',
-                feeType: 'container',
-                containerRates: {
-                  '20GP': '1200.00',
-                  '40GP': '1800.00',
-                  '40HC': '1800.00',
-                  '45HC': '',
-                  '20NOR': '',
-                  '40NOR': ''
-                }
-              }
-            ],
-            destination: [
-              { key: '5', name: 'PSS', price: '200.00', currency: 'USD', unit: '箱', remark: '', type: 'destination', feeType: 'non-container' },
-              { key: '6', name: '码头操作费', price: '150.00', currency: 'USD', unit: '箱', remark: '', type: 'destination', feeType: 'non-container' },
-              { 
-                key: '7', 
-                name: '燃油附加费', 
-                price: '', 
-                currency: 'USD', 
-                unit: '箱', 
-                remark: '', 
-                type: 'destination',
-                feeType: 'container',
-                containerRates: {
-                  '20GP': '350.00',
-                  '40GP': '700.00',
-                  '40HC': '700.00',
-                  '45HC': '',
-                  '20NOR': '',
-                  '40NOR': ''
-                }
-              }
-            ]
-          };
-        default:
-          return {
-            basic: [],
-            origin: [],
-            destination: []
-          };
-      }
+      setExportModalVisible(true);
     }
   };
+
+  // 检查运价完整性
+  const checkRateCompleteness = () => {
+    const incomplete: string[] = [];
+    
+    // 检查干线运价
+    if (formState.mainlineChecked && !selectedMainlineRate) {
+      incomplete.push('干线运价：未选择');
+    }
+    
+    // 检查港前运价
+    if (formState.precarriageChecked && !selectedPrecarriageRate) {
+      incomplete.push('港前运价：未选择');
+    }
+    
+    // 检查尾程运价
+    if (formState.lastmileChecked && !selectedOncarriageRate) {
+      incomplete.push('尾程运价：未选择');
+    }
+    
+    return incomplete;
+  };
+
+  // 生成快捷报价文本
+  const generateQuotationText = () => {
+    const containerInfo = containerList.map(c => `${c.count}*${c.type}`).join(' + ');
+    
+    // 获取选中的运价
+    const selectedMainline = mainlineRates.find(rate => rate.id.toString() === selectedMainlineRate);
+    const selectedPrecarriage = precarriageRates.find(rate => rate.id.toString() === selectedPrecarriageRate);
+    const selectedOncarriage = oncarriageRates.find(rate => rate.id.toString() === selectedOncarriageRate);
+    
+    // 计算总价格
+    let totalCost = 0;
+    const costDetails: string[] = [];
+    
+    // 计算干线费用
+    if (selectedMainline) {
+      selectedMainline.rateItems.forEach(item => {
+        containerList.forEach(container => {
+          const rate = item.containerRates?.[container.type];
+          if (rate) {
+            const cost = parseFloat(rate) * container.count;
+            totalCost += cost;
+          }
+        });
+      });
+      costDetails.push(`干线运价：${selectedMainline.certNo || 'M' + String(selectedMainline.id).padStart(3, '0')} - ${selectedMainline.shipCompany}`);
+    }
+    
+    // 计算港前费用
+    if (selectedPrecarriage) {
+      selectedPrecarriage.rateItems.forEach(item => {
+        containerList.forEach(container => {
+          const rate = item.containerRates?.[container.type];
+          if (rate) {
+            const cost = parseFloat(rate) * container.count;
+            totalCost += cost;
+          }
+        });
+      });
+      costDetails.push(`港前运价：${selectedPrecarriage.certNo || 'P' + String(selectedPrecarriage.id).padStart(3, '0')} - ${selectedPrecarriage.vendor}`);
+    }
+    
+    // 计算尾程费用
+    if (selectedOncarriage) {
+      selectedOncarriage.rateItems.forEach(item => {
+        if (item.unitPrice) {
+          const cost = parseFloat(item.unitPrice) * containerList.length; // 简化计算
+          totalCost += cost;
+        }
+      });
+      costDetails.push(`尾程运价：${selectedOncarriage.certNo || 'O' + String(selectedOncarriage.id).padStart(3, '0')} - ${selectedOncarriage.agentName}`);
+    }
+
+    const text = `
+【询价单】
+
+询价编号：${formState.inquiryNo || 'INQ' + Date.now()}
+委托单位：${formState.clientType === '正式客户' ? formState.clientCompany : formState.clientName}
+
+航线信息：
+${formState.departurePort} → ${formState.dischargePort}
+船公司：${formState.shipCompany}
+航线：${formState.route}
+直达/中转：${formState.transitType}
+
+箱型箱量：${containerInfo}
+
+运价方案：
+${costDetails.join('\n')}
+
+预估总计：USD ${totalCost.toFixed(2)}
+
+备注：${formState.remark || '无'}
+
+※ 以上价格仅供参考，实际价格以正式合同为准
+※ 如有任何疑问，请联系我们的客服团队
+    `.trim();
+
+    setQuotationText(text);
+    setExportModalVisible(false);
+    setCopyTextModalVisible(true);
+  };
+
+  // 复制到剪贴板
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(quotationText);
+      Message.success('运价文本已复制到剪贴板');
+      setCopyTextModalVisible(false);
+    } catch (err) {
+      Message.error('复制失败，请手动复制');
+    }
+  };
+
+  // 生成并预览PDF
+  const generatePDF = () => {
+    setExportModalVisible(false);
+    setPdfPreviewVisible(true);
+  };
+
+  // 航线负责人表格数据
+
 
   // 检查区域选择是否重复
   const isAreaDuplicate = (currentKey: number, province: string, city: string, district: string, street: string): boolean => {
@@ -1405,6 +910,249 @@ const CreateFclInquiry: React.FC = () => {
     }, 1000);
   };
 
+  // 选择框状态
+  const [selectedMainlineRate, setSelectedMainlineRate] = useState('');
+  const [selectedPrecarriageRate, setSelectedPrecarriageRate] = useState('');
+  const [selectedOncarriageRate, setSelectedOncarriageRate] = useState('');
+
+  // 导出运价相关状态
+  const [exportModalVisible, setExportModalVisible] = useState(false);
+  const [incompleteModalVisible, setIncompleteModalVisible] = useState(false);
+  const [copyTextModalVisible, setCopyTextModalVisible] = useState(false);
+  const [pdfPreviewVisible, setPdfPreviewVisible] = useState(false);
+  const [quotationText, setQuotationText] = useState('');
+
+  // 查询匹配运价状态
+  const [hasQueriedRates, setHasQueriedRates] = useState(false);
+  const [isQuerying, setIsQuerying] = useState(false);
+
+  // 查询匹配运价
+  const handleQueryRates = () => {
+    setIsQuerying(true);
+    
+    // 模拟查询过程
+    setTimeout(() => {
+      // 添加示例干线运价
+      setMainlineRates([
+        {
+          id: 1,
+          certNo: 'M001',
+          shipCompany: '地中海',
+          validPeriod: ['2024-06-01', '2024-07-01'],
+          transitType: '直达',
+          transitTime: '14天',
+          freeBox: '14天',
+          freeStorage: '7天',
+          rateItems: [
+            {
+              id: 1,
+              feeType: 'container',
+              feeName: '海运费',
+              currency: 'USD',
+              unit: '箱',
+              remark: '',
+              containerRates: {
+                '20GP': '1500',
+                '40GP': '2800',
+                '40HC': '2900'
+              }
+            },
+            {
+              id: 2,
+              feeType: 'non-container',
+              feeName: '文件费',
+              currency: 'CNY',
+              unit: '票',
+              remark: '',
+              unitPrice: '500'
+            }
+          ]
+        },
+        {
+          id: 2,
+          certNo: 'M002',
+          shipCompany: '马士基',
+          validPeriod: ['2024-07-01', '2024-08-01'],
+          transitType: '中转',
+          transitTime: '16天',
+          freeBox: '21天',
+          freeStorage: '10天',
+          rateItems: [
+            {
+              id: 3,
+              feeType: 'container',
+              feeName: '海运费',
+              currency: 'USD',
+              unit: '箱',
+              remark: '',
+              containerRates: {
+                '20GP': '1450',
+                '40GP': '2750',
+                '40HC': '2850'
+              }
+            }
+          ]
+        }
+      ]);
+
+      // 添加示例港前运价
+      setPrecarriageRates([
+        {
+          id: 1,
+          certNo: 'P001',
+          type: '直达',
+          vendor: '德邦专线',
+          validPeriod: ['2024-06-01', '2024-12-31'],
+          rateItems: [
+            {
+              id: 4,
+              feeType: 'container',
+              feeName: '拖车费',
+              currency: 'CNY',
+              unit: '箱',
+              remark: '',
+              containerRates: {
+                '20GP': '800',
+                '40GP': '1200',
+                '40HC': '1300'
+              }
+            }
+          ]
+        }
+      ]);
+
+      // 添加示例尾程运价
+      setOncarriageRates([
+        {
+          id: 1,
+          certNo: 'O001',
+          agentName: 'XPO TRUCK LLC',
+          validPeriod: ['2024-05-01', '2024-12-31'],
+          rateItems: [
+            {
+              id: 5,
+              feeType: 'non-container',
+              feeName: 'ISF CHARGE',
+              currency: 'USD',
+              unit: 'B/L',
+              remark: '',
+              unitPrice: '50'
+            }
+          ]
+        }
+      ]);
+
+      setHasQueriedRates(true);
+      setIsQuerying(false);
+      Message.success('匹配运价查询完成');
+    }, 1500);
+  };
+
+  // 渲染费用明细表格
+  const renderRateTable = (rateItems: RateItem[], containerTypes: string[]) => {
+    // 按费用类型分组
+    const containerRateItems = rateItems.filter(item => item.feeType === 'container');
+    const unitRateItems = rateItems.filter(item => item.feeType === 'non-container');
+
+    // 按箱计费表格列
+    const containerColumns = [
+      {
+        title: '费用名称',
+        dataIndex: 'feeName',
+        width: 120,
+      },
+      {
+        title: '币种',
+        dataIndex: 'currency',
+        width: 80,
+      },
+      ...containerTypes.map(type => ({
+        title: type.toUpperCase(),
+        dataIndex: type,
+        width: 100,
+        render: (_: string, record: RateItem) => {
+          return record.containerRates?.[type as keyof typeof record.containerRates] || '-';
+        }
+      })),
+      {
+        title: '备注',
+        dataIndex: 'remark',
+        width: 120,
+        render: (value: string) => value || '-'
+      }
+    ];
+
+    // 非按箱计费表格列
+    const unitColumns = [
+      {
+        title: '费用名称',
+        dataIndex: 'feeName',
+        width: 120,
+      },
+      {
+        title: '币种',
+        dataIndex: 'currency',
+        width: 80,
+      },
+      {
+        title: '单价',
+        dataIndex: 'unitPrice',
+        width: 100,
+      },
+      {
+        title: '单位',
+        dataIndex: 'unit',
+        width: 80,
+      },
+      {
+        title: '备注',
+        dataIndex: 'remark',
+        width: 120,
+        render: (value: string) => value || '-'
+      }
+    ];
+
+    return (
+      <div className="space-y-4">
+        {/* 按箱计费表格 */}
+        {containerRateItems.length > 0 && (
+          <div>
+            <div className="text-sm font-medium text-gray-600 mb-2">按箱计费</div>
+            <Table
+              columns={containerColumns}
+              data={containerRateItems}
+              rowKey="id"
+              pagination={false}
+              size="small"
+              border={{
+                wrapper: true,
+                cell: true
+              }}
+            />
+          </div>
+        )}
+
+        {/* 非按箱计费表格 */}
+        {unitRateItems.length > 0 && (
+          <div>
+            <div className="text-sm font-medium text-gray-600 mb-2">非按箱计费</div>
+            <Table
+              columns={unitColumns}
+              data={unitRateItems}
+              rowKey="id"
+              pagination={false}
+              size="small"
+              border={{
+                wrapper: true,
+                cell: true
+              }}
+            />
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <ControlTowerSaasLayout 
       menuSelectedKey="9" 
@@ -1443,7 +1191,8 @@ const CreateFclInquiry: React.FC = () => {
             </div>
             <Space>
               <Button icon={<IconSave />} onClick={handleSaveDraft}>保存草稿</Button>
-              <Button type="primary" icon={<IconUpload />} onClick={() => setManagerSelectVisible(true)}>直接提交</Button>
+              <Button icon={<IconDownload />} onClick={handleExportRate}>导出运价</Button>
+              <Button type="primary" icon={<IconUpload />} onClick={handleSubmit}>直接提交</Button>
               <Button icon={<IconDelete />} onClick={handleCancel}>取消</Button>
             </Space>
           </div>
@@ -1859,7 +1608,7 @@ const CreateFclInquiry: React.FC = () => {
                   </Col>
                   
                   <Col span={24}>
-                    <FormItem label="目的港" field="destinationPort">
+                    <FormItem label="目的港" field="dischargePort">
                       <Select
                         placeholder="请选择目的港" 
                         value={formState.dischargePort}
@@ -2082,527 +1831,169 @@ const CreateFclInquiry: React.FC = () => {
             </Col>
           </Row>
           
-          <Divider className="my-6" />
-          
-          {/* 底部区域：匹配报价 */}
-          <div className="border rounded p-4">
-            <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2 mb-4">匹配报价</div>
-            
-            <div className="bg-gray-100 p-4 rounded mb-4 rate-table-container">
-              <div className="text-blue-600 font-bold mb-3 text-base rate-table-title">干线运价</div>
-              <Table 
-                rowKey="certNo"
-                rowSelection={{
-                  type: 'radio',
-                  onChange: (selectedRowKeys) => {
-                    setSelectedMainlineRate(selectedRowKeys[0] as string);
-                  },
-                  selectedRowKeys: selectedMainlineRate ? [selectedMainlineRate] : []
-                }}
-                columns={[
-                  { title: '运价编号', dataIndex: 'certNo', width: 100 },
-                  { 
-                    title: '查看明细', 
-                    dataIndex: 'view', 
-                    width: 100, 
-                    render: (_: any, record: { certNo: string }) => (
-                      <span 
-                        className="view-link" 
-                        onClick={() => showRateDetail(record.certNo)}
-                      >
-                        查看
-                      </span>
-                    ) 
-                  },
-                  { title: '起运港', dataIndex: 'departurePort', width: 150 },
-                  { title: '目的港', dataIndex: 'destinationPort', width: 150 },
-                  { title: '船公司', dataIndex: 'shipCompany', width: 120 },
-                  { title: '有效期', dataIndex: 'validPeriod', width: 160 },
-                  { title: '中转港', dataIndex: 'transitPort', width: 120 },
-                  { title: '直达/中转', dataIndex: 'transitType', width: 100 },
-                  { title: '20GP', dataIndex: '20GP', width: 90 },
-                  { title: '40GP', dataIndex: '40GP', width: 90 },
-                  { title: '40HC', dataIndex: '40HC', width: 90 },
-                  { title: '45HC', dataIndex: '45HC', width: 90 },
-                  { title: '20NOR', dataIndex: '20NOR', width: 90 },
-                  { title: '40NOR', dataIndex: '40NOR', width: 90 },
-                  { title: 'ETD', dataIndex: 'etd', width: 110 },
-                  { title: 'ETA', dataIndex: 'eta', width: 110 },
-                  { title: '航程', dataIndex: 'transitTime', width: 90 },
-                  { title: '免用箱', dataIndex: 'freeBox', width: 90 },
-                  { title: '免堆存', dataIndex: 'freeStorage', width: 90 },
-                ]}
-                data={rateTableData}
-                scroll={{ x: 'max-content' }}
-                pagination={false}
-                border={true}
-                className="mt-4 match-price-table"
-                tableLayoutFixed={false}
-              />
+          {/* 下半部分：匹配运价模块 */}
+          <div className="mt-6">
+            <div className="flex justify-between items-center mb-4">
+              <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2">匹配运价</div>
+              <Button 
+                type="primary" 
+                onClick={handleQueryRates}
+                loading={isQuerying}
+                disabled={isQuerying}
+              >
+                {isQuerying ? '查询中...' : '查询匹配运价'}
+              </Button>
             </div>
             
-            {/* 港前运价表格 */}
-            <div className="bg-gray-100 p-4 rounded mb-4 rate-table-container">
-              <div className="text-blue-600 font-bold mb-3 text-base rate-table-title">港前运价</div>
-              <Table 
-                rowKey="id"
-                rowSelection={{
-                  type: 'radio',
-                  onChange: (selectedRowKeys) => {
-                    setSelectedPrecarriageRate(selectedRowKeys[0] as string);
-                  },
-                  selectedRowKeys: selectedPrecarriageRate ? [selectedPrecarriageRate] : []
-                }}
-                columns={[
-                  { title: '运价编号', dataIndex: 'certNo', width: 100 },
-                  { 
-                    title: '查看明细', 
-                    dataIndex: 'view', 
-                    width: 100, 
-                    render: (_: any, record: { certNo: string }) => (
-                      <span 
-                        className="view-link" 
-                        onClick={() => showRateDetail(record.certNo, 'precarriage')}
-                      >
-                        查看
-                      </span>
-                    ) 
-                  },
-                  { title: '类型', dataIndex: 'type', width: 100 },
-                  { title: '起运地', dataIndex: 'origin', width: 150 },
-                  { title: '目的地', dataIndex: 'destination', width: 150 },
-                  { title: '供应商', dataIndex: 'vendor', width: 120 },
-                  { title: '币种', dataIndex: 'currency', width: 80 },
-                  { title: '20GP', dataIndex: '20GP', width: 100 },
-                  { title: '40GP', dataIndex: '40GP', width: 100 },
-                  { title: '40HC', dataIndex: '40HC', width: 100 },
-                  { title: 'ETD', dataIndex: 'etd', width: 110 },
-                  { title: 'ETA', dataIndex: 'eta', width: 110 },
-                  { title: '有效期', dataIndex: 'validDate', width: 120 },
-                ]}
-                data={precarriageRateData}
-                scroll={{ x: 1300 }}
-                pagination={false}
-                border={true}
-                className="mt-2 match-price-table"
-              />
-            </div>
+            {/* 干线运价模块 - 仅在勾选干线价格时显示 */}
+            {formState.mainlineChecked && (
+              <div className="mb-6">
+                <div className="text-gray-800 font-medium mb-4">干线运价</div>
+                {!hasQueriedRates ? (
+                  <div className="text-center py-8 border border-gray-200 rounded bg-gray-50">
+                    <p className="text-gray-500">请点击"查询匹配运价"按钮获取运价信息</p>
+                  </div>
+                ) : mainlineRates.length > 0 ? (
+                  <div className="space-y-4">
+                    {mainlineRates.map((rate) => (
+                      <Card key={rate.id} className="border border-gray-200">
+                        <div className="flex items-start gap-4">
+                          {/* 选择框 */}
+                          <div className="mt-2">
+                            <Radio
+                              checked={selectedMainlineRate === rate.id.toString()}
+                              onChange={() => setSelectedMainlineRate(rate.id.toString())}
+                            />
+                          </div>
+                          
+                          {/* 运价内容 */}
+                          <div className="flex-1">
+                            {/* 基本信息 */}
+                            <div className="flex items-center gap-4 mb-4">
+                              <span className="font-medium text-blue-600">运价编号：{rate.certNo || 'M' + String(rate.id).padStart(3, '0')}</span>
+                              <span className="font-medium">船公司：{rate.shipCompany}</span>
+                              <span>有效期：{rate.validPeriod.join(' ~ ')}</span>
+                              <span>直达/中转：{rate.transitType}</span>
+                              <span>航程：{rate.transitTime}</span>
+                            </div>
+                            
+                            {/* 免用箱免堆存 */}
+                            <div className="flex gap-4 mb-4 text-sm text-gray-600">
+                              <span>免用箱：{rate.freeBox}</span>
+                              <span>免堆存：{rate.freeStorage}</span>
+                            </div>
+                            
+                            {/* 费用明细表格 */}
+                            {renderRateTable(rate.rateItems, getAvailableContainerTypes())}
+                          </div>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 border border-gray-200 rounded bg-gray-50">
+                    <p className="text-gray-500">暂无干线运价方案</p>
+                  </div>
+                )}
+              </div>
+            )}
             
-            {/* 尾程运价表格 */}
-            <div className="bg-gray-100 p-4 rounded rate-table-container">
-              <div className="text-blue-600 font-bold mb-3 text-base rate-table-title">尾程运价</div>
-              <Table 
-                rowKey="id"
-                rowSelection={{
-                  type: 'checkbox',
-                  onChange: (selectedRowKeys) => {
-                    setSelectedOncarriageRates(selectedRowKeys as string[]);
-                  },
-                  selectedRowKeys: selectedOncarriageRates
-                }}
-                columns={[
-                  { title: '运价编号', dataIndex: 'certNo', width: 100 },
-                  { 
-                    title: '查看明细', 
-                    dataIndex: 'view', 
-                    width: 100, 
-                    render: (_: any, record: { certNo: string }) => (
-                      <span 
-                        className="view-link" 
-                        onClick={() => showRateDetail(record.certNo, 'oncarriage')}
-                      >
-                        查看
-                      </span>
-                    ) 
-                  },
-                  { title: '目的港', dataIndex: 'origin', width: 150 },
-                  { title: '配送地址类型', dataIndex: 'addressType', width: 120 },
-                  { 
-                    title: '邮编', 
-                    dataIndex: 'zipCode', 
-                    width: 100,
-                    render: (value: string, record: any) => {
-                      if (record.addressType === '亚马逊仓库' || record.addressType === '易仓') {
-                        return '-';
-                      }
-                      return value;
-                    }
-                  },
-                  { 
-                    title: '地址', 
-                    dataIndex: 'address', 
-                    width: 180,
-                    render: (value: string, record: any) => {
-                      if (record.addressType === '亚马逊仓库' || record.addressType === '易仓') {
-                        return '-';
-                      }
-                      return value;
-                    }
-                  },
-                  { 
-                    title: '仓库代码', 
-                    dataIndex: 'warehouseCode', 
-                    width: 120,
-                    render: (value: string | null) => value ? value : '-'
-                  },
-                  { title: '代理名称', dataIndex: 'agentName', width: 150 },
-                  { title: 'ETD', dataIndex: 'etd', width: 110 },
-                  { title: 'ETA', dataIndex: 'eta', width: 110 },
-                  { title: '有效期', dataIndex: 'validDateRange', width: 180 },
-                  { title: '备注', dataIndex: 'remark', width: 150 },
-                ]}
-                data={oncarriageRateData}
-                scroll={{ x: 1300 }}
-                pagination={false}
-                border={true}
-                className="mt-2 match-price-table"
-              />
-            </div>
+            {/* 港前运价模块 - 仅在勾选港前价格时显示 */}
+            {formState.precarriageChecked && (
+              <div className="mb-6">
+                <div className="text-gray-800 font-medium mb-4">港前运价</div>
+                {!hasQueriedRates ? (
+                  <div className="text-center py-8 border border-gray-200 rounded bg-gray-50">
+                    <p className="text-gray-500">请点击"查询匹配运价"按钮获取运价信息</p>
+                  </div>
+                ) : precarriageRates.length > 0 ? (
+                  <div className="space-y-4">
+                    {precarriageRates.map((rate) => (
+                      <Card key={rate.id} className="border border-gray-200">
+                        <div className="flex items-start gap-4">
+                          {/* 选择框 */}
+                          <div className="mt-2">
+                            <Radio
+                              checked={selectedPrecarriageRate === rate.id.toString()}
+                              onChange={() => setSelectedPrecarriageRate(rate.id.toString())}
+                            />
+                          </div>
+                          
+                          {/* 运价内容 */}
+                          <div className="flex-1">
+                            {/* 基本信息 */}
+                            <div className="flex items-center gap-4 mb-4">
+                              <span className="font-medium text-blue-600">运价编号：{rate.certNo || 'P' + String(rate.id).padStart(3, '0')}</span>
+                              <span className="font-medium">类型：{rate.type}</span>
+                              {rate.subType && <span>子类型：{rate.subType}</span>}
+                              <span>供应商：{rate.vendor}</span>
+                              <span>有效期：{rate.validPeriod.join(' ~ ')}</span>
+                            </div>
+                            
+                            {/* 费用明细表格 */}
+                            {renderRateTable(rate.rateItems, getAvailableContainerTypes())}
+                          </div>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 border border-gray-200 rounded bg-gray-50">
+                    <p className="text-gray-500">暂无港前运价方案</p>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {/* 尾程运价模块 - 仅在勾选尾程价格时显示 */}
+            {formState.lastmileChecked && (
+              <div className="mb-6">
+                <div className="text-gray-800 font-medium mb-4">尾程运价</div>
+                {!hasQueriedRates ? (
+                  <div className="text-center py-8 border border-gray-200 rounded bg-gray-50">
+                    <p className="text-gray-500">请点击"查询匹配运价"按钮获取运价信息</p>
+                  </div>
+                ) : oncarriageRates.length > 0 ? (
+                  <div className="space-y-4">
+                    {oncarriageRates.map((rate) => (
+                      <Card key={rate.id} className="border border-gray-200">
+                        <div className="flex items-start gap-4">
+                          {/* 选择框 */}
+                          <div className="mt-2">
+                            <Radio
+                              checked={selectedOncarriageRate === rate.id.toString()}
+                              onChange={() => setSelectedOncarriageRate(rate.id.toString())}
+                            />
+                          </div>
+                          
+                          {/* 运价内容 */}
+                          <div className="flex-1">
+                            {/* 基本信息 */}
+                            <div className="flex items-center gap-4 mb-4">
+                              <span className="font-medium text-blue-600">运价编号：{rate.certNo || 'O' + String(rate.id).padStart(3, '0')}</span>
+                              <span className="font-medium">代理名称：{rate.agentName}</span>
+                              <span>有效期：{rate.validPeriod.join(' ~ ')}</span>
+                            </div>
+                            
+                            {/* 费用明细表格 */}
+                            {renderRateTable(rate.rateItems, getAvailableContainerTypes())}
+                          </div>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 border border-gray-200 rounded bg-gray-50">
+                    <p className="text-gray-500">暂无尾程运价方案</p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </Card>
       </Form>
 
-      {/* 航线负责人选择弹窗 */}
-      <Modal
-        title="选择询价负责人"
-        visible={managerSelectVisible}
-        onOk={confirmManagerSelect}
-        onCancel={() => setManagerSelectVisible(false)}
-        maskClosable={false}
-        style={{ width: 700 }}
-        footer={[
-          <Button key="cancel" onClick={() => setManagerSelectVisible(false)}>
-            取消
-          </Button>,
-          <Button key="confirm" type="primary" onClick={confirmManagerSelect}>
-            确定
-          </Button>
-        ]}
-      >
-        <div>
-          <div className="mb-4 pl-4 pt-2 text-gray-600">匹配到多个航线负责人信息，请选择需要发起询价的人员：</div>
-          
-          {/* 尾程运价负责人表格 */}
-          <div className="mb-4">
-            <div className="mb-2 pl-4 text-blue-600 font-medium border-l-2 border-blue-600">尾程运价负责人</div>
-            <Table
-              columns={[
-                { title: '航线', dataIndex: 'route' },
-                { title: '起运港', dataIndex: 'departurePort' },
-                { title: '卸货港', dataIndex: 'destinationPort' },
-                { title: '负责人', dataIndex: 'manager' },
-                { 
-                  title: '选择', 
-                  render: (_, record) => (
-                    <Radio
-                      checked={selectedLastMileManager === record.key}
-                      onChange={() => setSelectedLastMileManager(record.key)}
-                    />
-                  )
-                }
-              ]}
-              data={_routeManagersData}
-              pagination={false}
-              border={true}
-              rowKey="key"
-            />
-          </div>
 
-          {/* 干线运价负责人表格 */}
-          <div>
-            <div className="mb-2 pl-4 text-blue-600 font-medium border-l-2 border-blue-600">干线运价负责人</div>
-            <Table
-              columns={[
-                { title: '航线', dataIndex: 'route' },
-                { title: '起运港', dataIndex: 'departurePort' },
-                { title: '卸货港', dataIndex: 'destinationPort' },
-                { title: '负责人', dataIndex: 'manager' },
-                { 
-                  title: '选择', 
-                  render: (_, record) => (
-                    <Radio
-                      checked={selectedMainlineManager === record.key}
-                      onChange={() => setSelectedMainlineManager(record.key)}
-                    />
-                  )
-                }
-              ]}
-              data={_mainlineManagersData}
-              pagination={false}
-              border={true}
-              rowKey="key"
-            />
-          </div>
-        </div>
-      </Modal>
-
-      {/* 运价详情弹窗 */}
-      <Modal
-        title="运价详情"
-        visible={rateDetailVisible}
-        onOk={closeRateDetail}
-        onCancel={closeRateDetail}
-        maskClosable={false}
-        style={{ width: 800 }}
-      >
-        <div className="p-4">
-          {currentRateDetail && (
-            <>
-              {/* 基本信息 */}
-              <div className="mb-6">
-                <div className="text-blue-600 font-bold mb-3 border-l-4 border-blue-600 pl-2">基本信息</div>
-                <div className="grid grid-cols-2 gap-4">
-                  {currentRateType === 'mainline' && rateTableData.filter(item => item.certNo === currentRateDetail).map(rate => (
-                    <React.Fragment key={rate.certNo}>
-                      <div className="mb-2">
-                        <span className="text-gray-500">运价编号：</span>
-                        <span className="font-medium">{rate.certNo}</span>
-                      </div>
-                      <div className="mb-2">
-                        <span className="text-gray-500">船公司：</span>
-                        <span className="font-medium">{rate.shipCompany}</span>
-                      </div>
-                      <div className="mb-2">
-                        <span className="text-gray-500">起运港：</span>
-                        <span className="font-medium">{rate.departurePort}</span>
-                      </div>
-                      <div className="mb-2">
-                        <span className="text-gray-500">目的港：</span>
-                        <span className="font-medium">{rate.destinationPort}</span>
-                      </div>
-                      <div className="mb-2">
-                        <span className="text-gray-500">有效期：</span>
-                        <span className="font-medium">{rate.validPeriod}</span>
-                      </div>
-                      <div className="mb-2">
-                        <span className="text-gray-500">直达/中转：</span>
-                        <span className="font-medium">{rate.transitType}</span>
-                      </div>
-                    </React.Fragment>
-                  ))}
-                  
-                  {currentRateType === 'precarriage' && precarriageRateData.filter(item => item.certNo === currentRateDetail).map(rate => (
-                    <React.Fragment key={rate.certNo}>
-                      <div className="mb-2">
-                        <span className="text-gray-500">运价编号：</span>
-                        <span className="font-medium">{rate.certNo}</span>
-                      </div>
-                      <div className="mb-2">
-                        <span className="text-gray-500">类型：</span>
-                        <span className="font-medium">{rate.type}</span>
-                      </div>
-                      <div className="mb-2">
-                        <span className="text-gray-500">起运地：</span>
-                        <span className="font-medium">{rate.origin}</span>
-                      </div>
-                      <div className="mb-2">
-                        <span className="text-gray-500">目的地：</span>
-                        <span className="font-medium">{rate.destination}</span>
-                      </div>
-                      <div className="mb-2">
-                        <span className="text-gray-500">供应商：</span>
-                        <span className="font-medium">{rate.vendor}</span>
-                      </div>
-                      <div className="mb-2">
-                        <span className="text-gray-500">有效期：</span>
-                        <span className="font-medium">{rate.validDate}</span>
-                      </div>
-                    </React.Fragment>
-                  ))}
-                  
-                  {currentRateType === 'oncarriage' && oncarriageRateData.filter(item => item.certNo === currentRateDetail).map(rate => (
-                    <React.Fragment key={rate.certNo}>
-                      <div className="mb-2">
-                        <span className="text-gray-500">运价编号：</span>
-                        <span className="font-medium">{rate.certNo}</span>
-                      </div>
-                      <div className="mb-2">
-                        <span className="text-gray-500">目的港：</span>
-                        <span className="font-medium">{rate.origin}</span>
-                      </div>
-                      <div className="mb-2">
-                        <span className="text-gray-500">配送地址类型：</span>
-                        <span className="font-medium">{rate.addressType}</span>
-                      </div>
-                      {rate.addressType === '第三方地址' && (
-                        <>
-                          <div className="mb-2">
-                            <span className="text-gray-500">邮编：</span>
-                            <span className="font-medium">{rate.zipCode}</span>
-                          </div>
-                          <div className="mb-2">
-                            <span className="text-gray-500">地址：</span>
-                            <span className="font-medium">{rate.address}</span>
-                          </div>
-                        </>
-                      )}
-                      {(rate.addressType === '亚马逊仓库' || rate.addressType === '易仓') && (
-                        <div className="mb-2">
-                          <span className="text-gray-500">仓库代码：</span>
-                          <span className="font-medium">{rate.warehouseCode}</span>
-                        </div>
-                      )}
-                      <div className="mb-2">
-                        <span className="text-gray-500">代理名称：</span>
-                        <span className="font-medium">{rate.agentName}</span>
-                      </div>
-                      <div className="mb-2">
-                        <span className="text-gray-500">有效期：</span>
-                        <span className="font-medium">{rate.validDateRange}</span>
-                      </div>
-                      <div className="mb-2">
-                        <span className="text-gray-500">备注：</span>
-                        <span className="font-medium">{rate.remark || '-'}</span>
-                      </div>
-                    </React.Fragment>
-                  ))}
-                </div>
-              </div>
-              
-              {/* 费用明细 */}
-              <div>
-                <div className="text-blue-600 font-bold mb-3 border-l-4 border-blue-600 pl-2">费用明细</div>
-                
-                {/* 基础运费 */}
-                <div className="mb-4">
-                  <div className="text-gray-700 font-medium mb-2 border-l-2 border-gray-400 pl-2">基础运费</div>
-                  <Table
-                    columns={[
-                      { title: '费用名称', dataIndex: 'name', width: 120 },
-                      { 
-                        title: '计费类型', 
-                        dataIndex: 'feeType', 
-                        width: 100,
-                        render: (value: string) => value === 'container' ? '按箱型计费' : '非按箱型计费'
-                      },
-                      { 
-                        title: '单价/箱型价格', 
-                        dataIndex: 'price', 
-                        width: 200,
-                        render: (value: string, record: FeeDetail) => {
-                          if (record.feeType === 'container' && record.containerRates) {
-                            return (
-                              <div className="space-y-1">
-                                {Object.entries(record.containerRates).map(([containerType, price]) => 
-                                  price ? (
-                                    <div key={containerType} className="text-xs">
-                                      {containerType}: {price}
-                                    </div>
-                                  ) : null
-                                )}
-                              </div>
-                            );
-                          }
-                          return value;
-                        }
-                      },
-                      { title: '币种', dataIndex: 'currency', width: 80 },
-                      { title: '计费单位', dataIndex: 'unit', width: 100 },
-                      { title: '备注', dataIndex: 'remark', width: 150 }
-                    ]}
-                    data={currentRateDetail ? getRateDetail(currentRateDetail, currentRateType).basic : []}
-                    pagination={false}
-                    border={true}
-                    rowKey="key"
-                  />
-                </div>
-                
-                {/* 起运港附加费 - 仅在有数据时显示 */}
-                {currentRateDetail && getRateDetail(currentRateDetail, currentRateType).origin.length > 0 && (
-                  <div className="mb-4">
-                    <div className="text-gray-700 font-medium mb-2 border-l-2 border-gray-400 pl-2">起运港附加费</div>
-                    <Table
-                      columns={[
-                        { title: '费用名称', dataIndex: 'name', width: 120 },
-                        { 
-                          title: '计费类型', 
-                          dataIndex: 'feeType', 
-                          width: 100,
-                          render: (value: string) => value === 'container' ? '按箱型计费' : '非按箱型计费'
-                        },
-                        { 
-                          title: '单价/箱型价格', 
-                          dataIndex: 'price', 
-                          width: 200,
-                          render: (value: string, record: FeeDetail) => {
-                            if (record.feeType === 'container' && record.containerRates) {
-                              return (
-                                <div className="space-y-1">
-                                  {Object.entries(record.containerRates).map(([containerType, price]) => 
-                                    price ? (
-                                      <div key={containerType} className="text-xs">
-                                        {containerType}: {price}
-                                      </div>
-                                    ) : null
-                                  )}
-                                </div>
-                              );
-                            }
-                            return value;
-                          }
-                        },
-                        { title: '币种', dataIndex: 'currency', width: 80 },
-                        { title: '计费单位', dataIndex: 'unit', width: 100 },
-                        { title: '备注', dataIndex: 'remark', width: 150 }
-                      ]}
-                      data={getRateDetail(currentRateDetail, currentRateType).origin}
-                      pagination={false}
-                      border={true}
-                      rowKey="key"
-                    />
-                  </div>
-                )}
-                
-                {/* 目的港附加费 - 仅在有数据时显示 */}
-                {currentRateDetail && getRateDetail(currentRateDetail, currentRateType).destination.length > 0 && (
-                  <div>
-                    <div className="text-gray-700 font-medium mb-2 border-l-2 border-gray-400 pl-2">目的港附加费</div>
-                    <Table
-                      columns={[
-                        { title: '费用名称', dataIndex: 'name', width: 120 },
-                        { 
-                          title: '计费类型', 
-                          dataIndex: 'feeType', 
-                          width: 100,
-                          render: (value: string) => value === 'container' ? '按箱型计费' : '非按箱型计费'
-                        },
-                        { 
-                          title: '单价/箱型价格', 
-                          dataIndex: 'price', 
-                          width: 200,
-                          render: (value: string, record: FeeDetail) => {
-                            if (record.feeType === 'container' && record.containerRates) {
-                              return (
-                                <div className="space-y-1">
-                                  {Object.entries(record.containerRates).map(([containerType, price]) => 
-                                    price ? (
-                                      <div key={containerType} className="text-xs">
-                                        {containerType}: {price}
-                                      </div>
-                                    ) : null
-                                  )}
-                                </div>
-                              );
-                            }
-                            return value;
-                          }
-                        },
-                        { title: '币种', dataIndex: 'currency', width: 80 },
-                        { title: '计费单位', dataIndex: 'unit', width: 100 },
-                        { title: '备注', dataIndex: 'remark', width: 150 }
-                      ]}
-                      data={getRateDetail(currentRateDetail, currentRateType).destination}
-                      pagination={false}
-                      border={true}
-                      rowKey="key"
-                    />
-                  </div>
-                )}
-              </div>
-            </>
-          )}
-        </div>
-      </Modal>
 
       {/* 装箱门点AI识别弹窗 */}
       <Modal
@@ -2653,6 +2044,189 @@ const CreateFclInquiry: React.FC = () => {
               <li>如包含易仓代码(LAX203/ATL205等)，将自动设置为易仓类型</li>
               <li>其他情况将设置为第三方地址，并解析地址和邮编</li>
             </ul>
+          </div>
+        </div>
+      </Modal>
+
+      {/* 运价不完整提示弹窗 */}
+      <Modal
+        title="运价不完整提示"
+        visible={incompleteModalVisible}
+        onOk={() => {
+          setIncompleteModalVisible(false);
+          setExportModalVisible(true);
+        }}
+        onCancel={() => setIncompleteModalVisible(false)}
+        okText="确认"
+        cancelText="取消"
+      >
+        <div className="space-y-4">
+          <p>当前运价尚不完整，存在以下运价信息缺失：</p>
+          <ul className="list-disc list-inside space-y-1">
+            {checkRateCompleteness().map((item, index) => (
+              <li key={index} className="text-red-500">{item}</li>
+            ))}
+          </ul>
+          <p>是否仅导出已有的运价？</p>
+        </div>
+      </Modal>
+
+      {/* 导出运价弹窗 */}
+      <Modal
+        title="导出运价"
+        visible={exportModalVisible}
+        onCancel={() => setExportModalVisible(false)}
+        footer={null}
+        style={{ width: 600 }}
+      >
+        <div className="space-y-6">
+          {/* 已选择的运价方案 */}
+          <div>
+            <h4 className="text-lg font-medium mb-4">已选择的运价方案</h4>
+            <div className="space-y-2 bg-gray-50 p-4 rounded">
+              {selectedMainlineRate && mainlineRates.find(r => r.id.toString() === selectedMainlineRate) && (
+                <div className="flex justify-between">
+                  <span>干线运价：{mainlineRates.find(r => r.id.toString() === selectedMainlineRate)?.certNo || 'M' + selectedMainlineRate.padStart(3, '0')} - {mainlineRates.find(r => r.id.toString() === selectedMainlineRate)?.shipCompany}</span>
+                  <Tag color="green">已选择</Tag>
+                </div>
+              )}
+              {selectedPrecarriageRate && precarriageRates.find(r => r.id.toString() === selectedPrecarriageRate) && (
+                <div className="flex justify-between">
+                  <span>港前运价：{precarriageRates.find(r => r.id.toString() === selectedPrecarriageRate)?.certNo || 'P' + selectedPrecarriageRate.padStart(3, '0')} - {precarriageRates.find(r => r.id.toString() === selectedPrecarriageRate)?.vendor}</span>
+                  <Tag color="green">已选择</Tag>
+                </div>
+              )}
+              {selectedOncarriageRate && oncarriageRates.find(r => r.id.toString() === selectedOncarriageRate) && (
+                <div className="flex justify-between">
+                  <span>尾程运价：{oncarriageRates.find(r => r.id.toString() === selectedOncarriageRate)?.certNo || 'O' + selectedOncarriageRate.padStart(3, '0')} - {oncarriageRates.find(r => r.id.toString() === selectedOncarriageRate)?.agentName}</span>
+                  <Tag color="green">已选择</Tag>
+                </div>
+              )}
+              {!selectedMainlineRate && !selectedPrecarriageRate && !selectedOncarriageRate && (
+                <div className="text-gray-500 text-center">暂未选择任何运价方案</div>
+              )}
+            </div>
+          </div>
+
+          {/* 操作按钮 */}
+          <div className="flex justify-center gap-4">
+            <Button
+              type="primary"
+              icon={<IconCopy />}
+              onClick={generateQuotationText}
+              size="large"
+            >
+              复制快捷询价文本
+            </Button>
+            <Button
+              type="primary"
+              icon={<IconPrinter />}
+              onClick={generatePDF}
+              size="large"
+            >
+              打印询价单文件
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* 快捷询价文本弹窗 */}
+      <Modal
+        title="快捷询价文本"
+        visible={copyTextModalVisible}
+        onCancel={() => setCopyTextModalVisible(false)}
+        footer={
+          <div className="flex justify-end space-x-2">
+            <Button onClick={() => setCopyTextModalVisible(false)}>
+              关闭
+            </Button>
+            <Button type="primary" icon={<IconCopy />} onClick={copyToClipboard}>
+              复制文本
+            </Button>
+          </div>
+        }
+        style={{ width: 700 }}
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-gray-600">
+            以下是根据您选择的运价方案生成的询价文本，您可以复制后发送给客户：
+          </p>
+          <TextArea
+            value={quotationText}
+            readOnly
+            rows={15}
+            style={{ fontFamily: 'monospace' }}
+          />
+        </div>
+      </Modal>
+
+      {/* PDF预览弹窗 */}
+      <Modal
+        title="询价单预览"
+        visible={pdfPreviewVisible}
+        onCancel={() => setPdfPreviewVisible(false)}
+        footer={
+          <div className="flex justify-end space-x-2">
+            <Button onClick={() => setPdfPreviewVisible(false)}>
+              关闭
+            </Button>
+            <Button type="primary" icon={<IconDownload />}>
+              下载PDF
+            </Button>
+          </div>
+        }
+        style={{ width: 900, top: 20 }}
+      >
+        <div className="space-y-4" style={{ height: '600px', overflow: 'auto' }}>
+          {/* PDF预览内容 */}
+          <div className="bg-white p-8 shadow-sm border" style={{ fontFamily: 'SimSun, serif' }}>
+            <div className="text-center mb-8">
+              <h1 className="text-2xl font-bold mb-2">询价单</h1>
+              <p className="text-gray-600">Inquiry</p>
+            </div>
+
+            {/* 基本信息 */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-3 pb-2 border-b">基本信息</h3>
+              <Row gutter={[16, 8]}>
+                <Col span={8}>询价编号：{formState.inquiryNo || 'INQ' + Date.now()}</Col>
+                <Col span={8}>委托单位：{formState.clientType === '正式客户' ? formState.clientCompany : formState.clientName}</Col>
+                <Col span={8}>货盘性质：{formState.cargoNature}</Col>
+                <Col span={8}>货好时间：{formState.cargoReadyTime}</Col>
+                <Col span={8}>服务条款：{formState.serviceTerms}</Col>
+              </Row>
+            </div>
+
+            {/* 货物信息 */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-3 pb-2 border-b">货物信息</h3>
+              <Row gutter={[16, 8]}>
+                <Col span={8}>起运港：{formState.departurePort}</Col>
+                <Col span={8}>目的港：{formState.dischargePort}</Col>
+                <Col span={8}>船公司：{formState.shipCompany}</Col>
+                <Col span={8}>航线：{formState.route}</Col>
+                <Col span={8}>直达/中转：{formState.transitType}</Col>
+                {formState.weight && <Col span={8}>重量：{formState.weight} KGS</Col>}
+              </Row>
+            </div>
+
+            {/* 箱型箱量 */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-3 pb-2 border-b">箱型箱量</h3>
+              <div className="grid grid-cols-3 gap-4">
+                {containerList.map(container => (
+                  <div key={container.id} className="border p-3 text-center">
+                    <div className="font-medium">{container.type}</div>
+                    <div className="text-xl font-bold text-blue-600">{container.count} 箱</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 运价明细 - 后续步骤实现 */}
+            <div className="text-center py-8 text-gray-500">
+              运价明细部分将在后续步骤完善
+            </div>
           </div>
         </div>
       </Modal>
