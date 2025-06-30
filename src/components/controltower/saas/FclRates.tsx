@@ -745,6 +745,20 @@ const waveAnimation = `
   }
 `;
 
+// 按箱计费费用列表
+const FEE_TYPES = [
+  { label: '海运费', value: 'ocean_freight' },
+  { label: '燃油附加费', value: 'baf' },
+  { label: '货币附加费', value: 'caf' },
+  { label: '港口拥堵费', value: 'port_congestion' },
+  { label: '安全附加费', value: 'security_surcharge' },
+  { label: '码头操作费', value: 'terminal_handling' },
+  { label: '设备不平衡费', value: 'equipment_imbalance' },
+  { label: '旺季附加费', value: 'peak_season' },
+  { label: '文件费', value: 'documentation' },
+  { label: '清洁费', value: 'cleaning_fee' }
+];
+
 const FclRates: React.FC = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
   const [aiModalVisible, setAiModalVisible] = useState(false);
@@ -831,6 +845,7 @@ const FclRates: React.FC = () => {
   const [containerTypesModalVisible, setContainerTypesModalVisible] = useState(false);
   const [priceChangeMode, setPriceChangeMode] = useState<'increase' | 'decrease' | 'fixed'>('increase');
   const [selectedContainerTypes, setSelectedContainerTypes] = useState<string[]>(['20gp', '40gp', '40hc', '45hc', '40nor']);
+  const [selectedFeeType, setSelectedFeeType] = useState<string>('');
   const [priceValues, setPriceValues] = useState<Record<string, number>>({
     '20gp': 0,
     '40gp': 0,
@@ -1033,6 +1048,7 @@ const FclRates: React.FC = () => {
   const closeBatchPriceModal = () => {
     setBatchPriceModalVisible(false);
     setPriceChangeMode('increase');
+    setSelectedFeeType('');
     setPriceValues({
       '20gp': 0,
       '40gp': 0,
@@ -1087,14 +1103,20 @@ const FclRates: React.FC = () => {
 
   // 确认批量改价
   const confirmBatchPriceChange = () => {
+    if (!selectedFeeType) {
+      Message.warning('请先选择要修改的费用类型');
+      return;
+    }
+    
     const selectedRates = selectedRowKeys.length;
     const selectedTypes = selectedContainerTypes.length;
+    const feeTypeName = getFeeTypeName(selectedFeeType);
     
     Modal.confirm({
       title: '确认批量改价',
-      content: `将对选中的 ${selectedRates} 条运价的 ${selectedTypes} 种箱型进行${priceChangeMode === 'increase' ? '涨价' : priceChangeMode === 'decrease' ? '降价' : '固定金额'}操作，确认继续吗？`,
+      content: `将对选中的 ${selectedRates} 条运价的 ${selectedTypes} 种箱型的"${feeTypeName}"进行${priceChangeMode === 'increase' ? '涨价' : priceChangeMode === 'decrease' ? '降价' : '固定金额'}操作，确认继续吗？`,
       onOk: () => {
-        Message.success(`成功${priceChangeMode === 'increase' ? '涨价' : priceChangeMode === 'decrease' ? '降价' : '设置固定金额'} ${selectedRates} 条运价`);
+        Message.success(`成功${priceChangeMode === 'increase' ? '涨价' : priceChangeMode === 'decrease' ? '降价' : '设置固定金额'} ${selectedRates} 条运价的${feeTypeName}`);
         closeBatchPriceModal();
         setSelectedRowKeys([]);
       }
@@ -2022,6 +2044,29 @@ const FclRates: React.FC = () => {
       modifyDate: '修改日期'
     };
     return columnLabels[columnKey] || columnKey;
+  };
+
+  // 获取费用名称
+  const getFeeTypeName = (feeType: string): string => {
+    const feeTypeItem = FEE_TYPES.find(item => item.value === feeType);
+    return feeTypeItem ? feeTypeItem.label : feeType;
+  };
+
+  // 计算修改后的价格
+  const calculateNewPrice = (originalPrice: number, containerType: string): number => {
+    const changeValue = priceValues[containerType] || 0;
+    if (changeValue === 0) return originalPrice;
+    
+    switch (priceChangeMode) {
+      case 'increase':
+        return originalPrice + changeValue;
+      case 'decrease':
+        return Math.max(0, originalPrice - changeValue); // 确保不为负数
+      case 'fixed':
+        return changeValue;
+      default:
+        return originalPrice;
+    }
   };
 
   // ====== 港前运价 columns & data ======
@@ -3013,11 +3058,20 @@ const FclRates: React.FC = () => {
         footer={
           <div className="flex justify-between items-center py-3">
             <div className="text-sm text-gray-500">
-              此操作会修改选中运价的海运费金额，请确认数据准确性
+              {selectedFeeType 
+                ? `此操作会修改选中运价的${getFeeTypeName(selectedFeeType)}金额，请确认数据准确性`
+                : '请先选择要修改的费用类型'
+              }
             </div>
             <Space size="medium">
               <Button onClick={closeBatchPriceModal}>取消</Button>
-              <Button type="primary" onClick={confirmBatchPriceChange}>确认</Button>
+              <Button 
+                type="primary" 
+                onClick={confirmBatchPriceChange}
+                disabled={!selectedFeeType}
+              >
+                确认
+              </Button>
             </Space>
           </div>
         }
@@ -3038,30 +3092,29 @@ const FclRates: React.FC = () => {
             </div>
           </div>
 
-          {/* 选择要修改的箱型 */}
-          <Card title="选择要修改的箱型" bordered={false} className="bg-white">
-            <div className="flex justify-between items-start gap-4">
-              <div className="grid grid-cols-5 gap-4 flex-1">
-                {['20gp', '40gp', '40hc', '45hc', '40nor'].map(type => (
-                  <div key={type} className="flex items-center gap-2 py-1">
-                    <Switch 
-                      checked={selectedContainerTypes.includes(type)}
-                      onChange={() => toggleContainerType(type)}
-                      size="small"
-                    />
-                    <span className="text-sm">{type.toUpperCase()}</span>
-                  </div>
-                ))}
-              </div>
-              <Button 
-                type="outline" 
-                icon={<IconSettings />}
-                onClick={openContainerTypesModal}
-                size="small"
+                      {/* 选择费用 */}
+          <Card title="选择费用" bordered={false} className="bg-white">
+            <div className="flex items-center gap-4">
+              <span className="text-gray-600 min-w-[80px]">费用类型：</span>
+              <Select
+                value={selectedFeeType}
+                onChange={setSelectedFeeType}
+                placeholder="请选择要修改的费用类型"
+                style={{ width: 300 }}
+                allowClear
               >
-                箱型设置
-              </Button>
+                {FEE_TYPES.map(feeType => (
+                  <Option key={feeType.value} value={feeType.value}>
+                    {feeType.label}
+                  </Option>
+                ))}
+              </Select>
             </div>
+            {selectedFeeType && (
+              <div className="mt-3 p-3 bg-blue-50 rounded-md text-sm text-blue-700">
+                已选择费用：{getFeeTypeName(selectedFeeType)}
+              </div>
+            )}
           </Card>
 
           {/* 涨价/降价模式选择 */}
@@ -3108,49 +3161,202 @@ const FclRates: React.FC = () => {
           </Card>
 
           {/* 价格输入表格 */}
-          <Card title="设置价格" bordered={false}>
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr className="bg-gray-50">
-                    <th className="border border-gray-200 px-4 py-3 text-center text-sm font-semibold text-gray-700 w-32">
-                      箱型
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 text-center text-sm font-semibold text-gray-700">
-                      {priceChangeMode === 'increase' ? '涨价金额' : priceChangeMode === 'decrease' ? '降价金额' : '固定金额'}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {selectedContainerTypes.map(type => (
-                    <tr key={type} className="hover:bg-gray-50 transition-colors">
-                      <td className="border border-gray-200 px-4 py-4">
-                        <span className="font-medium text-gray-800">{type.toUpperCase()}</span>
-                      </td>
-                      <td className="border border-gray-200 px-4 py-4">
-                        <div className="flex items-center justify-center">
-                          <Input
-                            style={{ width: 140 }}
-                            placeholder={priceChangeMode === 'fixed' ? '新价格' : '金额'}
-                            value={priceValues[type]?.toString() || ''}
-                            onChange={(value) => updatePriceValue(type, Number(value) || 0)}
-                            type="number"
-                            min={0}
-                            suffix="USD"
-                          />
+          <Card 
+            title="设置价格" 
+            bordered={false}
+            extra={
+              <Button 
+                type="outline" 
+                icon={<IconSettings />}
+                onClick={openContainerTypesModal}
+                size="small"
+              >
+                箱型设置
+              </Button>
+            }
+          >
+            {selectedFeeType ? (
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="bg-gray-50">
+                      <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700 min-w-[200px] whitespace-nowrap">
+                        费用名称
+                      </th>
+                      {selectedContainerTypes.map(type => (
+                        <th key={type} className="border border-gray-200 px-4 py-3 text-center text-sm font-semibold text-gray-700 min-w-[120px]">
+                          {type.toUpperCase()}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="hover:bg-gray-50 transition-colors">
+                      <td className="border border-gray-200 px-4 py-4 whitespace-nowrap">
+                        <span className="font-medium text-gray-800">{getFeeTypeName(selectedFeeType)}</span>
+                        <div className="text-xs text-gray-500 mt-1">
+                          {priceChangeMode === 'increase' ? '涨价金额' : priceChangeMode === 'decrease' ? '降价金额' : '固定金额'}
                         </div>
                       </td>
+                      {selectedContainerTypes.map(type => (
+                        <td key={type} className="border border-gray-200 px-4 py-4">
+                          <div className="flex items-center justify-center">
+                            <Input
+                              style={{ width: '100%', maxWidth: 100 }}
+                              placeholder={priceChangeMode === 'fixed' ? '新价格' : '金额'}
+                              value={priceValues[type]?.toString() || ''}
+                              onChange={(value) => updatePriceValue(type, Number(value) || 0)}
+                              type="number"
+                              min={0}
+                              suffix="USD"
+                              size="small"
+                            />
+                          </div>
+                        </td>
+                      ))}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-              {selectedContainerTypes.length === 0 && (
-                <div className="text-center py-12 text-gray-500">
-                  请先选择要修改的箱型
-                </div>
-              )}
-            </div>
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="text-center py-12 text-gray-500">
+                请先选择要修改的费用类型
+              </div>
+            )}
           </Card>
+
+          {/* 将被修改的运价列表 */}
+          {selectedRowKeys.length > 0 && (
+            <Card title="将被修改的运价列表" bordered={false} className="bg-gray-50">
+              <div className="max-h-80 overflow-auto" style={{ overflowX: 'auto', overflowY: 'auto' }}>
+                <table className="w-full text-sm border-collapse" style={{ minWidth: 'max-content' }}>
+                  <style dangerouslySetInnerHTML={{
+                    __html: `
+                      .price-change-animation {
+                        transition: all 0.3s ease-in-out;
+                      }
+                      .price-change-animation:hover {
+                        transform: scale(1.05);
+                      }
+                    `
+                  }} />
+                  <thead className="bg-gray-100 sticky top-0">
+                    <tr>
+                      <th className="text-center p-3 border-b border-gray-200 min-w-[120px]">运价号</th>
+                      <th className="text-center p-3 border-b border-gray-200 min-w-[150px]">起运港</th>
+                      <th className="text-center p-3 border-b border-gray-200 min-w-[150px]">目的港</th>
+                      <th className="text-center p-3 border-b border-gray-200 min-w-[120px]">船公司</th>
+                      <th className="text-center p-3 border-b border-gray-200 min-w-[100px]">状态</th>
+                      {selectedFeeType && selectedContainerTypes.map(type => (
+                        <th key={type} className="text-center p-3 border-b border-gray-200 min-w-[100px]">
+                          {type.toUpperCase()}
+                          <div className="text-xs text-gray-500 font-normal mt-1">
+                            当前{getFeeTypeName(selectedFeeType)}
+                          </div>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedRowKeys.slice(0, 50).map((key, index) => {
+                      // 模拟当前费用数据
+                      const currentFeeValues: Record<string, number> = {
+                        '20gp': 1200 + index * 10,
+                        '40gp': 2400 + index * 20,
+                        '40hc': 2600 + index * 25,
+                        '45hc': 2800 + index * 30,
+                        '40nor': 2500 + index * 22,
+                        '20nor': 1100 + index * 8,
+                        '20hc': 1300 + index * 12,
+                        '20tk': 1400 + index * 15,
+                        '40tk': 2700 + index * 28,
+                        '20ot': 1500 + index * 18,
+                        '40ot': 2900 + index * 32,
+                        '20fr': 1600 + index * 20,
+                        '40fr': 3000 + index * 35
+                      };
+
+                      return (
+                        <tr key={key} className="hover:bg-gray-50 transition-colors">
+                          <td className="p-3 border-b border-gray-200 text-center">
+                            FCL{String(key).padStart(8, '0')}
+                          </td>
+                          <td className="p-3 border-b border-gray-200 text-center">
+                            <div className="text-xs">CNSHA</div>
+                            <div className="text-xs text-gray-500">上海</div>
+                          </td>
+                          <td className="p-3 border-b border-gray-200 text-center">
+                            <div className="text-xs">USLAX</div>
+                            <div className="text-xs text-gray-500">洛杉矶</div>
+                          </td>
+                          <td className="p-3 border-b border-gray-200 text-center">
+                            <div className="text-xs">COSCO</div>
+                          </td>
+                          <td className="p-3 border-b border-gray-200 text-center">
+                            <Tag color="green" size="small">正常</Tag>
+                          </td>
+                          {selectedFeeType && selectedContainerTypes.map(type => {
+                            const originalPrice = currentFeeValues[type];
+                            const newPrice = calculateNewPrice(originalPrice, type);
+                            const changeValue = priceValues[type] || 0;
+                            const hasChange = changeValue > 0 && newPrice !== originalPrice;
+                            
+                            return (
+                              <td key={type} className="p-3 border-b border-gray-200 text-center">
+                                {hasChange ? (
+                                  <div className="flex flex-col items-center gap-1 price-change-animation">
+                                    <div className="text-xs text-gray-400 line-through">
+                                      ${originalPrice}
+                                    </div>
+                                    <div className={`text-sm font-medium ${
+                                      priceChangeMode === 'increase' ? 'text-red-600' : 
+                                      priceChangeMode === 'decrease' ? 'text-green-600' : 
+                                      'text-blue-600'
+                                    }`}>
+                                      ${newPrice}
+                                      {priceChangeMode !== 'fixed' && (
+                                        <span className="text-xs ml-1">
+                                          ({priceChangeMode === 'increase' ? '+' : '-'}${priceValues[type]})
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="text-sm font-medium text-gray-800">
+                                    ${originalPrice}
+                                  </div>
+                                )}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                {selectedRowKeys.length > 50 && (
+                  <div className="text-center p-3 text-gray-500 text-sm border-t border-gray-200">
+                    还有 {selectedRowKeys.length - 50} 条运价未显示...
+                  </div>
+                )}
+              </div>
+              <div className="mt-3 text-sm text-gray-600 bg-blue-50 p-3 rounded">
+                <div className="flex justify-between items-center">
+                  <span>共选择 {selectedRowKeys.length} 条运价</span>
+                  {selectedFeeType && (
+                    <div className="flex items-center gap-4">
+                      <span>将批量修改 {getFeeTypeName(selectedFeeType)} 费用</span>
+                      {Object.values(priceValues).some(value => value > 0) && (
+                        <span className="text-orange-600">
+                          {Object.entries(priceValues).filter(([_, value]) => value > 0).length} 个箱型有价格变化
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </Card>
+          )}
         </div>
       </Drawer>
 
@@ -3168,7 +3374,7 @@ const FclRates: React.FC = () => {
         style={{ width: 600 }}
       >
         <div className="py-4">
-          <div className="mb-5 text-gray-600">选择要在运价表格中显示的箱型</div>
+          <div className="mb-5 text-gray-600">选择要在价格设置表格中显示的箱型</div>
           <div className="grid grid-cols-3 gap-3">
             {['20gp', '40gp', '40hc', '45hc', '40nor', '20nor', '20hc', '20tk', '40tk', '20ot', '40ot', '20fr', '40fr'].map(type => (
               <div key={type} className="flex items-center gap-3 p-3 border rounded-md hover:bg-gray-50 transition-colors">
@@ -3182,7 +3388,7 @@ const FclRates: React.FC = () => {
             ))}
           </div>
           <div className="mt-5 p-3 bg-gray-50 rounded-md text-sm text-gray-600">
-            选中的箱型将在批量改价时显示，未选中的箱型不会被修改
+            选中的箱型将在价格设置表格和运价列表中显示，未选中的箱型不会被修改
           </div>
         </div>
       </Modal>
