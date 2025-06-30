@@ -480,7 +480,7 @@ const CreateFclInquiry: React.FC = () => {
   interface RateData {
     certNo: string;
     departurePort: string;
-    dischargePort: string;
+    destinationPort: string; // 改为目的港
     shipCompany: string;
     validPeriod: string; // 修改为有效期
     transitPort: string;
@@ -511,6 +511,8 @@ const CreateFclInquiry: React.FC = () => {
     '40GP': string;
     '40HC': string;
     validDate: string;
+    etd?: string; // 港前运价ETD
+    eta?: string; // 港前运价ETA
   }
   
   // 尾程运价表格数据接口
@@ -526,14 +528,18 @@ const CreateFclInquiry: React.FC = () => {
     validDateRange: string; // 有效期区间
     remark: string; // 备注
     status: '正常' | '过期' | '下架'; // 状态，保留字段但不显示在表格中
+    etd?: string; // 尾程运价ETD
+    eta?: string; // 尾程运价ETA
   }
   
+
+
   // 运价表格数据
   const rateTableData: RateData[] = [
     {
       certNo: 'M001',
       departurePort: 'CNSHA | Shanghai',
-      dischargePort: 'USLAX | Los Angeles',
+      destinationPort: 'USLAX | Los Angeles', // 改为目的港
       shipCompany: '地中海',
       validPeriod: '2024-06-01 ~ 2024-07-01',
       transitPort: '-',
@@ -553,7 +559,7 @@ const CreateFclInquiry: React.FC = () => {
     {
       certNo: 'M002',
       departurePort: 'CNSHA | Shanghai',
-      dischargePort: 'USLAX | Los Angeles',
+      destinationPort: 'USLAX | Los Angeles', // 改为目的港
       shipCompany: '马士基',
       validPeriod: '2024-07-01 ~ 2024-08-01',
       transitPort: 'KRPUS | Busan',
@@ -573,7 +579,7 @@ const CreateFclInquiry: React.FC = () => {
     {
       certNo: 'M003',
       departurePort: 'CNSHA | Shanghai',
-      dischargePort: 'USLAX | Los Angeles',
+      destinationPort: 'USLAX | Los Angeles', // 改为目的港
       shipCompany: '长荣',
       validPeriod: '2024-06-15 ~ 2024-07-15',
       transitPort: '-',
@@ -606,6 +612,8 @@ const CreateFclInquiry: React.FC = () => {
       '40GP': '1200.00',
       '40HC': '1300.00',
       validDate: '2024-12-31',
+      etd: '2024-07-08',
+      eta: '2024-07-10',
     },
     {
       id: '2',
@@ -619,6 +627,8 @@ const CreateFclInquiry: React.FC = () => {
       '40GP': '700.00',
       '40HC': '750.00',
       validDate: '2024-11-30',
+      etd: '2024-07-09',
+      eta: '2024-07-10',
     }
   ];
 
@@ -635,7 +645,9 @@ const CreateFclInquiry: React.FC = () => {
       agentName: 'XPO TRUCK LLC',
       validDateRange: '2024-05-01 至 2024-12-31',
       remark: '',
-      status: '正常'
+      status: '正常',
+      etd: '2024-07-25',
+      eta: '2024-07-27',
     },
     {
       id: '2',
@@ -648,7 +660,9 @@ const CreateFclInquiry: React.FC = () => {
       agentName: 'DRAYEASY INC',
       validDateRange: '2024-05-15 至 2024-11-30',
       remark: '',
-      status: '正常'
+      status: '正常',
+      etd: '2024-07-26',
+      eta: '2024-07-28',
     },
     {
       id: '3',
@@ -661,7 +675,9 @@ const CreateFclInquiry: React.FC = () => {
       agentName: 'AMERICAN FREIGHT SOLUTIONS',
       validDateRange: '2024-04-01 至 2024-12-15',
       remark: '需提前24小时预约',
-      status: '正常'
+      status: '正常',
+      etd: '2024-07-27',
+      eta: '2024-07-29',
     },
     {
       id: '4',
@@ -674,7 +690,9 @@ const CreateFclInquiry: React.FC = () => {
       agentName: 'WEST COAST CARRIERS LLC',
       validDateRange: '2024-03-01 至 2024-05-31',
       remark: '',
-      status: '过期'
+      status: '过期',
+      etd: '2024-07-28',
+      eta: '2024-07-30',
     }
   ];
 
@@ -687,9 +705,18 @@ const CreateFclInquiry: React.FC = () => {
     unit: string;
     remark: string;
     type: 'basic' | 'origin' | 'destination'; // 费用类型：基础运费、起运港附加费、目的港附加费
+    feeType?: 'container' | 'non-container'; // 计费类型：按箱型计费、非按箱型计费
+    containerRates?: {
+      '20GP'?: string;
+      '40GP'?: string;
+      '40HC'?: string;
+      '45HC'?: string;
+      '20NOR'?: string;
+      '40NOR'?: string;
+    };
   }
 
-  // 获取运价详情数据
+  // 获取运价详情数据 - 参考QuoteForm.tsx的运价结构
   const getRateDetail = (rateId: string, type: 'mainline' | 'precarriage' | 'oncarriage' = 'mainline'): { basic: FeeDetail[], origin: FeeDetail[], destination: FeeDetail[] } => {
     // 根据不同的运价类型返回不同的数据
     if (type === 'precarriage') {
@@ -698,26 +725,56 @@ const CreateFclInquiry: React.FC = () => {
         case 'P001':
           return {
             basic: [
-              { key: '1', name: '拖车费', price: '800.00', currency: 'CNY', unit: '20GP', remark: '', type: 'basic' },
-              { key: '2', name: '拖车费', price: '1200.00', currency: 'CNY', unit: '40GP', remark: '', type: 'basic' },
-              { key: '3', name: '拖车费', price: '1300.00', currency: 'CNY', unit: '40HC', remark: '', type: 'basic' }
+              { 
+                key: '1', 
+                name: '拖车费', 
+                price: '', 
+                currency: 'CNY', 
+                unit: '箱', 
+                remark: '', 
+                type: 'basic',
+                feeType: 'container',
+                containerRates: {
+                  '20GP': '800.00',
+                  '40GP': '1200.00',
+                  '40HC': '1300.00',
+                  '45HC': '',
+                  '20NOR': '',
+                  '40NOR': ''
+                }
+              }
             ],
             origin: [
-              { key: '4', name: '装柜费', price: '200.00', currency: 'CNY', unit: '箱', remark: '', type: 'origin' },
-              { key: '5', name: '单证费', price: '100.00', currency: 'CNY', unit: '票', remark: '', type: 'origin' }
+              { key: '2', name: '装柜费', price: '200.00', currency: 'CNY', unit: '箱', remark: '', type: 'origin', feeType: 'non-container' },
+              { key: '3', name: '单证费', price: '100.00', currency: 'CNY', unit: '票', remark: '', type: 'origin', feeType: 'non-container' }
             ],
             destination: []
           };
         case 'P002':
           return {
             basic: [
-              { key: '1', name: '驳船费', price: '400.00', currency: 'CNY', unit: '20GP', remark: '', type: 'basic' },
-              { key: '2', name: '驳船费', price: '700.00', currency: 'CNY', unit: '40GP', remark: '', type: 'basic' },
-              { key: '3', name: '驳船费', price: '750.00', currency: 'CNY', unit: '40HC', remark: '', type: 'basic' }
+              { 
+                key: '1', 
+                name: '驳船费', 
+                price: '', 
+                currency: 'CNY', 
+                unit: '箱', 
+                remark: '', 
+                type: 'basic',
+                feeType: 'container',
+                containerRates: {
+                  '20GP': '400.00',
+                  '40GP': '700.00',
+                  '40HC': '750.00',
+                  '45HC': '',
+                  '20NOR': '',
+                  '40NOR': ''
+                }
+              }
             ],
             origin: [
-              { key: '4', name: '出港费', price: '150.00', currency: 'CNY', unit: '箱', remark: '', type: 'origin' },
-              { key: '5', name: '单证费', price: '80.00', currency: 'CNY', unit: '票', remark: '', type: 'origin' }
+              { key: '2', name: '出港费', price: '150.00', currency: 'CNY', unit: '箱', remark: '', type: 'origin', feeType: 'non-container' },
+              { key: '3', name: '单证费', price: '80.00', currency: 'CNY', unit: '票', remark: '', type: 'origin', feeType: 'non-container' }
             ],
             destination: []
           };
@@ -734,7 +791,25 @@ const CreateFclInquiry: React.FC = () => {
         case 'O001':
           return {
             basic: [
-              { key: '1', name: 'ISF CHARGE', price: '50.00', currency: 'USD', unit: 'B/L', remark: '', type: 'basic' }
+              { key: '1', name: 'ISF CHARGE', price: '50.00', currency: 'USD', unit: 'B/L', remark: '', type: 'basic', feeType: 'non-container' },
+              { 
+                key: '2', 
+                name: '配送费', 
+                price: '', 
+                currency: 'USD', 
+                unit: '箱', 
+                remark: '', 
+                type: 'basic',
+                feeType: 'container',
+                containerRates: {
+                  '20GP': '350.00',
+                  '40GP': '450.00',
+                  '40HC': '450.00',
+                  '45HC': '',
+                  '20NOR': '',
+                  '40NOR': ''
+                }
+              }
             ],
             origin: [],
             destination: []
@@ -742,7 +817,25 @@ const CreateFclInquiry: React.FC = () => {
         case 'O002':
           return {
             basic: [
-              { key: '1', name: '清关费', price: '100.00', currency: 'USD', unit: 'B/L', remark: '', type: 'basic' }
+              { key: '1', name: '清关费', price: '100.00', currency: 'USD', unit: 'B/L', remark: '', type: 'basic', feeType: 'non-container' },
+              { 
+                key: '2', 
+                name: '配送费', 
+                price: '', 
+                currency: 'USD', 
+                unit: '箱', 
+                remark: '', 
+                type: 'basic',
+                feeType: 'container',
+                containerRates: {
+                  '20GP': '400.00',
+                  '40GP': '500.00',
+                  '40HC': '500.00',
+                  '45HC': '',
+                  '20NOR': '',
+                  '40NOR': ''
+                }
+              }
             ],
             origin: [],
             destination: []
@@ -750,7 +843,25 @@ const CreateFclInquiry: React.FC = () => {
         case 'O003':
           return {
             basic: [
-              { key: '1', name: '文件费', price: '100.00', currency: 'USD', unit: 'B/L', remark: '', type: 'basic' }
+              { key: '1', name: '文件费', price: '100.00', currency: 'USD', unit: 'B/L', remark: '', type: 'basic', feeType: 'non-container' },
+              { 
+                key: '2', 
+                name: '仓储费', 
+                price: '', 
+                currency: 'USD', 
+                unit: '箱', 
+                remark: '', 
+                type: 'basic',
+                feeType: 'container',
+                containerRates: {
+                  '20GP': '200.00',
+                  '40GP': '300.00',
+                  '40HC': '300.00',
+                  '45HC': '',
+                  '20NOR': '',
+                  '40NOR': ''
+                }
+              }
             ],
             origin: [],
             destination: []
@@ -758,15 +869,7 @@ const CreateFclInquiry: React.FC = () => {
         case 'O004':
           return {
             basic: [
-              { key: '1', name: 'BOND', price: '100.00', currency: 'USD', unit: 'B/L', remark: '', type: 'basic' }
-            ],
-            origin: [],
-            destination: []
-          };
-        case 'O005':
-          return {
-            basic: [
-              { key: '1', name: '品检费', price: '2300.00', currency: 'USD', unit: '40HQ', remark: '', type: 'basic' }
+              { key: '1', name: 'BOND', price: '100.00', currency: 'USD', unit: 'B/L', remark: '', type: 'basic', feeType: 'non-container' }
             ],
             origin: [],
             destination: []
@@ -779,31 +882,209 @@ const CreateFclInquiry: React.FC = () => {
           };
       }
     } else {
-      // 干线运价详情 (原有逻辑)
+      // 干线运价详情 (参考QuoteForm.tsx的结构)
       switch(rateId) {
         case 'M001':
           return {
             basic: [
-              { key: '1', name: '海运费', price: '1500.00', currency: 'USD', unit: '20GP', remark: '', type: 'basic' },
-              { key: '2', name: '海运费', price: '2800.00', currency: 'USD', unit: '40GP', remark: '', type: 'basic' },
-              { key: '3', name: '海运费', price: '2900.00', currency: 'USD', unit: '40HC', remark: '', type: 'basic' },
+              { 
+                key: '1', 
+                name: '海运费', 
+                price: '', 
+                currency: 'USD', 
+                unit: '箱', 
+                remark: '', 
+                type: 'basic',
+                feeType: 'container',
+                containerRates: {
+                  '20GP': '1500.00',
+                  '40GP': '2800.00',
+                  '40HC': '2900.00',
+                  '45HC': '3100.00',
+                  '20NOR': '1400.00',
+                  '40NOR': '2700.00'
+                }
+              }
             ],
             origin: [
-              { key: '4', name: '文件费', price: '500.00', currency: 'CNY', unit: '票', remark: '', type: 'origin' },
-              { key: '5', name: '电放费', price: '300.00', currency: 'CNY', unit: '票', remark: '', type: 'origin' },
-              { key: '6', name: '港杂费', price: '1200.00', currency: 'CNY', unit: '20GP', remark: '', type: 'origin' },
-              { key: '7', name: '港杂费', price: '1800.00', currency: 'CNY', unit: '40GP', remark: '', type: 'origin' },
-              { key: '8', name: '港杂费', price: '1800.00', currency: 'CNY', unit: '40HC', remark: '', type: 'origin' },
+              { key: '2', name: '文件费', price: '500.00', currency: 'CNY', unit: '票', remark: '', type: 'origin', feeType: 'non-container' },
+              { key: '3', name: '电放费', price: '300.00', currency: 'CNY', unit: '票', remark: '', type: 'origin', feeType: 'non-container' },
+              { 
+                key: '4', 
+                name: '港杂费', 
+                price: '', 
+                currency: 'CNY', 
+                unit: '箱', 
+                remark: '', 
+                type: 'origin',
+                feeType: 'container',
+                containerRates: {
+                  '20GP': '1200.00',
+                  '40GP': '1800.00',
+                  '40HC': '1800.00',
+                  '45HC': '',
+                  '20NOR': '',
+                  '40NOR': ''
+                }
+              }
             ],
             destination: [
-              { key: '9', name: 'PSS', price: '200.00', currency: 'USD', unit: '箱', remark: '', type: 'destination' },
-              { key: '10', name: '码头操作费', price: '150.00', currency: 'USD', unit: '箱', remark: '', type: 'destination' },
-              { key: '11', name: '燃油附加费', price: '350.00', currency: 'USD', unit: '20GP', remark: '', type: 'destination' },
-              { key: '12', name: '燃油附加费', price: '700.00', currency: 'USD', unit: '40GP', remark: '', type: 'destination' },
-              { key: '13', name: '燃油附加费', price: '700.00', currency: 'USD', unit: '40HC', remark: '', type: 'destination' },
+              { key: '5', name: 'PSS', price: '200.00', currency: 'USD', unit: '箱', remark: '', type: 'destination', feeType: 'non-container' },
+              { key: '6', name: '码头操作费', price: '150.00', currency: 'USD', unit: '箱', remark: '', type: 'destination', feeType: 'non-container' },
+              { 
+                key: '7', 
+                name: '燃油附加费', 
+                price: '', 
+                currency: 'USD', 
+                unit: '箱', 
+                remark: '', 
+                type: 'destination',
+                feeType: 'container',
+                containerRates: {
+                  '20GP': '350.00',
+                  '40GP': '700.00',
+                  '40HC': '700.00',
+                  '45HC': '',
+                  '20NOR': '',
+                  '40NOR': ''
+                }
+              }
             ]
           };
-        // ... 其他案例 (保持原有逻辑)
+        case 'M002':
+          return {
+            basic: [
+              { 
+                key: '1', 
+                name: '海运费', 
+                price: '', 
+                currency: 'USD', 
+                unit: '箱', 
+                remark: '', 
+                type: 'basic',
+                feeType: 'container',
+                containerRates: {
+                  '20GP': '1450.00',
+                  '40GP': '2750.00',
+                  '40HC': '2850.00',
+                  '45HC': '3050.00',
+                  '20NOR': '1350.00',
+                  '40NOR': '2650.00'
+                }
+              }
+            ],
+            origin: [
+              { key: '2', name: '文件费', price: '500.00', currency: 'CNY', unit: '票', remark: '', type: 'origin', feeType: 'non-container' },
+              { key: '3', name: '电放费', price: '300.00', currency: 'CNY', unit: '票', remark: '', type: 'origin', feeType: 'non-container' },
+              { 
+                key: '4', 
+                name: '港杂费', 
+                price: '', 
+                currency: 'CNY', 
+                unit: '箱', 
+                remark: '', 
+                type: 'origin',
+                feeType: 'container',
+                containerRates: {
+                  '20GP': '1200.00',
+                  '40GP': '1800.00',
+                  '40HC': '1800.00',
+                  '45HC': '',
+                  '20NOR': '',
+                  '40NOR': ''
+                }
+              }
+            ],
+            destination: [
+              { key: '5', name: 'PSS', price: '200.00', currency: 'USD', unit: '箱', remark: '', type: 'destination', feeType: 'non-container' },
+              { key: '6', name: '码头操作费', price: '150.00', currency: 'USD', unit: '箱', remark: '', type: 'destination', feeType: 'non-container' },
+              { 
+                key: '7', 
+                name: '燃油附加费', 
+                price: '', 
+                currency: 'USD', 
+                unit: '箱', 
+                remark: '', 
+                type: 'destination',
+                feeType: 'container',
+                containerRates: {
+                  '20GP': '350.00',
+                  '40GP': '700.00',
+                  '40HC': '700.00',
+                  '45HC': '',
+                  '20NOR': '',
+                  '40NOR': ''
+                }
+              }
+            ]
+          };
+        case 'M003':
+          return {
+            basic: [
+              { 
+                key: '1', 
+                name: '海运费', 
+                price: '', 
+                currency: 'USD', 
+                unit: '箱', 
+                remark: '', 
+                type: 'basic',
+                feeType: 'container',
+                containerRates: {
+                  '20GP': '1550.00',
+                  '40GP': '2880.00',
+                  '40HC': '2980.00',
+                  '45HC': '3180.00',
+                  '20NOR': '1480.00',
+                  '40NOR': '2780.00'
+                }
+              }
+            ],
+            origin: [
+              { key: '2', name: '文件费', price: '500.00', currency: 'CNY', unit: '票', remark: '', type: 'origin', feeType: 'non-container' },
+              { key: '3', name: '电放费', price: '300.00', currency: 'CNY', unit: '票', remark: '', type: 'origin', feeType: 'non-container' },
+              { 
+                key: '4', 
+                name: '港杂费', 
+                price: '', 
+                currency: 'CNY', 
+                unit: '箱', 
+                remark: '', 
+                type: 'origin',
+                feeType: 'container',
+                containerRates: {
+                  '20GP': '1200.00',
+                  '40GP': '1800.00',
+                  '40HC': '1800.00',
+                  '45HC': '',
+                  '20NOR': '',
+                  '40NOR': ''
+                }
+              }
+            ],
+            destination: [
+              { key: '5', name: 'PSS', price: '200.00', currency: 'USD', unit: '箱', remark: '', type: 'destination', feeType: 'non-container' },
+              { key: '6', name: '码头操作费', price: '150.00', currency: 'USD', unit: '箱', remark: '', type: 'destination', feeType: 'non-container' },
+              { 
+                key: '7', 
+                name: '燃油附加费', 
+                price: '', 
+                currency: 'USD', 
+                unit: '箱', 
+                remark: '', 
+                type: 'destination',
+                feeType: 'container',
+                containerRates: {
+                  '20GP': '350.00',
+                  '40GP': '700.00',
+                  '40HC': '700.00',
+                  '45HC': '',
+                  '20NOR': '',
+                  '40NOR': ''
+                }
+              }
+            ]
+          };
         default:
           return {
             basic: [],
@@ -1578,9 +1859,9 @@ const CreateFclInquiry: React.FC = () => {
                   </Col>
                   
                   <Col span={24}>
-                    <FormItem label="卸货港" field="dischargePort">
+                    <FormItem label="目的港" field="destinationPort">
                       <Select
-                        placeholder="请选择卸货港" 
+                        placeholder="请选择目的港" 
                         value={formState.dischargePort}
                         onChange={(value) => handleFormChange('dischargePort', value)}
                         style={{ width: '100%' }}
@@ -1834,7 +2115,7 @@ const CreateFclInquiry: React.FC = () => {
                     ) 
                   },
                   { title: '起运港', dataIndex: 'departurePort', width: 150 },
-                  { title: '卸货港', dataIndex: 'dischargePort', width: 150 },
+                  { title: '目的港', dataIndex: 'destinationPort', width: 150 },
                   { title: '船公司', dataIndex: 'shipCompany', width: 120 },
                   { title: '有效期', dataIndex: 'validPeriod', width: 160 },
                   { title: '中转港', dataIndex: 'transitPort', width: 120 },
@@ -1895,6 +2176,8 @@ const CreateFclInquiry: React.FC = () => {
                   { title: '20GP', dataIndex: '20GP', width: 100 },
                   { title: '40GP', dataIndex: '40GP', width: 100 },
                   { title: '40HC', dataIndex: '40HC', width: 100 },
+                  { title: 'ETD', dataIndex: 'etd', width: 110 },
+                  { title: 'ETA', dataIndex: 'eta', width: 110 },
                   { title: '有效期', dataIndex: 'validDate', width: 120 },
                 ]}
                 data={precarriageRateData}
@@ -1963,6 +2246,8 @@ const CreateFclInquiry: React.FC = () => {
                     render: (value: string | null) => value ? value : '-'
                   },
                   { title: '代理名称', dataIndex: 'agentName', width: 150 },
+                  { title: 'ETD', dataIndex: 'etd', width: 110 },
+                  { title: 'ETA', dataIndex: 'eta', width: 110 },
                   { title: '有效期', dataIndex: 'validDateRange', width: 180 },
                   { title: '备注', dataIndex: 'remark', width: 150 },
                 ]}
@@ -2082,8 +2367,8 @@ const CreateFclInquiry: React.FC = () => {
                         <span className="font-medium">{rate.departurePort}</span>
                       </div>
                       <div className="mb-2">
-                        <span className="text-gray-500">卸货港：</span>
-                        <span className="font-medium">{rate.dischargePort}</span>
+                        <span className="text-gray-500">目的港：</span>
+                        <span className="font-medium">{rate.destinationPort}</span>
                       </div>
                       <div className="mb-2">
                         <span className="text-gray-500">有效期：</span>
@@ -2184,7 +2469,33 @@ const CreateFclInquiry: React.FC = () => {
                   <Table
                     columns={[
                       { title: '费用名称', dataIndex: 'name', width: 120 },
-                      { title: '单价', dataIndex: 'price', width: 100 },
+                      { 
+                        title: '计费类型', 
+                        dataIndex: 'feeType', 
+                        width: 100,
+                        render: (value: string) => value === 'container' ? '按箱型计费' : '非按箱型计费'
+                      },
+                      { 
+                        title: '单价/箱型价格', 
+                        dataIndex: 'price', 
+                        width: 200,
+                        render: (value: string, record: FeeDetail) => {
+                          if (record.feeType === 'container' && record.containerRates) {
+                            return (
+                              <div className="space-y-1">
+                                {Object.entries(record.containerRates).map(([containerType, price]) => 
+                                  price ? (
+                                    <div key={containerType} className="text-xs">
+                                      {containerType}: {price}
+                                    </div>
+                                  ) : null
+                                )}
+                              </div>
+                            );
+                          }
+                          return value;
+                        }
+                      },
                       { title: '币种', dataIndex: 'currency', width: 80 },
                       { title: '计费单位', dataIndex: 'unit', width: 100 },
                       { title: '备注', dataIndex: 'remark', width: 150 }
@@ -2203,7 +2514,33 @@ const CreateFclInquiry: React.FC = () => {
                     <Table
                       columns={[
                         { title: '费用名称', dataIndex: 'name', width: 120 },
-                        { title: '单价', dataIndex: 'price', width: 100 },
+                        { 
+                          title: '计费类型', 
+                          dataIndex: 'feeType', 
+                          width: 100,
+                          render: (value: string) => value === 'container' ? '按箱型计费' : '非按箱型计费'
+                        },
+                        { 
+                          title: '单价/箱型价格', 
+                          dataIndex: 'price', 
+                          width: 200,
+                          render: (value: string, record: FeeDetail) => {
+                            if (record.feeType === 'container' && record.containerRates) {
+                              return (
+                                <div className="space-y-1">
+                                  {Object.entries(record.containerRates).map(([containerType, price]) => 
+                                    price ? (
+                                      <div key={containerType} className="text-xs">
+                                        {containerType}: {price}
+                                      </div>
+                                    ) : null
+                                  )}
+                                </div>
+                              );
+                            }
+                            return value;
+                          }
+                        },
                         { title: '币种', dataIndex: 'currency', width: 80 },
                         { title: '计费单位', dataIndex: 'unit', width: 100 },
                         { title: '备注', dataIndex: 'remark', width: 150 }
@@ -2223,7 +2560,33 @@ const CreateFclInquiry: React.FC = () => {
                     <Table
                       columns={[
                         { title: '费用名称', dataIndex: 'name', width: 120 },
-                        { title: '单价', dataIndex: 'price', width: 100 },
+                        { 
+                          title: '计费类型', 
+                          dataIndex: 'feeType', 
+                          width: 100,
+                          render: (value: string) => value === 'container' ? '按箱型计费' : '非按箱型计费'
+                        },
+                        { 
+                          title: '单价/箱型价格', 
+                          dataIndex: 'price', 
+                          width: 200,
+                          render: (value: string, record: FeeDetail) => {
+                            if (record.feeType === 'container' && record.containerRates) {
+                              return (
+                                <div className="space-y-1">
+                                  {Object.entries(record.containerRates).map(([containerType, price]) => 
+                                    price ? (
+                                      <div key={containerType} className="text-xs">
+                                        {containerType}: {price}
+                                      </div>
+                                    ) : null
+                                  )}
+                                </div>
+                              );
+                            }
+                            return value;
+                          }
+                        },
                         { title: '币种', dataIndex: 'currency', width: 80 },
                         { title: '计费单位', dataIndex: 'unit', width: 100 },
                         { title: '备注', dataIndex: 'remark', width: 150 }
