@@ -184,7 +184,6 @@ const PersonalizationConfig: React.FC = () => {
     return (
       <div>
         <Card 
-          title="网站基本信息" 
           style={{ marginBottom: 20 }}
         >
           <Text type="secondary" style={{ display: 'block', marginBottom: 20 }}>
