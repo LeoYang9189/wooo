@@ -217,7 +217,7 @@ const features = ref([
       "价格比较分析",
       "报价版本管理"
     ],
-    videoUrl: "",
+    videoUrl: "/qrcodes/video/quote.mp4",
     videoPoster: ""
   },
   // 4. 订单协作
