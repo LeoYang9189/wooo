@@ -119,25 +119,14 @@ const PersonalizationConfig: React.FC = () => {
 
   const handleDomainCheckClose = () => {
     setDomainCheckVisible(false);
-    if (domainAvailable) {
-      // 如果域名可用，显示确认弹窗
-      setTimeout(() => {
-        Modal.confirm({
-          title: '确认修改域名',
-          content: '恭喜您，域名可用，确认修改？',
-          onOk: () => {
-            setCustomDomain(tempDomain);
-            setDomainEditing(false);
-            setTempDomain('');
-            Message.success('域名修改成功！');
-          },
-          onCancel: () => {
-            setDomainEditing(false);
-            setTempDomain('');
-          }
-        });
-      }, 100);
-    }
+  };
+
+  const handleDomainConfirm = () => {
+    setCustomDomain(tempDomain);
+    setDomainEditing(false);
+    setTempDomain('');
+    setDomainCheckVisible(false);
+    Message.success('域名修改成功！');
   };
 
   const handleDomainCancel = () => {
@@ -275,9 +264,20 @@ const PersonalizationConfig: React.FC = () => {
                     </>
                   )}
                 </div>
-                <Text type="secondary" style={{ fontSize: 12 }}>
-                  控制塔系统支持使用您自有域名，如有需要，请联系客服支持人员。
-                </Text>
+                <div style={{ 
+                  background: 'linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%)', 
+                  border: '1px solid #1976d2', 
+                  borderRadius: 6, 
+                  padding: '8px 12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8
+                }}>
+                  <span style={{ color: '#1976d2', fontSize: 14 }}>💡</span>
+                  <Text style={{ color: '#1976d2', fontSize: 13, fontWeight: 500 }}>
+                    控制塔系统支持使用您自有域名，如有需要，请联系客服支持人员。
+                  </Text>
+                </div>
               </Form.Item>
 
               <Form.Item field="siteName" label="网站名称">
@@ -470,50 +470,189 @@ const PersonalizationConfig: React.FC = () => {
 
       {/* 域名修改警告弹窗 */}
       <Modal
-        title="域名修改提醒"
+        title={
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ 
+              width: 32, 
+              height: 32, 
+              borderRadius: '50%', 
+              background: 'linear-gradient(135deg, #faad14, #ff7875)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 16
+            }}>
+              ⚠️
+            </div>
+            <span style={{ fontSize: 16, fontWeight: 600 }}>域名修改提醒</span>
+          </div>
+        }
         visible={domainWarningVisible}
         onOk={handleDomainWarningConfirm}
         onCancel={handleDomainWarningCancel}
-        okText="确认"
+        okText="确认修改"
         cancelText="取消"
+        style={{ borderRadius: 12 }}
       >
-        <div style={{ padding: '16px 0' }}>
-          <p style={{ color: '#faad14', marginBottom: 16 }}>
-            ⚠️ 域名每6个月仅可修改一次，请慎重操作
-          </p>
-          <p style={{ color: '#666', marginBottom: 0 }}>
-            确认要修改域名吗？修改后将立即生效。
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #fff7e6, #fffbe6)',
+            border: '1px solid #faad14',
+            borderRadius: 8,
+            padding: '16px 20px',
+            marginBottom: 20
+          }}>
+            <p style={{ 
+              color: '#d46b08', 
+              fontSize: 15,
+              fontWeight: 600,
+              marginBottom: 8,
+              lineHeight: 1.5
+            }}>
+              域名每6个月仅可修改一次，请慎重操作
+            </p>
+            <p style={{ 
+              color: '#8c8c8c', 
+              fontSize: 13,
+              marginBottom: 0,
+              lineHeight: 1.4
+            }}>
+              修改后将立即生效，请确保新域名符合您的需求
+            </p>
+          </div>
+          <p style={{ color: '#595959', fontSize: 14, marginBottom: 0 }}>
+            确认要修改域名吗？
           </p>
         </div>
       </Modal>
 
       {/* 域名可用性检查结果弹窗 */}
       <Modal
-        title="域名可用性检查"
+        title={
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ 
+              width: 32, 
+              height: 32, 
+              borderRadius: '50%', 
+              background: domainAvailable 
+                ? 'linear-gradient(135deg, #52c41a, #73d13d)' 
+                : 'linear-gradient(135deg, #ff4d4f, #ff7875)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 16,
+              color: 'white',
+              fontWeight: 'bold'
+            }}>
+              {domainAvailable ? '✓' : '✗'}
+            </div>
+            <span style={{ fontSize: 16, fontWeight: 600 }}>域名可用性检查</span>
+          </div>
+        }
         visible={domainCheckVisible}
-        onOk={handleDomainCheckClose}
+        onOk={domainAvailable ? handleDomainConfirm : handleDomainCheckClose}
         onCancel={handleDomainCheckClose}
-        okText="关闭"
-        cancelButtonProps={{ style: { display: 'none' } }}
+        okText={domainAvailable ? "确认修改" : "关闭"}
+        cancelText={domainAvailable ? "取消" : undefined}
+        cancelButtonProps={domainAvailable ? {} : { style: { display: 'none' } }}
+        style={{ borderRadius: 12 }}
       >
-        <div style={{ padding: '16px 0' }}>
+        <div style={{ padding: '20px 0', textAlign: 'center' }}>
           {domainAvailable ? (
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 48, color: '#52c41a', marginBottom: 16 }}>✓</div>
-              <p style={{ color: '#52c41a', fontSize: 16, fontWeight: 500, marginBottom: 8 }}>
-                恭喜您，域名可用！
-              </p>
-              <p style={{ color: '#666', marginBottom: 0 }}>
-                域名 <strong>{tempDomain}.walltechsystem.com</strong> 可以使用
+            <div>
+              <div style={{ 
+                width: 80, 
+                height: 80, 
+                borderRadius: '50%', 
+                background: 'linear-gradient(135deg, #f6ffed, #d9f7be)',
+                border: '3px solid #52c41a',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 20px',
+                fontSize: 32,
+                color: '#52c41a'
+              }}>
+                ✓
+              </div>
+              <div style={{
+                background: 'linear-gradient(135deg, #f6ffed, #d9f7be)',
+                border: '1px solid #52c41a',
+                borderRadius: 8,
+                padding: '16px 20px',
+                marginBottom: 16
+              }}>
+                <p style={{ 
+                  color: '#389e0d', 
+                  fontSize: 18, 
+                  fontWeight: 600, 
+                  marginBottom: 8 
+                }}>
+                  🎉 恭喜您，域名可用！
+                </p>
+                <p style={{ 
+                  color: '#52c41a', 
+                  fontSize: 14,
+                  marginBottom: 0,
+                  fontFamily: 'monospace',
+                  background: 'rgba(255,255,255,0.8)',
+                  padding: '4px 8px',
+                  borderRadius: 4,
+                  display: 'inline-block'
+                }}>
+                  {tempDomain}.walltechsystem.com
+                </p>
+              </div>
+              <p style={{ color: '#8c8c8c', fontSize: 13, marginBottom: 0 }}>
+                点击"确认修改"完成域名设置
               </p>
             </div>
           ) : (
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 48, color: '#ff4d4f', marginBottom: 16 }}>✗</div>
-              <p style={{ color: '#ff4d4f', fontSize: 16, fontWeight: 500, marginBottom: 8 }}>
-                抱歉，该域名已被人使用
-              </p>
-              <p style={{ color: '#666', marginBottom: 0 }}>
+            <div>
+              <div style={{ 
+                width: 80, 
+                height: 80, 
+                borderRadius: '50%', 
+                background: 'linear-gradient(135deg, #fff2f0, #ffccc7)',
+                border: '3px solid #ff4d4f',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 20px',
+                fontSize: 32,
+                color: '#ff4d4f'
+              }}>
+                ✗
+              </div>
+              <div style={{
+                background: 'linear-gradient(135deg, #fff2f0, #ffccc7)',
+                border: '1px solid #ff4d4f',
+                borderRadius: 8,
+                padding: '16px 20px',
+                marginBottom: 16
+              }}>
+                <p style={{ 
+                  color: '#cf1322', 
+                  fontSize: 18, 
+                  fontWeight: 600, 
+                  marginBottom: 8 
+                }}>
+                  😞 抱歉，该域名已被使用
+                </p>
+                <p style={{ 
+                  color: '#ff4d4f', 
+                  fontSize: 14,
+                  marginBottom: 0,
+                  fontFamily: 'monospace',
+                  background: 'rgba(255,255,255,0.8)',
+                  padding: '4px 8px',
+                  borderRadius: 4,
+                  display: 'inline-block'
+                }}>
+                  {tempDomain}.walltechsystem.com
+                </p>
+              </div>
+              <p style={{ color: '#8c8c8c', fontSize: 13, marginBottom: 0 }}>
                 请尝试其他域名前缀
               </p>
             </div>
