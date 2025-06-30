@@ -2270,7 +2270,7 @@ const FclRates: React.FC = () => {
           { key: 'vendor', label: '供应商', width: '120px' },
           { key: 'status', label: '状态', width: '100px' }
         ];
-             case 'lastmile':
+       case 'oncarriage':
          return [
            { key: 'routeCode', label: '运价号', width: '120px' },
            { key: 'dischargePort', label: '目的港', width: '150px' },
@@ -2319,7 +2319,7 @@ const FclRates: React.FC = () => {
           departurePort: 'CNSHA | 上海',
           vendor: '安吉物流'
         };
-             case 'lastmile':
+       case 'oncarriage':
          return {
            ...baseData,
            dischargePort: 'USLAX | 洛杉矶',
