@@ -142,11 +142,62 @@
       type="privacy"
       @close="privacyPolicyVisible = false"
     />
+    
+    <!-- 租户选择弹窗 -->
+    <div v-if="tenantSelectionVisible" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden animate-fadeIn">
+        <!-- 装饰性头部 -->
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 pt-6 pb-4 relative">
+          <div class="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-12 translate-x-12"></div>
+          <div class="relative z-10">
+            <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-3">
+              <i class="fas fa-building text-white text-xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">选择租户</h3>
+            <p class="text-blue-100 text-sm">当前账号归属于多个租户，请选择您要登录的租户</p>
+          </div>
+        </div>
+        
+        <!-- 表单内容 -->
+        <div class="p-6">
+          <div class="mb-6">
+            <label class="block text-gray-700 font-semibold mb-3">租户列表</label>
+            <select 
+              v-model="selectedTenant" 
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+            >
+              <option value="personal">个人账号</option>
+              <option value="company1">上海物流科技有限公司</option>
+              <option value="company2">深圳国际货运代理有限公司</option>
+              <option value="company3">北京供应链管理有限公司</option>
+              <option value="company4">广州跨境电商物流有限公司</option>
+              <option value="company5">青岛港口物流有限公司</option>
+            </select>
+          </div>
+          
+          <div class="flex gap-3">
+            <button 
+              @click="tenantSelectionVisible = false"
+              class="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+            >
+              取消
+            </button>
+            <button 
+              @click="handleTenantConfirm"
+              class="flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all font-medium"
+            >
+              确认
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+// @ts-ignore
+import { ref, reactive, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthState } from './composables/useAuthState'
 import { useUser } from './composables/useUser'
@@ -169,6 +220,11 @@ const {
 const router = useRouter()
 const { login } = useUser()
 
+// 租户选择相关状态
+const tenantSelectionVisible = ref(false)
+const selectedTenant = ref('personal')
+const pendingUserData = ref(null)
+
 // 组件挂载
 onMounted(() => {
   mounted.value = true
@@ -176,7 +232,7 @@ onMounted(() => {
 
 // 返回首页
 const handleBackToPortal = () => {
-  router.push('/portal')
+  window.location.href = '/walltech-vue3'
 }
 
 // 处理登录
@@ -203,11 +259,19 @@ const handleLogin = async (values: any) => {
       phone: '13800138000'
     }
     
+    // 特殊处理：账号1密码1显示租户选择
+    if (values.account === '1' && values.password === '1') {
+      pendingUserData.value = userData
+      tenantSelectionVisible.value = true
+      loading.value = false
+      return
+    }
+    
     login(userData)
     alert('登录成功！欢迎回来 🎉')
     
     setTimeout(() => {
-      router.push('/portal')
+      router.push('/walltech-vue3')
     }, 100)
     
   } catch (error) {
@@ -232,7 +296,7 @@ const handleRegister = async (values: any) => {
     
     login(userData)
     alert('注册成功！欢迎加入我们 🌟')
-    router.push('/portal')
+    router.push('/walltech-vue3')
   } catch (error) {
     alert('注册失败，请重试')
   } finally {
@@ -244,6 +308,31 @@ const handleRegister = async (values: any) => {
 const handleSendCode = () => {
   // 验证码逻辑已在组件中处理
   console.log('发送验证码')
+}
+
+// 处理租户确认
+const handleTenantConfirm = () => {
+  if (!pendingUserData.value) return
+  
+  // 添加租户信息到用户数据
+  const userDataWithTenant = {
+    ...pendingUserData.value,
+    tenant: selectedTenant.value,
+    tenantType: selectedTenant.value === 'personal' ? 'personal' : 'enterprise'
+  }
+  
+  login(userDataWithTenant)
+  tenantSelectionVisible.value = false
+  
+  if (selectedTenant.value === 'personal') {
+    alert('登录成功！欢迎使用个人账号 👤')
+    // 个人账号跳转到控制塔，但只显示用户中心
+    window.location.href = '/controltower?mode=personal'
+  } else {
+    alert('登录成功！欢迎进入企业控制塔 🏢')
+    // 企业账号跳转到完整的控制塔
+    window.location.href = '/controltower'
+  }
 }
 </script>
 

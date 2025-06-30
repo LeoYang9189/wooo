@@ -109,7 +109,7 @@
             <!-- 行动按钮 -->
             <div class="mt-6 flex gap-3">
               <button 
-                @click="emit('openLeadForm')"
+                @click="handleExperience"
                 class="bg-blue-600 text-white px-5 py-2.5 hover:bg-blue-700 transition-colors font-medium text-sm border-0 rounded-none"
               >
                 立即体验
@@ -309,6 +309,12 @@ const features = ref([
 
 const selectFeature = (index: number) => {
   selectedFeature.value = index
+}
+
+// 处理立即体验按钮点击
+const handleExperience = () => {
+  // 跳转到登录注册页面
+  window.location.href = '/walltech-vue3-auth'
 }
 
 // 选择功能处理

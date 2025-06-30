@@ -136,7 +136,8 @@ const emit = defineEmits<{
 
 // 事件处理函数
 const handleExperience = () => {
-  emit('openLeadForm')
+  // 跳转到登录注册页面
+  window.location.href = '/walltech-vue3-auth'
 }
 
 const handleDemo = () => {

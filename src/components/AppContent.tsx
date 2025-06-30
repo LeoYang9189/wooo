@@ -29,7 +29,6 @@ const SSOAuthPageWrapper = lazy(() => import('./portalhome/SSOAuthPageWrapper'))
 const ProfilePageWrapper = lazy(() => import('./portalhome/ProfilePageWrapper'));
 const CompanyPageWrapper = lazy(() => import('./portalhome/CompanyPageWrapper'));
 const NotFound = lazy(() => import('./pages/NotFound'));
-const ContainerSystem = lazy(() => import('./containersaas/ContainerSystem'));
 const ControlTower = lazy(() => import('./controltower/ControlTower'));
 const ControlTowerClient = lazy(() => import('./controltower-client/ControlTower'));
 const PlatformAdmin = lazy(() => import('./platformadmin/PlatformAdmin'));
@@ -78,7 +77,6 @@ const AppContent = ({}: AppContentProps) => {
         <Route path="/sso/auth/:provider" element={<SSOAuthPageWrapper />} />
         <Route path="/profile" element={<ProfilePageWrapper />} />
         <Route path="/company" element={<CompanyPageWrapper />} />
-        <Route path="/smartainer/*" element={<ContainerSystem />} />
         <Route path="/controltower/*" element={<ControlTower />} />
         <Route path="/controltower-client/*" element={<ControlTowerClient />} />
         <Route path="/platformadmin/*" element={<PlatformAdmin />} />

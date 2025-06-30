@@ -111,7 +111,7 @@
         </div>
       </div>
 
-      <div class="mt-6 grid grid-cols-3 gap-3">
+      <div class="mt-6 grid grid-cols-2 gap-3">
         <button
           @click="handleThirdPartyLogin('etower')"
           class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
@@ -120,18 +120,11 @@
           <span class="text-sm font-medium">eTower</span>
         </button>
         <button
-          @click="handleThirdPartyLogin('google')"
+          @click="handleThirdPartyLogin('cargoware')"
           class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
         >
-          <i class="fab fa-google text-red-500 mr-2"></i>
-          <span class="text-sm font-medium">Google</span>
-        </button>
-        <button
-          @click="handleThirdPartyLogin('apple')"
-          class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-        >
-          <i class="fab fa-apple text-black mr-2"></i>
-          <span class="text-sm font-medium">Apple</span>
+          <img src="/assets/v2_snyjmq-Lh_sDSg4.png" alt="CargoWare" class="w-5 h-5 mr-2" />
+          <span class="text-sm font-medium">CargoWare</span>
         </button>
       </div>
     </div>
@@ -207,6 +200,8 @@ const handleSendCode = () => {
 const handleThirdPartyLogin = (provider: string) => {
   if (provider === 'etower') {
     router.push('/sso/auth/etower')
+  } else if (provider === 'cargoware') {
+    router.push('/sso/auth/cargoware')
   } else {
     alert(`${provider} 登录功能开发中...`)
   }

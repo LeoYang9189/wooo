@@ -17,6 +17,10 @@ const Auth = () => {
     agreeTerms: false
   });
 
+  // 租户选择相关状态
+  const [tenantSelectionVisible, setTenantSelectionVisible] = useState(false);
+  const [selectedTenant, setSelectedTenant] = useState('personal');
+
   // 处理表单输入变化
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -29,8 +33,31 @@ const Auth = () => {
   // 处理表单提交
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // 特殊处理：账号1密码1显示租户选择
+    if (formData.email === '1' && formData.password === '1') {
+      setTenantSelectionVisible(true);
+      return;
+    }
+    
     // 这里添加表单验证和提交逻辑
     console.log('表单提交', formData);
+    alert('登录成功！');
+  };
+
+  // 处理租户确认
+  const handleTenantConfirm = () => {
+    setTenantSelectionVisible(false);
+    
+    if (selectedTenant === 'personal') {
+      alert('登录成功！欢迎使用个人账号 👤');
+      // 个人账号跳转到控制塔，但只显示用户中心
+      window.location.href = '/controltower?mode=personal';
+    } else {
+      alert('登录成功！欢迎进入企业控制塔 🏢');
+      // 企业账号跳转到完整的控制塔
+      window.location.href = '/controltower';
+    }
   };
 
 
@@ -273,7 +300,68 @@ const Auth = () => {
           </div>
         </motion.div>
 
-
+        {/* 租户选择弹窗 */}
+        {tenantSelectionVisible && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="bg-white rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden"
+            >
+              {/* 装饰性头部 */}
+              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 pt-6 pb-4 relative">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-12 translate-x-12"></div>
+                <div className="relative z-10">
+                  <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-3">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-2">选择租户</h3>
+                  <p className="text-blue-100 text-sm">当前账号归属于多个租户，请选择您要登录的租户</p>
+                </div>
+              </div>
+              
+              {/* 表单内容 */}
+              <div className="p-6">
+                <div className="mb-6">
+                  <label className="block text-gray-700 font-semibold mb-3">租户列表</label>
+                  <select 
+                    value={selectedTenant}
+                    onChange={(e) => setSelectedTenant(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                  >
+                    <option value="personal">个人账号</option>
+                    <option value="company1">上海物流科技有限公司</option>
+                    <option value="company2">深圳国际货运代理有限公司</option>
+                    <option value="company3">北京供应链管理有限公司</option>
+                    <option value="company4">广州跨境电商物流有限公司</option>
+                    <option value="company5">青岛港口物流有限公司</option>
+                  </select>
+                </div>
+                
+                <div className="flex gap-3">
+                  <button 
+                    onClick={() => setTenantSelectionVisible(false)}
+                    className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                  >
+                    取消
+                  </button>
+                  <button 
+                    onClick={handleTenantConfirm}
+                    className="flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all font-medium"
+                  >
+                    确认
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
       </div>
     </div>
   );

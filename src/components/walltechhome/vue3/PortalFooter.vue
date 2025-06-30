@@ -1,90 +1,171 @@
 <template>
   <footer class="bg-white pt-16 pb-8">
     <div class="container mx-auto px-4">
+      <!-- Logo和搜索框区域 -->
+      <div class="flex flex-col md:flex-row justify-between items-start mb-12">
+        <div class="flex items-center mb-6 md:mb-0">
+          <img 
+            src="/assets/WX20250627-182147@2x.png" 
+            alt="WallTech (China) Co.,Ltd." 
+            class="h-12 w-auto"
+          />
+        </div>
+        <div class="flex items-center bg-gray-50 rounded-lg px-4 py-2 w-full md:w-96">
+          <input 
+            type="text" 
+            placeholder="Search..." 
+            class="bg-transparent outline-none flex-1 text-gray-600"
+          />
+          <button class="text-gray-400 hover:text-blue-600">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- 主要链接区域 -->
       <div class="grid grid-cols-1 md:grid-cols-5 gap-8 mb-12">
-        <!-- 公司信息 -->
-        <div class="md:col-span-1">
-          <div class="flex items-center mb-4">
-            <img 
-              src="/assets/WX20250627-182147@2x.png" 
-              alt="WallTech Logo" 
-              class="h-10 w-auto"
-            />
-          </div>
-          <p class="text-gray-600 text-sm mb-4">
-            为全球国际物流提供智能化解决方案
-          </p>
-          <div class="flex space-x-4">
-            <a href="#" class="text-gray-400 hover:text-blue-600" title="YouTube" aria-label="访问我们的YouTube频道">
-              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm4.441 16.892c-2.102.144-6.784.144-8.883 0-2.276-.156-2.541-1.27-2.558-4.892.017-3.629.285-4.736 2.558-4.892 2.099-.144 6.782-.144 8.883 0 2.277.156 2.541 1.27 2.559 4.892-.018 3.629-.285 4.736-2.559 4.892zm-6.441-7.234l4.917 2.338-4.917 2.346v-4.684z"/>
-              </svg>
-            </a>
-            <a href="#" class="text-gray-400 hover:text-blue-600" title="Instagram" aria-label="访问我们的Instagram账号">
-              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-2.917 18.339c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm8.342-8.248c-1.105 0-2-0.895-2-2 0-1.105 0.895-2 2-2 1.104 0 2 0.895 2 2 0 1.105-0.896 2-2 2z"/>
-              </svg>
-            </a>
-            <a href="#" class="text-gray-400 hover:text-blue-600" title="LinkedIn" aria-label="访问我们的LinkedIn主页">
-              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-2 16h-2v-6h2v6zm-1-6.891c-.607 0-1.1-.496-1.1-1.109 0-.612.492-1.109 1.1-1.109s1.1.497 1.1 1.109c0 .613-.493 1.109-1.1 1.109zm8 6.891h-1.998v-2.861c0-1.881-2.002-1.722-2.002 0v2.861h-2v-6h2v1.093c.872-1.616 4-1.736 4 1.548v3.359z"/>
-              </svg>
-            </a>
-          </div>
+        <!-- 客户和支持 -->
+        <div>
+          <h3 class="text-gray-800 font-semibold mb-4">客户和支持</h3>
+          <ul class="space-y-2">
+            <li><a href="https://zh.etowertech.com/etowerb2c-parcel-logistics-management/" target="_blank" class="text-gray-600 hover:text-blue-600 text-sm transition-colors">eTowerB2C</a></li>
+            <li><a href="https://zh.etowertech.com/etowerone-integrated-logistics-management/" target="_blank" class="text-gray-600 hover:text-blue-600 text-sm transition-colors">eTowerOne</a></li>
+            <li><a href="https://zh.etowertech.com/cargoware-freight-forwarding-management/" target="_blank" class="text-gray-600 hover:text-blue-600 text-sm transition-colors">CargoWare</a></li>
+            <li><a href="https://zh.etowertech.com/contact/#contact" target="_blank" class="text-gray-600 hover:text-blue-600 text-sm transition-colors">IT-支持</a></li>
+            <li><a href="https://auth.walltechsystem.cn/LoginServlet?ps=eyJyZXR1cm5VcmwiOiJodHRwczpcL1wvY24uZXRvd2VydGVjaC5jb21cL0luZGV4U2VydmxldCIsInNlcnZpY2VDb2RlIjoiUGFyY2VsIiwiYnJhbmQiOiJjbi5ldG93ZXJ0ZWNoLmNvbSIsImxhbmd1YWdlIjoiZW5fVVMifQ==&notifyUrl=https%3A%2F%2Fwww.etowertech.com%2FApi%2FSync%2FloginNotify%3Flogin_flag%3D99134f39-507a-41ea-905e-4f9e74f42d07" target="_blank" class="text-gray-600 hover:text-blue-600 text-sm transition-colors">登录</a></li>
+          </ul>
         </div>
 
-        <!-- 链接列表 -->
-        <div class="md:col-span-1">
-          <h3 class="text-gray-800 font-semibold mb-4">产品</h3>
+        <!-- 帮助中心 -->
+        <div>
+          <h3 class="text-gray-800 font-semibold mb-4">帮助中心</h3>
           <ul class="space-y-2">
-            <li><a href="#" class="text-gray-600 hover:text-blue-600 text-sm">功能介绍</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-blue-600 text-sm">定价</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-blue-600 text-sm">安全说明</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-blue-600 text-sm">下载客户端</a></li>
+            <li><a href="https://zh.etowertech.com/faqs/" target="_blank" class="text-gray-600 hover:text-blue-600 text-sm transition-colors">常见问题</a></li>
+            <li><a href="https://zh.etowertech.com/contact/#contact" target="_blank" class="text-gray-600 hover:text-blue-600 text-sm transition-colors">客户服务</a></li>
+            <li><a href="https://zh.etowertech.com/privacy-policy.html" target="_blank" class="text-gray-600 hover:text-blue-600 text-sm transition-colors">隐私政策</a></li>
           </ul>
         </div>
-        
-        <div class="md:col-span-1">
-          <h3 class="text-gray-800 font-semibold mb-4">解决方案</h3>
+
+        <!-- 联系我们 -->
+        <div>
+          <h3 class="text-gray-800 font-semibold mb-4">联系我们</h3>
           <ul class="space-y-2">
-            <li><a href="#" class="text-gray-600 hover:text-blue-600 text-sm">国际货运</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-blue-600 text-sm">航空物流</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-blue-600 text-sm">供应链管理</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-blue-600 text-sm">跨境电商</a></li>
+            <li><a href="https://zh.etowertech.com/company-profile/" target="_blank" class="text-gray-600 hover:text-blue-600 text-sm transition-colors">合作</a></li>
+            <li><a href="https://zh.etowertech.com/contact/#contact" target="_blank" class="text-gray-600 hover:text-blue-600 text-sm transition-colors">咨询</a></li>
+            <li><a href="https://zh.etowertech.com/company-profile/" target="_blank" class="text-gray-600 hover:text-blue-600 text-sm transition-colors">位置</a></li>
           </ul>
         </div>
-        
-        <div class="md:col-span-1">
-          <h3 class="text-gray-800 font-semibold mb-4">支持</h3>
+
+        <!-- 意见和建议 -->
+        <div>
+          <h3 class="text-gray-800 font-semibold mb-4">意见和建议</h3>
           <ul class="space-y-2">
-            <li><a href="#" class="text-gray-600 hover:text-blue-600 text-sm">帮助中心</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-blue-600 text-sm">专业支持</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-blue-600 text-sm">运维服务</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-blue-600 text-sm">常见问题</a></li>
+            <li><a href="https://zh.etowertech.com/contact/#contact" target="_blank" class="text-gray-600 hover:text-blue-600 text-sm transition-colors">评论</a></li>
+            <li><a href="https://zh.etowertech.com/contact/#contact" target="_blank" class="text-gray-600 hover:text-blue-600 text-sm transition-colors">建议邮件</a></li>
           </ul>
         </div>
-        
-        <div class="md:col-span-1">
-          <h3 class="text-gray-800 font-semibold mb-4">公司</h3>
+
+        <!-- 合作伙伴评估 -->
+        <div>
+          <h3 class="text-gray-800 font-semibold mb-4">合作伙伴评估</h3>
           <ul class="space-y-2">
-            <li><a href="/about" class="text-gray-600 hover:text-blue-600 text-sm">关于我们</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-blue-600 text-sm">新闻中心</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-blue-600 text-sm">加入我们</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-blue-600 text-sm">联系我们</a></li>
+            <li><a href="https://zh.etowertech.com/cooperation-cases/" target="_blank" class="text-gray-600 hover:text-blue-600 text-sm transition-colors">合作伙伴</a></li>
+            <li><a href="https://zh.etowertech.com/cooperation-cases/" target="_blank" class="text-gray-600 hover:text-blue-600 text-sm transition-colors">合作案例</a></li>
+            <li><a href="https://zh.etowertech.com/cooperation-cases/" target="_blank" class="text-gray-600 hover:text-blue-600 text-sm transition-colors">评价</a></li>
           </ul>
         </div>
       </div>
 
+      <!-- 联系信息区域 -->
+      <div class="border-t border-gray-200 pt-8 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <!-- 电话 -->
+          <div class="flex items-center">
+            <i class="fas fa-phone text-blue-600 mr-3"></i>
+            <a href="tel:400-665-9211" class="text-gray-700 hover:text-blue-600 transition-colors">
+              400-665-9211
+            </a>
+          </div>
+
+          <!-- 邮箱 -->
+          <div class="flex items-center">
+            <i class="fas fa-envelope text-blue-600 mr-3"></i>
+            <a href="mailto:etowermkt@walltechsystem.cn" class="text-gray-700 hover:text-blue-600 transition-colors">
+              etowermkt@walltechsystem.cn
+            </a>
+          </div>
+
+          <!-- 地址 -->
+          <div class="md:col-span-2">
+            <div class="flex items-start">
+              <i class="fas fa-map-marker-alt text-blue-600 mr-3 mt-1"></i>
+              <div class="text-gray-700 text-sm">
+                <div class="mb-1">总部:上海市虹口区周家嘴路669号中垠广场A座9楼</div>
+                <div class="mb-1">华南办事处:深圳市罗湖区笋岗梅园路75号润弘大厦写字楼T2 30楼</div>
+                <div>北京办事处:北京市顺义区旭辉空港中心B座623室</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 社交媒体图标 -->
+        <div class="flex justify-center space-x-6 mt-8">
+          <a href="https://www.linkedin.com/company/etowertech/?viewAsMember=true" 
+             target="_blank" 
+             class="text-gray-400 hover:text-blue-600 transition-colors" 
+             title="LinkedIn"
+             aria-label="访问我们的LinkedIn主页">
+            <i class="fab fa-linkedin text-xl"></i>
+          </a>
+          <a href="https://www.facebook.com/eTowertech/" 
+             target="_blank" 
+             class="text-gray-400 hover:text-blue-600 transition-colors" 
+             title="Facebook"
+             aria-label="访问我们的Facebook页面">
+            <i class="fab fa-facebook text-xl"></i>
+          </a>
+          <a href="https://x.com/etowertech" 
+             target="_blank" 
+             class="text-gray-400 hover:text-blue-600 transition-colors" 
+             title="X (Twitter)"
+             aria-label="访问我们的X账号">
+            <i class="fab fa-twitter text-xl"></i>
+          </a>
+          <a href="https://www.youtube.com/@WallTechSystemLogistics" 
+             target="_blank" 
+             class="text-gray-400 hover:text-blue-600 transition-colors" 
+             title="YouTube"
+             aria-label="访问我们的YouTube频道">
+            <i class="fab fa-youtube text-xl"></i>
+          </a>
+          <a href="https://affim.baidu.com/unique_23353207/chat?siteId=19529787&userId=23353207&siteToken=79c1c8eec08eed73a1ea37fdf830aad3" 
+             target="_blank" 
+             class="text-gray-400 hover:text-blue-600 transition-colors" 
+             title="在线客服"
+             aria-label="在线客服">
+            <i class="fas fa-comments text-xl"></i>
+          </a>
+          <a href="https://wa.me/" 
+             target="_blank" 
+             class="text-gray-400 hover:text-blue-600 transition-colors" 
+             title="WhatsApp"
+             aria-label="通过WhatsApp联系我们">
+            <i class="fab fa-whatsapp text-xl"></i>
+          </a>
+        </div>
+      </div>
+
       <!-- 底部版权信息 -->
-      <div class="pt-8 border-t border-gray-200">
+      <div class="border-t border-gray-200 pt-6">
         <div class="flex flex-col md:flex-row justify-between items-center mb-4">
-          <p class="text-gray-500 text-sm">
-            © 2025 WallTech. 保留所有权利.
-          </p>
+          <div class="text-center">
+            <p class="text-gray-500 text-sm mb-2">
+              版权 © <a href="https://zh.etowertech.com/" target="_blank" class="hover:text-blue-600 transition-colors">WallTech (China) Co.,Ltd.</a> 保留所有权利.
+            </p>
+          </div>
           <div class="flex space-x-6 mt-4 md:mt-0">
-            <a href="/privacy" class="text-gray-500 hover:text-blue-600 text-sm">隐私政策</a>
-            <a href="/terms" class="text-gray-500 hover:text-blue-600 text-sm">服务条款</a>
-            <a href="/cookie-settings" class="text-gray-500 hover:text-blue-600 text-sm">Cookie 设置</a>
+            <a href="https://zh.etowertech.com/sitemap.html" target="_blank" class="text-gray-500 hover:text-blue-600 text-sm transition-colors">网站地图</a>
+            <a href="https://zh.etowertech.com/privacy-policy.html" target="_blank" class="text-gray-500 hover:text-blue-600 text-sm transition-colors">隐私政策</a>
           </div>
         </div>
 
@@ -123,4 +204,12 @@
 
 <style scoped>
 /* PortalFooter特定样式 */
+footer {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+}
+
+/* 确保FontAwesome图标正确显示 */
+.fas, .fab {
+  font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands";
+}
 </style> 

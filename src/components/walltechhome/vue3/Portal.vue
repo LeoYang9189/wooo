@@ -5,7 +5,7 @@
       <PortalHero @open-lead-form="showLeadForm = true" />
       <PortalFeatures @open-lead-form="showLeadForm = true" />
       <PortalAIDemo />
-      <PortalCTA />
+      <PortalCTA @open-lead-form="showLeadForm = true" />
     </main>
     <PortalFooter />
     

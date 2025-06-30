@@ -38,8 +38,8 @@ const goHome = () => {
 }
 
 const handleLogin = () => {
-  console.log('登录/注册')
-  // 这里可以添加具体的登录逻辑
+  // 跳转到登录注册页面
+  window.location.href = '/walltech-vue3-auth'
 }
 </script>
 

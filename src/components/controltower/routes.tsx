@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import ControlTowerPanel from './pages/ControlTowerPanel';
 import ControlTowerPanelTemp from './pages/ControlTowerPanelTemp';
@@ -87,10 +87,23 @@ import AboutManagement from './pages/AboutManagement';
 import HomeManagement from './pages/HomeManagement';
 // --- 结束 ---
 
+// 默认路由重定向组件
+const DefaultRoute: React.FC = () => {
+  const location = useLocation();
+  const urlParams = new URLSearchParams(location.search);
+  const isPersonalMode = urlParams.get('mode') === 'personal';
+  
+  if (isPersonalMode) {
+    return <Navigate to="/controltower/user-profile?mode=personal" replace />;
+  }
+  
+  return <Dashboard />;
+};
+
 const ControlTowerRoutes: React.FC = () => {
   return (
     <Routes>
-      <Route path="/" element={<Dashboard />} />
+      <Route path="/" element={<DefaultRoute />} />
       <Route path="/ui-standards" element={<UIStandards />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/control-tower-panel" element={<ControlTowerPanel />} />

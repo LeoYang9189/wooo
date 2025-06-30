@@ -45,6 +45,10 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
   const [searchValue, setSearchValue] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // 检查是否为个人模式
+  const urlParams = new URLSearchParams(location.search);
+  const isPersonalMode = urlParams.get('mode') === 'personal';
 
   const toggleCollapse = () => setCollapsed(!collapsed);
 
@@ -927,8 +931,8 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
         className="border-r border-gray-200 relative"
       >
         {/* 绸带标签 - 放在侧边栏左上角 */}
-        <div className="ribbon orange">
-          运营
+        <div className={`ribbon ${isPersonalMode ? 'green' : 'orange'}`}>
+          {isPersonalMode ? '个人' : '运营'}
         </div>
         
         <div className="p-4 flex items-center justify-center">
@@ -961,223 +965,242 @@ const ControlTowerLayout: React.FC<LayoutProps> = ({ children }) => {
           onClickMenuItem={handleMenuItemClick}
           style={{ width: '100%' }}
         >
-          <MenuItem key="ui-standards">
-            <IconBook />
-            <span>通用规范约定</span>
-          </MenuItem>
-          <MenuItem key="dashboard">
-            <IconDashboard />
-            <span>仪表盘</span>
-          </MenuItem>
-          <MenuItem key="control-tower-panel">
-            <IconApps />
-            <span>控制塔面板</span>
-          </MenuItem>
-          <MenuItem key="control-tower-panel-temp">
-            <IconApps />
-            <span>控制塔面板-临时</span>
-          </MenuItem>
-          
-          {/* 超级运价系统菜单 */}
-          <SubMenu
-            key="super-freight"
-            title={
-              <span>
-                <IconFile />
-                <span>超级运价</span>
-              </span>
-            }
-          >
-            <MenuItem key="saas/fcl-rates">运价维护</MenuItem>
-            <MenuItem key="saas/rate-query">运价查询</MenuItem>
+          {/* 个人模式只显示用户中心 */}
+          {isPersonalMode ? (
             <SubMenu
-              key="inquiry-quote"
-              title="询价报价"
+              key="user"
+              title={
+                <span>
+                  <IconUser />
+                  <span>用户中心</span>
+                </span>
+              }
             >
-              <MenuItem key="saas/inquiry-management">询价管理</MenuItem>
-              <MenuItem key="saas/quote-management">报价管理</MenuItem>
+              <MenuItem key="user-profile">个人信息</MenuItem>
+              <MenuItem key="company-profile">企业信息</MenuItem>
             </SubMenu>
-            <SubMenu
-              key="space-management"
-              title="舱位管理"
-            >
-              <MenuItem key="saas/space-query">舱位查询</MenuItem>
-              <MenuItem key="saas/space-booking">舱位预订</MenuItem>
-              <MenuItem key="saas/space-statistics">舱位统计</MenuItem>
-            </SubMenu>
-            <MenuItem key="saas/contract-management">合约管理</MenuItem>
-            <MenuItem key="saas/surcharge">附加费维护</MenuItem>
-            <MenuItem key="saas/pricing-rule-management">加价规则维护</MenuItem>
-          </SubMenu>
-          
-          {/* 原有控制塔菜单 */}
-          {/* 运价中心菜单已暂时注释
-          <SubMenu
-            key="freight"
-            title={
-              <span>
-                <FontAwesomeIcon icon={faShip} className="mr-2" />
-                <span>运价中心</span>
-              </span>
-            }
-          >
-            <MenuItem key="freight-rate-query">运价查询</MenuItem>
-            <MenuItem key="inquiry-management">询价管理</MenuItem>
-          </SubMenu>
-          */}
-          <SubMenu
-            key="order"
-            title={
-              <span>
-                <IconList />
-                <span>订单中心</span>
-              </span>
-            }
-          >
-            <MenuItem key="order-management">订单管理</MenuItem>
-          </SubMenu>
-
-          {/* 船期中心 */}
-          <SubMenu
-            key="schedule"
-            title={
-              <span>
-                <FontAwesomeIcon icon={faShip} className="mr-2" />
-                <span>船期中心</span>
-              </span>
-            }
-          >
-            <MenuItem key="route-maintenance">航线维护</MenuItem>
-            <MenuItem key="schedule-query">船期查询</MenuItem>
-          </SubMenu>
-
-          {/* 客户中心 */}
-          <SubMenu
-            key="customer"
-            title={
-              <span>
-                <FontAwesomeIcon icon={faUsers} className="mr-2" />
-                <span>客户中心</span>
-              </span>
-            }
-          >
-            <MenuItem key="user-management">用户管理</MenuItem>
-            <MenuItem key="company-management">企业管理</MenuItem>
-          </SubMenu>
-
-          <SubMenu
-            key="user"
-            title={
-              <span>
-                <IconUser />
-                <span>用户中心</span>
-              </span>
-            }
-          >
-            <MenuItem key="user-profile">个人信息</MenuItem>
-            <MenuItem key="company-profile">企业信息</MenuItem>
-          </SubMenu>
-          <MenuItem key="application-center">
-            <IconApps />
-            <span>应用中心</span>
-          </MenuItem>
-
-          {/* 运营管理 */}
-          <SubMenu
-            key="operation-management"
-            title={
-              <span>
+          ) : (
+            <>
+              {/* 企业模式显示完整菜单 */}
+              <MenuItem key="ui-standards">
+                <IconBook />
+                <span>通用规范约定</span>
+              </MenuItem>
+              <MenuItem key="dashboard">
+                <IconDashboard />
+                <span>仪表盘</span>
+              </MenuItem>
+              <MenuItem key="control-tower-panel">
                 <IconApps />
-                <span>运营管理</span>
-              </span>
-            }
-          >
-            <MenuItem key="home-management">首页管理</MenuItem>
-            <MenuItem key="news-management">资讯中心管理</MenuItem>
-            <MenuItem key="business-management">业务介绍管理</MenuItem>
-            <MenuItem key="about-management">关于我们管理</MenuItem>
-          </SubMenu>
+                <span>控制塔面板</span>
+              </MenuItem>
+              <MenuItem key="control-tower-panel-temp">
+                <IconApps />
+                <span>控制塔面板-临时</span>
+              </MenuItem>
+              
+              {/* 超级运价系统菜单 */}
+              <SubMenu
+                key="super-freight"
+                title={
+                  <span>
+                    <IconFile />
+                    <span>超级运价</span>
+                  </span>
+                }
+              >
+                <MenuItem key="saas/fcl-rates">运价维护</MenuItem>
+                <MenuItem key="saas/rate-query">运价查询</MenuItem>
+                <SubMenu
+                  key="inquiry-quote"
+                  title="询价报价"
+                >
+                  <MenuItem key="saas/inquiry-management">询价管理</MenuItem>
+                  <MenuItem key="saas/quote-management">报价管理</MenuItem>
+                </SubMenu>
+                <SubMenu
+                  key="space-management"
+                  title="舱位管理"
+                >
+                  <MenuItem key="saas/space-query">舱位查询</MenuItem>
+                  <MenuItem key="saas/space-booking">舱位预订</MenuItem>
+                  <MenuItem key="saas/space-statistics">舱位统计</MenuItem>
+                </SubMenu>
+                <MenuItem key="saas/contract-management">合约管理</MenuItem>
+                <MenuItem key="saas/surcharge">附加费维护</MenuItem>
+                <MenuItem key="saas/pricing-rule-management">加价规则维护</MenuItem>
+              </SubMenu>
+              
+              {/* 原有控制塔菜单 */}
+              {/* 运价中心菜单已暂时注释
+              <SubMenu
+                key="freight"
+                title={
+                  <span>
+                    <FontAwesomeIcon icon={faShip} className="mr-2" />
+                    <span>运价中心</span>
+                  </span>
+                }
+              >
+                <MenuItem key="freight-rate-query">运价查询</MenuItem>
+                <MenuItem key="inquiry-management">询价管理</MenuItem>
+              </SubMenu>
+              */}
+              <SubMenu
+                key="order"
+                title={
+                  <span>
+                    <IconList />
+                    <span>订单中心</span>
+                  </span>
+                }
+              >
+                <MenuItem key="order-management">订单管理</MenuItem>
+              </SubMenu>
 
-          {/* 系统设置 */}
-          <SubMenu
-            key="system-settings"
-            title={
-              <span>
-                <IconSettings />
-                <span>系统设置</span>
-              </span>
-            }
-          >
-            <MenuItem key="employee-management">员工管理</MenuItem>
-            <MenuItem key="permission-management">权限管理</MenuItem>
-            <MenuItem key="personalization-config">个性化配置</MenuItem>
-          </SubMenu>
+              {/* 船期中心 */}
+              <SubMenu
+                key="schedule"
+                title={
+                  <span>
+                    <FontAwesomeIcon icon={faShip} className="mr-2" />
+                    <span>船期中心</span>
+                  </span>
+                }
+              >
+                <MenuItem key="route-maintenance">航线维护</MenuItem>
+                <MenuItem key="schedule-query">船期查询</MenuItem>
+              </SubMenu>
 
-          {/* 基础资料维护 */}
-          <SubMenu
-            key="basic-data"
-            title={
-              <span>
-                <IconStorage />
-                <span>基础资料维护</span>
-              </span>
-            }
-          >
-            <MenuItem key="port-management">
-              <span>港口管理</span>
-            </MenuItem>
-            <MenuItem key="carrier-management">
-              <span>承运人管理</span>
-            </MenuItem>
-            <MenuItem key="country-region-management">
-              <span>国家（地区）</span>
-            </MenuItem>
-            <MenuItem key="china-administrative">
-              <span>中国行政区划</span>
-            </MenuItem>
-            <MenuItem key="overseas-warehouse">
-              <span>海外仓库</span>
-            </MenuItem>
-            <MenuItem key="zipcode-management">
-              <span>邮编管理</span>
-            </MenuItem>
-            <MenuItem key="route-management">
-              <span>航线管理</span>
-            </MenuItem>
-            <MenuItem key="container-management">
-              <span>集装箱管理</span>
-            </MenuItem>
-            <MenuItem key="package-unit">
-              <span>包装单位</span>
-            </MenuItem>
-            <MenuItem key="transport-terms">
-              <span>运输条款</span>
-            </MenuItem>
-            <MenuItem key="trade-terms">
-              <span>贸易条款</span>
-            </MenuItem>
-            <MenuItem key="currency-management">
-              <span>币种管理</span>
-            </MenuItem>
-            <MenuItem key="exchange-rate-management">
-              <span>汇率设置</span>
-            </MenuItem>
-            <MenuItem key="calculation-unit">
-              <span>计费单位</span>
-            </MenuItem>
-            <MenuItem key="charge-management">
-              <span>费用管理</span>
-            </MenuItem>
-            <MenuItem key="ship-agent">
-              <span>船舶代理</span>
-            </MenuItem>
-            <MenuItem key="ship-data">
-              <span>船舶资料</span>
-            </MenuItem>
-            <MenuItem key="terminal-management">
-              <span>码头管理</span>
-            </MenuItem>
-          </SubMenu>
+              {/* 客户中心 */}
+              <SubMenu
+                key="customer"
+                title={
+                  <span>
+                    <FontAwesomeIcon icon={faUsers} className="mr-2" />
+                    <span>客户中心</span>
+                  </span>
+                }
+              >
+                <MenuItem key="user-management">用户管理</MenuItem>
+                <MenuItem key="company-management">企业管理</MenuItem>
+              </SubMenu>
+
+              <SubMenu
+                key="user"
+                title={
+                  <span>
+                    <IconUser />
+                    <span>用户中心</span>
+                  </span>
+                }
+              >
+                <MenuItem key="user-profile">个人信息</MenuItem>
+                <MenuItem key="company-profile">企业信息</MenuItem>
+              </SubMenu>
+              <MenuItem key="application-center">
+                <IconApps />
+                <span>应用中心</span>
+              </MenuItem>
+
+              {/* 运营管理 */}
+              <SubMenu
+                key="operation-management"
+                title={
+                  <span>
+                    <IconApps />
+                    <span>运营管理</span>
+                  </span>
+                }
+              >
+                <MenuItem key="home-management">首页管理</MenuItem>
+                <MenuItem key="news-management">资讯中心管理</MenuItem>
+                <MenuItem key="business-management">业务介绍管理</MenuItem>
+                <MenuItem key="about-management">关于我们管理</MenuItem>
+              </SubMenu>
+
+              {/* 系统设置 */}
+              <SubMenu
+                key="system-settings"
+                title={
+                  <span>
+                    <IconSettings />
+                    <span>系统设置</span>
+                  </span>
+                }
+              >
+                <MenuItem key="employee-management">员工管理</MenuItem>
+                <MenuItem key="permission-management">权限管理</MenuItem>
+                <MenuItem key="personalization-config">个性化配置</MenuItem>
+              </SubMenu>
+
+              {/* 基础资料维护 */}
+              <SubMenu
+                key="basic-data"
+                title={
+                  <span>
+                    <IconStorage />
+                    <span>基础资料维护</span>
+                  </span>
+                }
+              >
+                <MenuItem key="port-management">
+                  <span>港口管理</span>
+                </MenuItem>
+                <MenuItem key="carrier-management">
+                  <span>承运人管理</span>
+                </MenuItem>
+                <MenuItem key="country-region-management">
+                  <span>国家（地区）</span>
+                </MenuItem>
+                <MenuItem key="china-administrative">
+                  <span>中国行政区划</span>
+                </MenuItem>
+                <MenuItem key="overseas-warehouse">
+                  <span>海外仓库</span>
+                </MenuItem>
+                <MenuItem key="zipcode-management">
+                  <span>邮编管理</span>
+                </MenuItem>
+                <MenuItem key="route-management">
+                  <span>航线管理</span>
+                </MenuItem>
+                <MenuItem key="container-management">
+                  <span>集装箱管理</span>
+                </MenuItem>
+                <MenuItem key="package-unit">
+                  <span>包装单位</span>
+                </MenuItem>
+                <MenuItem key="transport-terms">
+                  <span>运输条款</span>
+                </MenuItem>
+                <MenuItem key="trade-terms">
+                  <span>贸易条款</span>
+                </MenuItem>
+                <MenuItem key="currency-management">
+                  <span>币种管理</span>
+                </MenuItem>
+                <MenuItem key="exchange-rate-management">
+                  <span>汇率设置</span>
+                </MenuItem>
+                <MenuItem key="calculation-unit">
+                  <span>计费单位</span>
+                </MenuItem>
+                <MenuItem key="charge-management">
+                  <span>费用管理</span>
+                </MenuItem>
+                <MenuItem key="ship-agent">
+                  <span>船舶代理</span>
+                </MenuItem>
+                <MenuItem key="ship-data">
+                  <span>船舶资料</span>
+                </MenuItem>
+                <MenuItem key="terminal-management">
+                  <span>码头管理</span>
+                </MenuItem>
+              </SubMenu>
+            </>
+          )}
         </Menu>
 
         <div className="absolute bottom-5 w-full px-4">
