@@ -4,8 +4,6 @@
     <main>
       <PortalHero @open-lead-form="showLeadForm = true" />
       <PortalFeatures @open-lead-form="showLeadForm = true" />
-      <PortalFeatureDetail />
-      <PortalTechSpecs />
       <PortalCTA />
     </main>
     <PortalFooter />
@@ -129,8 +127,6 @@ import PortalHeader from './PortalHeader.vue'
 import PortalFooter from './PortalFooter.vue'
 import PortalHero from './PortalHero.vue'
 import PortalFeatures from './PortalFeatures.vue'
-import PortalFeatureDetail from './PortalFeatureDetail.vue'
-import PortalTechSpecs from './PortalTechSpecs.vue'
 import PortalCTA from './PortalCTA.vue'
 import './PortalStyles.css'
 
