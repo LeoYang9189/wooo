@@ -119,7 +119,7 @@
             <span v-if="isLogin">还没有账户？</span>
             <span v-else>已有账户？</span>
             <button
-              @click="toggleAuthMode"
+              @click="handleAuthModeToggle"
               class="text-blue-600 hover:text-blue-700 font-medium ml-2"
             >
               {{ isLogin ? '立即注册' : '立即登录' }}
@@ -192,6 +192,62 @@
         </div>
       </div>
     </div>
+    
+    <!-- 账号已注册提醒弹窗 -->
+    <div v-if="accountExistsModalVisible" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden animate-fadeIn">
+        <!-- 装饰性头部 -->
+        <div class="bg-gradient-to-r from-orange-500 to-red-500 px-6 pt-6 pb-4 relative">
+          <div class="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-12 translate-x-12"></div>
+          <div class="relative z-10">
+            <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-3">
+              <i class="fas fa-exclamation-triangle text-white text-xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">账号提醒</h3>
+            <p class="text-orange-100 text-sm">系统检测到您可能已有账号</p>
+          </div>
+        </div>
+        
+        <!-- 内容区域 -->
+        <div class="p-6">
+          <div class="mb-6 text-center">
+            <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <i class="fas fa-user-check text-orange-500 text-2xl"></i>
+            </div>
+            <h4 class="text-lg font-bold text-gray-800 mb-3">当前账号已注册</h4>
+            <p class="text-gray-600 leading-relaxed">
+              检测到您的账号信息已存在于系统中，无需重复注册。请直接使用现有账号登录，享受我们的智慧物流服务。
+            </p>
+          </div>
+          
+          <div class="bg-blue-50 rounded-xl p-4 mb-6 border border-blue-100">
+            <div class="flex items-start">
+              <i class="fas fa-info-circle text-blue-500 mt-1 mr-3"></i>
+              <div class="text-sm text-blue-700">
+                <p class="font-medium mb-1">温馨提示：</p>
+                <p>如果您忘记了登录密码，可以使用"忘记密码"功能重置密码。</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="flex gap-3">
+            <button 
+              @click="accountExistsModalVisible = false"
+              class="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+            >
+              取消
+            </button>
+            <button 
+              @click="handleGoToLogin"
+              class="flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all font-medium flex items-center justify-center"
+            >
+              <i class="fas fa-sign-in-alt mr-2"></i>
+              去登录
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -224,6 +280,9 @@ const { login } = useUser()
 const tenantSelectionVisible = ref(false)
 const selectedTenant = ref('personal')
 const pendingUserData = ref(null)
+
+// 账号已注册提醒弹窗状态
+const accountExistsModalVisible = ref(false)
 
 // 组件挂载
 onMounted(() => {
@@ -332,6 +391,26 @@ const handleTenantConfirm = () => {
     alert('登录成功！欢迎进入企业控制塔 🏢')
     // 企业账号跳转到完整的控制塔
     window.location.href = '/controltower'
+  }
+}
+
+// 处理登录/注册模式切换
+const handleAuthModeToggle = () => {
+  // 如果当前是登录页面，用户点击"立即注册"，先显示账号已注册提醒弹窗
+  if (isLogin.value) {
+    accountExistsModalVisible.value = true
+  } else {
+    // 如果当前是注册页面，用户点击"立即登录"，直接切换到登录页面
+    toggleAuthMode()
+  }
+}
+
+// 处理去登录按钮点击
+const handleGoToLogin = () => {
+  accountExistsModalVisible.value = false
+  // 确保切换到登录模式
+  if (!isLogin.value) {
+    toggleAuthMode()
   }
 }
 </script>
