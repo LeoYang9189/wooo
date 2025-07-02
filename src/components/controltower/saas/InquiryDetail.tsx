@@ -7,13 +7,13 @@ import {
   Space, 
   Table, 
   Radio, 
-  Descriptions,
   Modal,
   InputNumber,
   Select,
   Input, 
   Message,
-  Grid
+  Grid,
+  Checkbox
 } from '@arco-design/web-react';
 import { IconArrowLeft, IconDownload, IconCopy, IconPrinter } from '@arco-design/web-react/icon';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -89,6 +89,10 @@ interface InquiryDetail {
   remark: string;
   clientType: string;
   clientName: string;
+  // 价格勾选状态
+  precarriageChecked?: boolean;
+  mainlineChecked?: boolean;
+  lastmileChecked?: boolean;
   // 整箱特有字段
   containerInfo?: ContainerInfo[];
   // 拼箱/空运特有字段
@@ -417,6 +421,109 @@ ${type === 'air' ? '航空公司' : '船公司'}：${inquiryDetail.shipCompany}
     return containerTypes.map(type => ({ label: type.toUpperCase(), value: type }));
   };
 
+  // 渲染运价表格 - 复制自 ViewQuote.tsx
+  const renderRateTable = (rateItems: any[], containerTypes: string[]) => {
+    // 按计费方式分组
+    const containerRateItems = rateItems.filter(item => item.containerRates);
+    const unitRateItems = rateItems.filter(item => item.unitPrice && !item.containerRates);
+
+    // 按箱计费表格列
+    const containerColumns = [
+      {
+        title: '费用名称',
+        dataIndex: 'feeName',
+        width: 120,
+      },
+      {
+        title: '币种',
+        dataIndex: 'currency',
+        width: 80,
+      },
+      ...containerTypes.map(type => ({
+        title: type,
+        dataIndex: 'containerRates',
+        width: 100,
+        render: (_: any, record: any) => record.containerRates?.[type] || '-'
+      })),
+      {
+        title: '备注',
+        dataIndex: 'remark',
+        width: 120,
+        render: (value: string) => value || '-'
+      }
+    ];
+
+    // 非按箱计费表格列
+    const unitColumns = [
+      {
+        title: '费用名称',
+        dataIndex: 'feeName',
+        width: 120,
+      },
+      {
+        title: '币种',
+        dataIndex: 'currency',
+        width: 80,
+      },
+      {
+        title: '单价',
+        dataIndex: 'unitPrice',
+        width: 100,
+      },
+      {
+        title: '单位',
+        dataIndex: 'unit',
+        width: 80,
+      },
+      {
+        title: '备注',
+        dataIndex: 'remark',
+        width: 120,
+        render: (value: string) => value || '-'
+      }
+    ];
+
+    return (
+      <div className="space-y-4">
+        {/* 按箱计费表格 */}
+        {containerRateItems.length > 0 && (
+          <div>
+            <div className="text-sm font-medium text-gray-600 mb-2">按箱计费</div>
+            <Table
+              columns={containerColumns}
+              data={containerRateItems}
+              rowKey="id"
+              pagination={false}
+              size="small"
+              border={{
+                wrapper: true,
+                cell: true
+              }}
+            />
+          </div>
+        )}
+
+        {/* 非按箱计费表格 */}
+        {unitRateItems.length > 0 && (
+          <div>
+            <div className="text-sm font-medium text-gray-600 mb-2">非按箱计费</div>
+            <Table
+              columns={unitColumns}
+              data={unitRateItems}
+              rowKey="id"
+              pagination={false}
+              size="small"
+              border={{
+                wrapper: true,
+                cell: true
+              }}
+            />
+          </div>
+        )}
+      </div>
+    );
+  };
+
   // 生成委托
   const handleGenerateDelegate = () => {
     // 检查是否选择了必要的运价
@@ -436,55 +543,9 @@ ${type === 'air' ? '航空公司' : '船公司'}：${inquiryDetail.shipCompany}
     });
   };
 
-  // 表格列 - 整箱干线运价
-  const fclMainlineColumns = [
-    {
-      title: '选择',
-      width: 80,
-      render: (_: unknown, record: MainlineRate) => (
-        <Radio
-          checked={selectedMainlineRate === record.id}
-          onChange={() => setSelectedMainlineRate(record.id)}
-        />
-      ),
-    },
-    { title: '运价编号', dataIndex: 'certNo', width: 120 },
-    { title: '起运港', dataIndex: 'departurePort', width: 150 },
-    { title: '卸货港', dataIndex: 'dischargePort', width: 150 },
-    { title: '船公司', dataIndex: 'shipCompany', width: 120 },
-    { title: '有效期', dataIndex: 'validPeriod', width: 180 },
-    { title: '直达/中转', dataIndex: 'transitType', width: 100 },
-    { title: '20GP', dataIndex: '20GP', width: 110 },
-    { title: '40GP', dataIndex: '40GP', width: 110 },
-    { title: '40HC', dataIndex: '40HC', width: 110 },
-    { title: '航程', dataIndex: 'transitTime', width: 80 },
-    { title: 'ETD', dataIndex: 'etd', width: 110 },
-    { title: 'ETA', dataIndex: 'eta', width: 110 }
-  ];
+
   
-  // 表格列 - 拼箱/空运干线运价
-  const lclAirMainlineColumns = [
-    {
-      title: '选择',
-      width: 80,
-      render: (_: unknown, record: MainlineRate) => (
-        <Radio
-          checked={selectedMainlineRate === record.id}
-          onChange={() => setSelectedMainlineRate(record.id)}
-        />
-      ),
-    },
-    { title: '运价编号', dataIndex: 'certNo', width: 120 },
-    { title: '起运地', dataIndex: 'departurePort', width: 150 },
-    { title: '目的地', dataIndex: 'dischargePort', width: 150 },
-    { title: '承运人', dataIndex: 'shipCompany', width: 120 },
-    { title: '有效期', dataIndex: 'validPeriod', width: 180 },
-    { title: '运价', dataIndex: 'price', width: 100 },
-    { title: '币种', dataIndex: 'currency', width: 80 },
-    { title: '航程', dataIndex: 'transitTime', width: 80 },
-    { title: 'ETD', dataIndex: 'etd', width: 110 },
-    { title: 'ETA', dataIndex: 'eta', width: 110 }
-  ];
+
   
   // 表格列 - 港前运价
   const precarriageColumns = [
@@ -519,25 +580,7 @@ ${type === 'air' ? '航空公司' : '船公司'}：${inquiryDetail.shipCompany}
     );
   }
   
-  // 表格列 - 尾程运价
-  const oncarriageColumns = [
-    {
-      title: '选择',
-      width: 80,
-      render: (_: unknown, record: OncarriageRate) => (
-        <Radio
-          checked={selectedOncarriageRate === record.id}
-          onChange={() => setSelectedOncarriageRate(record.id)}
-        />
-      ),
-    },
-    { title: '运价编号', dataIndex: 'certNo', width: 120 },
-    { title: '目的地', dataIndex: 'destination', width: 150 },
-    { title: '地址类型', dataIndex: 'addressType', width: 100 },
-    { title: '代理名称', dataIndex: 'agentName', width: 150 },
-    { title: '运价', dataIndex: 'price', width: 100 },
-    { title: '币种', dataIndex: 'currency', width: 80 }
-  ];
+
 
   if (!inquiryDetail) {
     return (
@@ -567,88 +610,348 @@ ${type === 'air' ? '航空公司' : '船公司'}：${inquiryDetail.shipCompany}
         <div className="flex items-center mb-4">
           <Button icon={<IconArrowLeft />} onClick={handleGoBack}>返回</Button>
           <Title heading={6} className="ml-4 mb-0">询价详情：{inquiryDetail.inquiryNo}</Title>
-          <div className="ml-auto">
+        </div>
+        
+          {/* 顶部checkbox区域和操作按钮 */}
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <Checkbox 
+                checked={inquiryDetail.precarriageChecked || true} 
+                disabled
+                style={{ marginRight: 16 }}
+              >
+                港前价格
+              </Checkbox>
+              <Checkbox 
+                checked={inquiryDetail.mainlineChecked || true}
+                disabled
+                style={{ marginRight: 16 }}
+              >
+                干线价格
+              </Checkbox>
+              <Checkbox 
+                checked={inquiryDetail.lastmileChecked || true}
+                disabled
+              >
+                尾程价格
+              </Checkbox>
+            </div>
             <Space>
-              <Button type="primary" onClick={handleExportQuotation} icon={<IconDownload />}>导出报价</Button>
+              <Button icon={<IconDownload />} onClick={handleExportQuotation}>导出报价</Button>
               <Button type="primary" onClick={handleGenerateDelegate}>生成委托</Button>
             </Space>
           </div>
-        </div>
-        
-          {/* 基本信息区域 */}
-        <Card title="基本信息" className="mb-6">
-          <Descriptions 
-            column={3}
-            layout="vertical"
-            data={[
-              { label: '询价编号', value: inquiryDetail.inquiryNo },
-              { label: '询价来源', value: inquiryDetail.source },
-              { label: '询价人', value: inquiryDetail.inquirer },
-              { label: '货盘性质', value: inquiryDetail.cargoNature },
-              { label: '货好时间', value: inquiryDetail.cargoReadyTime },
-              { label: type === 'air' ? "航空公司" : "船公司", value: inquiryDetail.shipCompany },
-              { label: '直达/中转', value: inquiryDetail.transitType },
-              { label: '航线', value: inquiryDetail.route },
-              { label: type === 'air' ? "起始地" : "起运港", value: inquiryDetail.departurePort },
-              { label: type === 'air' ? "目的地" : "卸货港", value: inquiryDetail.dischargePort },
-              { label: '委托单位类型', value: inquiryDetail.clientType },
-              { label: '委托单位名称', value: inquiryDetail.clientName },
-              // 根据类型显示不同字段
-              ...(type === 'fcl' ? [
-                { label: '箱型箱量', value: inquiryDetail.containerInfo?.map(item => `${item.count}*${item.type}`).join('+') || '-' }
-              ] : [
-                { label: '重量(KGS)', value: inquiryDetail.weight || '-' },
-                { label: '体积(CBM)', value: inquiryDetail.volume || '-' }
-              ]),
-              { label: '备注', value: inquiryDetail.remark || '-' }
-            ]}
-          />
-        </Card>
           
-          {/* 报价方案区域 */}
-          <div className="border rounded p-4 mb-4">
-            <div className="section-title">报价方案</div>
+          <Row gutter={[16, 16]}>
+            {/* 左侧区域：基本信息 */}
+            <Col span={12}>
+              <div className="border rounded p-4 mb-4">
+                <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2 mb-4">基本信息</div>
+                
+                <Row gutter={[16, 16]}>
+                  <Col span={24}>
+                    <div className="mb-3">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">询价编号</label>
+                      <Input value={inquiryDetail.inquiryNo} disabled />
+                    </div>
+                  </Col>
+                  
+                  <Col span={24}>
+                    <div className="mb-3">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">询价来源</label>
+                      <Input value={inquiryDetail.source} disabled />
+                    </div>
+                  </Col>
+                  
+                  <Col span={24}>
+                    <div className="mb-3">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">询价人</label>
+                      <Input value={inquiryDetail.inquirer} disabled />
+                    </div>
+                  </Col>
+                  
+                  <Col span={24}>
+                    <div className="mb-3">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">货盘性质</label>
+                      <Input value={inquiryDetail.cargoNature} disabled />
+                    </div>
+                  </Col>
+                  
+                  <Col span={24}>
+                    <div className="mb-3">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">货好时间</label>
+                      <Input value={inquiryDetail.cargoReadyTime} disabled />
+                    </div>
+                  </Col>
+                  
+                  <Col span={24}>
+                    <div className="mb-3">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">委托单位</label>
+                      <Input value={`${inquiryDetail.clientType} - ${inquiryDetail.clientName}`} disabled />
+                    </div>
+                  </Col>
+                </Row>
+              </div>
+            </Col>
+            
+            {/* 右侧区域：货物信息 */}
+            <Col span={12}>
+              <div className="border rounded p-4 mb-4">
+                <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2 mb-4">货物信息</div>
+                
+                <Row gutter={[16, 16]}>
+                  <Col span={24}>
+                    <div className="mb-3">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">直达/中转</label>
+                      <Input value={inquiryDetail.transitType} disabled />
+                    </div>
+                  </Col>
+                  
+                  <Col span={24}>
+                    <div className="mb-3">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">航线</label>
+                      <Input value={inquiryDetail.route} disabled />
+                    </div>
+                  </Col>
+                  
+                  <Col span={24}>
+                    <div className="mb-3">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{type === 'air' ? '起始地' : '起运港'}</label>
+                      <Input value={inquiryDetail.departurePort} disabled />
+                    </div>
+                  </Col>
+                  
+                  <Col span={24}>
+                    <div className="mb-3">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{type === 'air' ? '目的地' : '卸货港'}</label>
+                      <Input value={inquiryDetail.dischargePort} disabled />
+                    </div>
+                  </Col>
+                  
+                  <Col span={24}>
+                    <div className="mb-3">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{type === 'air' ? '航空公司' : '船公司'}</label>
+                      <Input value={inquiryDetail.shipCompany} disabled />
+                    </div>
+                  </Col>
+                  
+                  <Col span={24}>
+                    <div className="mb-3">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">备注</label>
+                      <Input.TextArea value={inquiryDetail.remark} disabled style={{ minHeight: '60px' }} />
+                    </div>
+                  </Col>
+                </Row>
+              </div>
+              
+              {/* 箱型箱量信息 */}
+              <div className="border rounded p-4">
+                <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2 mb-4">
+                  {type === 'fcl' ? '箱型箱量' : '货物信息'}
+                </div>
+                
+                {type === 'fcl' ? (
+                  <div className="space-y-3">
+                    {inquiryDetail.containerInfo?.map((container, index) => (
+                      <Row gutter={[16, 16]} key={index}>
+                        <Col span={12}>
+                          <div className="mb-3">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">箱型</label>
+                            <Input value={container.type} disabled />
+                          </div>
+                        </Col>
+                        <Col span={12}>
+                          <div className="mb-3">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">数量</label>
+                            <Input value={String(container.count)} disabled />
+                          </div>
+                        </Col>
+                      </Row>
+                    )) || (
+                      <div className="text-gray-500">暂无箱型信息</div>
+                    )}
+                  </div>
+                ) : (
+                  <Row gutter={[16, 16]}>
+                    <Col span={12}>
+                      <div className="mb-3">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">重量(KGS)</label>
+                        <Input value={inquiryDetail.weight || '-'} disabled />
+                      </div>
+                    </Col>
+                    <Col span={12}>
+                      <div className="mb-3">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">体积(CBM)</label>
+                        <Input value={inquiryDetail.volume || '-'} disabled />
+                      </div>
+                    </Col>
+                  </Row>
+                )}
+              </div>
+            </Col>
+          </Row>
+          
+          {/* 下半部分：运价明细模块 */}
+          <div className="mt-6">
+            <div className="text-blue-600 font-bold border-l-4 border-blue-600 pl-2 mb-6 text-lg">运价明细</div>
             
             {/* 干线运价 */}
-            <div className="rate-table-container">
-              <div className="rate-table-title">干线运价</div>
-              <Table
-                rowKey="id"
-                columns={type === 'fcl' ? fclMainlineColumns : lclAirMainlineColumns}
-                data={inquiryDetail.mainlineRates}
-                className="match-price-table"
-                pagination={false}
-                border={true}
-                scroll={{ x: 1500 }}
-              />
-            </div>
-            
+            {inquiryDetail.mainlineRates.length > 0 && (
+              <div className="mb-6">
+                <Title heading={6} className="mb-4 text-blue-600">干线运价</Title>
+                <div className="space-y-4">
+                  {inquiryDetail.mainlineRates.map((rate) => (
+                    <Card key={rate.id} className="border border-gray-200">
+                      <div className="flex items-start gap-4">
+                        {/* 选择框 */}
+                        <div className="mt-2">
+                          <Radio
+                            checked={selectedMainlineRate === rate.id}
+                            onChange={() => setSelectedMainlineRate(rate.id)}
+                          />
+                        </div>
+                        
+                        {/* 运价内容 */}
+                        <div className="flex-1">
+                          {/* 基本信息 */}
+                          <div className="flex items-center gap-4 mb-4">
+                            <span className="font-medium text-blue-600">运价编号：{rate.certNo}</span>
+                            <span className="font-medium">船公司：{rate.shipCompany}</span>
+                            <span>有效期：{rate.validPeriod}</span>
+                            <span>直达/中转：{rate.transitType}</span>
+                            <span>航程：{rate.transitTime}</span>
+                          </div>
+                          
+                          {/* 免用箱免堆存 */}
+                          <div className="flex gap-4 mb-4 text-sm text-gray-600">
+                            <span>ETD：{rate.etd}</span>
+                            <span>ETA：{rate.eta}</span>
+                          </div>
+                          
+                          {/* 费用明细表格 */}
+                          {renderRateTable([
+                            {
+                              id: 1,
+                              feeName: '海运费',
+                              currency: rate.currency,
+                              unit: '箱',
+                              containerRates: {
+                                '20GP': rate['20GP']?.replace(/\s*USD$/, ''),
+                                '40GP': rate['40GP']?.replace(/\s*USD$/, ''),
+                                '40HC': rate['40HC']?.replace(/\s*USD$/, '')
+                              },
+                              remark: 'LSE已含'
+                            }
+                          ], inquiryDetail.containerInfo?.map(c => c.type) || ['20GP', '40HC'])}
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* 港前运价 */}
-            <div className="rate-table-container">
-              <div className="rate-table-title">港前运价</div>
-              <Table
-                rowKey="id"
-                columns={precarriageColumns}
-                data={inquiryDetail.precarriageRates}
-                className="match-price-table"
-                pagination={false}
-                border={true}
-                scroll={{ x: 1200 }}
-              />
+            <div className="mb-6">
+              <Title heading={6} className="mb-4 text-blue-600">港前运价</Title>
+              {inquiryDetail.precarriageRates.length > 0 ? (
+                <div className="space-y-4">
+                  {inquiryDetail.precarriageRates.map((rate) => (
+                    <Card key={rate.id} className="border border-gray-200">
+                      <div className="flex items-start gap-4">
+                        {/* 选择框 */}
+                        <div className="mt-2">
+                          <Radio
+                            checked={selectedPrecarriageRate === rate.id}
+                            onChange={() => setSelectedPrecarriageRate(rate.id)}
+                          />
+                        </div>
+                        
+                        {/* 运价内容 */}
+                        <div className="flex-1">
+                          {/* 基本信息 */}
+                          <div className="flex items-center gap-4 mb-4">
+                            <span className="font-medium text-blue-600">运价编号：{rate.certNo}</span>
+                            <span className="font-medium">类型：{rate.type}</span>
+                            <span>供应商：{rate.vendor}</span>
+                            <span>起始地：{rate.origin}</span>
+                            <span>目的地：{rate.destination}</span>
+                          </div>
+                          
+                          {/* 费用明细表格 */}
+                          {renderRateTable([
+                            {
+                              id: 1,
+                              feeName: '拖车费',
+                              currency: rate.currency,
+                              unit: '箱',
+                              containerRates: {
+                                '20GP': rate['20GP']?.replace(/\s*CNY$/, ''),
+                                '40GP': rate['40GP']?.replace(/\s*CNY$/, ''),
+                                '40HC': rate['40HC']?.replace(/\s*CNY$/, '')
+                              },
+                              remark: ''
+                            }
+                          ], inquiryDetail.containerInfo?.map(c => c.type) || ['20GP', '40HC'])}
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 border border-gray-200 rounded bg-gray-50">
+                  <div className="text-gray-500">暂无港前运价数据</div>
+                </div>
+              )}
             </div>
-            
+
             {/* 尾程运价 */}
-            <div className="rate-table-container">
-              <div className="rate-table-title">尾程运价</div>
-              <Table
-                rowKey="id"
-                columns={oncarriageColumns}
-                data={inquiryDetail.oncarriageRates}
-                className="match-price-table"
-                pagination={false}
-                border={true}
-                scroll={{ x: 1000 }}
-              />
+            <div className="mb-6">
+              <Title heading={6} className="mb-4 text-blue-600">尾程运价</Title>
+              {inquiryDetail.oncarriageRates.length > 0 ? (
+                <div className="space-y-4">
+                  {inquiryDetail.oncarriageRates.map((rate) => (
+                    <Card key={rate.id} className="border border-gray-200">
+                      <div className="flex items-start gap-4">
+                        {/* 选择框 */}
+                        <div className="mt-2">
+                          <Radio
+                            checked={selectedOncarriageRate === rate.id}
+                            onChange={() => setSelectedOncarriageRate(rate.id)}
+                          />
+                        </div>
+                        
+                        {/* 运价内容 */}
+                        <div className="flex-1">
+                          {/* 基本信息 */}
+                          <div className="flex items-center gap-4 mb-4">
+                            <span className="font-medium text-blue-600">运价编号：{rate.certNo}</span>
+                            <span className="font-medium">代理名称：{rate.agentName}</span>
+                            <span>目的地：{rate.destination}</span>
+                            <span>地址类型：{rate.addressType}</span>
+                          </div>
+                          
+                          {/* 费用明细表格 */}
+                          {renderRateTable([
+                            {
+                              id: 1,
+                              feeName: '配送费',
+                              currency: rate.currency,
+                              unit: '票',
+                              unitPrice: rate.price,
+                              remark: ''
+                            }
+                          ], inquiryDetail.containerInfo?.map(c => c.type) || ['20GP', '40HC'])}
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 border border-gray-200 rounded bg-gray-50">
+                  <div className="text-gray-500">暂无尾程运价数据</div>
+                </div>
+              )}
             </div>
           </div>
 

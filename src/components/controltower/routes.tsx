@@ -39,6 +39,7 @@ import CreateRegion from './saas/CreateRegion';
 import CreateFclInquiry from './saas/CreateFclInquiry';
 import CreateLclInquiry from './saas/CreateLclInquiry';
 import CreateAirInquiry from './saas/CreateAirInquiry';
+import EditFclInquiry from './saas/EditFclInquiry';
 import InquiryDetail from './saas/InquiryDetail';
 import ViewPrecarriageRate from './saas/ViewPrecarriageRate';
 import ViewLastMileRate from './saas/ViewLastMileRate';
@@ -269,6 +270,23 @@ const ControlTowerRoutes: React.FC = () => {
         </SaasPageWrapper>
       } />
       <Route path="/saas/create-inquiry/air" element={
+        <SaasPageWrapper>
+          <CreateAirInquiry />
+        </SaasPageWrapper>
+      } />
+      
+      {/* 编辑询价路由 */}
+      <Route path="/saas/edit-inquiry/fcl/:id" element={
+        <SaasPageWrapper>
+          <EditFclInquiry />
+        </SaasPageWrapper>
+      } />
+      <Route path="/saas/edit-inquiry/lcl/:id" element={
+        <SaasPageWrapper>
+          <CreateLclInquiry />
+        </SaasPageWrapper>
+      } />
+      <Route path="/saas/edit-inquiry/air/:id" element={
         <SaasPageWrapper>
           <CreateAirInquiry />
         </SaasPageWrapper>

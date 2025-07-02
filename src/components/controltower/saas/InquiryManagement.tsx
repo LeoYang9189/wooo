@@ -1090,7 +1090,13 @@ const InquiryManagement: React.FC = () => {
               >
                 详情
               </Button>
-              <Button type="text" size="small">编辑</Button>
+              <Button 
+                type="text" 
+                size="small"
+                onClick={() => navigate(`/controltower/saas/edit-inquiry/${activeTab}/${record.inquiryNo}`)}
+              >
+                编辑
+              </Button>
               <Dropdown
                 droplist={
                   <Menu>
