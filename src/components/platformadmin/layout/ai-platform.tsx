@@ -5,9 +5,10 @@ import { IconSync, IconApps, IconFile, IconAttachment, IconClose, IconSearch, Ic
 interface AIPlatformAssistantProps {
   visible: boolean;
   onClose: () => void;
+  onFullscreen?: () => void;
 }
 
-const AIPlatformAssistant: React.FC<AIPlatformAssistantProps> = ({ visible, onClose }) => {
+const AIPlatformAssistant: React.FC<AIPlatformAssistantProps> = ({ visible, onClose, onFullscreen }) => {
   const [aiMessages, setAiMessages] = useState<{text: string, isUser: boolean}[]>([]);
   const [userInput, setUserInput] = useState('');
   const [skillPrefix, setSkillPrefix] = useState('');
@@ -23,7 +24,7 @@ const AIPlatformAssistant: React.FC<AIPlatformAssistantProps> = ({ visible, onCl
     // 模拟AI回复
     setTimeout(() => {
       setAiMessages(prev => [...prev, {
-        text: `我已收到你的问题："${fullInput}"。作为自定义名字的AI助手，我正在处理中，请稍候...`,
+        text: `我已收到你的问题："${fullInput}"。作为平台管理助手，我正在处理中，请稍候...`,
         isUser: false
       }]);
       setUserInput('');
@@ -43,7 +44,7 @@ const AIPlatformAssistant: React.FC<AIPlatformAssistantProps> = ({ visible, onCl
     
     setTimeout(() => {
       setAiMessages(prev => [...prev, {
-        text: `我已收到你的问题："${question}"。作为自定义名字的AI助手，我正在处理中，请稍候...`,
+        text: `我已收到你的问题："${question}"。作为平台管理助手，我正在处理中，请稍候...`,
         isUser: false
       }]);
     }, 500);
@@ -123,11 +124,11 @@ const AIPlatformAssistant: React.FC<AIPlatformAssistantProps> = ({ visible, onCl
       <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50">
         <div className="flex items-center">
           <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center mr-3 shadow-sm">
-            <img src="/assets/g6qmm-vsolk.gif" alt="自定义名字的AI助手" className="w-full h-full object-cover" />
+            <img src="/assets/g6qmm-vsolk.gif" alt="平台管理助手" className="w-full h-full object-cover" />
           </div>
           <div>
-            <div className="text-base font-medium text-gray-800">自定义名字的AI助手</div>
-            <div className="text-xs text-purple-600">你的工作，可以更简单</div>
+            <div className="text-base font-medium text-gray-800">平台管理助手</div>
+            <div className="text-xs text-purple-600">智能化运营管理</div>
           </div>
         </div>
         <div className="flex items-center space-x-2">
@@ -145,6 +146,7 @@ const AIPlatformAssistant: React.FC<AIPlatformAssistantProps> = ({ visible, onCl
             className="text-purple-600"
             icon={<IconApps style={{ color: '#7C3AED' }} />}
             title="全屏模式"
+            onClick={onFullscreen}
           />
           <Button 
             type="text" 
@@ -161,14 +163,14 @@ const AIPlatformAssistant: React.FC<AIPlatformAssistantProps> = ({ visible, onCl
       <div className="flex-1 overflow-y-auto p-4 bg-gradient-to-b from-white via-blue-50/30 to-purple-50/20">
         <div className="flex mb-4">
           <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center mr-3 flex-shrink-0 shadow-sm">
-            <img src="/assets/g6qmm-vsolk.gif" alt="自定义名字的AI助手" className="w-full h-full object-cover" />
+            <img src="/assets/g6qmm-vsolk.gif" alt="平台管理助手" className="w-full h-full object-cover" />
           </div>
           <div className="flex-1">
             <div className="mb-2">
-              <span className="text-purple-600 font-medium">👋 你好，我是自定义名字的AI助手</span>
+              <span className="text-purple-600 font-medium">👋 你好，我是平台管理助手</span>
             </div>
             <div className="text-gray-700 text-sm leading-relaxed">
-              你好，我是你的AI助理。我汇集了平台管理各项智能服务，可以帮你处理用户管理、企业审核、基础数据维护、系统配置等问题，虽然我初出茅庐，但是我每天都在进步哦！
+              你好，我是你的AI管理助理。我汇集了平台管理各项智能服务，可以帮你处理用户管理、企业审核、基础数据维护、系统配置等问题，让平台运营更高效智能！
             </div>
             
             <div className="mt-4">
@@ -353,7 +355,7 @@ const AIPlatformAssistant: React.FC<AIPlatformAssistantProps> = ({ visible, onCl
               <Input.TextArea
                 value={userInput}
                 onChange={value => setUserInput(value)}
-                placeholder={skillPrefix ? "继续输入你的具体需求..." : "需要我帮你处理什么工作呢？"}
+                placeholder={skillPrefix ? "继续输入你的具体需求..." : "需要我帮你处理什么管理工作呢？"}
                 className="text-sm resize-none"
                 style={{ 
                   background: 'transparent',

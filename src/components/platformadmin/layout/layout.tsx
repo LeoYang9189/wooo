@@ -21,6 +21,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Message } from '@arco-design/web-react';
 import '../PlatformAdminStyles.css';
 import AIPlatformAssistant from './ai-platform';
+import AIFullscreen from './AIFullscreen';
 
 const { Header, Sider, Content } = Layout;
 const MenuItem = Menu.Item;
@@ -38,6 +39,7 @@ interface LayoutProps {
 const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [aiChatVisible, setAiChatVisible] = useState(false);
+  const [aiFullscreenVisible, setAiFullscreenVisible] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
@@ -778,7 +780,22 @@ const PlatformAdminLayout: React.FC<LayoutProps> = ({ children }) => {
           {children}
         </Content>
       </Layout>
-      <AIPlatformAssistant visible={aiChatVisible} onClose={() => setAiChatVisible(false)} />
+      <AIPlatformAssistant 
+        visible={aiChatVisible} 
+        onClose={() => setAiChatVisible(false)} 
+        onFullscreen={() => {
+          setAiChatVisible(false);
+          setAiFullscreenVisible(true);
+        }}
+      />
+      <AIFullscreen 
+        visible={aiFullscreenVisible} 
+        onClose={() => setAiFullscreenVisible(false)} 
+        onExitFullscreen={() => {
+          setAiFullscreenVisible(false);
+          setAiChatVisible(true);
+        }}
+      />
     </Layout>
   );
 };
